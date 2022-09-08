@@ -1,4 +1,5 @@
 from .telegram.telegram import Telegram
+from .telegram.request_timeout import RequestTimeout
 
 
 def _evaluate_type_annotations() -> None:

@@ -51,6 +51,7 @@ from telebox.telegram.types.types.chat_member_member import ChatMemberMember
 from telebox.telegram.types.types.chat_member_restricted import ChatMemberRestricted
 from telebox.telegram.types.types.chat_member_left import ChatMemberLeft
 from telebox.telegram.types.types.chat_member_banned import ChatMemberBanned
+from telebox.telegram.request_timeout import RequestTimeout
 from telebox.utils import NotSetValue, NOT_SET_VALUE
 
 
@@ -98,16 +99,19 @@ class Telegram:
         url: str = URL,
         is_local: bool = False,
         default_parse_mode: Union[str, NotSetValue] = NOT_SET_VALUE,
+        default_request_timeout: Optional[RequestTimeout] = None
     ):
         self._session = session
         self._token = token
         self._url = url
         self._is_local = is_local
         self._default_parse_mode = default_parse_mode
+        self._default_request_timeout = default_request_timeout or RequestTimeout(150, 150)
 
     def get_updates(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
         timeout: Optional[int] = None,
@@ -122,7 +126,8 @@ class Telegram:
                     "limit": limit,
                     "timeout": timeout,
                     "allowed_updates": allowed_updates
-                }
+                },
+                timeout=request_timeout
             )
         ]
 
@@ -130,6 +135,7 @@ class Telegram:
         self,
         url: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         certificate: Optional[InputFile] = None,
         ip_address: Optional[str] = None,
         max_connections: Optional[int] = None,
@@ -147,40 +153,52 @@ class Telegram:
                 "allowed_updates": allowed_updates,
                 "drop_pending_updates": drop_pending_updates,
                 "secret_token": secret_token
-            }
+            },
+            timeout=request_timeout
         )
 
-    def delete_webhook(self, *, drop_pending_updates: Optional[bool] = None) -> Literal[True]:
+    def delete_webhook(
+        self,
+        *,
+        request_timeout: Optional[RequestTimeout] = None,
+        drop_pending_updates: Optional[bool] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="deleteWebhook",
             parameters={
                 "drop_pending_updates": drop_pending_updates
-            }
+            },
+            timeout=request_timeout
         )
 
-    def get_webhook_info(self) -> WebhookInfo:
+    def get_webhook_info(
+        self,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> WebhookInfo:
         return _get_dataclass_object(
-            data=self._send_request(method="getWebhookInfo"),
+            data=self._send_request(method="getWebhookInfo", timeout=request_timeout),
             type_=WebhookInfo
         )
 
-    def get_me(self) -> User:
+    def get_me(self, *, request_timeout: Optional[RequestTimeout] = None) -> User:
         return _get_dataclass_object(
-            data=self._send_request(method="getMe"),
+            data=self._send_request(method="getMe", timeout=request_timeout),
             type_=User
         )
 
-    def log_out(self) -> Literal[True]:
-        return self._send_request(method="logOut")
+    def log_out(self, *, request_timeout: Optional[RequestTimeout] = None) -> Literal[True]:
+        return self._send_request(method="logOut", timeout=request_timeout)
 
-    def close(self) -> Literal[True]:
-        return self._send_request(method="close")
+    def close(self, *, request_timeout: Optional[RequestTimeout] = None) -> Literal[True]:
+        return self._send_request(method="close", timeout=request_timeout)
 
     def send_message(
         self,
         chat_id: Union[int, str],
         text: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
@@ -208,7 +226,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -219,6 +238,7 @@ class Telegram:
         from_chat_id: Union[int, str],
         message_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None
     ) -> Message:
@@ -231,7 +251,8 @@ class Telegram:
                     "message_id": message_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -242,6 +263,7 @@ class Telegram:
         from_chat_id: Union[int, str],
         message_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -270,7 +292,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=MessageId
         )
@@ -280,6 +303,7 @@ class Telegram:
         chat_id: Union[int, str],
         photo: Union[InputFile, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -307,7 +331,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -317,6 +342,7 @@ class Telegram:
         chat_id: Union[int, str],
         audio: Union[InputFile, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -352,7 +378,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -362,6 +389,7 @@ class Telegram:
         chat_id: Union[int, str],
         document: Union[InputFile, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
@@ -393,7 +421,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -403,6 +432,7 @@ class Telegram:
         chat_id: Union[int, str],
         video: Union[InputFile, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
@@ -440,7 +470,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -450,6 +481,7 @@ class Telegram:
         chat_id: Union[int, str],
         animation: Union[InputFile, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
@@ -485,7 +517,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -495,6 +528,7 @@ class Telegram:
         chat_id: Union[int, str],
         voice: Union[InputFile, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -524,7 +558,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -534,6 +569,7 @@ class Telegram:
         chat_id: Union[int, str],
         video_note: Union[InputFile, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
         thumb: Union[InputFile, str, None] = None,
@@ -561,7 +597,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -574,6 +611,7 @@ class Telegram:
                      list[InputMediaPhoto],
                      list[InputMediaVideo]],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -590,7 +628,8 @@ class Telegram:
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply
-                }
+                },
+                timeout=request_timeout
             )
         ]
 
@@ -600,6 +639,7 @@ class Telegram:
         latitude: float,
         longitude: float,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         horizontal_accuracy: Optional[float] = None,
         live_period: Optional[int] = None,
         heading: Optional[int] = None,
@@ -630,7 +670,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -640,6 +681,7 @@ class Telegram:
         latitude: float,
         longitude: float,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -660,7 +702,8 @@ class Telegram:
                 "heading": heading,
                 "proximity_alert_radius": proximity_alert_radius,
                 "reply_markup": reply_markup
-            }
+            },
+            timeout=request_timeout
         )
 
         return data if data is True else _get_dataclass_object(data=data, type_=Message)
@@ -668,6 +711,7 @@ class Telegram:
     def stop_message_live_location(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -680,7 +724,8 @@ class Telegram:
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
-            }
+            },
+            timeout=request_timeout
         )
 
         return data if data is True else _get_dataclass_object(data=data, type_=Message)
@@ -693,6 +738,7 @@ class Telegram:
         title: str,
         address: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         foursquare_id: Optional[str] = None,
         foursquare_type: Optional[str] = None,
         google_place_id: Optional[str] = None,
@@ -725,7 +771,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -736,6 +783,7 @@ class Telegram:
         phone_number: str,
         first_name: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         last_name: Optional[str] = None,
         vcard: Optional[str] = None,
         disable_notification: Optional[bool] = None,
@@ -762,7 +810,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -773,6 +822,7 @@ class Telegram:
         question: str,
         options: list[str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         is_anonymous: Optional[bool] = None,
         type_: Optional[str] = None,
         allows_multiple_answers: Optional[bool] = None,
@@ -815,7 +865,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -824,6 +875,7 @@ class Telegram:
         self,
         chat_id: Union[int, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -846,24 +898,33 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
 
-    def send_chat_action(self, chat_id: Union[int, str], action: str) -> Literal[True]:
+    def send_chat_action(
+        self,
+        chat_id: Union[int, str],
+        action: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="sendChatAction",
             parameters={
                 "chat_id": chat_id,
                 "action": action
-            }
+            },
+            timeout=request_timeout
         )
 
     def get_user_profile_photos(
         self,
         user_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None
     ) -> UserProfilePhotos:
@@ -874,18 +935,25 @@ class Telegram:
                     "user_id": user_id,
                     "offset": offset,
                     "limit": limit
-                }
+                },
+                timeout=request_timeout
             ),
             type_=UserProfilePhotos
         )
 
-    def get_file(self, file_id: str) -> File:
+    def get_file(
+        self,
+        file_id: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> File:
         return _get_dataclass_object(
             data=self._send_request(
                 method="getFile",
                 parameters={
                     "file_id": file_id
-                }
+                },
+                timeout=request_timeout
             ),
             type_=File
         )
@@ -895,6 +963,7 @@ class Telegram:
         chat_id: Union[int, str],
         user_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         until_date: Optional[datetime_] = None,
         revoke_messages: Optional[bool] = None
     ) -> Literal[True]:
@@ -905,7 +974,8 @@ class Telegram:
                 "user_id": user_id,
                 "until_date": until_date,
                 "revoke_messages": revoke_messages
-            }
+            },
+            timeout=request_timeout
         )
 
     def unban_chat_member(
@@ -913,6 +983,7 @@ class Telegram:
         chat_id: Union[int, str],
         user_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         only_if_banned: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -921,7 +992,8 @@ class Telegram:
                 "chat_id": chat_id,
                 "user_id": user_id,
                 "only_if_banned": only_if_banned
-            }
+            },
+            timeout=request_timeout
         )
 
     def restrict_chat_member(
@@ -930,6 +1002,7 @@ class Telegram:
         user_id: int,
         permissions: ChatPermissions,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         until_date: Optional[datetime_] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -939,7 +1012,8 @@ class Telegram:
                 "user_id": user_id,
                 "permissions": permissions,
                 "until_date": until_date
-            }
+            },
+            timeout=request_timeout
         )
 
     def promote_chat_member(
@@ -947,6 +1021,7 @@ class Telegram:
         chat_id: Union[int, str],
         user_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         is_anonymous: Optional[bool] = None,
         can_manage_chat: Optional[bool] = None,
         can_post_messages: Optional[bool] = None,
@@ -975,14 +1050,17 @@ class Telegram:
                 "can_change_info": can_change_info,
                 "can_invite_users": can_invite_users,
                 "can_pin_messages": can_pin_messages
-            }
+            },
+            timeout=request_timeout
         )
 
     def set_chat_administrator_custom_title(
         self,
         chat_id: Union[int, str],
         user_id: int,
-        custom_title: str
+        custom_title: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatAdministratorCustomTitle",
@@ -990,60 +1068,77 @@ class Telegram:
                 "chat_id": chat_id,
                 "user_id": user_id,
                 "custom_title": custom_title
-            }
+            },
+            timeout=request_timeout
         )
 
     def ban_chat_sender_chat(
         self,
         chat_id: Union[int, str],
-        sender_chat_id: int
+        sender_chat_id: int,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._send_request(
             method="banChatSenderChat",
             parameters={
                 "chat_id": chat_id,
                 "sender_chat_id": sender_chat_id
-            }
+            },
+            timeout=request_timeout
         )
 
     def unban_chat_sender_chat(
         self,
         chat_id: Union[int, str],
-        sender_chat_id: int
+        sender_chat_id: int,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._send_request(
             method="unbanChatSenderChat",
             parameters={
                 "chat_id": chat_id,
                 "sender_chat_id": sender_chat_id
-            }
+            },
+            timeout=request_timeout
         )
 
     def set_chat_permissions(
         self,
         chat_id: Union[int, str],
-        permissions: ChatPermissions
+        permissions: ChatPermissions,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatPermissions",
             parameters={
                 "chat_id": chat_id,
                 "permissions": permissions
-            }
+            },
+            timeout=request_timeout
         )
 
-    def export_chat_invite_link(self, chat_id: Union[int, str]) -> str:
+    def export_chat_invite_link(
+        self,
+        chat_id: Union[int, str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> str:
         return self._send_request(
             method="exportChatInviteLink",
             parameters={
                 "chat_id": chat_id
-            }
+            },
+            timeout=request_timeout
         )
 
     def create_chat_invite_link(
         self,
         chat_id: Union[int, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         name: Optional[str] = None,
         expire_date: Optional[datetime_] = None,
         member_limit: Optional[int] = None,
@@ -1058,7 +1153,8 @@ class Telegram:
                     "expire_date": expire_date,
                     "member_limit": member_limit,
                     "creates_join_request": creates_join_request
-                }
+                },
+                timeout=request_timeout
             ),
             type_=ChatInviteLink
         )
@@ -1068,6 +1164,7 @@ class Telegram:
         chat_id: Union[int, str],
         invite_link: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         name: Optional[str] = None,
         expire_date: Optional[datetime_] = None,
         member_limit: Optional[int] = None,
@@ -1083,7 +1180,8 @@ class Telegram:
                     "expire_date": expire_date,
                     "member_limit": member_limit,
                     "creates_join_request": creates_join_request
-                }
+                },
+                timeout=request_timeout
             ),
             type_=ChatInviteLink
         )
@@ -1091,7 +1189,9 @@ class Telegram:
     def revoke_chat_invite_link(
         self,
         chat_id: Union[int, str],
-        invite_link: str
+        invite_link: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> ChatInviteLink:
         return _get_dataclass_object(
             data=self._send_request(
@@ -1099,62 +1199,104 @@ class Telegram:
                 parameters={
                     "chat_id": chat_id,
                     "invite_link": invite_link
-                }
+                },
+                timeout=request_timeout
             ),
             type_=ChatInviteLink
         )
 
-    def approve_chat_join_request(self, chat_id: Union[int, str], user_id: int) -> Literal[True]:
+    def approve_chat_join_request(
+        self,
+        chat_id: Union[int, str],
+        user_id: int,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="approveChatJoinRequest",
             parameters={
                 "chat_id": chat_id,
                 "user_id": user_id
-            }
+            },
+            timeout=request_timeout
         )
 
-    def decline_chat_join_request(self, chat_id: Union[int, str], user_id: int) -> Literal[True]:
+    def decline_chat_join_request(
+        self,
+        chat_id: Union[int, str],
+        user_id: int,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="declineChatJoinRequest",
             parameters={
                 "chat_id": chat_id,
                 "user_id": user_id
-            }
+            },
+            timeout=request_timeout
         )
 
-    def set_chat_photo(self, chat_id: Union[int, str], photo: InputFile) -> Literal[True]:
+    def set_chat_photo(
+        self,
+        chat_id: Union[int, str],
+        photo: InputFile,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="setChatPhoto",
             parameters={
                 "chat_id": chat_id,
                 "photo": photo
-            }
+            },
+            timeout=request_timeout
         )
 
-    def delete_chat_photo(self, chat_id: Union[int, str]) -> Literal[True]:
+    def delete_chat_photo(
+        self,
+        chat_id: Union[int, str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="deleteChatPhoto",
             parameters={
                 "chat_id": chat_id
-            }
+            },
+            timeout=request_timeout
         )
     
-    def set_chat_title(self, chat_id: Union[int, str], title: str) -> Literal[True]:
+    def set_chat_title(
+        self,
+        chat_id: Union[int, str],
+        title: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="setChatTitle",
             parameters={
                 "chat_id": chat_id,
                 "title": title
-            }
+            },
+            timeout=request_timeout
         )
 
-    def set_chat_description(self, chat_id: Union[int, str], description: str) -> Literal[True]:
+    def set_chat_description(
+        self,
+        chat_id: Union[int, str],
+        description: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="setChatDescription",
             parameters={
                 "chat_id": chat_id,
                 "description": description
-            }
+            },
+            timeout=request_timeout
         )
 
     def pin_chat_message(
@@ -1162,6 +1304,7 @@ class Telegram:
         chat_id: Union[int, str],
         message_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         disable_notification: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1170,48 +1313,76 @@ class Telegram:
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "disable_notification": disable_notification
-            }
+            },
+            timeout=request_timeout
         )
 
-    def unpin_chat_message(self, chat_id: Union[int, str], message_id: int) -> Literal[True]:
+    def unpin_chat_message(
+        self,
+        chat_id: Union[int, str],
+        message_id: int,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="unpinChatMessage",
             parameters={
                 "chat_id": chat_id,
                 "message_id": message_id
-            }
+            },
+            timeout=request_timeout
         )
 
-    def unpin_all_chat_messages(self, chat_id: Union[int, str]) -> Literal[True]:
+    def unpin_all_chat_messages(
+        self,
+        chat_id: Union[int, str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None,
+    ) -> Literal[True]:
         return self._send_request(
             method="unpinAllChatMessages",
             parameters={
                 "chat_id": chat_id
-            }
+            },
+            timeout=request_timeout
         )
 
-    def leave_chat(self, chat_id: Union[int, str]) -> Literal[True]:
+    def leave_chat(
+        self,
+        chat_id: Union[int, str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="leaveChat",
             parameters={
                 "chat_id": chat_id
-            }
+            },
+            timeout=request_timeout
         )
 
-    def get_chat(self, chat_id: Union[int, str]) -> Chat:
+    def get_chat(
+        self,
+        chat_id: Union[int, str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Chat:
         return _get_dataclass_object(
             data=self._send_request(
                 method="getChat",
                 parameters={
                     "chat_id": chat_id
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Chat
         )
 
     def get_chat_administrators(
         self,
-        chat_id: Union[int, str]
+        chat_id: Union[int, str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> list[Union[ChatMemberOwner,
                     ChatMemberAdministrator]]:
         return [
@@ -1220,25 +1391,39 @@ class Telegram:
                 method="getChatAdministrators",
                 parameters={
                     "chat_id": chat_id
-                }
+                },
+                timeout=request_timeout
             )
         ]
 
-    def get_chat_member_count(self, chat_id: Union[int, str]) -> int:
+    def get_chat_member_count(
+        self,
+        chat_id: Union[int, str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> int:
         return self._send_request(
             method="getChatMemberCount",
             parameters={
                 "chat_id": chat_id
-            }
+            },
+            timeout=request_timeout
         )
 
-    def get_chat_member(self, chat_id: Union[int, str], user_id: int) -> ChatMember:
+    def get_chat_member(
+        self,
+        chat_id: Union[int, str],
+        user_id: int,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> ChatMember:
         data = self._send_request(
             method="getChatMember",
             parameters={
                 "chat_id": chat_id,
                 "user_id": user_id
-            }
+            },
+            timeout=request_timeout
         )
 
         return _get_dataclass_object(data=data, type_=_CHAT_MEMBER_TYPES[data["status"]])
@@ -1246,28 +1431,38 @@ class Telegram:
     def set_chat_sticker_set(
         self,
         chat_id: Union[int, str],
-        sticker_set_name: str
+        sticker_set_name: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatStickerSet",
             parameters={
                 "chat_id": chat_id,
                 "sticker_set_name": sticker_set_name
-            }
+            },
+            timeout=request_timeout
         )
 
-    def delete_chat_sticker_set(self, chat_id: Union[int, str]) -> Literal[True]:
+    def delete_chat_sticker_set(
+        self,
+        chat_id: Union[int, str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="deleteChatStickerSet",
             parameters={
                 "chat_id": chat_id
-            }
+            },
+            timeout=request_timeout
         )
 
     def answer_callback_query(
         self,
         callback_query_id: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         text: Optional[str] = None,
         show_alert: Optional[bool] = None,
         url: Optional[str] = None,
@@ -1281,13 +1476,15 @@ class Telegram:
                 "show_alert": show_alert,
                 "url": url,
                 "cache_time": cache_time
-            }
+            },
+            timeout=request_timeout
         )
 
     def set_my_commands(
         self,
         commands: list[BotCommand],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None
     ) -> Literal[True]:
@@ -1297,12 +1494,14 @@ class Telegram:
                 "commands": commands,
                 "scope": scope,
                 "language_code": language_code
-            }
+            },
+            timeout=request_timeout
         )
 
     def delete_my_commands(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None
     ) -> Literal[True]:
@@ -1311,12 +1510,14 @@ class Telegram:
             parameters={
                 "scope": scope,
                 "language_code": language_code
-            }
+            },
+            timeout=request_timeout
         )
 
     def get_my_commands(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None
     ) -> list[BotCommand]:
@@ -1327,13 +1528,15 @@ class Telegram:
                 parameters={
                     "scope": scope,
                     "language_code": language_code
-                }
+                },
+                timeout=request_timeout
             )
         ]
 
     def set_chat_menu_button(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         chat_id: Optional[int] = None,
         menu_button: Optional[MenuButton] = None
     ) -> Literal[True]:
@@ -1342,20 +1545,28 @@ class Telegram:
             parameters={
                 "chat_id": chat_id,
                 "menu_button": menu_button
-            }
+            },
+            timeout=request_timeout
         )
 
-    def get_chat_menu_button(self, *, chat_id: Optional[int] = None) -> Literal[True]:
+    def get_chat_menu_button(
+        self,
+        *,
+        request_timeout: Optional[RequestTimeout] = None,
+        chat_id: Optional[int] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="getChatMenuButton",
             parameters={
                 "chat_id": chat_id
-            }
+            },
+            timeout=request_timeout
         )
 
     def set_my_default_administrator_rights(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         rights: Optional[ChatAdministratorRights] = None,
         for_channels: Optional[bool] = None
     ) -> Literal[True]:
@@ -1364,25 +1575,29 @@ class Telegram:
             parameters={
                 "rights": rights,
                 "for_channels": for_channels
-            }
+            },
+            timeout=request_timeout
         )
 
     def get_my_default_administrator_rights(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         for_channels: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
             method="getMyDefaultAdministratorRights",
             parameters={
                 "for_channels": for_channels
-            }
+            },
+            timeout=request_timeout
         )
 
     def edit_message_text(
         self,
         text: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -1402,7 +1617,8 @@ class Telegram:
                 "entities": entities,
                 "disable_web_page_preview": disable_web_page_preview,
                 "reply_markup": reply_markup
-            }
+            },
+            timeout=request_timeout
         )
 
         return data if data is True else _get_dataclass_object(data=data, type_=Message)
@@ -1410,6 +1626,7 @@ class Telegram:
     def edit_message_caption(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -1428,7 +1645,8 @@ class Telegram:
                 "parse_mode": self._get_parse_mode(parse_mode),
                 "caption_entities": caption_entities,
                 "reply_markup": reply_markup
-            }
+            },
+            timeout=request_timeout
         )
 
         return data if data is True else _get_dataclass_object(data=data, type_=Message)
@@ -1437,6 +1655,7 @@ class Telegram:
         self,
         media: InputMedia,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -1450,7 +1669,8 @@ class Telegram:
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
-            }
+            },
+            timeout=request_timeout
         )
 
         return data if data is True else _get_dataclass_object(data=data, type_=Message)
@@ -1458,6 +1678,7 @@ class Telegram:
     def edit_message_reply_markup(
         self,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -1470,7 +1691,8 @@ class Telegram:
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
-            }
+            },
+            timeout=request_timeout
         )
 
         return data if data is True else _get_dataclass_object(data=data, type_=Message)
@@ -1480,6 +1702,7 @@ class Telegram:
         chat_id: Union[int, str],
         message_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
         return _get_dataclass_object(
@@ -1489,18 +1712,26 @@ class Telegram:
                     "chat_id": chat_id,
                     "message_id": message_id,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Poll
         )
 
-    def delete_message(self, chat_id: Union[int, str], message_id: int) -> Literal[True]:
+    def delete_message(
+        self,
+        chat_id: Union[int, str],
+        message_id: int,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="deleteMessage",
             parameters={
                 "chat_id": chat_id,
                 "message_id": message_id
-            }
+            },
+            timeout=request_timeout
         )
 
     def send_sticker(
@@ -1508,6 +1739,7 @@ class Telegram:
         chat_id: Union[int, str],
         sticker: Union[InputFile, str],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -1529,41 +1761,61 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
 
-    def get_sticker_set(self, name: str) -> StickerSet:
+    def get_sticker_set(
+        self,
+        name: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> StickerSet:
         return _get_dataclass_object(
             data=self._send_request(
                 method="getStickerSet",
                 parameters={
                     "name": name
-                }
+                },
+                timeout=request_timeout
             ),
             type_=StickerSet
         )
 
-    def get_custom_emoji_stickers(self, custom_emoji_ids: list[str]) -> list[Sticker]:
+    def get_custom_emoji_stickers(
+        self,
+        custom_emoji_ids: list[str],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> list[Sticker]:
         return [
             _get_dataclass_object(data=i, type_=Sticker)
             for i in self._send_request(
                 method="getCustomEmojiStickers",
                 parameters={
                     "custom_emoji_ids": custom_emoji_ids
-                }
+                },
+                timeout=request_timeout
             )
         ]
 
-    def upload_sticker_file(self, user_id: int, png_sticker: InputFile) -> File:
+    def upload_sticker_file(
+        self,
+        user_id: int,
+        png_sticker: InputFile,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> File:
         return _get_dataclass_object(
             data=self._send_request(
                 method="uploadStickerFile",
                 parameters={
                     "user_id": user_id,
                     "png_sticker": png_sticker
-                }
+                },
+                timeout=request_timeout
             ),
             type_=File
         )
@@ -1575,6 +1827,7 @@ class Telegram:
         title: str,
         emojis: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         png_sticker: Union[InputFile, str, None] = None,
         tgs_sticker: Optional[InputFile] = None,
         webm_sticker: Optional[InputFile] = None,
@@ -1593,7 +1846,8 @@ class Telegram:
                 "webm_sticker": webm_sticker,
                 "contains_masks": contains_masks,
                 "mask_position": mask_position
-            }
+            },
+            timeout=request_timeout
         )
 
     def add_sticker_to_set(
@@ -1602,6 +1856,7 @@ class Telegram:
         name: str,
         emojis: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         png_sticker: Union[InputFile, str, None] = None,
         tgs_sticker: Optional[InputFile] = None,
         webm_sticker: Optional[InputFile] = None,
@@ -1617,24 +1872,38 @@ class Telegram:
                 "tgs_sticker": tgs_sticker,
                 "webm_sticker": webm_sticker,
                 "mask_position": mask_position
-            }
+            },
+            timeout=request_timeout
         )
 
-    def set_sticker_position_in_set(self, sticker: str, position: int) -> Literal[True]:
+    def set_sticker_position_in_set(
+        self,
+        sticker: str,
+        position: int,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="setStickerPositionInSet",
             parameters={
                 "sticker": sticker,
                 "position": position
-            }
+            },
+            timeout=request_timeout
         )
 
-    def delete_sticker_from_set(self, sticker: str) -> Literal[True]:
+    def delete_sticker_from_set(
+        self,
+        sticker: str,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
+    ) -> Literal[True]:
         return self._send_request(
             method="deleteStickerFromSet",
             parameters={
                 "sticker": sticker
-            }
+            },
+            timeout=request_timeout
         )
 
     def set_sticker_set_thumb(
@@ -1642,6 +1911,7 @@ class Telegram:
         name: str,
         user_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         thumb: Union[InputFile, str, None] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1650,7 +1920,8 @@ class Telegram:
                 "name": name,
                 "user_id": user_id,
                 "thumb": thumb
-            }
+            },
+            timeout=request_timeout
         )
 
     def answer_inline_query(
@@ -1658,6 +1929,7 @@ class Telegram:
         inline_query_id: str,
         results: list[InlineQueryResult],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         cache_time: Optional[int] = None,
         is_personal: Optional[bool] = None,
         next_offset: Optional[str] = None,
@@ -1674,13 +1946,16 @@ class Telegram:
                 "next_offset": next_offset,
                 "switch_pm_text": switch_pm_text,
                 "switch_pm_parameter": switch_pm_parameter
-            }
+            },
+            timeout=request_timeout
         )
 
     def answer_web_app_query(
         self,
         web_app_query_id: str,
-        result: InlineQueryResult
+        result: InlineQueryResult,
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> SentWebAppMessage:
         return _get_dataclass_object(
             data=self._send_request(
@@ -1688,7 +1963,8 @@ class Telegram:
                 parameters={
                     "web_app_query_id": web_app_query_id,
                     "result": result
-                }
+                },
+                timeout=request_timeout
             ),
             type_=SentWebAppMessage
         )
@@ -1703,6 +1979,7 @@ class Telegram:
         currency: str,
         prices: list[LabeledPrice],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         max_tip_amount: Optional[int] = None,
         suggested_tip_amounts: Optional[list[int]] = None,
         start_parameter: Optional[str] = None,
@@ -1755,7 +2032,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -1769,6 +2047,7 @@ class Telegram:
         currency: str,
         prices: list[LabeledPrice],
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         max_tip_amount: Optional[int] = None,
         suggested_tip_amounts: Optional[list[int]] = None,
         provider_data: Optional[str] = None,
@@ -1807,7 +2086,8 @@ class Telegram:
                 "send_phone_number_to_provider": send_phone_number_to_provider,
                 "send_email_to_provider": send_email_to_provider,
                 "is_flexible": is_flexible
-            }
+            },
+            timeout=request_timeout
         )
 
     def answer_shipping_query(
@@ -1815,6 +2095,7 @@ class Telegram:
         shipping_query_id: str,
         ok: bool,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         shipping_options: Optional[list[ShippingOption]] = None,
         error_message: Optional[str] = None
     ) -> Literal[True]:
@@ -1825,7 +2106,8 @@ class Telegram:
                 "ok": ok,
                 "shipping_options": shipping_options,
                 "error_message": error_message
-            }
+            },
+            timeout=request_timeout
         )
 
     def answer_pre_checkout_query(
@@ -1833,6 +2115,7 @@ class Telegram:
         pre_checkout_query_id: str,
         ok: bool,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         error_message: Optional[str] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1841,20 +2124,24 @@ class Telegram:
                 "pre_checkout_query_id": pre_checkout_query_id,
                 "ok": ok,
                 "error_message": error_message
-            }
+            },
+            timeout=request_timeout
         )
 
     def set_passport_data_errors(
         self,
         user_id: int,
-        errors: list[PassportElementError]
+        errors: list[PassportElementError],
+        *,
+        request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setPassportDataErrors",
             parameters={
                 "user_id": user_id,
                 "errors": errors
-            }
+            },
+            timeout=request_timeout
         )
 
     def send_game(
@@ -1862,6 +2149,7 @@ class Telegram:
         chat_id: int,
         game_short_name: str,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -1879,7 +2167,8 @@ class Telegram:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
-                }
+                },
+                timeout=request_timeout
             ),
             type_=Message
         )
@@ -1889,6 +2178,7 @@ class Telegram:
         user_id: int,
         score: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         force: Optional[bool] = None,
         disable_edit_message: Optional[bool] = None,
         chat_id: Optional[int] = None,
@@ -1905,7 +2195,8 @@ class Telegram:
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id
-            }
+            },
+            timeout=request_timeout
         )
 
         return data if data is True else _get_dataclass_object(data=data, type_=Message)
@@ -1914,6 +2205,7 @@ class Telegram:
         self,
         user_id: int,
         *,
+        request_timeout: Optional[RequestTimeout] = None,
         chat_id: Optional[int] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None
@@ -1927,7 +2219,8 @@ class Telegram:
                     "chat_id": chat_id,
                     "message_id": message_id,
                     "inline_message_id": inline_message_id
-                }
+                },
+                timeout=request_timeout
             )
         ]
 
@@ -1935,12 +2228,19 @@ class Telegram:
         self,
         method: str,
         *,
-        parameters: Optional[dict[str, Any]] = None
+        parameters: Optional[dict[str, Any]] = None,
+        timeout: Optional[RequestTimeout] = None
     ) -> Any:
         parameters = parameters or {}
         url = self._get_url(method)
         data, files = _get_prepared_parameters(parameters)
-        response = self._session.post(url, json=data, files=files)
+        timeout = timeout or self._default_request_timeout
+        response = self._session.post(
+            url=url,
+            json=data,
+            files=files,
+            timeout=(timeout.connect_secs, timeout.read_secs)
+        )
 
         return _process_response(response, method, parameters)
 
