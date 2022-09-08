@@ -237,7 +237,7 @@ class PrivateChannelError(BadRequestError):
 
 
 @dataclass
-class WritingChatForbiddenError(BadRequestError):
+class WriteToChatForbiddenError(BadRequestError):
     """Error class for this response:
     {
         'description': 'Bad Request: CHAT_WRITE_FORBIDDEN',
@@ -418,7 +418,7 @@ class InvalidButtonDataError(BadRequestError):
 
 
 @dataclass
-class CannotParseInlineKeyboardButtonError(BadRequestError):
+class InlineKeyboardButtonParsingError(BadRequestError):
     """Error class for this response:
     {
         'description': 'Bad Request: can't parse inline keyboard button: Text buttons are unallowed in the inline keyboard',
@@ -484,7 +484,7 @@ class TooMuchMessagesToSendAsAlbumError(BadRequestError):
 
 
 @dataclass
-class CannotDemoteChatCreatorError(BadRequestError):
+class DemoteChatCreatorError(BadRequestError):
     """Error class for this response:
     {
         'description': 'Bad Request: can't demote chat creator',
@@ -495,7 +495,7 @@ class CannotDemoteChatCreatorError(BadRequestError):
 
 
 @dataclass
-class CannotRestrictSelfError(BadRequestError):
+class SelfRestrictError(BadRequestError):
     """Error class for this response:
     {
         'description': 'Bad Request: can't restrict self',
@@ -517,7 +517,7 @@ class WebhookURLMustBeHTTPSError(BadRequestError):
 
 
 @dataclass
-class CannotParseURLError(BadRequestError):
+class URLParsingError(BadRequestError):
     """Error class for this response:
     {
         'description': 'Bad Request: can't parse URL',
@@ -550,7 +550,7 @@ class UnknownWebhookHostError(BadRequestError):
 
 
 @dataclass
-class CannotParseMessageEntitiesError(BadRequestError):
+class MessageEntitiesParsingError(BadRequestError):
     """Error class for this response:
     {
         'description': 'Bad Request: can't parse entities',
@@ -648,7 +648,7 @@ class BotCannotInitiateConversationWithUserError(ForbiddenError):
 
 
 @dataclass
-class DeletingMessageForbiddenError(ForbiddenError):
+class DeleteMessageForbiddenError(ForbiddenError):
     """Error class for this response:
     {
         'description': 'Forbidden: MESSAGE_DELETE_FORBIDDEN',
@@ -822,7 +822,7 @@ def _get_bad_request_error(
         ("message is not a poll", MessageIsNotPollError),
         ("message_id_invalid", InvalidMessageIDError),
         ("channel_private", PrivateChannelError),
-        ("chat_write_forbidden", WritingChatForbiddenError),
+        ("chat_write_forbidden", WriteToChatForbiddenError),
         ("message to pin not found", MessageToPinNotFoundError),
         (
             "not enough rights to manage pinned messages in the chat",
@@ -847,19 +847,19 @@ def _get_bad_request_error(
         ),
         ("button_url_invalid", InvalidButtonURLError),
         ("button_data_invalid", InvalidButtonDataError),
-        ("can't parse inline keyboard button", CannotParseInlineKeyboardButtonError),
+        ("can't parse inline keyboard button", InlineKeyboardButtonParsingError),
         ("wrong file id", WrongFileIDError),
         ("group is deactivated", GroupIsDeactivatedError),
         ("photo should be uploaded as an inputfile", PhotoShouldBeUploadedAsInputFileError),
         ("stickerset_invalid", InvalidStickerSetError),
         ("too much messages to send as an album", TooMuchMessagesToSendAsAlbumError),
-        ("can't demote chat creator", CannotDemoteChatCreatorError),
-        ("can't restrict self", CannotRestrictSelfError),
+        ("can't demote chat creator", DemoteChatCreatorError),
+        ("can't restrict self", SelfRestrictError),
         ("https url must be provided for webhook", WebhookURLMustBeHTTPSError),
-        ("can't parse url", CannotParseURLError),
+        ("can't parse url", URLParsingError),
         ("webhook can be set up only on ports", BadWebhookPortError),
         ("failed to resolve host: name or service not known", UnknownWebhookHostError),
-        ("can't parse entities", CannotParseMessageEntitiesError),
+        ("can't parse entities", MessageEntitiesParsingError),
         ("wrong http url", WrongHTTPURLError),
         ("invalid file id", InvalidFileIDError)
     ):
@@ -892,7 +892,7 @@ def _get_forbidden_error(kwargs: dict[str, Any]) -> ForbiddenError:
             "bot can't initiate conversation with a user",
             BotCannotInitiateConversationWithUserError
         ),
-        ("message_delete_forbidden", DeletingMessageForbiddenError),
+        ("message_delete_forbidden", DeleteMessageForbiddenError),
         ("bot is not a member of the supergroup chat", BotIsNotSupergroupMemberError),
         ("bot is not a member of the channel chat", BotIsNotChannelMemberError),
         ("bot can't send messages to bots", BotCannotSendMessagesToBotsError)
