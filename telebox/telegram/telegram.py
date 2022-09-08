@@ -51,6 +51,7 @@ from telebox.telegram.types.types.chat_member_member import ChatMemberMember
 from telebox.telegram.types.types.chat_member_restricted import ChatMemberRestricted
 from telebox.telegram.types.types.chat_member_left import ChatMemberLeft
 from telebox.telegram.types.types.chat_member_banned import ChatMemberBanned
+from telebox.utils import NotSetValue, NOT_SET_VALUE
 
 
 URL = "https://api.telegram.org"
@@ -89,11 +90,20 @@ _dataclass_factory = Factory(
 
 class Telegram:
 
-    def __init__(self, session: Session, token: str, *, url: str = URL, is_local: bool = False):
+    def __init__(
+        self,
+        session: Session,
+        token: str,
+        *,
+        url: str = URL,
+        is_local: bool = False,
+        default_parse_mode: Union[str, NotSetValue] = NOT_SET_VALUE,
+    ):
         self._session = session
         self._token = token
         self._url = url
         self._is_local = is_local
+        self._default_parse_mode = default_parse_mode
 
     def get_updates(
         self,
@@ -171,7 +181,7 @@ class Telegram:
         chat_id: Union[int, str],
         text: str,
         *,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
@@ -190,7 +200,7 @@ class Telegram:
                 parameters={
                     "chat_id": chat_id,
                     "text": text,
-                    "parse_mode": parse_mode,
+                    "parse_mode": self._get_parse_mode(parse_mode),
                     "entities": entities,
                     "disable_web_page_preview": disable_web_page_preview,
                     "disable_notification": disable_notification,
@@ -233,7 +243,7 @@ class Telegram:
         message_id: int,
         *,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -253,7 +263,7 @@ class Telegram:
                     "from_chat_id": from_chat_id,
                     "message_id": message_id,
                     "caption": caption,
-                    "parse_mode": parse_mode,
+                    "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -271,7 +281,7 @@ class Telegram:
         photo: Union[InputFile, str],
         *,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -290,7 +300,7 @@ class Telegram:
                     "chat_id": chat_id,
                     "photo": photo,
                     "caption": caption,
-                    "parse_mode": parse_mode,
+                    "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -308,7 +318,7 @@ class Telegram:
         audio: Union[InputFile, str],
         *,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
         duration: Optional[int] = None,
         performer: Optional[str] = None,
@@ -331,7 +341,7 @@ class Telegram:
                     "chat_id": chat_id,
                     "audio": audio,
                     "caption": caption,
-                    "parse_mode": parse_mode,
+                    "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
                     "duration": duration,
                     "performer": performer,
@@ -354,7 +364,7 @@ class Telegram:
         *,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_content_type_detection: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
@@ -375,7 +385,7 @@ class Telegram:
                     "document": document,
                     "thumb": thumb,
                     "caption": caption,
-                    "parse_mode": parse_mode,
+                    "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
                     "disable_content_type_detection": disable_content_type_detection,
                     "disable_notification": disable_notification,
@@ -398,7 +408,7 @@ class Telegram:
         height: Optional[int] = None,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
@@ -422,7 +432,7 @@ class Telegram:
                     "height": height,
                     "thumb": thumb,
                     "caption": caption,
-                    "parse_mode": parse_mode,
+                    "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
                     "supports_streaming": supports_streaming,
                     "disable_notification": disable_notification,
@@ -445,7 +455,7 @@ class Telegram:
         height: Optional[int] = None,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -468,7 +478,7 @@ class Telegram:
                     "height": height,
                     "thumb": thumb,
                     "caption": caption,
-                    "parse_mode": parse_mode,
+                    "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -486,7 +496,7 @@ class Telegram:
         voice: Union[InputFile, str],
         *,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
         duration: Optional[int] = None,
         disable_notification: Optional[bool] = None,
@@ -506,7 +516,7 @@ class Telegram:
                     "chat_id": chat_id,
                     "voice": voice,
                     "caption": caption,
-                    "parse_mode": parse_mode,
+                    "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
                     "duration": duration,
                     "disable_notification": disable_notification,
@@ -768,7 +778,7 @@ class Telegram:
         allows_multiple_answers: Optional[bool] = None,
         correct_option_id: Optional[int] = None,
         explanation: Optional[str] = None,
-        explanation_parse_mode: Optional[str] = None,
+        explanation_parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         explanation_entities: Optional[list[MessageEntity]] = None,
         open_period: Optional[int] = None,
         close_date: Optional[datetime_] = None,
@@ -795,7 +805,7 @@ class Telegram:
                     "allows_multiple_answers": allows_multiple_answers,
                     "correct_option_id": correct_option_id,
                     "explanation": explanation,
-                    "explanation_parse_mode": explanation_parse_mode,
+                    "explanation_parse_mode": self._get_parse_mode(explanation_parse_mode),
                     "explanation_entities": explanation_entities,
                     "open_period": open_period,
                     "close_date": close_date,
@@ -1376,7 +1386,7 @@ class Telegram:
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
         reply_markup: Optional[ReplyKeyboardMarkup] = None
@@ -1388,7 +1398,7 @@ class Telegram:
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
-                "parse_mode": parse_mode,
+                "parse_mode": self._get_parse_mode(parse_mode),
                 "entities": entities,
                 "disable_web_page_preview": disable_web_page_preview,
                 "reply_markup": reply_markup
@@ -1404,7 +1414,7 @@ class Telegram:
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         caption_entities: Optional[list[MessageEntity]] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Union[Message, Literal[True]]:
@@ -1415,7 +1425,7 @@ class Telegram:
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
                 "caption": caption,
-                "parse_mode": parse_mode,
+                "parse_mode": self._get_parse_mode(parse_mode),
                 "caption_entities": caption_entities,
                 "reply_markup": reply_markup
             }
@@ -1936,6 +1946,12 @@ class Telegram:
 
     def _get_url(self, method: str) -> str:
         return f"{self._url}/bot{self._token}/{method}"
+
+    def _get_parse_mode(self, parse_mode: Union[str, None, NotSetValue]) -> Optional[str]:
+        if parse_mode is not NOT_SET_VALUE:
+            return parse_mode
+        elif self._default_parse_mode is not NOT_SET_VALUE:
+            return self._default_parse_mode
 
 
 def _get_prepared_parameters(
