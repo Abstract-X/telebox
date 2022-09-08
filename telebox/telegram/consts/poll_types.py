@@ -1,0 +1,2 @@
+QUIZ = "quiz"
+REGULAR = "regular"

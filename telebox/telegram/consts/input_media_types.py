@@ -1,0 +1,5 @@
+PHOTO = "photo"
+VIDEO = "video"
+ANIMATION = "animation"
+AUDIO = "audio"
+DOCUMENT = "document"
