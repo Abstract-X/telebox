@@ -74,14 +74,12 @@ class TelegramBot:
         token: str,
         *,
         url: str = URL,
-        is_local: bool = False,
         default_parse_mode: Union[str, NotSetValue] = NOT_SET_VALUE,
         default_request_timeout: Optional[RequestTimeout] = None
     ):
         self._session = session
         self._token = token
         self._url = url
-        self._is_local = is_local
         self._default_parse_mode = default_parse_mode
         self._default_request_timeout = default_request_timeout or RequestTimeout(150, 150)
         self._dataclass_serializer = DataclassSerializer()
