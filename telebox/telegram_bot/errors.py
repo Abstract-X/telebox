@@ -13,6 +13,11 @@ class TelegramBotError(TeleboxError):
 
 
 @dataclass
+class UnknownUpdateTypeError(TelegramBotError):
+    """Class for unknown update type errors."""
+
+
+@dataclass
 class UnknownMessageTypeError(TelegramBotError):
     """Class for unknown message type errors."""
 
