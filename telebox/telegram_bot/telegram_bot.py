@@ -2,6 +2,7 @@ from typing import Union, Optional, Any, Literal
 from datetime import datetime
 from dataclasses import is_dataclass
 import secrets
+from http import HTTPStatus
 
 from requests import Session, Response
 
@@ -2282,7 +2283,7 @@ class TelegramBot:
     ) -> Any:
         data = response.json()
 
-        if not data["ok"]:
+        if not data["ok"] or (response.status_code != HTTPStatus.OK):
             try:
                 response_parameter_data = data["parameters"]
             except KeyError:
