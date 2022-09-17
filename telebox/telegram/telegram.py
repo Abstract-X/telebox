@@ -1,11 +1,11 @@
-from typing import Union, Optional, Any, Literal, TypeVar, Type
-from datetime import timezone, datetime as datetime_
+from typing import Union, Optional, Any, Literal
+from datetime import datetime
 from dataclasses import is_dataclass
 import secrets
 
 from requests import Session, Response
-from dataclass_factory import Factory, Schema
 
+from telebox.telegram.serialization import DataclassSerializer, convert_datetime_to_timestamp
 from telebox.telegram.errors import get_error
 from telebox.telegram.consts import chat_member_statuses
 from telebox.telegram.types.types.response_parameters import ResponseParameters
@@ -56,7 +56,6 @@ from telebox.utils import NotSetValue, NOT_SET_VALUE
 
 
 URL = "https://api.telegram.org"
-DataclassObject = TypeVar("DataclassObject")
 _CHAT_MEMBER_TYPES = {
     chat_member_statuses.CREATOR: ChatMemberOwner,
     chat_member_statuses.ADMINISTRATOR: ChatMemberAdministrator,
@@ -65,28 +64,6 @@ _CHAT_MEMBER_TYPES = {
     chat_member_statuses.LEFT: ChatMemberLeft,
     chat_member_statuses.KICKED: ChatMemberBanned
 }
-
-
-def _convert_datetime_to_timestamp(datetime: Optional[datetime_]) -> int:
-    if datetime is not None:
-        return int(datetime.timestamp())
-    else:
-        return 0
-
-
-def _convert_timestamp_to_datetime(timestamp: int) -> Optional[datetime_]:
-    if timestamp:
-        return datetime_.fromtimestamp(timestamp, tz=timezone.utc)
-
-
-_dataclass_factory = Factory(
-    schemas={
-        datetime_: Schema(
-            serializer=_convert_datetime_to_timestamp,
-            parser=_convert_timestamp_to_datetime
-        )
-    }
-)
 
 
 class Telegram:
@@ -107,6 +84,7 @@ class Telegram:
         self._is_local = is_local
         self._default_parse_mode = default_parse_mode
         self._default_request_timeout = default_request_timeout or RequestTimeout(150, 150)
+        self._dataclass_serializer = DataclassSerializer()
 
     def get_updates(
         self,
@@ -118,7 +96,7 @@ class Telegram:
         allowed_updates: Optional[list[str]] = None
     ) -> list[Update]:
         return [
-            _get_dataclass_object(data=i, type_=Update)
+            self._dataclass_serializer.get_object(data=i, class_=Update)
             for i in self._send_request(
                 method="getUpdates",
                 parameters={
@@ -176,15 +154,15 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> WebhookInfo:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(method="getWebhookInfo", timeout=request_timeout),
-            type_=WebhookInfo
+            class_=WebhookInfo
         )
 
     def get_me(self, *, request_timeout: Optional[RequestTimeout] = None) -> User:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(method="getMe", timeout=request_timeout),
-            type_=User
+            class_=User
         )
 
     def log_out(self, *, request_timeout: Optional[RequestTimeout] = None) -> Literal[True]:
@@ -212,7 +190,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendMessage",
                 parameters={
@@ -229,7 +207,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def forward_message(
@@ -242,7 +220,7 @@ class Telegram:
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="forwardMessage",
                 parameters={
@@ -254,7 +232,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def copy_message(
@@ -277,7 +255,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> MessageId:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="copyMessage",
                 parameters={
@@ -295,7 +273,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=MessageId
+            class_=MessageId
         )
 
     def send_photo(
@@ -317,7 +295,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendPhoto",
                 parameters={
@@ -334,7 +312,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_audio(
@@ -360,7 +338,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendAudio",
                 parameters={
@@ -381,7 +359,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_document(
@@ -405,7 +383,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendDocument",
                 parameters={
@@ -424,7 +402,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_video(
@@ -451,7 +429,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendVideo",
                 parameters={
@@ -473,7 +451,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_animation(
@@ -499,7 +477,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendAnimation",
                 parameters={
@@ -520,7 +498,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_voice(
@@ -543,7 +521,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendVoice",
                 parameters={
@@ -561,7 +539,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_video_note(
@@ -583,7 +561,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendVideoNote",
                 parameters={
@@ -600,7 +578,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_media_group(
@@ -618,7 +596,7 @@ class Telegram:
         allow_sending_without_reply: Optional[bool] = None
     ) -> list[Message]:
         return [
-            _get_dataclass_object(data=i, type_=Message)
+            self._dataclass_serializer.get_object(data=i, class_=Message)
             for i in self._send_request(
                 method="sendMediaGroup",
                 parameters={
@@ -654,7 +632,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendLocation",
                 parameters={
@@ -673,7 +651,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def edit_message_live_location(
@@ -706,7 +684,10 @@ class Telegram:
             timeout=request_timeout
         )
 
-        return data if data is True else _get_dataclass_object(data=data, type_=Message)
+        return data if data is True else self._dataclass_serializer.get_object(
+            data=data,
+            class_=Message
+        )
 
     def stop_message_live_location(
         self,
@@ -728,7 +709,10 @@ class Telegram:
             timeout=request_timeout
         )
 
-        return data if data is True else _get_dataclass_object(data=data, type_=Message)
+        return data if data is True else self._dataclass_serializer.get_object(
+            data=data,
+            class_=Message
+        )
 
     def send_venue(
         self,
@@ -753,7 +737,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendVenue",
                 parameters={
@@ -774,7 +758,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_contact(
@@ -796,7 +780,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendContact",
                 parameters={
@@ -813,7 +797,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_poll(
@@ -831,7 +815,7 @@ class Telegram:
         explanation_parse_mode: Union[str, None, NotSetValue] = NOT_SET_VALUE,
         explanation_entities: Optional[list[MessageEntity]] = None,
         open_period: Optional[int] = None,
-        close_date: Optional[datetime_] = None,
+        close_date: Optional[datetime] = None,
         is_closed: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -843,7 +827,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendPoll",
                 parameters={
@@ -868,7 +852,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_dice(
@@ -887,7 +871,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendDice",
                 parameters={
@@ -901,7 +885,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def send_chat_action(
@@ -928,7 +912,7 @@ class Telegram:
         offset: Optional[int] = None,
         limit: Optional[int] = None
     ) -> UserProfilePhotos:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="getUserProfilePhotos",
                 parameters={
@@ -938,7 +922,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=UserProfilePhotos
+            class_=UserProfilePhotos
         )
 
     def get_file(
@@ -947,7 +931,7 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> File:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="getFile",
                 parameters={
@@ -955,7 +939,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=File
+            class_=File
         )
 
     def ban_chat_member(
@@ -964,7 +948,7 @@ class Telegram:
         user_id: int,
         *,
         request_timeout: Optional[RequestTimeout] = None,
-        until_date: Optional[datetime_] = None,
+        until_date: Optional[datetime] = None,
         revoke_messages: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1003,7 +987,7 @@ class Telegram:
         permissions: ChatPermissions,
         *,
         request_timeout: Optional[RequestTimeout] = None,
-        until_date: Optional[datetime_] = None
+        until_date: Optional[datetime] = None
     ) -> Literal[True]:
         return self._send_request(
             method="restrictChatMember",
@@ -1140,11 +1124,11 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None,
         name: Optional[str] = None,
-        expire_date: Optional[datetime_] = None,
+        expire_date: Optional[datetime] = None,
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="createChatInviteLink",
                 parameters={
@@ -1156,7 +1140,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=ChatInviteLink
+            class_=ChatInviteLink
         )
 
     def edit_chat_invite_link(
@@ -1166,11 +1150,11 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None,
         name: Optional[str] = None,
-        expire_date: Optional[datetime_] = None,
+        expire_date: Optional[datetime] = None,
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="editChatInviteLink",
                 parameters={
@@ -1183,7 +1167,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=ChatInviteLink
+            class_=ChatInviteLink
         )
 
     def revoke_chat_invite_link(
@@ -1193,7 +1177,7 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> ChatInviteLink:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="revokeChatInviteLink",
                 parameters={
@@ -1202,7 +1186,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=ChatInviteLink
+            class_=ChatInviteLink
         )
 
     def approve_chat_join_request(
@@ -1367,7 +1351,7 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> Chat:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="getChat",
                 parameters={
@@ -1375,7 +1359,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Chat
+            class_=Chat
         )
 
     def get_chat_administrators(
@@ -1386,7 +1370,7 @@ class Telegram:
     ) -> list[Union[ChatMemberOwner,
                     ChatMemberAdministrator]]:
         return [
-            _get_dataclass_object(data=i, type_=_CHAT_MEMBER_TYPES[i["status"]])
+            self._dataclass_serializer.get_object(data=i, class_=_CHAT_MEMBER_TYPES[i["status"]])
             for i in self._send_request(
                 method="getChatAdministrators",
                 parameters={
@@ -1426,7 +1410,10 @@ class Telegram:
             timeout=request_timeout
         )
 
-        return _get_dataclass_object(data=data, type_=_CHAT_MEMBER_TYPES[data["status"]])
+        return self._dataclass_serializer.get_object(
+            data=data,
+            class_=_CHAT_MEMBER_TYPES[data["status"]]
+        )
 
     def set_chat_sticker_set(
         self,
@@ -1522,7 +1509,7 @@ class Telegram:
         language_code: Optional[str] = None
     ) -> list[BotCommand]:
         return [
-            _get_dataclass_object(data=i, type_=BotCommand)
+            self._dataclass_serializer.get_object(data=i, class_=BotCommand)
             for i in self._send_request(
                 method="getMyCommands",
                 parameters={
@@ -1621,7 +1608,10 @@ class Telegram:
             timeout=request_timeout
         )
 
-        return data if data is True else _get_dataclass_object(data=data, type_=Message)
+        return data if data is True else self._dataclass_serializer.get_object(
+            data=data,
+            class_=Message
+        )
 
     def edit_message_caption(
         self,
@@ -1649,7 +1639,10 @@ class Telegram:
             timeout=request_timeout
         )
 
-        return data if data is True else _get_dataclass_object(data=data, type_=Message)
+        return data if data is True else self._dataclass_serializer.get_object(
+            data=data,
+            class_=Message
+        )
 
     def edit_message_media(
         self,
@@ -1673,7 +1666,10 @@ class Telegram:
             timeout=request_timeout
         )
 
-        return data if data is True else _get_dataclass_object(data=data, type_=Message)
+        return data if data is True else self._dataclass_serializer.get_object(
+            data=data,
+            class_=Message
+        )
 
     def edit_message_reply_markup(
         self,
@@ -1695,7 +1691,10 @@ class Telegram:
             timeout=request_timeout
         )
 
-        return data if data is True else _get_dataclass_object(data=data, type_=Message)
+        return data if data is True else self._dataclass_serializer.get_object(
+            data=data,
+            class_=Message
+        )
 
     def stop_poll(
         self,
@@ -1705,7 +1704,7 @@ class Telegram:
         request_timeout: Optional[RequestTimeout] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="stopPoll",
                 parameters={
@@ -1715,7 +1714,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Poll
+            class_=Poll
         )
 
     def delete_message(
@@ -1750,7 +1749,7 @@ class Telegram:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendSticker",
                 parameters={
@@ -1764,7 +1763,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def get_sticker_set(
@@ -1773,7 +1772,7 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> StickerSet:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="getStickerSet",
                 parameters={
@@ -1781,7 +1780,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=StickerSet
+            class_=StickerSet
         )
 
     def get_custom_emoji_stickers(
@@ -1791,7 +1790,7 @@ class Telegram:
         request_timeout: Optional[RequestTimeout] = None
     ) -> list[Sticker]:
         return [
-            _get_dataclass_object(data=i, type_=Sticker)
+            self._dataclass_serializer.get_object(data=i, class_=Sticker)
             for i in self._send_request(
                 method="getCustomEmojiStickers",
                 parameters={
@@ -1808,7 +1807,7 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> File:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="uploadStickerFile",
                 parameters={
@@ -1817,7 +1816,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=File
+            class_=File
         )
 
     def create_new_sticker_set(
@@ -1957,7 +1956,7 @@ class Telegram:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> SentWebAppMessage:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="answerWebAppQuery",
                 parameters={
@@ -1966,7 +1965,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=SentWebAppMessage
+            class_=SentWebAppMessage
         )
 
     def send_invoice(
@@ -2001,7 +2000,7 @@ class Telegram:
         allow_sending_without_reply: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendInvoice",
                 parameters={
@@ -2035,7 +2034,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def create_invoice_link(
@@ -2156,7 +2155,7 @@ class Telegram:
         allow_sending_without_reply: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
-        return _get_dataclass_object(
+        return self._dataclass_serializer.get_object(
             data=self._send_request(
                 method="sendGame",
                 parameters={
@@ -2170,7 +2169,7 @@ class Telegram:
                 },
                 timeout=request_timeout
             ),
-            type_=Message
+            class_=Message
         )
 
     def set_game_score(
@@ -2199,7 +2198,10 @@ class Telegram:
             timeout=request_timeout
         )
 
-        return data if data is True else _get_dataclass_object(data=data, type_=Message)
+        return data if data is True else self._dataclass_serializer.get_object(
+            data=data,
+            class_=Message
+        )
 
     def get_game_high_scores(
         self,
@@ -2211,7 +2213,7 @@ class Telegram:
         inline_message_id: Optional[str] = None
     ) -> list[GameHighScore]:
         return [
-            _get_dataclass_object(data=i, type_=GameHighScore)
+            self._dataclass_serializer.get_object(data=i, class_=GameHighScore)
             for i in self._send_request(
                 method="getGameHighScores",
                 parameters={
@@ -2233,7 +2235,7 @@ class Telegram:
     ) -> Any:
         parameters = parameters or {}
         url = self._get_url(method)
-        data, files = _get_prepared_parameters(parameters)
+        data, files = self._get_prepared_parameters(parameters)
         timeout = timeout or self._default_request_timeout
         response = self._session.post(
             url=url,
@@ -2242,7 +2244,7 @@ class Telegram:
             timeout=(timeout.connect_secs, timeout.read_secs)
         )
 
-        return _process_response(response, method, parameters)
+        return self._process_response(response, method, parameters)
 
     def _get_url(self, method: str) -> str:
         return f"{self._url}/bot{self._token}/{method}"
@@ -2253,77 +2255,52 @@ class Telegram:
         elif self._default_parse_mode is not NOT_SET_VALUE:
             return self._default_parse_mode
 
+    def _get_prepared_parameters(
+        self,
+        parameters: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[tuple[str, tuple[str, bytes]]]]:
+        data = {}
+        files = []
 
-def _get_prepared_parameters(
-    parameters: dict[str, Any]
-) -> tuple[dict[str, Any], list[tuple[str, tuple[str, bytes]]]]:
-    data = {}
-    files = []
+        for name, value in parameters.items():
+            if value is not None:
+                if isinstance(value, InputFile):
+                    files.append((name, (value.name or secrets.token_urlsafe(16), value.content)))
+                else:
+                    if isinstance(value, datetime):
+                        value = convert_datetime_to_timestamp(value)
+                    elif is_dataclass(value):
+                        value = self._dataclass_serializer.get_data(value)
 
-    for name, value in parameters.items():
-        if value is not None:
-            if isinstance(value, InputFile):
-                files.append((name, (value.name or secrets.token_urlsafe(16), value.content)))
+                    data[name] = value
+
+        return data, files
+
+    def _process_response(
+        self,
+        response: Response,
+        method: str,
+        parameters: dict[str, Any]
+    ) -> Any:
+        data = response.json()
+
+        if not data["ok"]:
+            try:
+                response_parameter_data = data["parameters"]
+            except KeyError:
+                response_parameters = None
             else:
-                if isinstance(value, datetime_):
-                    value = _convert_datetime_to_timestamp(value)
-                elif is_dataclass(value):
-                    value = _get_dataclass_object_compressed_data(value)
+                response_parameters = self._dataclass_serializer.get_object(
+                    data=response_parameter_data,
+                    class_=ResponseParameters
+                )
 
-                data[name] = value
-
-    return data, files
-
-
-def _process_response(response: Response, method: str, parameters: dict[str, Any]) -> Any:
-    data = response.json()
-
-    if not data["ok"]:
-        try:
-            response_parameter_data = data["parameters"]
-        except KeyError:
-            response_parameters = None
-        else:
-            response_parameters = _get_dataclass_object(
-                data=response_parameter_data,
-                type_=ResponseParameters
+            raise get_error(
+                method=method,
+                parameters=parameters,
+                status_code=response.status_code,
+                description=data["description"],
+                response_parameters=response_parameters
             )
 
-        raise get_error(
-            method=method,
-            parameters=parameters,
-            status_code=response.status_code,
-            description=data["description"],
-            response_parameters=response_parameters
-        )
-
-    return data["result"]
-
-
-def _get_dataclass_object_compressed_data(object_: Any) -> dict[str, Any]:
-    data = _dataclass_factory.dump(object_)
-    _compress_dict_data(data)
-
-    return data
-
-
-def _get_dataclass_object(data: dict[str, Any], type_: Type[DataclassObject]) -> DataclassObject:
-    return _dataclass_factory.load(data, type_)
-
-
-def _compress_dict_data(data: dict[str, Any]) -> None:
-    for key in tuple(data):
-        if data[key] is None:
-            del data[key]
-        elif isinstance(data[key], dict):
-            _compress_dict_data(data[key])
-        elif isinstance(data[key], list):
-            _compress_list_data(data[key])
-
-
-def _compress_list_data(data: list[Any]) -> None:
-    for i in data:
-        if isinstance(i, dict):
-            _compress_dict_data(i)
-        elif isinstance(i, list):
-            _compress_list_data(i)
+        return data["result"]
