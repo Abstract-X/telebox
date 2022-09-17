@@ -1,12 +1,12 @@
-from .telegram.telegram import Telegram
-from .telegram.request_timeout import RequestTimeout
+from .telegram_bot.telegram_bot import TelegramBot
+from .telegram_bot.request_timeout import RequestTimeout
 
 
 def _evaluate_type_annotations() -> None:
     from typing import get_type_hints
 
-    from .telegram.types.types.chat import Chat
-    from .telegram.types.types.message import Message
+    from .telegram_bot.types.types.chat import Chat
+    from .telegram_bot.types.types.message import Message
 
     classes = (Chat, Message)
     mapping = {i.__name__: i for i in classes}
