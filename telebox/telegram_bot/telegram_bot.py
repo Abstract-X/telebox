@@ -55,7 +55,7 @@ from telebox.telegram_bot.request_timeout import RequestTimeout
 from telebox.utils import NotSetValue, NOT_SET_VALUE
 
 
-URL = "https://api.telegram.org"
+API_URL = "https://api.telegram.org"
 _CHAT_MEMBER_TYPES = {
     chat_member_statuses.CREATOR: ChatMemberOwner,
     chat_member_statuses.ADMINISTRATOR: ChatMemberAdministrator,
@@ -73,13 +73,13 @@ class TelegramBot:
         session: Session,
         token: str,
         *,
-        url: str = URL,
+        api_url: str = API_URL,
         default_parse_mode: Union[str, NotSetValue] = NOT_SET_VALUE,
         default_request_timeout: Optional[RequestTimeout] = None
     ):
         self._session = session
         self._token = token
-        self._url = url
+        self._api_url = api_url
         self._default_parse_mode = default_parse_mode
         self._default_request_timeout = default_request_timeout or RequestTimeout(150, 150)
         self._dataclass_serializer = DataclassSerializer()
@@ -2232,7 +2232,7 @@ class TelegramBot:
         timeout: Optional[RequestTimeout] = None
     ) -> Any:
         parameters = parameters or {}
-        url = self._get_url(method)
+        url = self._get_api_url(method)
         data, files = self._get_prepared_parameters(parameters)
         timeout = timeout or self._default_request_timeout
         response = self._session.post(
@@ -2244,8 +2244,8 @@ class TelegramBot:
 
         return self._process_response(response, method, parameters)
 
-    def _get_url(self, method: str) -> str:
-        return f"{self._url}/bot{self._token}/{method}"
+    def _get_api_url(self, method: str) -> str:
+        return f"{self._api_url}/bot{self._token}/{method}"
 
     def _get_parse_mode(self, parse_mode: Union[str, None, NotSetValue]) -> Optional[str]:
         if parse_mode is not NOT_SET_VALUE:
