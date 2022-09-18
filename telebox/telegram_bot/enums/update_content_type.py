@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class UpdateType(Enum):
+class UpdateContentType(Enum):
     MESSAGE = "message"
     EDITED_MESSAGE = "edited_message"
     CHANNEL_POST = "channel_type"

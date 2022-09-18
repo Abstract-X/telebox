@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class MessageType(Enum):
+class MessageContentType(Enum):
     TEXT = "text"
     ANIMATION = "animation"
     AUDIO = "audio"

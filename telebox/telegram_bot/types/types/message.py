@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Literal, TYPE_CHECKING
+from typing import Optional, Literal, Union, TYPE_CHECKING
 
 from telebox.telegram_bot.types.base import Type
 from telebox.telegram_bot.utils import get_message_public_url, get_message_private_url
 from telebox.telegram_bot.consts import chat_types
-from telebox.telegram_bot import enums
-from telebox.telegram_bot.errors import UnknownMessageTypeError
+from telebox.telegram_bot.enums.message_content_type import MessageContentType
+from telebox.telegram_bot.errors import UnknownMessageContentError
 from telebox.telegram_bot.types.types.user import User
 from telebox.telegram_bot.types.types.message_entity import MessageEntity
 from telebox.telegram_bot.types.types.animation import Animation
@@ -105,83 +105,89 @@ class Message(Type):
     reply_markup: Optional[InlineKeyboardMarkup] = None
 
     @property
-    def type(self) -> enums.MessageType:
+    def content(self) -> tuple["MessageContent", MessageContentType]:
         if self.text is not None:
-            return enums.MessageType.TEXT
+            return self.text, MessageContentType.TEXT
         elif self.animation is not None:
-            return enums.MessageType.ANIMATION
+            return self.animation, MessageContentType.ANIMATION
         elif self.audio is not None:
-            return enums.MessageType.AUDIO
+            return self.audio, MessageContentType.AUDIO
         elif self.document is not None:
-            return enums.MessageType.DOCUMENT
+            return self.document, MessageContentType.DOCUMENT
         elif self.photo is not None:
-            return enums.MessageType.PHOTO
+            return self.photo, MessageContentType.PHOTO
         elif self.sticker is not None:
-            return enums.MessageType.STICKER
+            return self.sticker, MessageContentType.STICKER
         elif self.video is not None:
-            return enums.MessageType.VIDEO
+            return self.video, MessageContentType.VIDEO
         elif self.video_note is not None:
-            return enums.MessageType.VIDEO_NOTE
+            return self.video_note, MessageContentType.VIDEO_NOTE
         elif self.voice is not None:
-            return enums.MessageType.VOICE
+            return self.voice, MessageContentType.VOICE
         elif self.contact is not None:
-            return enums.MessageType.CONTACT
+            return self.contact, MessageContentType.CONTACT
         elif self.dice is not None:
-            return enums.MessageType.DICE
+            return self.dice, MessageContentType.DICE
         elif self.game is not None:
-            return enums.MessageType.GAME
+            return self.game, MessageContentType.GAME
         elif self.poll is not None:
-            return enums.MessageType.POLL
+            return self.poll, MessageContentType.POLL
         elif self.venue is not None:
-            return enums.MessageType.VENUE
+            return self.venue, MessageContentType.VENUE
         elif self.location is not None:
-            return enums.MessageType.LOCATION
+            return self.location, MessageContentType.LOCATION
         elif self.new_chat_members is not None:
-            return enums.MessageType.NEW_CHAT_MEMBERS
+            return self.new_chat_members, MessageContentType.NEW_CHAT_MEMBERS
         elif self.left_chat_member is not None:
-            return enums.MessageType.LEFT_CHAT_MEMBER
+            return self.left_chat_member, MessageContentType.LEFT_CHAT_MEMBER
         elif self.new_chat_title is not None:
-            return enums.MessageType.NEW_CHAT_TITLE
+            return self.new_chat_title, MessageContentType.NEW_CHAT_TITLE
         elif self.new_chat_photo is not None:
-            return enums.MessageType.NEW_CHAT_PHOTO
+            return self.new_chat_photo, MessageContentType.NEW_CHAT_PHOTO
         elif self.delete_chat_photo is not None:
-            return enums.MessageType.DELETE_CHAT_PHOTO
+            return self.delete_chat_photo, MessageContentType.DELETE_CHAT_PHOTO
         elif self.group_chat_created is not None:
-            return enums.MessageType.GROUP_CHAT_CREATED
+            return self.group_chat_created, MessageContentType.GROUP_CHAT_CREATED
         elif self.supergroup_chat_created is not None:
-            return enums.MessageType.SUPERGROUP_CHAT_CREATED
+            return self.supergroup_chat_created, MessageContentType.SUPERGROUP_CHAT_CREATED
         elif self.channel_chat_created is not None:
-            return enums.MessageType.CHANNEL_CHAT_CREATED
+            return self.channel_chat_created, MessageContentType.CHANNEL_CHAT_CREATED
         elif self.message_auto_delete_timer_changed is not None:
-            return enums.MessageType.MESSAGE_AUTO_DELETE_TIMER_CHANGED
+            return (
+                self.message_auto_delete_timer_changed,
+                MessageContentType.MESSAGE_AUTO_DELETE_TIMER_CHANGED
+            )
         elif self.migrate_to_chat_id is not None:
-            return enums.MessageType.MIGRATE_TO_CHAT_ID
+            return self.migrate_to_chat_id, MessageContentType.MIGRATE_TO_CHAT_ID
         elif self.migrate_from_chat_id is not None:
-            return enums.MessageType.MIGRATE_FROM_CHAT_ID
+            return self.migrate_from_chat_id, MessageContentType.MIGRATE_FROM_CHAT_ID
         elif self.pinned_message is not None:
-            return enums.MessageType.PINNED_MESSAGE
+            return self.pinned_message, MessageContentType.PINNED_MESSAGE
         elif self.invoice is not None:
-            return enums.MessageType.INVOICE
+            return self.invoice, MessageContentType.INVOICE
         elif self.successful_payment is not None:
-            return enums.MessageType.SUCCESSFUL_PAYMENT
+            return self.successful_payment, MessageContentType.SUCCESSFUL_PAYMENT
         elif self.connected_website is not None:
-            return enums.MessageType.CONNECTED_WEBSITE
+            return self.connected_website, MessageContentType.CONNECTED_WEBSITE
         elif self.passport_data is not None:
-            return enums.MessageType.PASSPORT_DATA
+            return self.passport_data, MessageContentType.PASSPORT_DATA
         elif self.proximity_alert_triggered is not None:
-            return enums.MessageType.PROXIMITY_ALERT_TRIGGERED
+            return self.proximity_alert_triggered, MessageContentType.PROXIMITY_ALERT_TRIGGERED
         elif self.video_chat_scheduled is not None:
-            return enums.MessageType.VIDEO_CHAT_SCHEDULED
+            return self.video_chat_scheduled, MessageContentType.VIDEO_CHAT_SCHEDULED
         elif self.video_chat_started is not None:
-            return enums.MessageType.VIDEO_CHAT_STARTED
+            return self.video_chat_started, MessageContentType.VIDEO_CHAT_STARTED
         elif self.video_chat_ended is not None:
-            return enums.MessageType.VIDEO_CHAT_ENDED
+            return self.video_chat_ended, MessageContentType.VIDEO_CHAT_ENDED
         elif self.video_chat_participants_invited is not None:
-            return enums.MessageType.VIDEO_CHAT_PARTICIPANTS_INVITED
+            return (
+                self.video_chat_participants_invited,
+                MessageContentType.VIDEO_CHAT_PARTICIPANTS_INVITED
+            )
         elif self.web_app_data is not None:
-            return enums.MessageType.WEB_APP_DATA
+            return self.web_app_data, MessageContentType.WEB_APP_DATA
 
-        raise UnknownMessageTypeError("Unknown message type!")
+        raise UnknownMessageContentError("Unknown message type!")
 
     @property
     def is_forwarded(self) -> bool:
@@ -194,3 +200,37 @@ class Message(Type):
                 return get_message_public_url(self.chat.username, self.message_id)
             else:
                 return get_message_private_url(self.chat.id, self.message_id)
+
+
+MessageContent = Union[
+    str,
+    Animation,
+    Audio,
+    Document,
+    list[PhotoSize],
+    Sticker,
+    Video,
+    VideoNote,
+    Voice,
+    Contact,
+    Dice,
+    Game,
+    Poll,
+    Venue,
+    Location,
+    list[User],
+    User,
+    Literal[True],
+    MessageAutoDeleteTimerChanged,
+    int,
+    Message,
+    Invoice,
+    SuccessfulPayment,
+    PassportData,
+    ProximityAlertTriggered,
+    VideoChatScheduled,
+    VideoChatStarted,
+    VideoChatEnded,
+    VideoChatParticipantsInvited,
+    WebAppData
+]
