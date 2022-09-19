@@ -1,11 +1,18 @@
-from .telegram.telegram import Telegram
+from .telegram_bot.telegram_bot import TelegramBot
+from .dispatcher.dispatcher import Dispatcher
+from .dispatcher.enums.event_type import EventType
+from .dispatcher.handlers.event import AbstractEventHandler
+from .dispatcher.handlers.error import AbstractErrorHandler
+from .dispatcher.filters.base.event import AbstractEventFilter
+from .dispatcher.filters.base.error import AbstractErrorFilter
+from .telegram_bot.request_timeout import RequestTimeout
 
 
 def _evaluate_type_annotations() -> None:
     from typing import get_type_hints
 
-    from .telegram.types.types.chat import Chat
-    from .telegram.types.types.message import Message
+    from .telegram_bot.types.types.chat import Chat
+    from .telegram_bot.types.types.message import Message
 
     classes = (Chat, Message)
     mapping = {i.__name__: i for i in classes}
