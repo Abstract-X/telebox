@@ -1,7 +1,6 @@
 import logging
-from typing import Optional, Union, Iterable, Type
+from typing import Optional, Union, Iterable
 import contextlib
-from collections import defaultdict
 import time
 
 from telebox.telegram_bot.telegram_bot import TelegramBot
@@ -29,13 +28,10 @@ EventHandlerDict = dict[
         ]
     ]
 ]
-ErrorHandlerDict = defaultdict[
-    Type[Exception],
-    list[
-        tuple[
-            AbstractErrorHandler,
-            tuple[AbstractErrorFilter, ...]
-        ]
+ErrorHandlerList = list[
+    tuple[
+        AbstractErrorHandler,
+        tuple[AbstractErrorFilter, ...]
     ]
 ]
 
@@ -46,7 +42,7 @@ class Dispatcher:
         self._bot = bot
         self._polling_is_started = False
         self._event_handlers: EventHandlerDict = {i: [] for i in EventType}
-        self._error_handlers: ErrorHandlerDict = defaultdict(list)
+        self._error_handlers: ErrorHandlerList = []
 
     def add_event_handler(
         self,
@@ -157,10 +153,9 @@ class Dispatcher:
     def add_error_handler(
         self,
         handler: AbstractErrorHandler,
-        error_type: Type[Exception] = Exception,
         filters: Iterable[AbstractErrorFilter] = ()
     ) -> None:
-        self._error_handlers[error_type].append((handler, tuple(filters)))
+        self._error_handlers.append((handler, tuple(filters)))
 
     def start_polling(
         self,
@@ -182,6 +177,7 @@ class Dispatcher:
         if error_delay_secs < 0:
             raise ValueError("Error delay seconds cannot be negative!")
 
+        logger.debug("Polling is starting...")
         self._polling_is_started = True
         offset_update_id = None
         thread_pool = ThreadPool(threads)
@@ -191,6 +187,8 @@ class Dispatcher:
         )
 
         try:
+            logger.info("Polling started.")
+
             while True:
                 # noinspection PyBroadException
                 try:
@@ -206,6 +204,7 @@ class Dispatcher:
                     time.sleep(error_delay_secs)
                 else:
                     for i in updates:
+                        logger.debug("Update received: %r.", i)
                         thread_pool.add_item(i)
 
                     with contextlib.suppress(IndexError):
@@ -213,14 +212,18 @@ class Dispatcher:
 
                     time.sleep(delay_secs)
         except KeyboardInterrupt:
-            thread_pool.wait_queue()
             self._polling_is_started = False
+            logger.info("Polling stopped.")
+            logger.info("Finishing processing updates...")
+            thread_pool.wait_queue()
+            logger.info("Update processing finished.")
 
     def drop_pending_updates(
         self,
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> None:
+        logger.debug("Dropping pending updates...")
         updates = self._bot.get_updates(
             request_timeout=request_timeout,
             offset=-1
@@ -232,9 +235,12 @@ class Dispatcher:
                 offset=updates[-1].update_id + 1
             )
 
+        logger.info("Pending updates dropped.")
+
     def _process_updates(self, thread_pool: ThreadPool) -> None:
         while True:
             update = thread_pool.get_item()
+            logger.debug("Update processing started: %r.", update)
 
             try:
                 event, event_type = update.content
@@ -280,16 +286,14 @@ class Dispatcher:
     def _get_error_handler(self, error: Exception, event: Event) -> Optional[AbstractErrorHandler]:
         filter_results = {}
 
-        for error_type in self._error_handlers:
-            if isinstance(error, error_type):
-                for handler, filters in self._error_handlers[error_type]:
-                    for filter_ in filters:
-                        try:
-                            result = filter_results[filter_]
-                        except KeyError:
-                            result = filter_results[filter_] = filter_.check_error(error, event)
+        for handler, filters in self._error_handlers:
+            for filter_ in filters:
+                try:
+                    result = filter_results[filter_]
+                except KeyError:
+                    result = filter_results[filter_] = filter_.check_error(error, event)
 
-                        if not result:
-                            break
-                    else:
-                        return handler
+                if not result:
+                    break
+            else:
+                return handler
