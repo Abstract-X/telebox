@@ -194,6 +194,10 @@ class Message(Type):
         return self.forward_date is not None
 
     @property
+    def is_reply(self) -> bool:
+        return self.reply_to_message is not None
+
+    @property
     def url(self) -> Optional[str]:
         if self.chat.type in {chat_types.CHANNEL, chat_types.SUPERGROUP}:
             if self.chat.username is not None:
