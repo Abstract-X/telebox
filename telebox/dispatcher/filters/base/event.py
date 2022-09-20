@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 
+from telebox.dispatcher.filters.base.base import AbstractFilter
 
-class AbstractEventFilter(ABC):
+
+class AbstractEventFilter(AbstractFilter, ABC):
 
     @abstractmethod
-    def check_event(self, event) -> bool:
+    def check(self, event) -> bool:
         pass

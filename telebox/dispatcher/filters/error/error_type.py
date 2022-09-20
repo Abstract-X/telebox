@@ -7,11 +7,7 @@ from telebox.typing import Event
 class ErrorTypeFilter(AbstractErrorFilter):
 
     def __init__(self, *types: Type[Exception]):
-        self._types = set(types)
+        self._types = types
 
-    def check_error(self, error: Exception, event: Event) -> bool:
-        for type_ in self._types:
-            if isinstance(error, type_):
-                return True
-
-        return False
+    def check(self, error: Exception, event: Event) -> bool:
+        return isinstance(error, self._types)

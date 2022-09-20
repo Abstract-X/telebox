@@ -12,7 +12,7 @@ class ChatTypeFilter(AbstractEventFilter):
     def __init__(self, *types: str):
         self._types = set(types)
 
-    def check_event(
+    def check(
         self,
         event: Union[
             Message,

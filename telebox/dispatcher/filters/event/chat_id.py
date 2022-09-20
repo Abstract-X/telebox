@@ -12,7 +12,7 @@ class ChatIDFilter(AbstractEventFilter):
     def __init__(self, *ids: int):
         self._ids = set(ids)
 
-    def check_event(
+    def check(
         self,
         event: Union[
             Message,

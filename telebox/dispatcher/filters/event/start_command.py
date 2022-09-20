@@ -19,8 +19,8 @@ class StartCommandFilter(CommandFilter):
         self._payload = payload
         self._with_decoding = with_decoding
 
-    def check_event(self, event: Message) -> bool:
-        if super().check_event(event=event):
+    def check(self, event: Message) -> bool:
+        if super().check(event=event):
             if self._payload is not None:
                 text_parts = event.text.split(" ", 1)
 

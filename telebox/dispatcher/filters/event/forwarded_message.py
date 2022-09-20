@@ -4,5 +4,5 @@ from telebox.telegram_bot.types.types.message import Message
 
 class ForwardedMessageFilter(AbstractEventFilter):
 
-    def check_event(self, event: Message) -> bool:
+    def check(self, event: Message) -> bool:
         return event.is_forwarded

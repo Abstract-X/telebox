@@ -1,12 +1,10 @@
 from abc import ABC, abstractmethod
 
+from telebox.dispatcher.handlers.base import AbstractHandler
 
-class AbstractErrorHandler(ABC):
+
+class AbstractErrorHandler(AbstractHandler, ABC):
 
     @abstractmethod
-    def process_error(self, error, event):
+    def process(self, error, event):
         pass
-
-    @classmethod
-    def get_name(cls) -> str:
-        return cls.__name__

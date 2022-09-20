@@ -18,7 +18,7 @@ class CommandFilter(AbstractEventFilter):
 
         self._ignore_case = ignore_case
 
-    def check_event(self, event: Message) -> bool:
+    def check(self, event: Message) -> bool:
         command_text = event.text.split(" ", 1)[0]
 
         if self._ignore_case:

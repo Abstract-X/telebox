@@ -9,9 +9,5 @@ class RegExpTextFilter(AbstractEventFilter):
     def __init__(self, *texts: Pattern):
         self._texts = set(texts)
 
-    def check_event(self, event: Message) -> bool:
-        for i in self._texts:
-            if i.fullmatch(event.text) is not None:
-                return True
-
-        return False
+    def check(self, event: Message) -> bool:
+        return any(i.fullmatch(event.text) is not None for i in self._texts)

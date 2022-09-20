@@ -9,10 +9,5 @@ class DispatcherError(TeleboxError):
 
 
 @dataclass
-class EventHandlerNotFoundError(DispatcherError):
-    """Class for not found event handler error."""
-
-
-@dataclass
 class PollingAlreadyStartedError(DispatcherError):
     """Class for error an already started polling."""

@@ -8,7 +8,7 @@ class ContentTypeFilter(AbstractEventFilter):
     def __init__(self, *types: MessageContentType):
         self._types = set(types)
 
-    def check_event(self, event: Message) -> bool:
+    def check(self, event: Message) -> bool:
         _, content_type = event.content
 
         return content_type in self._types

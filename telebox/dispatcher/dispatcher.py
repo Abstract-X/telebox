@@ -12,10 +12,7 @@ from telebox.dispatcher.filters.base.event import AbstractEventFilter
 from telebox.dispatcher.filters.base.error import AbstractErrorFilter
 from telebox.utils import RequestTimeout
 from telebox.typing import Event
-from telebox.dispatcher.errors import (
-    EventHandlerNotFoundError,
-    PollingAlreadyStartedError
-)
+from telebox.dispatcher.errors import PollingAlreadyStartedError
 
 
 logger = logging.getLogger(__name__)
@@ -240,60 +237,55 @@ class Dispatcher:
     def _process_updates(self, thread_pool: ThreadPool) -> None:
         while True:
             update = thread_pool.get_item()
-            logger.debug("Update processing started: %r.", update)
 
             try:
+                logger.debug("Update processing started: %r.", update)
                 event, event_type = update.content
+                event_handler = self._get_event_handler(event, event_type)
 
-                try:
-                    event_handler = self._get_event_handler(event, event_type)
-                except EventHandlerNotFoundError:
-                    pass
-                else:
+                if event_handler is not None:
                     # noinspection PyBroadException
                     try:
                         try:
-                            event_handler.process_event(event)
+                            event_handler.process(event)
                         except Exception as error:
                             error_handler = self._get_error_handler(error, event)
 
                             if error_handler is None:
                                 raise
 
-                            error_handler.process_error(error, event)
+                            error_handler.process(error, event)
                     except Exception:
                         logger.exception("An error occurred while processing an update!")
             finally:
                 thread_pool.set_item_as_processed()
 
-    def _get_event_handler(self, event: Event, event_type: EventType) -> AbstractEventHandler:
-        filter_results = {}
+    def _get_event_handler(
+        self,
+        event: Event,
+        event_type: EventType
+    ) -> Optional[AbstractEventHandler]:
+        return _get_handler(self._event_handlers[event_type], (event,))
 
-        for handler, filters in self._event_handlers[event_type]:
-            for filter_ in filters:
-                try:
-                    result = filter_results[filter_]
-                except KeyError:
-                    result = filter_results[filter_] = filter_.check_event(event)
+    def _get_error_handler(
+        self,
+        error: Exception,
+        event: Event
+    ) -> Optional[AbstractErrorHandler]:
+        return _get_handler(self._error_handlers, (error, event))
 
-                if not result:
-                    break
-            else:
-                return handler
 
-        raise EventHandlerNotFoundError("Event handler not found!")
+def _get_handler(handlers: list[tuple], check_args: tuple):
+    filter_results = {}
 
-    def _get_error_handler(self, error: Exception, event: Event) -> Optional[AbstractErrorHandler]:
-        filter_results = {}
+    for handler, filters in handlers:
+        for filter_ in filters:
+            try:
+                result = filter_results[filter_]
+            except KeyError:
+                result = filter_results[filter_] = filter_.check(*check_args)
 
-        for handler, filters in self._error_handlers:
-            for filter_ in filters:
-                try:
-                    result = filter_results[filter_]
-                except KeyError:
-                    result = filter_results[filter_] = filter_.check_error(error, event)
-
-                if not result:
-                    break
-            else:
-                return handler
+            if not result:
+                break
+        else:
+            return handler
