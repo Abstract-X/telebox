@@ -8,3 +8,4 @@ from .chat_id import ChatIDFilter
 from .user_id import UserIDFilter
 from .reply_message import ReplyMessageFilter
 from .forwarded_message import ForwardedMessageFilter
+from .chat_type import ChatTypeFilter
