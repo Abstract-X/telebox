@@ -9,13 +9,13 @@ class StartCommandFilter(CommandFilter):
 
     def __init__(
         self,
+        *,
         username: str,
         payload: Union[str, Pattern[str], None] = None,
-        *,
         with_decoding: bool = False,
         ignore_case: bool = True
     ):
-        super().__init__(command="/start", username=username, ignore_case=ignore_case)
+        super().__init__("/start", username=username, ignore_case=ignore_case)
         self._payload = payload
         self._with_decoding = with_decoding
 
