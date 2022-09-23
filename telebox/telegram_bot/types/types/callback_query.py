@@ -15,3 +15,11 @@ class CallbackQuery(Type):
     inline_message_id: Optional[str] = None
     data: Optional[str] = None
     game_short_name: Optional[str] = None
+
+    @property
+    def chat_id(self) -> Optional[int]:
+        return self.message.chat.id if self.message is not None else None
+
+    @property
+    def user_id(self) -> int:
+        return self.from_.id

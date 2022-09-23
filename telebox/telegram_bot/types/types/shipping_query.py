@@ -11,3 +11,7 @@ class ShippingQuery(Type):
     from_: User
     invoice_payload: str
     shipping_address: ShippingAddress
+
+    @property
+    def user_id(self) -> int:
+        return self.from_.id

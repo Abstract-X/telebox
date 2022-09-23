@@ -190,6 +190,14 @@ class Message(Type):
         raise UnknownMessageContentError("Unknown message type!")
 
     @property
+    def chat_id(self) -> int:
+        return self.chat.id
+
+    @property
+    def user_id(self) -> Optional[int]:
+        return self.from_.id if self.from_ is not None else None
+
+    @property
     def is_forwarded(self) -> bool:
         return self.forward_date is not None
 

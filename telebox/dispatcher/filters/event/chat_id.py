@@ -21,9 +21,4 @@ class ChatIDFilter(AbstractEventFilter):
             ChatJoinRequest
         ]
     ) -> bool:
-        if isinstance(event, (Message, ChatMemberUpdated, ChatJoinRequest)):
-            return event.chat.id in self._ids
-        elif isinstance(event, CallbackQuery):
-            return event.message.chat.id in self._ids
-
-        return False
+        return event.chat_id in self._ids

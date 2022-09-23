@@ -31,20 +31,4 @@ class UserIDFilter(AbstractEventFilter):
             ChatJoinRequest
         ]
     ) -> bool:
-        if isinstance(
-            event, (
-                Message,
-                InlineQuery,
-                ChosenInlineResult,
-                CallbackQuery,
-                ShippingQuery,
-                PreCheckoutQuery,
-                ChatMemberUpdated,
-                ChatJoinRequest
-            )
-        ):
-            return event.from_.id in self._ids
-        elif isinstance(event, PollAnswer):
-            return event.user.id in self._ids
-
-        return False
+        return event.user_id in self._ids

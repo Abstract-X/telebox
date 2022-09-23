@@ -14,3 +14,7 @@ class InlineQuery(Type):
     offset: str
     chat_type: Optional[str] = None
     location: Optional[Location] = None
+
+    @property
+    def user_id(self) -> int:
+        return self.from_.id
