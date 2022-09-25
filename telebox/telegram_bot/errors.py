@@ -23,6 +23,11 @@ class UnknownMessageContentError(TelegramBotError):
 
 
 @dataclass
+class NoMeError(TelegramBotError):
+    """Class for bot user error."""
+
+
+@dataclass
 class RequestError(TelegramBotError):
     """Class for Telegram Bot API request error."""
     DEFAULT_TEMPLATE = "\n".join((

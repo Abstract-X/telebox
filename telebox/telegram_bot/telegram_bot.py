@@ -7,7 +7,7 @@ from http import HTTPStatus
 from requests import Session, Response
 
 from telebox.telegram_bot.serialization import DataclassSerializer, convert_datetime_to_timestamp
-from telebox.telegram_bot.errors import get_error
+from telebox.telegram_bot.errors import get_error, NoMeError
 from telebox.telegram_bot.consts import chat_member_statuses
 from telebox.telegram_bot.types.types.response_parameters import ResponseParameters
 from telebox.telegram_bot.types.types.update import Update
@@ -84,6 +84,17 @@ class TelegramBot:
         self._default_parse_mode = default_parse_mode
         self._default_request_timeout = default_request_timeout or RequestTimeout(150, 150)
         self._dataclass_serializer = DataclassSerializer()
+        self._me: Optional[User] = None
+
+    @property
+    def me(self) -> User:
+        if self._me is None:
+            raise NoMeError(
+                "Bot user was not loaded! To use this property, you need to call "
+                "bot.get_me method at least once!"
+            )
+
+        return self._me
 
     def get_updates(
         self,
@@ -159,10 +170,12 @@ class TelegramBot:
         )
 
     def get_me(self, *, request_timeout: Optional[RequestTimeout] = None) -> User:
-        return self._dataclass_serializer.get_object(
+        self._me = self._dataclass_serializer.get_object(
             data=self._send_request(method="getMe", timeout=request_timeout),
             class_=User
         )
+
+        return self._me
 
     def log_out(self, *, request_timeout: Optional[RequestTimeout] = None) -> Literal[True]:
         return self._send_request(method="logOut", timeout=request_timeout)
