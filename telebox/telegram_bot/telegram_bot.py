@@ -7,7 +7,7 @@ from http import HTTPStatus
 from requests import Session, Response
 
 from telebox.telegram_bot.serialization import DataclassSerializer, convert_datetime_to_timestamp
-from telebox.telegram_bot.errors import get_error, NoMeError
+from telebox.telegram_bot.errors import get_request_error, NoMeError
 from telebox.telegram_bot.consts import chat_member_statuses
 from telebox.telegram_bot.types.types.response_parameters import ResponseParameters
 from telebox.telegram_bot.types.types.update import Update
@@ -2307,7 +2307,7 @@ class TelegramBot:
                     class_=ResponseParameters
                 )
 
-            raise get_error(
+            raise get_request_error(
                 method=method,
                 parameters=parameters,
                 status_code=response.status_code,
