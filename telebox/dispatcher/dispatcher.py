@@ -1,6 +1,5 @@
 import logging
 from typing import Optional, Union, Iterable
-import contextlib
 import time
 
 from telebox.telegram_bot.telegram_bot import TelegramBot
@@ -204,7 +203,7 @@ class Dispatcher:
                         logger.debug("Update received: %r.", i)
                         thread_pool.add_item(i)
 
-                    with contextlib.suppress(IndexError):
+                    if updates:
                         offset_update_id = updates[-1].update_id + 1
 
                     time.sleep(delay_secs)
