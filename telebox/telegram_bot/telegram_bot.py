@@ -52,8 +52,7 @@ from telebox.telegram_bot.types.types.chat_member_member import ChatMemberMember
 from telebox.telegram_bot.types.types.chat_member_restricted import ChatMemberRestricted
 from telebox.telegram_bot.types.types.chat_member_left import ChatMemberLeft
 from telebox.telegram_bot.types.types.chat_member_banned import ChatMemberBanned
-from telebox.telegram_bot.request_timeout import RequestTimeout
-from telebox.utils import NotSetValue, NOT_SET_VALUE
+from telebox.utils import RequestTimeout, NotSetValue, NOT_SET_VALUE
 
 
 API_URL = "https://api.telegram.org"
