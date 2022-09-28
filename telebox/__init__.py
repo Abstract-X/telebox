@@ -6,6 +6,9 @@ from .dispatcher.handlers.error import AbstractErrorHandler
 from .dispatcher.filters.base.event import AbstractEventFilter
 from .dispatcher.filters.base.error import AbstractErrorFilter
 from .telegram_bot.request_timeout import RequestTimeout
+from .state_machine.state_machine import StateMachine
+from .state_machine.state import State
+from .utils import Set
 
 
 def _evaluate_type_annotations() -> None:
