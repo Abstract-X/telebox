@@ -27,3 +27,6 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/Abstract-X/telebox"
 "Bug Tracker" = "https://github.com/Abstract-X/telebox/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["telebox"]
