@@ -1,6 +1,4 @@
 from typing import Optional
-import contextlib
-import time
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.base import AbstractStateStorage
@@ -8,7 +6,6 @@ from telebox.state_machine.state_manager import StateManager
 from telebox.state_machine.transition_scheme import TransitionScheme
 from telebox.state_machine.state_magazine import StateMagazine
 from telebox.state_machine.errors import (
-    LockedError,
     DestinationStateNotFoundError,
     NextStateNotFoundError,
     PreviousStateNotFoundError
