@@ -1,9 +1,15 @@
 import logging
 from typing import Optional, Union, Iterable
+from threading import Thread
 import time
 
 from telebox.telegram_bot.telegram_bot import TelegramBot
-from telebox.dispatcher.thread_pool import ThreadPool
+from telebox.telegram_bot.types.types.message import Message
+from telebox.telegram_bot.types.types.callback_query import CallbackQuery
+from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
+from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
+from telebox.dispatcher.utils.thread_pool import ThreadPool
+from telebox.dispatcher.utils.event_queue import EventQueue, Item
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.error import AbstractErrorHandler
@@ -153,7 +159,7 @@ class Dispatcher:
     ) -> None:
         self._error_handlers.append((handler, tuple(filters)))
 
-    def start_polling(
+    def run_polling(
         self,
         threads: int,
         *,
@@ -176,11 +182,18 @@ class Dispatcher:
         logger.debug("Polling is starting...")
         self._polling_is_started = True
         offset_update_id = None
-        thread_pool = ThreadPool(threads)
-        thread_pool.start_threads(
-            target=self._process_updates,
-            args=(thread_pool,)
+        event_queue = EventQueue()
+        delayed_event_processing_thread = Thread(
+            target=event_queue.run_delayed_event_processing,
+            daemon=True
         )
+        delayed_event_processing_thread.start()
+        thread_pool = ThreadPool(
+            threads=threads,
+            target=self._run_event_queue_processing,
+            args=(event_queue,)
+        )
+        thread_pool.start()
 
         try:
             logger.info("Polling started.")
@@ -199,20 +212,26 @@ class Dispatcher:
                     logger.exception("An error occurred while receiving updates!")
                     time.sleep(error_delay_secs)
                 else:
-                    for i in updates:
-                        logger.debug("Update received: %r.", i)
-                        thread_pool.add_item(i)
-
                     if updates:
                         offset_update_id = updates[-1].update_id + 1
 
+                        for i in updates:
+                            logger.debug("Update received: %r.", i)
+                            event, event_type = i.content
+                            item = Item(
+                                event=event,
+                                event_type=event_type,
+                                chat_id=_get_event_chat_id(event)
+                            )
+                            event_queue.add_item(item)
+
                     time.sleep(delay_secs)
         except KeyboardInterrupt:
-            self._polling_is_started = False
             logger.info("Polling stopped.")
-            logger.info("Finishing processing updates...")
-            thread_pool.wait_queue()
+            logger.info("Finishing processing updates...", )
+            event_queue.wait_processing()
             logger.info("Update processing finished.")
+            self._polling_is_started = False
 
     def drop_pending_updates(
         self,
@@ -233,31 +252,31 @@ class Dispatcher:
 
         logger.info("Pending updates dropped.")
 
-    def _process_updates(self, thread_pool: ThreadPool) -> None:
+    def _run_event_queue_processing(self, queue: EventQueue) -> None:
         while True:
-            update = thread_pool.get_item()
+            item = queue.get_item()
 
             try:
-                logger.debug("Update processing started: %r.", update)
-                event, event_type = update.content
-                event_handler = self._get_event_handler(event, event_type)
+                logger.debug("Event processing started: %r.", item.event)
+                event_handler = self._get_event_handler(item.event, item.event_type)
 
                 if event_handler is not None:
                     # noinspection PyBroadException
                     try:
                         try:
-                            event_handler.process(event)
+                            event_handler.process(item.event)
                         except Exception as error:
-                            error_handler = self._get_error_handler(error, event)
+                            error_handler = self._get_error_handler(error, item.event)
 
                             if error_handler is None:
                                 raise
 
-                            error_handler.process(error, event)
+                            error_handler.process(error, item.event)
                     except Exception:
                         logger.exception("An error occurred while processing an update!")
             finally:
-                thread_pool.set_item_as_processed()
+                queue.notify_about_processed_item(item)
+                logger.debug("Event processing finished: %r.", item.event)
 
     def _get_event_handler(
         self,
@@ -288,3 +307,8 @@ def _get_handler(handlers: list[tuple], check_args: tuple):
                 break
         else:
             return handler
+
+
+def _get_event_chat_id(event: Event) -> Optional[int]:
+    if isinstance(event, (Message, CallbackQuery, ChatMemberUpdated, ChatJoinRequest)):
+        return event.chat_id

@@ -6,5 +6,5 @@ from telebox.dispatcher.handlers.base import AbstractHandler
 class AbstractEventHandler(AbstractHandler, ABC):
 
     @abstractmethod
-    def process(self, event):
+    def process(self, event) -> None:
         pass
