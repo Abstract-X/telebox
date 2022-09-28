@@ -8,8 +8,8 @@ from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
 from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
-from telebox.dispatcher.utils.thread_pool import ThreadPool
-from telebox.dispatcher.utils.event_queue import EventQueue, Item
+from telebox.dispatcher.thread_pool import ThreadPool
+from telebox.dispatcher.event_queue import EventQueue, Item
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.error import AbstractErrorHandler

@@ -4,7 +4,7 @@ from typing import Optional
 from threading import Lock
 from dataclasses import dataclass
 
-from telebox.dispatcher.utils.double_ended_queue import DoubleEndedQueue
+from telebox.dispatcher.double_ended_queue import DoubleEndedQueue
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.typing import Event
 
