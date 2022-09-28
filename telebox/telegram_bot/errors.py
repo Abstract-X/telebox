@@ -23,6 +23,11 @@ class UnknownMessageContentError(TelegramBotError):
 
 
 @dataclass
+class NoMeError(TelegramBotError):
+    """Class for bot user error."""
+
+
+@dataclass
 class RequestError(TelegramBotError):
     """Class for Telegram Bot API request error."""
     DEFAULT_TEMPLATE = "\n".join((
@@ -765,7 +770,7 @@ class ServerIsRestartingError(InternalServerError):
     """
 
 
-def get_error(
+def get_request_error(
     method: str,
     parameters: dict[str, Any],
     status_code: int,

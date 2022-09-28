@@ -13,3 +13,7 @@ class ChosenInlineResult(Type):
     query: str
     location: Optional[Location] = None
     inline_message_id: Optional[str] = None
+
+    @property
+    def user_id(self) -> int:
+        return self.from_.id

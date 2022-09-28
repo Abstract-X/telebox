@@ -1,11 +1,15 @@
 import logging
-from typing import Optional, Union, Iterable, Type
-import contextlib
-from collections import defaultdict
+from typing import Optional, Union, Iterable
+from threading import Thread
 import time
 
 from telebox.telegram_bot.telegram_bot import TelegramBot
+from telebox.telegram_bot.types.types.message import Message
+from telebox.telegram_bot.types.types.callback_query import CallbackQuery
+from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
+from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
 from telebox.dispatcher.thread_pool import ThreadPool
+from telebox.dispatcher.event_queue import EventQueue, Item
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.error import AbstractErrorHandler
@@ -13,10 +17,7 @@ from telebox.dispatcher.filters.base.event import AbstractEventFilter
 from telebox.dispatcher.filters.base.error import AbstractErrorFilter
 from telebox.utils import RequestTimeout
 from telebox.typing import Event
-from telebox.dispatcher.errors import (
-    EventHandlerNotFoundError,
-    PollingAlreadyStartedError
-)
+from telebox.dispatcher.errors import PollingAlreadyStartedError
 
 
 logger = logging.getLogger(__name__)
@@ -29,13 +30,10 @@ EventHandlerDict = dict[
         ]
     ]
 ]
-ErrorHandlerDict = defaultdict[
-    Type[Exception],
-    list[
-        tuple[
-            AbstractErrorHandler,
-            tuple[AbstractErrorFilter, ...]
-        ]
+ErrorHandlerList = list[
+    tuple[
+        AbstractErrorHandler,
+        tuple[AbstractErrorFilter, ...]
     ]
 ]
 
@@ -46,7 +44,7 @@ class Dispatcher:
         self._bot = bot
         self._polling_is_started = False
         self._event_handlers: EventHandlerDict = {i: [] for i in EventType}
-        self._error_handlers: ErrorHandlerDict = defaultdict(list)
+        self._error_handlers: ErrorHandlerList = []
 
     def add_event_handler(
         self,
@@ -157,12 +155,11 @@ class Dispatcher:
     def add_error_handler(
         self,
         handler: AbstractErrorHandler,
-        error_type: Type[Exception] = Exception,
         filters: Iterable[AbstractErrorFilter] = ()
     ) -> None:
-        self._error_handlers[error_type].append((handler, tuple(filters)))
+        self._error_handlers.append((handler, tuple(filters)))
 
-    def start_polling(
+    def run_polling(
         self,
         threads: int,
         *,
@@ -182,15 +179,25 @@ class Dispatcher:
         if error_delay_secs < 0:
             raise ValueError("Error delay seconds cannot be negative!")
 
+        logger.debug("Polling is starting...")
         self._polling_is_started = True
         offset_update_id = None
-        thread_pool = ThreadPool(threads)
-        thread_pool.start_threads(
-            target=self._process_updates,
-            args=(thread_pool,)
+        event_queue = EventQueue()
+        delayed_event_processing_thread = Thread(
+            target=event_queue.run_delayed_event_processing,
+            daemon=True
         )
+        delayed_event_processing_thread.start()
+        thread_pool = ThreadPool(
+            threads=threads,
+            target=self._run_event_queue_processing,
+            args=(event_queue,)
+        )
+        thread_pool.start()
 
         try:
+            logger.info("Polling started.")
+
             while True:
                 # noinspection PyBroadException
                 try:
@@ -205,15 +212,25 @@ class Dispatcher:
                     logger.exception("An error occurred while receiving updates!")
                     time.sleep(error_delay_secs)
                 else:
-                    for i in updates:
-                        thread_pool.add_item(i)
-
-                    with contextlib.suppress(IndexError):
+                    if updates:
                         offset_update_id = updates[-1].update_id + 1
+
+                        for i in updates:
+                            logger.debug("Update received: %r.", i)
+                            event, event_type = i.content
+                            item = Item(
+                                event=event,
+                                event_type=event_type,
+                                chat_id=_get_event_chat_id(event)
+                            )
+                            event_queue.add_item(item)
 
                     time.sleep(delay_secs)
         except KeyboardInterrupt:
-            thread_pool.wait_queue()
+            logger.info("Polling stopped.")
+            logger.info("Finishing processing updates...", )
+            event_queue.wait_processing()
+            logger.info("Update processing finished.")
             self._polling_is_started = False
 
     def drop_pending_updates(
@@ -221,6 +238,7 @@ class Dispatcher:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> None:
+        logger.debug("Dropping pending updates...")
         updates = self._bot.get_updates(
             request_timeout=request_timeout,
             offset=-1
@@ -232,64 +250,65 @@ class Dispatcher:
                 offset=updates[-1].update_id + 1
             )
 
-    def _process_updates(self, thread_pool: ThreadPool) -> None:
+        logger.info("Pending updates dropped.")
+
+    def _run_event_queue_processing(self, queue: EventQueue) -> None:
         while True:
-            update = thread_pool.get_item()
+            item = queue.get_item()
 
             try:
-                event, event_type = update.content
+                logger.debug("Event processing started: %r.", item.event)
+                event_handler = self._get_event_handler(item.event, item.event_type)
 
-                try:
-                    event_handler = self._get_event_handler(event, event_type)
-                except EventHandlerNotFoundError:
-                    pass
-                else:
+                if event_handler is not None:
                     # noinspection PyBroadException
                     try:
                         try:
-                            event_handler.process_event(event)
+                            event_handler.process(item.event)
                         except Exception as error:
-                            error_handler = self._get_error_handler(error, event)
+                            error_handler = self._get_error_handler(error, item.event)
 
                             if error_handler is None:
                                 raise
 
-                            error_handler.process_error(error, event)
+                            error_handler.process(error, item.event)
                     except Exception:
                         logger.exception("An error occurred while processing an update!")
             finally:
-                thread_pool.set_item_as_processed()
+                queue.notify_about_processed_item(item)
+                logger.debug("Event processing finished: %r.", item.event)
 
-    def _get_event_handler(self, event: Event, event_type: EventType) -> AbstractEventHandler:
-        filter_results = {}
+    def _get_event_handler(
+        self,
+        event: Event,
+        event_type: EventType
+    ) -> Optional[AbstractEventHandler]:
+        return _get_handler(self._event_handlers[event_type], (event,))
 
-        for handler, filters in self._event_handlers[event_type]:
-            for filter_ in filters:
-                try:
-                    result = filter_results[filter_]
-                except KeyError:
-                    result = filter_results[filter_] = filter_.check_event(event)
+    def _get_error_handler(
+        self,
+        error: Exception,
+        event: Event
+    ) -> Optional[AbstractErrorHandler]:
+        return _get_handler(self._error_handlers, (error, event))
 
-                if not result:
-                    break
-            else:
-                return handler
 
-        raise EventHandlerNotFoundError("Event handler not found!")
+def _get_handler(handlers: list[tuple], check_args: tuple):
+    filter_results = {}
 
-    def _get_error_handler(self, error: Exception, event: Event) -> Optional[AbstractErrorHandler]:
-        filter_results = {}
+    for handler, filters in handlers:
+        for filter_ in filters:
+            try:
+                result = filter_results[filter_]
+            except KeyError:
+                result = filter_results[filter_] = filter_.check(*check_args)
 
-        for error_type in self._error_handlers:
-            if isinstance(error, error_type):
-                for handler, filters in self._error_handlers[error_type]:
-                    for filter_ in filters:
-                        try:
-                            result = filter_results[filter_]
-                        except KeyError:
-                            result = filter_results[filter_] = filter_.check_error(error, event)
+            if not result:
+                break
+        else:
+            return handler
 
-                        if not result:
-                            break
-                    else:
-                        return handler
+
+def _get_event_chat_id(event: Event) -> Optional[int]:
+    if isinstance(event, (Message, CallbackQuery, ChatMemberUpdated, ChatJoinRequest)):
+        return event.chat_id

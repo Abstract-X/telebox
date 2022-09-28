@@ -1,4 +1,5 @@
 from typing import Optional
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 
 
 def get_url(path: Optional[str] = None) -> str:
@@ -66,3 +67,26 @@ def get_full_name(first_name: str, last_name: Optional[str]) -> str:
 
 def get_attach_string(name: str) -> str:
     return f"attach://{name}"
+
+
+def get_encoded_deep_link_payload(payload: str) -> str:
+    return urlsafe_b64encode(payload.encode()).decode()
+
+
+def get_decoded_deep_link_payload(payload: str) -> str:
+    return urlsafe_b64decode(payload.encode()).decode()
+
+
+def get_start_deep_link(username: str, payload: str, encode: bool = False) -> str:
+    return _get_deep_link("start", username, payload, encode)
+
+
+def get_startgroup_deep_link(username: str, payload: str, encode: bool = False) -> str:
+    return _get_deep_link("startgroup", username, payload, encode)
+
+
+def _get_deep_link(type_: str, username: str, payload: str, encode: bool) -> str:
+    if encode:
+        payload = get_encoded_deep_link_payload(payload)
+
+    return get_url(f"{username}?{type_}={payload}")

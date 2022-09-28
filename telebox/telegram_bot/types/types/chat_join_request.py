@@ -15,3 +15,11 @@ class ChatJoinRequest(Type):
     date: datetime
     bio: Optional[str] = None
     invite_link: Optional[ChatInviteLink] = None
+
+    @property
+    def chat_id(self) -> int:
+        return self.chat.id
+
+    @property
+    def user_id(self) -> int:
+        return self.from_.id

@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 
+from telebox.dispatcher.filters.base.base import AbstractFilter
 
-class AbstractErrorFilter(ABC):
+
+class AbstractErrorFilter(AbstractFilter, ABC):
 
     @abstractmethod
-    def check_error(self, error, event) -> bool:
+    def check(self, error, event) -> bool:
         pass

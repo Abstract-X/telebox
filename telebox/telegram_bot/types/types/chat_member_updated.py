@@ -17,3 +17,11 @@ class ChatMemberUpdated(Type):
     old_chat_member: ChatMember
     new_chat_member: ChatMember
     invite_link: Optional[ChatInviteLink] = None
+
+    @property
+    def chat_id(self) -> int:
+        return self.chat.id
+
+    @property
+    def user_id(self) -> int:
+        return self.from_.id

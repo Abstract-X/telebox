@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "telebox"
-version = "0.2.0"
+version = "0.3.0"
 authors = [
   { name="Abstract-X", email="abstract-x-mail@protonmail.com" },
 ]
@@ -27,3 +27,6 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/Abstract-X/telebox"
 "Bug Tracker" = "https://github.com/Abstract-X/telebox/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["telebox"]

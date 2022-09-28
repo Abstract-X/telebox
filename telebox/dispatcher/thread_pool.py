@@ -1,38 +1,25 @@
-from typing import Callable, Any
-
-from threading import Thread
-from queue import Queue
+from threading import Thread, Barrier
+from typing import Callable
 
 
 class ThreadPool:
 
-    def __init__(self, threads: int):
+    def __init__(self, threads: int, target: Callable, args: tuple):
         if threads < 1:
-            raise ValueError("The number of threads cannot be less than 1!")
+            raise ValueError("Number of threads cannot be less than 1!")
 
-        self._threads = threads
-        self._active_threads = []
-        self._queue = Queue()
-
-    def start_threads(self, target: Callable, args: tuple) -> None:
-        threads = [
-            Thread(target=target, args=args, daemon=True)
-            for _ in range(self._threads)
+        self._target = target
+        self._args = args
+        self._threads = [
+            Thread(target=self._process, daemon=True)
+            for _ in range(threads)
         ]
+        self._barrier = Barrier(threads)
 
-        for i in threads:
+    def start(self) -> None:
+        for i in self._threads:
             i.start()
-            self._active_threads.append(i)
 
-    def add_item(self, item: Any) -> None:
-        self._queue.put(item, block=False)
-
-    def get_item(self) -> Any:
-        return self._queue.get()
-
-    def set_item_as_processed(self) -> None:
-        self._queue.task_done()
-
-    def wait_queue(self) -> None:
-        self._queue.join()
-        self._active_threads.clear()
+    def _process(self) -> None:
+        self._barrier.wait()
+        self._target(*self._args)
