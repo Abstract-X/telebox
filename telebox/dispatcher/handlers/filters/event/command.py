@@ -1,4 +1,4 @@
-from telebox.dispatcher.filters.base.event import AbstractEventFilter
+from telebox.dispatcher.handlers.filters.base.event import AbstractEventFilter
 from telebox.telegram_bot.types.types.message import Message
 
 
@@ -18,10 +18,13 @@ class CommandFilter(AbstractEventFilter):
 
         self._ignore_case = ignore_case
 
-    def check(self, event: Message) -> bool:
+    def get_value(self, event: Message) -> str:
         command_text = event.text.split(" ", 1)[0]
 
         if self._ignore_case:
             command_text = command_text.lower()
 
-        return command_text in self._commands
+        return command_text
+
+    def check_value(self, value: str) -> bool:
+        return value in self._commands

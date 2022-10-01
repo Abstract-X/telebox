@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Union, Iterable
+from typing import Optional, Union
 from threading import Thread
 import time
 
@@ -8,34 +8,18 @@ from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
 from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
+from telebox.dispatcher.handlers.manager import HandlerManager, EventFilter, ErrorFilter
 from telebox.dispatcher.thread_pool import ThreadPool
 from telebox.dispatcher.event_queue import EventQueue, Item
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.handlers.event import AbstractEventHandler
-from telebox.dispatcher.handlers.error import AbstractErrorHandler
-from telebox.dispatcher.filters.base.event import AbstractEventFilter
-from telebox.dispatcher.filters.base.error import AbstractErrorFilter
+from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
+from telebox.dispatcher.handlers.handlers.error import AbstractErrorHandler
 from telebox.utils import RequestTimeout
 from telebox.typing import Event
 from telebox.dispatcher.errors import PollingAlreadyStartedError
 
 
 logger = logging.getLogger(__name__)
-EventHandlerDict = dict[
-    EventType,
-    list[
-        tuple[
-            AbstractEventHandler,
-            tuple[AbstractEventFilter, ...]
-        ]
-    ]
-]
-ErrorHandlerList = list[
-    tuple[
-        AbstractErrorHandler,
-        tuple[AbstractErrorFilter, ...]
-    ]
-]
 
 
 class Dispatcher:
@@ -43,121 +27,120 @@ class Dispatcher:
     def __init__(self, bot: TelegramBot):
         self._bot = bot
         self._polling_is_started = False
-        self._event_handlers: EventHandlerDict = {i: [] for i in EventType}
-        self._error_handlers: ErrorHandlerList = []
+        self._handler_manager = HandlerManager()
 
     def add_event_handler(
         self,
         handler: AbstractEventHandler,
         event_type: EventType,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self._event_handlers[event_type].append((handler, tuple(filters)))
+        self._handler_manager.add_event_handler(handler, event_type, filter_)
 
     def add_message_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.MESSAGE, filters)
+        self.add_event_handler(handler, EventType.MESSAGE, filter_)
 
     def add_edited_message_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.EDITED_MESSAGE, filters)
+        self.add_event_handler(handler, EventType.EDITED_MESSAGE, filter_)
 
     def add_channel_post_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.CHANNEL_POST, filters)
+        self.add_event_handler(handler, EventType.CHANNEL_POST, filter_)
 
     def add_edited_channel_post_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.EDITED_CHANNEL_POST, filters)
+        self.add_event_handler(handler, EventType.EDITED_CHANNEL_POST, filter_)
 
     def add_inline_query_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.INLINE_QUERY, filters)
+        self.add_event_handler(handler, EventType.INLINE_QUERY, filter_)
 
     def add_chosen_inline_result_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.CHOSEN_INLINE_RESULT, filters)
+        self.add_event_handler(handler, EventType.CHOSEN_INLINE_RESULT, filter_)
 
     def add_callback_query_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.CALLBACK_QUERY, filters)
+        self.add_event_handler(handler, EventType.CALLBACK_QUERY, filter_)
 
     def add_shipping_query_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.SHIPPING_QUERY, filters)
+        self.add_event_handler(handler, EventType.SHIPPING_QUERY, filter_)
 
     def add_pre_checkout_query_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.PRE_CHECKOUT_QUERY, filters)
+        self.add_event_handler(handler, EventType.PRE_CHECKOUT_QUERY, filter_)
 
     def add_poll_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.POLL, filters)
+        self.add_event_handler(handler, EventType.POLL, filter_)
 
     def add_poll_answer_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.POLL_ANSWER, filters)
+        self.add_event_handler(handler, EventType.POLL_ANSWER, filter_)
 
     def add_my_chat_member_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.MY_CHAT_MEMBER, filters)
+        self.add_event_handler(handler, EventType.MY_CHAT_MEMBER, filter_)
 
     def add_chat_member_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.CHAT_MEMBER, filters)
+        self.add_event_handler(handler, EventType.CHAT_MEMBER, filter_)
 
     def add_chat_join_request_handler(
         self,
         handler: AbstractEventHandler,
-        filters: Iterable[AbstractEventFilter] = ()
+        filter_: EventFilter = None
     ) -> None:
-        self.add_event_handler(handler, EventType.CHAT_JOIN_REQUEST, filters)
+        self.add_event_handler(handler, EventType.CHAT_JOIN_REQUEST, filter_)
 
     def add_error_handler(
         self,
         handler: AbstractErrorHandler,
-        filters: Iterable[AbstractErrorFilter] = ()
+        filter_: ErrorFilter = None
     ) -> None:
-        self._error_handlers.append((handler, tuple(filters)))
+        self._handler_manager.add_error_handler(handler, filter_)
 
     def run_polling(
         self,
@@ -258,7 +241,10 @@ class Dispatcher:
 
             try:
                 logger.debug("Event processing started: %r.", item.event)
-                event_handler = self._get_event_handler(item.event, item.event_type)
+                event_handler = self._handler_manager.get_event_handler(
+                    event=item.event,
+                    event_type=item.event_type
+                )
 
                 if event_handler is not None:
                     # noinspection PyBroadException
@@ -266,7 +252,10 @@ class Dispatcher:
                         try:
                             event_handler.process(item.event)
                         except Exception as error:
-                            error_handler = self._get_error_handler(error, item.event)
+                            error_handler = self._handler_manager.get_error_handler(
+                                error=error,
+                                event=item.event
+                            )
 
                             if error_handler is None:
                                 raise
@@ -277,36 +266,6 @@ class Dispatcher:
             finally:
                 queue.notify_about_processed_item(item)
                 logger.debug("Event processing finished: %r.", item.event)
-
-    def _get_event_handler(
-        self,
-        event: Event,
-        event_type: EventType
-    ) -> Optional[AbstractEventHandler]:
-        return _get_handler(self._event_handlers[event_type], (event,))
-
-    def _get_error_handler(
-        self,
-        error: Exception,
-        event: Event
-    ) -> Optional[AbstractErrorHandler]:
-        return _get_handler(self._error_handlers, (error, event))
-
-
-def _get_handler(handlers: list[tuple], check_args: tuple):
-    filter_results = {}
-
-    for handler, filters in handlers:
-        for filter_ in filters:
-            try:
-                result = filter_results[filter_]
-            except KeyError:
-                result = filter_results[filter_] = filter_.check(*check_args)
-
-            if not result:
-                break
-        else:
-            return handler
 
 
 def _get_event_chat_id(event: Event) -> Optional[int]:

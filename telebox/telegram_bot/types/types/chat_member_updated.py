@@ -19,6 +19,10 @@ class ChatMemberUpdated(Type):
     invite_link: Optional[ChatInviteLink] = None
 
     @property
+    def chat_type(self) -> str:
+        return self.chat.type
+
+    @property
     def chat_id(self) -> int:
         return self.chat.id
 

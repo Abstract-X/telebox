@@ -36,7 +36,7 @@ class Set:
     def __contains__(self, item):
         return item in self._items
 
-    def get_items(self, *, exclude: Iterable[Any] = ()) -> set[Any]:
+    def get(self, *, exclude: Iterable[Any] = ()) -> set[Any]:
         return {i for i in self._items if i not in exclude}
 
 

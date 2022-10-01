@@ -17,6 +17,10 @@ class CallbackQuery(Type):
     game_short_name: Optional[str] = None
 
     @property
+    def chat_type(self) -> Optional[str]:
+        return self.message.chat.type if self.message is not None else None
+
+    @property
     def chat_id(self) -> Optional[int]:
         return self.message.chat.id if self.message is not None else None
 
