@@ -12,7 +12,7 @@ from telebox.typing import Event
 _DELAY_SECS = 0.05
 
 
-@dataclass
+@dataclass(frozen=True)
 class Item:
     event: Event
     event_type: EventType
@@ -51,14 +51,21 @@ class EventQueue:
         self._queue.wait_processing()
 
     def run_delayed_event_processing(self) -> None:
+        remaining_items = set()
+
         while True:
             item = self._delayed_queue.get()
 
-            if item.chat_id not in self._delayed_chat_ids:
-                self._delayed_chat_ids.add(item.chat_id)
-                self._queue.add_on_right(item)
-            else:
-                self._delayed_queue.put(item, block=False)
+            try:
+                if item in remaining_items:
+                    remaining_items.clear()
+                    time.sleep(_DELAY_SECS)
 
-            self._delayed_queue.task_done()
-            time.sleep(_DELAY_SECS)
+                if item.chat_id not in self._delayed_chat_ids:
+                    self._delayed_chat_ids.add(item.chat_id)
+                    self._queue.add_on_right(item)
+                else:
+                    self._delayed_queue.put(item, block=False)
+                    remaining_items.add(item)
+            finally:
+                self._delayed_queue.task_done()
