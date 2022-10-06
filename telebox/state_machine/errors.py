@@ -12,11 +12,6 @@ class StateMachineError(TeleboxError):
 
 
 @dataclass
-class StateMagazineError(StateMachineError):
-    pass
-
-
-@dataclass
 class StateAlreadyExistsError(StateMachineError):
     state: State
 
