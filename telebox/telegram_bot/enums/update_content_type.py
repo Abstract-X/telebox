@@ -4,7 +4,7 @@ from enum import Enum
 class UpdateContentType(Enum):
     MESSAGE = "message"
     EDITED_MESSAGE = "edited_message"
-    CHANNEL_POST = "channel_type"
+    CHANNEL_POST = "channel_post"
     EDITED_CHANNEL_POST = "edited_channel_post"
     INLINE_QUERY = "inline_query"
     CHOSEN_INLINE_RESULT = "chosen_inline_result"
