@@ -7,7 +7,8 @@ from .dispatcher import (
     AbstractErrorHandler,
     AbstractFilter,
     AbstractEventFilter,
-    AbstractErrorFilter
+    AbstractErrorFilter,
+    RateLimiter
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
 from .typing import Event
