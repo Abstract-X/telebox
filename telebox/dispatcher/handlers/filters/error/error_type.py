@@ -6,11 +6,12 @@ from telebox.typing import Event
 
 class ErrorTypeFilter(AbstractErrorFilter):
 
-    def __init__(self, *types: Type[Exception]):
+    def __init__(self, *types: Type[Exception], strictly: bool = False):
         self._types = types
+        self._strictly = strictly
 
     def get_value(self, error: Exception, event: Event) -> Exception:
         return error
 
     def check_value(self, value: Exception) -> bool:
-        return isinstance(value, self._types)
+        return value in self._types if self._strictly else isinstance(value, self._types)
