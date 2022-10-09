@@ -14,4 +14,4 @@ class ErrorTypeFilter(AbstractErrorFilter):
         return error
 
     def check_value(self, value: Exception) -> bool:
-        return value in self._types if self._strictly else isinstance(value, self._types)
+        return type(value) in self._types if self._strictly else isinstance(value, self._types)
