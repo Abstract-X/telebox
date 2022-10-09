@@ -16,5 +16,6 @@ from .event import (
 )
 from .error import (
     ErrorTypeFilter,
-    ErrorTextFilter
+    ErrorTextFilter,
+    ErrorRegExpTextFilter
 )
