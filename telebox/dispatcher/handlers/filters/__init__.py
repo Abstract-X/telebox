@@ -14,4 +14,7 @@ from .event import (
     TextFilter,
     NonStandardCommandFilter
 )
-from .error import ErrorTypeFilter
+from .error import (
+    ErrorTypeFilter,
+    ErrorTextFilter
+)
