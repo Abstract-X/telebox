@@ -11,6 +11,7 @@ from .event import (
     SenderContactFilter,
     StartCommandFilter,
     StateFilter,
-    TextFilter
+    TextFilter,
+    NonStandardCommandFilter
 )
 from .error import ErrorTypeFilter
