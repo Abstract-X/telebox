@@ -9,12 +9,7 @@ class TextFilter(AbstractEventFilter):
         self._ignore_case = ignore_case
 
     def get_value(self, event: Message) -> str:
-        text = event.text
-
-        if self._ignore_case:
-            text = event.text.lower()
-
-        return text
+        return event.text.lower() if self._ignore_case else event.text
 
     def check_value(self, value: str) -> bool:
         return value in self._texts
