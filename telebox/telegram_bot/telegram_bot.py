@@ -1,4 +1,5 @@
 from typing import Union, Optional, Any, Literal
+import time
 from datetime import datetime
 from dataclasses import is_dataclass
 import secrets
@@ -7,7 +8,7 @@ from http import HTTPStatus
 from requests import Session, Response
 
 from telebox.telegram_bot.serialization import DataclassSerializer, convert_datetime_to_timestamp
-from telebox.telegram_bot.errors import get_request_error, NoMeError
+from telebox.telegram_bot.errors import get_request_error, TelegramBotError, RetryAfterError
 from telebox.telegram_bot.consts import chat_member_statuses
 from telebox.telegram_bot.types.types.response_parameters import ResponseParameters
 from telebox.telegram_bot.types.types.update import Update
@@ -74,12 +75,15 @@ class TelegramBot:
         token: str,
         *,
         api_url: str = API_URL,
+        force_sending: bool = False,
         default_parse_mode: Union[str, NotSetValue] = NOT_SET_VALUE,
         default_request_timeout: Optional[RequestTimeout] = None
     ):
         self._session = session
         self._token = token
         self._api_url = api_url
+        self._force_sending = force_sending
+        self._over_limit_chat_ids: set[int] = set()
         self._default_parse_mode = default_parse_mode
         self._default_request_timeout = default_request_timeout or RequestTimeout(150, 150)
         self._dataclass_serializer = DataclassSerializer()
@@ -88,12 +92,22 @@ class TelegramBot:
     @property
     def me(self) -> User:
         if self._me is None:
-            raise NoMeError(
+            raise TelegramBotError(
                 "Bot user was not loaded! To use this property, you need to call "
                 "bot.get_me method at least once!"
             )
 
         return self._me
+
+    @property
+    def over_limit_chat_ids(self) -> set[int]:
+        if not self._force_sending:
+            raise TelegramBotError(
+                "Over limit chat identifiers are not available "
+                "when force sending is disabled!"
+            )
+
+        return self._over_limit_chat_ids
 
     def get_updates(
         self,
@@ -2248,14 +2262,33 @@ class TelegramBot:
         url = self._get_api_url(method)
         data, files = self._get_prepared_parameters(parameters)
         timeout = timeout or self._default_request_timeout
-        response = self._session.post(
-            url=url,
-            json=data,
-            files=files,
-            timeout=(timeout.connect_secs, timeout.read_secs)
-        )
+        chat_id = parameters.get("chat_id")
 
-        return self._process_response(response, method, parameters)
+        if not isinstance(chat_id, int):
+            chat_id = None
+
+        force_sending = self._force_sending and chat_id is not None
+
+        while True:
+            response = self._session.post(
+                url=url,
+                json=data,
+                files=files,
+                timeout=(timeout.connect_secs, timeout.read_secs)
+            )
+
+            try:
+                data = self._process_response(response, method, parameters)
+            except RetryAfterError as error:
+                if not force_sending:
+                    raise
+
+                self._over_limit_chat_ids.add(chat_id)
+                time.sleep(error.retry_after)
+            else:
+                self._over_limit_chat_ids.discard(chat_id)
+
+                return data
 
     def _get_api_url(self, method: str) -> str:
         return f"{self._api_url}/bot{self._token}/{method}"

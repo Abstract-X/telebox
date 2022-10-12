@@ -12,7 +12,8 @@ from .event import (
     StartCommandFilter,
     StateFilter,
     TextFilter,
-    NonStandardCommandFilter
+    NonStandardCommandFilter,
+    NotOverLimitChatFilter
 )
 from .error import (
     ErrorTypeFilter,
