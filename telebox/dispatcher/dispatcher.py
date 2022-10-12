@@ -6,6 +6,8 @@ import time
 from cachetools import TTLCache
 
 from telebox.telegram_bot.telegram_bot import TelegramBot
+from telebox.telegram_bot.types.types.message import Message
+from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 from telebox.dispatcher.thread_pool import ThreadPool
 from telebox.dispatcher.event_queue import EventQueue
 from telebox.dispatcher.enums.event_type import EventType
@@ -59,9 +61,11 @@ class Dispatcher:
         self,
         bot: TelegramBot,
         *,
+        drop_over_limit_events: bool = False,
         default_rate_limiters: Optional[dict[EventType, RateLimiter]] = None
     ):
         self._bot = bot
+        self._drop_over_limit_events = drop_over_limit_events
         self._default_rate_limiters = default_rate_limiters or {}
         self._polling_is_started = False
         self._event_handlers: dict[EventType, list[EventHandler]] = {i: [] for i in EventType}
@@ -234,7 +238,18 @@ class Dispatcher:
                 else:
                     for i in updates:
                         logger.debug("Update received: %r.", i)
-                        events.add_event(*i.content)
+                        event, event_type = i.content
+
+                        if (
+                            self._drop_over_limit_events
+                            and isinstance(event, (Message, CallbackQuery))
+                            and event.chat_id in self._bot.over_limit_chat_ids
+                        ):
+                            logger.debug("Event from over limit chat dropped: %r.", event)
+                            continue
+
+                        logger.debug("Event added to queue: %r.", event)
+                        events.add_event(event, event_type)
 
                     if updates:
                         offset_update_id = updates[-1].update_id + 1
