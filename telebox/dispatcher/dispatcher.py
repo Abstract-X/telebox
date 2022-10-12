@@ -350,7 +350,7 @@ class Dispatcher:
 
                             error_handler.handler.process(error, event.event)
                     except Exception:
-                        logger.exception("An error occurred while processing an update!")
+                        logger.exception("An error occurred while processing an event!")
                 else:
                     logger.warning("No handler found for event: %r.", event)
             finally:
