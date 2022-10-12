@@ -1,3 +1,5 @@
+from typing import Optional
+
 from telebox.dispatcher.handlers.filters.base.event import AbstractEventFilter
 from telebox.telegram_bot.types.types.message import Message
 
@@ -18,13 +20,14 @@ class CommandFilter(AbstractEventFilter):
 
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Message) -> str:
-        command_text = event.text.split(" ", 1)[0]
+    def get_value(self, event: Message) -> Optional[str]:
+        if event.text is not None:
+            command_text = event.text.split(" ", 1)[0]
 
-        if self._ignore_case:
-            command_text = command_text.lower()
+            if self._ignore_case:
+                command_text = command_text.lower()
 
-        return command_text
+            return command_text
 
-    def check_value(self, value: str) -> bool:
+    def check_value(self, value: Optional[str]) -> bool:
         return value in self._commands

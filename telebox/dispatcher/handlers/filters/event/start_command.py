@@ -1,4 +1,4 @@
-from typing import Union, Pattern
+from typing import Union, Pattern, Optional
 
 from telebox.dispatcher.handlers.filters.event.command import CommandFilter
 from telebox.telegram_bot.utils import get_decoded_deep_link_payload
@@ -18,7 +18,7 @@ class StartCommandFilter(CommandFilter):
         self._payload = payload
         self._with_decoding = with_decoding
 
-    def check_value(self, value: str) -> bool:
+    def check_value(self, value: Optional[str]) -> bool:
         if super().check_value(value):
             if self._payload is not None:
                 text_parts = value.split(" ", 1)

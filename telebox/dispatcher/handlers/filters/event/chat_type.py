@@ -20,7 +20,7 @@ class ChatTypeFilter(AbstractEventFilter):
             ChatMemberUpdated,
             ChatJoinRequest
         ]
-    ) -> str:
+    ) -> Optional[str]:
         return event.chat_type
 
     def check_value(self, value: Optional[str]) -> bool:
