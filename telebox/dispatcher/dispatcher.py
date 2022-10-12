@@ -1,6 +1,7 @@
 import logging
 from typing import Optional, Union, Literal
 from dataclasses import dataclass
+from threading import Lock
 import time
 
 from cachetools import TTLCache
@@ -66,6 +67,8 @@ class Dispatcher:
         self._polling_is_started = False
         self._event_handlers: dict[EventType, list[EventHandler]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandler] = []
+        self._event_handler_getting_lock = Lock()
+        self._error_handler_getting_lock = Lock()
 
     def add_message_handler(
         self,
@@ -310,7 +313,9 @@ class Dispatcher:
 
             try:
                 logger.debug("Event processing started: %r.", event.event)
-                event_handler = self._get_event_handler(event.event, event.event_type)
+
+                with self._event_handler_getting_lock:
+                    event_handler = self._get_event_handler(event.event, event.event_type)
 
                 if event_handler is not None:
                     if event_handler.rate_limiter is not None:
@@ -328,10 +333,11 @@ class Dispatcher:
                         try:
                             event_handler.handler.process(event.event)
                         except Exception as error:
-                            error_handler = self._get_error_handler(
-                                error=error,
-                                event=event.event
-                            )
+                            with self._error_handler_getting_lock:
+                                error_handler = self._get_error_handler(
+                                    error=error,
+                                    event=event.event
+                                )
 
                             if error_handler is None:
                                 raise
