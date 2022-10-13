@@ -305,19 +305,24 @@ class Dispatcher:
     def drop_pending_updates(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        request_timeout: Optional[RequestTimeout] = None,
+        with_delete_webhook: bool = True
     ) -> None:
         logger.debug("Dropping pending updates...")
-        updates = self._bot.get_updates(
-            request_timeout=request_timeout,
-            offset=-1
-        )
 
-        if updates:
-            self._bot.get_updates(
+        if with_delete_webhook:
+            self._bot.delete_webhook(request_timeout=request_timeout, drop_pending_updates=True)
+        else:
+            updates = self._bot.get_updates(
                 request_timeout=request_timeout,
-                offset=updates[-1].update_id + 1
+                offset=-1
             )
+
+            if updates:
+                self._bot.get_updates(
+                    request_timeout=request_timeout,
+                    offset=updates[-1].update_id + 1
+                )
 
         logger.info("Pending updates dropped.")
 
