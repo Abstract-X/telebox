@@ -13,7 +13,7 @@ from .dispatcher import (
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
 from .typing import Event
-from .utils import RequestTimeout, Set
+from .utils import NamedSet, RequestTimeout
 
 
 def _evaluate_type_annotations() -> None:

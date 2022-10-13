@@ -32,7 +32,8 @@ from telebox.dispatcher.handlers.filters.base.event import AbstractEventFilter
 from telebox.dispatcher.handlers.filters.base.error import AbstractErrorFilter
 from telebox.dispatcher.rate_limiter import RateLimiter
 from telebox.dispatcher.errors import DispatcherError
-from telebox.utils import RequestTimeout, NotSetValue, NOT_SET_VALUE
+from telebox.utils.not_set import NotSet
+from telebox.utils.request_timeout import RequestTimeout
 from telebox.typing import Event
 
 
@@ -84,7 +85,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.MESSAGE, filter_, rate_limiter)
 
@@ -92,7 +93,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.EDITED_MESSAGE, filter_, rate_limiter)
 
@@ -114,7 +115,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.INLINE_QUERY, filter_, rate_limiter)
 
@@ -122,7 +123,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.CHOSEN_INLINE_RESULT, filter_, rate_limiter)
 
@@ -130,7 +131,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.CALLBACK_QUERY, filter_, rate_limiter)
 
@@ -138,7 +139,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.SHIPPING_QUERY, filter_, rate_limiter)
 
@@ -146,7 +147,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.PRE_CHECKOUT_QUERY, filter_, rate_limiter)
 
@@ -161,7 +162,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.POLL_ANSWER, filter_, rate_limiter)
 
@@ -331,9 +332,9 @@ class Dispatcher:
         handler: AbstractEventHandler,
         event_type: EventType,
         filter_: EventFilter = None,
-        rate_limiter: Union[RateLimiter, None, NotSetValue] = NOT_SET_VALUE
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
-        if rate_limiter is NOT_SET_VALUE:
+        if rate_limiter is NotSet():
             rate_limiter = self._default_rate_limiters.get(event_type)
 
         if rate_limiter is None:

@@ -1,20 +1,10 @@
 from dataclasses import dataclass
 import dataclasses
-from typing import Union, Iterable, Any
-
-
-class NotSetValue:
-    pass
+from typing import Iterable, Any
 
 
 @dataclass
-class RequestTimeout:
-    connect_secs: Union[float, int]
-    read_secs: Union[float, int]
-
-
-@dataclass
-class Set:
+class NamedSet:
 
     def __post_init__(self):
         fields = {i.name for i in dataclasses.fields(self)}
@@ -27,6 +17,9 @@ class Set:
     def __len__(self):
         return len(self._items)
 
+    def __bool__(self):
+        return bool(self._items)
+
     def __iter__(self):
         return iter(self._items)
 
@@ -38,6 +31,3 @@ class Set:
 
     def get(self, *, exclude: Iterable[Any] = ()) -> set[Any]:
         return {i for i in self._items if i not in exclude}
-
-
-NOT_SET_VALUE = NotSetValue()
