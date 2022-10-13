@@ -7,7 +7,7 @@ from http import HTTPStatus
 
 from requests import Session, Response
 
-from telebox.telegram_bot.serialization import DataclassSerializer, convert_datetime_to_timestamp
+from telebox.telegram_bot.serializer import Serializer, convert_datetime_to_timestamp
 from telebox.telegram_bot.errors import get_request_error, TelegramBotError, RetryAfterError
 from telebox.telegram_bot.consts import chat_member_statuses
 from telebox.telegram_bot.types.types.response_parameters import ResponseParameters
@@ -80,13 +80,13 @@ class TelegramBot:
         default_request_timeout: Optional[RequestTimeout] = None
     ):
         self._session = session
-        self._token = token
+        self.token = token
         self._api_url = api_url
         self._force_sending = force_sending
         self._default_parse_mode = default_parse_mode
         self._default_request_timeout = default_request_timeout or RequestTimeout(150, 150)
         self._over_limit_times: dict[int, float] = {}
-        self._dataclass_serializer = DataclassSerializer()
+        self._serializer = Serializer()
         self._me: Optional[User] = None
 
     @property
@@ -115,7 +115,7 @@ class TelegramBot:
         allowed_updates: Optional[list[str]] = None
     ) -> list[Update]:
         return [
-            self._dataclass_serializer.get_object(data=i, class_=Update)
+            self._serializer.get_object(data=i, class_=Update)
             for i in self._send_request(
                 method="getUpdates",
                 parameters={
@@ -173,13 +173,13 @@ class TelegramBot:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> WebhookInfo:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(method="getWebhookInfo", timeout=request_timeout),
             class_=WebhookInfo
         )
 
     def get_me(self, *, request_timeout: Optional[RequestTimeout] = None) -> User:
-        self._me = self._dataclass_serializer.get_object(
+        self._me = self._serializer.get_object(
             data=self._send_request(method="getMe", timeout=request_timeout),
             class_=User
         )
@@ -211,7 +211,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendMessage",
                 parameters={
@@ -241,7 +241,7 @@ class TelegramBot:
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="forwardMessage",
                 parameters={
@@ -276,7 +276,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> MessageId:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="copyMessage",
                 parameters={
@@ -316,7 +316,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendPhoto",
                 parameters={
@@ -359,7 +359,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendAudio",
                 parameters={
@@ -404,7 +404,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendDocument",
                 parameters={
@@ -450,7 +450,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendVideo",
                 parameters={
@@ -498,7 +498,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendAnimation",
                 parameters={
@@ -542,7 +542,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendVoice",
                 parameters={
@@ -582,7 +582,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendVideoNote",
                 parameters={
@@ -617,7 +617,7 @@ class TelegramBot:
         allow_sending_without_reply: Optional[bool] = None
     ) -> list[Message]:
         return [
-            self._dataclass_serializer.get_object(data=i, class_=Message)
+            self._serializer.get_object(data=i, class_=Message)
             for i in self._send_request(
                 method="sendMediaGroup",
                 parameters={
@@ -653,7 +653,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendLocation",
                 parameters={
@@ -705,7 +705,7 @@ class TelegramBot:
             timeout=request_timeout
         )
 
-        return data if data is True else self._dataclass_serializer.get_object(
+        return data if data is True else self._serializer.get_object(
             data=data,
             class_=Message
         )
@@ -730,7 +730,7 @@ class TelegramBot:
             timeout=request_timeout
         )
 
-        return data if data is True else self._dataclass_serializer.get_object(
+        return data if data is True else self._serializer.get_object(
             data=data,
             class_=Message
         )
@@ -758,7 +758,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendVenue",
                 parameters={
@@ -801,7 +801,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendContact",
                 parameters={
@@ -848,7 +848,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendPoll",
                 parameters={
@@ -892,7 +892,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendDice",
                 parameters={
@@ -933,7 +933,7 @@ class TelegramBot:
         offset: Optional[int] = None,
         limit: Optional[int] = None
     ) -> UserProfilePhotos:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="getUserProfilePhotos",
                 parameters={
@@ -952,7 +952,7 @@ class TelegramBot:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> File:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="getFile",
                 parameters={
@@ -1149,7 +1149,7 @@ class TelegramBot:
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="createChatInviteLink",
                 parameters={
@@ -1175,7 +1175,7 @@ class TelegramBot:
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="editChatInviteLink",
                 parameters={
@@ -1198,7 +1198,7 @@ class TelegramBot:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> ChatInviteLink:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="revokeChatInviteLink",
                 parameters={
@@ -1372,7 +1372,7 @@ class TelegramBot:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> Chat:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="getChat",
                 parameters={
@@ -1391,7 +1391,7 @@ class TelegramBot:
     ) -> list[Union[ChatMemberOwner,
                     ChatMemberAdministrator]]:
         return [
-            self._dataclass_serializer.get_object(data=i, class_=_CHAT_MEMBER_TYPES[i["status"]])
+            self._serializer.get_object(data=i, class_=_CHAT_MEMBER_TYPES[i["status"]])
             for i in self._send_request(
                 method="getChatAdministrators",
                 parameters={
@@ -1431,7 +1431,7 @@ class TelegramBot:
             timeout=request_timeout
         )
 
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=data,
             class_=_CHAT_MEMBER_TYPES[data["status"]]
         )
@@ -1530,7 +1530,7 @@ class TelegramBot:
         language_code: Optional[str] = None
     ) -> list[BotCommand]:
         return [
-            self._dataclass_serializer.get_object(data=i, class_=BotCommand)
+            self._serializer.get_object(data=i, class_=BotCommand)
             for i in self._send_request(
                 method="getMyCommands",
                 parameters={
@@ -1629,7 +1629,7 @@ class TelegramBot:
             timeout=request_timeout
         )
 
-        return data if data is True else self._dataclass_serializer.get_object(
+        return data if data is True else self._serializer.get_object(
             data=data,
             class_=Message
         )
@@ -1660,7 +1660,7 @@ class TelegramBot:
             timeout=request_timeout
         )
 
-        return data if data is True else self._dataclass_serializer.get_object(
+        return data if data is True else self._serializer.get_object(
             data=data,
             class_=Message
         )
@@ -1687,7 +1687,7 @@ class TelegramBot:
             timeout=request_timeout
         )
 
-        return data if data is True else self._dataclass_serializer.get_object(
+        return data if data is True else self._serializer.get_object(
             data=data,
             class_=Message
         )
@@ -1712,7 +1712,7 @@ class TelegramBot:
             timeout=request_timeout
         )
 
-        return data if data is True else self._dataclass_serializer.get_object(
+        return data if data is True else self._serializer.get_object(
             data=data,
             class_=Message
         )
@@ -1725,7 +1725,7 @@ class TelegramBot:
         request_timeout: Optional[RequestTimeout] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="stopPoll",
                 parameters={
@@ -1770,7 +1770,7 @@ class TelegramBot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendSticker",
                 parameters={
@@ -1793,7 +1793,7 @@ class TelegramBot:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> StickerSet:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="getStickerSet",
                 parameters={
@@ -1811,7 +1811,7 @@ class TelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> list[Sticker]:
         return [
-            self._dataclass_serializer.get_object(data=i, class_=Sticker)
+            self._serializer.get_object(data=i, class_=Sticker)
             for i in self._send_request(
                 method="getCustomEmojiStickers",
                 parameters={
@@ -1828,7 +1828,7 @@ class TelegramBot:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> File:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="uploadStickerFile",
                 parameters={
@@ -1977,7 +1977,7 @@ class TelegramBot:
         *,
         request_timeout: Optional[RequestTimeout] = None
     ) -> SentWebAppMessage:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="answerWebAppQuery",
                 parameters={
@@ -2021,7 +2021,7 @@ class TelegramBot:
         allow_sending_without_reply: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendInvoice",
                 parameters={
@@ -2176,7 +2176,7 @@ class TelegramBot:
         allow_sending_without_reply: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
-        return self._dataclass_serializer.get_object(
+        return self._serializer.get_object(
             data=self._send_request(
                 method="sendGame",
                 parameters={
@@ -2219,7 +2219,7 @@ class TelegramBot:
             timeout=request_timeout
         )
 
-        return data if data is True else self._dataclass_serializer.get_object(
+        return data if data is True else self._serializer.get_object(
             data=data,
             class_=Message
         )
@@ -2234,7 +2234,7 @@ class TelegramBot:
         inline_message_id: Optional[str] = None
     ) -> list[GameHighScore]:
         return [
-            self._dataclass_serializer.get_object(data=i, class_=GameHighScore)
+            self._serializer.get_object(data=i, class_=GameHighScore)
             for i in self._send_request(
                 method="getGameHighScores",
                 parameters={
@@ -2285,7 +2285,7 @@ class TelegramBot:
                 time.sleep(error.retry_after)
 
     def _get_api_url(self, method: str) -> str:
-        return f"{self._api_url}/bot{self._token}/{method}"
+        return f"{self._api_url}/bot{self.token}/{method}"
 
     def _get_parse_mode(self, parse_mode: Union[str, None, NotSetValue]) -> Optional[str]:
         if parse_mode is not NOT_SET_VALUE:
@@ -2308,7 +2308,7 @@ class TelegramBot:
                     if isinstance(value, datetime):
                         value = convert_datetime_to_timestamp(value)
                     elif is_dataclass(value):
-                        value = self._dataclass_serializer.get_data(value)
+                        value = self._serializer.get_data(value)
 
                     data[name] = value
 
@@ -2328,7 +2328,7 @@ class TelegramBot:
             except KeyError:
                 response_parameters = None
             else:
-                response_parameters = self._dataclass_serializer.get_object(
+                response_parameters = self._serializer.get_object(
                     data=response_parameter_data,
                     class_=ResponseParameters
                 )

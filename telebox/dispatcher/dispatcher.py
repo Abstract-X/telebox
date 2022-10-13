@@ -1,13 +1,17 @@
 import logging
-from typing import Optional, Union, Literal
+from typing import Optional, Union, Literal, Callable
 from dataclasses import dataclass
 import time
 
 from cachetools import TTLCache
+import cherrypy
+import ujson
 
 from telebox.telegram_bot.telegram_bot import TelegramBot
+from telebox.telegram_bot.types.types.update import Update
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
+from telebox.telegram_bot.serializer import Serializer
 from telebox.dispatcher.thread_pool import ThreadPool
 from telebox.dispatcher.event_queue import EventQueue
 from telebox.dispatcher.enums.event_type import EventType
@@ -26,7 +30,7 @@ from telebox.dispatcher.handlers.filters.base.base import (
 from telebox.dispatcher.handlers.filters.base.event import AbstractEventFilter
 from telebox.dispatcher.handlers.filters.base.error import AbstractErrorFilter
 from telebox.dispatcher.rate_limiter import RateLimiter
-from telebox.dispatcher.errors import PollingAlreadyStartedError
+from telebox.dispatcher.errors import DispatcherError
 from telebox.utils import RequestTimeout, NotSetValue, NOT_SET_VALUE
 from telebox.typing import Event
 
@@ -67,7 +71,11 @@ class Dispatcher:
         self._bot = bot
         self._drop_over_limit_events = drop_over_limit_events
         self._default_rate_limiters = default_rate_limiters or {}
-        self._polling_is_started = False
+        self._polling_is_used = False
+        self._server_is_used = False
+        self._serializer = Serializer()
+        self._events = EventQueue()
+        self._thread_pool: Optional[ThreadPool] = None
         self._event_handlers: dict[EventType, list[EventHandler]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandler] = []
 
@@ -200,8 +208,11 @@ class Dispatcher:
         timeout: Optional[int] = None,
         allowed_updates: Optional[list[str]] = None
     ) -> None:
-        if self._polling_is_started:
-            raise PollingAlreadyStartedError("Polling already started!")
+        if self._polling_is_used:
+            raise DispatcherError("Polling cannot be run twice!")
+
+        if self._server_is_used:
+            raise DispatcherError("Polling cannot be run while the server is used!")
 
         if delay_secs < 0:
             raise ValueError("Delay seconds cannot be negative!")
@@ -209,16 +220,10 @@ class Dispatcher:
         if error_delay_secs < 0:
             raise ValueError("Error delay seconds cannot be negative!")
 
+        self._polling_is_used = True
         logger.debug("Polling is starting...")
-        self._polling_is_started = True
         offset_update_id = None
-        events = EventQueue()
-        thread_pool = ThreadPool(
-            threads=threads,
-            target=self._run_event_processing,
-            args=(events,)
-        )
-        thread_pool.start()
+        self._run_thread_pool(threads)
         logger.info("Polling started.")
 
         try:
@@ -237,19 +242,7 @@ class Dispatcher:
                     time.sleep(error_delay_secs)
                 else:
                     for i in updates:
-                        logger.debug("Update received: %r.", i)
-                        event, event_type = i.content
-
-                        if (
-                            self._drop_over_limit_events
-                            and isinstance(event, (Message, CallbackQuery))
-                            and event.chat_id in self._bot.over_limit_chat_ids
-                        ):
-                            logger.debug("Event from over limit chat dropped: %r.", event)
-                            continue
-
-                        logger.debug("Event added to queue: %r.", event)
-                        events.add_event(event, event_type)
+                        self._process_update(i)
 
                     if updates:
                         offset_update_id = updates[-1].update_id + 1
@@ -257,10 +250,56 @@ class Dispatcher:
                     time.sleep(delay_secs)
         except KeyboardInterrupt:
             logger.info("Polling stopped.")
-            logger.info("Finishing processing updates...", )
-            events.wait_event_processing()
-            logger.info("Update processing finished.")
-            self._polling_is_started = False
+            self._finish_update_processing()
+            self._polling_is_used = False
+
+    def run_server(
+        self,
+        threads: int,
+        webhook_path: str = "",
+        *,
+        host: str = "0.0.0.0",
+        port: int = 443,
+        ssl_certificate_path: Optional[str] = None,
+        ssl_private_key_path: Optional[str] = None
+    ) -> None:
+        if self._server_is_used:
+            raise DispatcherError("Server cannot be run twice!")
+
+        if self._polling_is_used:
+            raise DispatcherError("Server cannot be run while polling is used!")
+
+        self._server_is_used = True
+        logger.debug("Server is starting...")
+        cherrypy.config.update({
+            "server.socket_host": host,
+            "server.socket_port": port,
+            'environment': 'production',
+            "engine.autoreload.on": False
+        })
+
+        if (ssl_certificate_path is not None) and (ssl_private_key_path is not None):
+            cherrypy.config.update({
+                "server.ssl_module": "builtin",
+                "server.ssl_certificate": ssl_certificate_path,
+                "server.ssl_private_key": ssl_private_key_path,
+            })
+
+        self._run_thread_pool(threads)
+        logger.info("Server started.")
+
+        try:
+            cherrypy.quickstart(
+                root=ServerRoot(
+                    serializer=self._serializer,
+                    update_processor=self._process_update
+                ),
+                script_name=webhook_path
+            )
+        finally:
+            logger.info("Server stopped.")
+            self._finish_update_processing()
+            self._server_is_used = False
 
     def drop_pending_updates(
         self,
@@ -318,6 +357,34 @@ class Dispatcher:
         event: Event
     ) -> Optional[ErrorHandler]:
         return _get_handler(self._error_handlers, (error, event))
+
+    def _run_thread_pool(self, threads: int) -> None:
+        self._thread_pool = ThreadPool(
+            threads=threads,
+            target=self._run_event_processing,
+            args=(self._events,)
+        )
+        self._thread_pool.start()
+
+    def _process_update(self, update: Update) -> None:
+        logger.debug("Update received: %r.", update)
+        event, event_type = update.content
+
+        if (
+            self._drop_over_limit_events
+            and isinstance(event, (Message, CallbackQuery))
+            and event.chat_id in self._bot.over_limit_chat_ids
+        ):
+            logger.debug("Event from over limit chat dropped: %r.", event)
+        else:
+            logger.debug("Event added to queue: %r.", event)
+            self._events.add_event(event, event_type)
+
+    def _finish_update_processing(self) -> None:
+        logger.info("Update processing finishing...")
+        self._events.wait_event_processing()
+        self._thread_pool = None
+        logger.info("Update processing finished.")
 
     def _run_event_processing(self, events: EventQueue) -> None:
         while True:
@@ -443,3 +510,23 @@ def _get_expression(filter_) -> AbstractExpression:
         return filter_
 
     raise ValueError(f"Unknown filter type {filter_!r}!")
+
+
+class ServerRoot:
+
+    def __init__(self, serializer: Serializer, update_processor: Callable[[Update], None]):
+        self._serializer = serializer
+        self._update_processor = update_processor
+
+    @cherrypy.expose
+    def index(self) -> str:
+        content_length = cherrypy.request.headers.get("Content-Length")
+
+        if content_length is None:
+            raise cherrypy.HTTPError(403)
+
+        data = ujson.loads(cherrypy.request.body.read(int(content_length)))
+        update = self._serializer.get_object(data=data, class_=Update)
+        self._update_processor(update)
+
+        return str()

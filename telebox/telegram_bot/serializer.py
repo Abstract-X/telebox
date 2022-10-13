@@ -179,7 +179,7 @@ def convert_timestamp_to_datetime(timestamp: int) -> Optional[datetime_]:
     return datetime_.fromtimestamp(timestamp, tz=timezone.utc) if timestamp else None
 
 
-class DataclassSerializer:
+class Serializer:
 
     # noinspection PyMethodMayBeStatic
     def get_object(
