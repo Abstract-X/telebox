@@ -73,7 +73,6 @@ class Dispatcher:
         self._default_rate_limiters = default_rate_limiters or {}
         self._polling_is_used = False
         self._server_is_used = False
-        self._serializer = Serializer()
         self._events = EventQueue()
         self._thread_pool: Optional[ThreadPool] = None
         self._event_handlers: dict[EventType, list[EventHandler]] = {i: [] for i in EventType}
@@ -290,10 +289,7 @@ class Dispatcher:
 
         try:
             cherrypy.quickstart(
-                root=ServerRoot(
-                    serializer=self._serializer,
-                    update_processor=self._process_update
-                ),
+                root=ServerRoot(self._process_update),
                 script_name=webhook_path
             )
         finally:
@@ -514,8 +510,8 @@ def _get_expression(filter_) -> AbstractExpression:
 
 class ServerRoot:
 
-    def __init__(self, serializer: Serializer, update_processor: Callable[[Update], None]):
-        self._serializer = serializer
+    def __init__(self, update_processor: Callable[[Update], None]):
+        self._serializer = Serializer()
         self._update_processor = update_processor
 
     @cherrypy.expose
