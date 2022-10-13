@@ -8,6 +8,7 @@ from .dispatcher import (
     AbstractFilter,
     AbstractEventFilter,
     AbstractErrorFilter,
+    Middleware,
     RateLimiter
 )
 from .state_machine import StateMachine, State, AbstractStateStorage

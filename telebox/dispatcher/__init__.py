@@ -8,4 +8,5 @@ from .handlers import (
     AbstractEventFilter,
     AbstractErrorFilter
 )
+from .middlewares import Middleware
 from .rate_limiter import RateLimiter

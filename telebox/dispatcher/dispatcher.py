@@ -17,6 +17,7 @@ from telebox.dispatcher.event_queue import EventQueue
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.handlers.error import AbstractErrorHandler
+from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.handlers.filters.base.base import (
     AbstractFilter,
     ExpressionType,
@@ -77,6 +78,7 @@ class Dispatcher:
         self._thread_pool: Optional[ThreadPool] = None
         self._event_handlers: dict[EventType, list[EventHandler]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandler] = []
+        self._middlewares: list[Middleware] = []
 
     def add_message_handler(
         self,
@@ -195,6 +197,9 @@ class Dispatcher:
                 filter=_get_expression(filter_)
             )
         )
+
+    def add_middleware(self, middleware: Middleware) -> None:
+        self._middlewares.append(middleware)
 
     def run_polling(
         self,
@@ -386,8 +391,13 @@ class Dispatcher:
         while True:
             event = events.get_event()
 
+            # noinspection PyBroadException
             try:
                 logger.debug("Event processing started: %r.", event.event)
+
+                for i in self._middlewares:
+                    i.pre_process_event(event.event, event.event_type)
+
                 event_handler = self._get_event_handler(event.event, event.event_type)
 
                 if event_handler is not None:
@@ -401,21 +411,35 @@ class Dispatcher:
                         else:
                             continue
 
-                    # noinspection PyBroadException
+                    for i in self._middlewares:
+                        i.process_event(event.event, event.event_type)
+
                     try:
+                        event_handler.handler.process(event.event)
+                    except Exception as error:
+                        for i in self._middlewares:
+                            i.pre_process_error(error, event.event, event.event_type)
+
+                        error_handler = self._get_error_handler(error, event.event)
+
+                        if error_handler is None:
+                            raise
+
+                        for i in self._middlewares:
+                            i.process_error(error, event.event, event.event_type)
+
                         try:
-                            event_handler.handler.process(event.event)
-                        except Exception as error:
-                            error_handler = self._get_error_handler(error, event.event)
-
-                            if error_handler is None:
-                                raise
-
-                            error_handler.handler.process(error, event.event)
-                    except Exception:
-                        logger.exception("An error occurred while processing an event!")
+                            error_handler.handler.process(error, event.event, event.event_type)
+                        finally:
+                            for i in self._middlewares:
+                                i.post_process_error(error, event.event, event.event_type)
+                    finally:
+                        for i in self._middlewares:
+                            i.post_process_event(event.event, event.event_type)
                 else:
                     logger.warning("No handler found for event: %r.", event)
+            except Exception:
+                logger.exception("An error occurred while processing an event!")
             finally:
                 events.set_event_as_processed(event)
                 logger.debug("Event processing finished: %r.", event.event)

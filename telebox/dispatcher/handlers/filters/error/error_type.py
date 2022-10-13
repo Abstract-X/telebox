@@ -1,6 +1,7 @@
 from typing import Type
 
 from telebox.dispatcher.handlers.filters.base.error import AbstractErrorFilter
+from telebox.dispatcher.enums.event_type import EventType
 from telebox.typing import Event
 
 
@@ -10,7 +11,7 @@ class ErrorTypeFilter(AbstractErrorFilter):
         self._types = types
         self._strictly = strictly
 
-    def get_value(self, error: Exception, event: Event) -> Exception:
+    def get_value(self, error: Exception, event: Event, event_type: EventType) -> Exception:
         return error
 
     def check_value(self, value: Exception) -> bool:
