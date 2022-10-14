@@ -1,8 +1,11 @@
-from telebox.dispatcher.filters.base.event import AbstractEventFilter
+from telebox.dispatcher.filters.base_event import AbstractEventFilter
 from telebox.telegram_bot.types.types.message import Message
 
 
 class ReplyMessageFilter(AbstractEventFilter):
 
-    def check(self, event: Message) -> bool:
-        return event.is_reply
+    def get_value(self, event: Message) -> Message:
+        return event
+
+    def check_value(self, value: Message) -> bool:
+        return value.is_reply

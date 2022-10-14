@@ -3,16 +3,11 @@ from typing import Optional
 
 from telebox.errors import TeleboxError
 from telebox.state_machine.state import State
-from telebox.dispatcher.handlers.event import AbstractEventHandler
+from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
 
 
 @dataclass
 class StateMachineError(TeleboxError):
-    pass
-
-
-@dataclass
-class StateMagazineError(StateMachineError):
     pass
 
 

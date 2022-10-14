@@ -1,13 +1,11 @@
 from typing import Optional
 
-from telebox.state_machine.errors import StateMagazineError
-
 
 class StateMagazine:
 
     def __init__(self, states: list[str]):
         if not states:
-            raise StateMagazineError("State magazine can't be empty!")
+            raise ValueError("State magazine can't be empty!")
 
         self._states = states[:]
 

@@ -1,4 +1,6 @@
-from telebox.dispatcher.filters.base.event import AbstractEventFilter
+from typing import Optional
+
+from telebox.dispatcher.filters.base_event import AbstractEventFilter
 from telebox.telegram_bot.types.types.message import Message
 
 
@@ -8,10 +10,9 @@ class TextFilter(AbstractEventFilter):
         self._texts = {i.lower() for i in texts} if ignore_case else set(texts)
         self._ignore_case = ignore_case
 
-    def check(self, event: Message) -> bool:
-        text = event.text
+    def get_value(self, event: Message) -> Optional[str]:
+        if event.text is not None:
+            return event.text.lower() if self._ignore_case else event.text
 
-        if self._ignore_case:
-            text = event.text.lower()
-
-        return text in self._texts
+    def check_value(self, value: Optional[str]) -> bool:
+        return value in self._texts

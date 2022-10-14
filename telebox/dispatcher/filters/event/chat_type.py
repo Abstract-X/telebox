@@ -1,6 +1,6 @@
-from typing import Union
+from typing import Union, Optional
 
-from telebox.dispatcher.filters.base.event import AbstractEventFilter
+from telebox.dispatcher.filters.base_event import AbstractEventFilter
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
@@ -12,7 +12,7 @@ class ChatTypeFilter(AbstractEventFilter):
     def __init__(self, *types: str):
         self._types = set(types)
 
-    def check(
+    def get_value(
         self,
         event: Union[
             Message,
@@ -20,10 +20,8 @@ class ChatTypeFilter(AbstractEventFilter):
             ChatMemberUpdated,
             ChatJoinRequest
         ]
-    ) -> bool:
-        if isinstance(event, (Message, ChatMemberUpdated, ChatJoinRequest)):
-            return event.chat.type in self._types
-        elif isinstance(event, CallbackQuery):
-            return event.message.chat.type in self._types
+    ) -> Optional[str]:
+        return event.chat_type
 
-        return False
+    def check_value(self, value: Optional[str]) -> bool:
+        return value in self._types
