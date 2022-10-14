@@ -2,9 +2,9 @@ from typing import Optional
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.base import AbstractStateStorage
-from telebox.state_machine.state_manager import StateManager
+from telebox.state_machine.manager import StateManager
 from telebox.state_machine.transition_scheme import TransitionScheme
-from telebox.state_machine.state_magazine import StateMagazine
+from telebox.state_machine.magazine import StateMagazine
 from telebox.state_machine.errors import (
     DestinationStateNotFoundError,
     NextStateNotFoundError,

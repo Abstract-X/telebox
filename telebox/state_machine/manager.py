@@ -2,7 +2,7 @@ from typing import Optional
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.base import AbstractStateStorage
-from telebox.state_machine.state_magazine import StateMagazine
+from telebox.state_machine.magazine import StateMagazine
 from telebox.state_machine.errors import (
     StateAlreadyExistsError,
     StateNameAlreadyExistsError,
