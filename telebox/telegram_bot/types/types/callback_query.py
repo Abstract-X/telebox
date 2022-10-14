@@ -27,3 +27,7 @@ class CallbackQuery(Type):
     @property
     def user_id(self) -> int:
         return self.from_.id
+
+    @property
+    def message_id(self) -> Optional[int]:
+        return self.message.message_id if self.message is not None else None

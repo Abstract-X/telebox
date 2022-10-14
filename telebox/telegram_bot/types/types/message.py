@@ -198,6 +198,10 @@ class Message(Type):
         return self.chat.id
 
     @property
+    def sender_chat_id(self) -> Optional[int]:
+        return self.sender_chat.id if self.sender_chat is not None else None
+
+    @property
     def user_id(self) -> Optional[int]:
         return self.from_.id if self.from_ is not None else None
 

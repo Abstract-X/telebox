@@ -34,6 +34,11 @@ from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.not_set import NotSet
 from telebox.utils.request_timeout import RequestTimeout
 from telebox.typing import Event
+from telebox.utils.context.vars import (
+    event_context,
+    event_handler_context,
+    error_handler_context
+)
 
 
 @dataclass
@@ -394,11 +399,13 @@ class Dispatcher:
 
     def _run_event_processing(self, events: EventQueue) -> None:
         while True:
+            event_context_token = event_handler_context_token = error_handler_context_token = None
             event = events.get_event()
 
             # noinspection PyBroadException
             try:
                 logger.debug("Event processing started: %r.", event.event)
+                event_context_token = event_context.set(event)
 
                 for i in self._middlewares:
                     i.pre_process_event(event.event, event.event_type)
@@ -406,15 +413,10 @@ class Dispatcher:
                 event_handler = self._get_event_handler(event.event, event.event_type)
 
                 if event_handler is not None:
-                    if event_handler.rate_limiter is not None:
-                        if event.user_id not in event_handler.calls:
-                            event_handler.calls[event.user_id] = CallState(is_first=True)
-                        elif event_handler.calls[event.user_id].is_first:
-                            event_handler.calls[event.user_id].is_first = False
-                            event_handler.rate_limiter.process(event.event)
-                            continue
-                        else:
-                            continue
+                    event_handler_context_token = event_handler_context.set(event_handler.handler)
+
+                    if _process_rate_limiting(event, event_handler):
+                        continue
 
                     for i in self._middlewares:
                         i.process_event(event.event, event.event_type)
@@ -429,6 +431,10 @@ class Dispatcher:
 
                         if error_handler is None:
                             raise
+
+                        error_handler_context_token = error_handler_context.set(
+                            error_handler.handler
+                        )
 
                         for i in self._middlewares:
                             i.process_error(error, event.event, event.event_type)
@@ -446,8 +452,31 @@ class Dispatcher:
             except Exception:
                 logger.exception("An error occurred while processing an event!")
             finally:
+                if event_context_token is not None:
+                    event_context.reset(event_context_token)
+
+                if event_handler_context_token is not None:
+                    event_handler_context.reset(event_handler_context_token)
+
+                if error_handler_context_token is not None:
+                    error_handler_context.reset(error_handler_context_token)
+
                 events.set_event_as_processed(event)
                 logger.debug("Event processing finished: %r.", event.event)
+
+
+def _process_rate_limiting(event: Event, handler: EventHandler) -> bool:
+    if handler.rate_limiter is not None:
+        if event.user_id not in handler.calls:
+            handler.calls[event.user_id] = CallState(is_first=True)
+        else:
+            if handler.calls[event.user_id].is_first:
+                handler.calls[event.user_id].is_first = False
+                handler.rate_limiter.process(event.event)
+
+            return True
+
+    return False
 
 
 def _get_handler(handlers: list, value_getting_args: tuple):
