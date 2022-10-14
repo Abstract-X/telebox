@@ -17,8 +17,7 @@ from telebox.dispatcher.event_queue import EventQueue
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.handlers.error import AbstractErrorHandler
-from telebox.dispatcher.middlewares.middleware import Middleware
-from telebox.dispatcher.handlers.filters.base.base import (
+from telebox.dispatcher.filters.base import (
     AbstractFilter,
     ExpressionType,
     AbstractExpression,
@@ -28,8 +27,9 @@ from telebox.dispatcher.handlers.filters.base.base import (
     AndExpression,
     OrExpression
 )
-from telebox.dispatcher.handlers.filters.base.event import AbstractEventFilter
-from telebox.dispatcher.handlers.filters.base.error import AbstractErrorFilter
+from telebox.dispatcher.filters.base_event import AbstractEventFilter
+from telebox.dispatcher.filters.base_error import AbstractErrorFilter
+from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.rate_limiter import RateLimiter
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.not_set import NotSet

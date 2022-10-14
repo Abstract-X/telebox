@@ -1,4 +1,4 @@
-from telebox.dispatcher.handlers.filters.base.event import AbstractEventFilter
+from telebox.dispatcher.filters.base_event import AbstractEventFilter
 from telebox.telegram_bot.types.types.message import Message
 from telebox.state_machine.state import State
 from telebox.state_machine.state_machine import StateMachine

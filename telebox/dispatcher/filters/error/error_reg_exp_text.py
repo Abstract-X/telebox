@@ -1,6 +1,6 @@
 from typing import Pattern
 
-from telebox.dispatcher.handlers.filters.base.error import AbstractErrorFilter
+from telebox.dispatcher.filters.base_error import AbstractErrorFilter
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.typing import Event
 

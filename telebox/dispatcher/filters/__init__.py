@@ -1,4 +1,6 @@
-from .base import AbstractFilter, AbstractEventFilter, AbstractErrorFilter
+from .base import AbstractFilter
+from .base_event import AbstractEventFilter
+from .base_error import AbstractErrorFilter
 from .event import (
     ChatIDFilter,
     UserIDFilter,

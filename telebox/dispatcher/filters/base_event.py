@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from telebox.dispatcher.handlers.filters.base.base import AbstractFilter
+from telebox.dispatcher.filters.base import AbstractFilter
 
 
 class AbstractEventFilter(AbstractFilter, ABC):

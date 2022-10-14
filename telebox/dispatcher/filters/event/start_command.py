@@ -1,6 +1,6 @@
 from typing import Union, Pattern, Optional
 
-from telebox.dispatcher.handlers.filters.event.command import CommandFilter
+from telebox.dispatcher.filters.event.command import CommandFilter
 from telebox.telegram_bot.utils import get_decoded_deep_link_payload
 
 

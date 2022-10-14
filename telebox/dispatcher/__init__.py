@@ -3,7 +3,9 @@ from .enums import EventType
 from .handlers import (
     AbstractHandler,
     AbstractEventHandler,
-    AbstractErrorHandler,
+    AbstractErrorHandler
+)
+from .filters import (
     AbstractFilter,
     AbstractEventFilter,
     AbstractErrorFilter
