@@ -1,2 +1,2 @@
 from .base import AbstractCallbackDataBuilder
-from .builders import JSONCallbackDataBuilder
+from .builders import JSONCallbackDataBuilder, SeparatoryCallbackDataBuilder
