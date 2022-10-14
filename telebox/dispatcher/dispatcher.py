@@ -1,17 +1,15 @@
 import logging
-from typing import Optional, Union, Literal, Callable
+from typing import Optional, Union, Literal
 from dataclasses import dataclass
 import time
 
 from cachetools import TTLCache
 import cherrypy
-import ujson
 
 from telebox.telegram_bot.telegram_bot import TelegramBot
 from telebox.telegram_bot.types.types.update import Update
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
-from telebox.telegram_bot.serializer import Serializer
 from telebox.dispatcher.thread_pool import ThreadPool
 from telebox.dispatcher.event_queue import EventQueue
 from telebox.dispatcher.enums.event_type import EventType
@@ -31,6 +29,7 @@ from telebox.dispatcher.filters.base_event import AbstractEventFilter
 from telebox.dispatcher.filters.base_error import AbstractErrorFilter
 from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.rate_limiter import RateLimiter
+from telebox.dispatcher.server_root import ServerRoot
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.not_set import NotSet
 from telebox.utils.request_timeout import RequestTimeout
@@ -536,23 +535,3 @@ def _get_expression(filter_) -> AbstractExpression:
         return filter_
 
     raise ValueError(f"Unknown filter type {filter_!r}!")
-
-
-class ServerRoot:
-
-    def __init__(self, update_processor: Callable[[Update], None]):
-        self._serializer = Serializer()
-        self._update_processor = update_processor
-
-    @cherrypy.expose
-    def index(self) -> str:
-        content_length = cherrypy.request.headers.get("Content-Length")
-
-        if content_length is None:
-            raise cherrypy.HTTPError(403)
-
-        data = ujson.loads(cherrypy.request.body.read(int(content_length)))
-        update = self._serializer.get_object(data=data, class_=Update)
-        self._update_processor(update)
-
-        return str()
