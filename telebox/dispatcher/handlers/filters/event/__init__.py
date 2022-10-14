@@ -11,3 +11,4 @@ from .forwarded_message import ForwardedMessageFilter
 from .chat_type import ChatTypeFilter
 from .state import StateFilter
 from .non_standard_command import NonStandardCommandFilter
+from .callback_data import CallbackDataFilter

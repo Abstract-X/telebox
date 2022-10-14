@@ -12,7 +12,8 @@ from .event import (
     StartCommandFilter,
     StateFilter,
     TextFilter,
-    NonStandardCommandFilter
+    NonStandardCommandFilter,
+    CallbackDataFilter
 )
 from .error import (
     ErrorTypeFilter,
