@@ -1,4 +1,4 @@
-from .base import Type
+from .type import Type
 from .types import (
     Update,
     WebhookInfo,

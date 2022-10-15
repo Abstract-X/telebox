@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.types.types.poll_option import PollOption
 from telebox.telegram_bot.types.types.message_entity import MessageEntity
 

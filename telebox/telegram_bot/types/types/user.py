@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, Literal
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.utils import get_url, get_user_mention_url, get_full_name
 
 

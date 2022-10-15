@@ -1,2 +1,2 @@
-from .base import AbstractHandler
+from .handler import AbstractHandler
 from .handlers import AbstractEventHandler, AbstractErrorHandler

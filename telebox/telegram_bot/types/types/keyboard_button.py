@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.types.types.keyboard_button_poll_type import KeyboardButtonPollType
 from telebox.telegram_bot.types.types.web_app_info import WebAppInfo
 

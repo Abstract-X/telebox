@@ -1,4 +1,4 @@
-from telebox.dispatcher.filters.base_error import AbstractErrorFilter
+from telebox.dispatcher.filters.error_filter import AbstractErrorFilter
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.typing import Event
 

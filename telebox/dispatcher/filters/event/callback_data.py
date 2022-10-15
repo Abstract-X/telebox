@@ -1,8 +1,8 @@
 from typing import Optional, Any
 
-from telebox.dispatcher.filters.base_event import AbstractEventFilter
+from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
-from telebox.utils.callback_data_builders.base import AbstractCallbackDataBuilder
+from telebox.utils.callback_data_builders.builder import AbstractCallbackDataBuilder
 
 
 class CallbackDataFilter(AbstractEventFilter):

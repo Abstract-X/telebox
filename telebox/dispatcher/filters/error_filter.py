@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from telebox.dispatcher.filters.base import AbstractFilter
+from telebox.dispatcher.filters.filter import AbstractFilter
 
 
 class AbstractErrorFilter(AbstractFilter, ABC):

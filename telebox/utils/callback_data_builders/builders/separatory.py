@@ -1,6 +1,6 @@
 from typing import Iterable, Union
 
-from telebox.utils.callback_data_builders.base import AbstractCallbackDataBuilder
+from telebox.utils.callback_data_builders.builder import AbstractCallbackDataBuilder
 
 
 FilterKey = str

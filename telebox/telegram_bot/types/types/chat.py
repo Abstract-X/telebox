@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Literal, Optional, TYPE_CHECKING
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.utils import get_url, get_full_name, get_chat_id_without_prefix
 from telebox.telegram_bot.consts import chat_types
 from telebox.telegram_bot.types.types.chat_photo import ChatPhoto

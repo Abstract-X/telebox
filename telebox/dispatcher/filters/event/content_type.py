@@ -1,4 +1,4 @@
-from telebox.dispatcher.filters.base_event import AbstractEventFilter
+from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.enums.message_content_type import MessageContentType
 
