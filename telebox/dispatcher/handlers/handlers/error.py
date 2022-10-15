@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from telebox.dispatcher.handlers.base import AbstractHandler
+from telebox.dispatcher.handlers.handler import AbstractHandler
 
 
 class AbstractErrorHandler(AbstractHandler, ABC):

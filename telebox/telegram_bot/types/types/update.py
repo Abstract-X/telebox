@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.typing import UpdateContent
 from telebox.telegram_bot.enums.update_content_type import UpdateContentType
 from telebox.telegram_bot.errors import UnknownUpdateContentError
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.inline_query import InlineQuery
 from telebox.telegram_bot.types.types.chosen_inline_result import ChosenInlineResult

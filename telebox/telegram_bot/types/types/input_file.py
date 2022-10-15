@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 
 
 @dataclass(unsafe_hash=True)

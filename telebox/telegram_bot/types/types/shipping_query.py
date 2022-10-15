@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.types.types.user import User
 from telebox.telegram_bot.types.types.shipping_address import ShippingAddress
 

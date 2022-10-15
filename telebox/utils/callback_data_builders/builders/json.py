@@ -2,7 +2,7 @@ from typing import Union
 
 import ujson
 
-from telebox.utils.callback_data_builders.base import AbstractCallbackDataBuilder
+from telebox.utils.callback_data_builders.builder import AbstractCallbackDataBuilder
 
 
 FilterKey = Union[str, int]

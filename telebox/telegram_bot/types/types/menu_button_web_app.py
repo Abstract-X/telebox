@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.consts import menu_button_types
 from telebox.telegram_bot.types.types.web_app_info import WebAppInfo
 

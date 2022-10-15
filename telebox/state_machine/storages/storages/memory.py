@@ -1,6 +1,6 @@
 from typing import Optional
 
-from telebox.state_machine.storages.base import AbstractStateStorage
+from telebox.state_machine.storages.storage import AbstractStateStorage
 
 
 StateDict = dict[

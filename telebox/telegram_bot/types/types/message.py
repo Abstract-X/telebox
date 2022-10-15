@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Literal, Union, TYPE_CHECKING
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.utils import get_message_public_url, get_message_private_url
 from telebox.telegram_bot.consts import chat_types
 from telebox.telegram_bot.enums.message_content_type import MessageContentType

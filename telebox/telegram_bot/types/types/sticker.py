@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from telebox.telegram_bot.types.base import Type
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.types.types.photo_size import PhotoSize
 from telebox.telegram_bot.types.types.file import File
 from telebox.telegram_bot.types.types.mask_position import MaskPosition
