@@ -16,8 +16,8 @@ class State:
     def name(self) -> str:
         return self._name
 
-    def process_enter(self, event) -> None:
+    def process_enter(self, event, data) -> None:
         pass
 
-    def process_exit(self, event) -> None:
+    def process_exit(self, event, data) -> None:
         pass
