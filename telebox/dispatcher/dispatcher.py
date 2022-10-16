@@ -1,12 +1,13 @@
 import logging
-from typing import Optional, Union, Literal
+from typing import Optional, Union, Literal, TYPE_CHECKING
 from dataclasses import dataclass
 import time
 
 from cachetools import TTLCache
 import cherrypy
 
-from telebox.telegram_bot.telegram_bot import TelegramBot
+if TYPE_CHECKING:
+    from telebox.telegram_bot.telegram_bot import TelegramBot
 from telebox.telegram_bot.types.types.update import Update
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
@@ -69,7 +70,7 @@ class Dispatcher:
 
     def __init__(
         self,
-        bot: TelegramBot,
+        bot: "TelegramBot",
         *,
         drop_over_limit_events: bool = False,
         default_rate_limiters: Optional[dict[EventType, RateLimiter]] = None

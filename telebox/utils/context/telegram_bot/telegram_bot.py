@@ -1,7 +1,8 @@
-from typing import Optional, Union, Literal, Any
+from typing import Optional, Union, Literal, Any, TYPE_CHECKING
 from datetime import datetime
 
-from telebox.telegram_bot.telegram_bot import TelegramBot
+if TYPE_CHECKING:
+    from telebox.telegram_bot.telegram_bot import TelegramBot
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.inline_query import InlineQuery
 from telebox.telegram_bot.types.types.chosen_inline_result import ChosenInlineResult
@@ -86,7 +87,7 @@ _HAVING_PRE_CHECKOUT_QUERY_ID_TYPES = frozenset({
 
 class ContextTelegramBot:
 
-    def __init__(self, bot: TelegramBot):
+    def __init__(self, bot: "TelegramBot"):
         self._bot = bot
 
     def send_message(
