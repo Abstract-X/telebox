@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.telegram_bot.types.types.message import Message
@@ -20,8 +20,8 @@ class ChatIDFilter(AbstractEventFilter):
             ChatMemberUpdated,
             ChatJoinRequest
         ]
-    ) -> int:
+    ) -> Optional[int]:
         return event.chat_id
 
-    def check_value(self, value: int) -> bool:
+    def check_value(self, value: Optional[int]) -> bool:
         return value in self._ids
