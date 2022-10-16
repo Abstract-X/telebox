@@ -3,7 +3,7 @@ from typing import Optional
 from telebox.state_machine.state import State
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
 from telebox.state_machine.errors import (
-    TransitionAlreadyExistsError,
+    TransitionExistsError,
     DestinationStateNotFoundError
 )
 
@@ -33,7 +33,7 @@ class TransitionScheme:
         direction: Optional[str] = None
     ) -> None:
         if self._check_destination_state(source_state, handler, direction):
-            raise TransitionAlreadyExistsError(
+            raise TransitionExistsError(
                 "Transition already exists ({source_state=}, {handler=}, {direction=})!",
                 source_state=source_state,
                 handler=handler,
