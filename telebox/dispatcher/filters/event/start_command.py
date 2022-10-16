@@ -1,6 +1,7 @@
 from typing import Union, Pattern, Optional
 
 from telebox.dispatcher.filters.event.command import CommandFilter
+from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.utils import get_decoded_deep_link_payload
 
 
@@ -18,22 +19,31 @@ class StartCommandFilter(CommandFilter):
         self._payload = payload
         self._with_decoding = with_decoding
 
-    def check_value(self, value: Optional[str]) -> bool:
-        if super().check_value(value):
-            if self._payload is not None:
-                text_parts = value.split(" ", 1)
+    def get_value(self, event: Message) -> tuple[Optional[str], Optional[str]]:
+        command = super().get_value(event)
+        payload = None
 
-                if len(text_parts) == 2:
-                    payload = text_parts[1]
-
-                    if self._with_decoding:
-                        payload = get_decoded_deep_link_payload(payload)
-
-                    if isinstance(self._payload, Pattern):
-                        return self._payload.fullmatch(payload) is not None
-                    else:
-                        return self._payload == payload
+        if (command is not None) and (self._payload is not None):
+            try:
+                payload = event.text.split(" ", 1)[1]
+            except IndexError:
+                pass
             else:
-                return True
+                if self._with_decoding:
+                    payload = get_decoded_deep_link_payload(payload)
+
+        return command, payload
+
+    def check_value(self, value: tuple[Optional[str], Optional[str]]) -> bool:
+        command, payload = value
+
+        if super().check_value(command):
+            if (self._payload is not None) and (payload is not None):
+                if isinstance(self._payload, Pattern):
+                    return self._payload.fullmatch(payload) is not None
+                else:
+                    return self._payload == payload
+
+            return True
 
         return False

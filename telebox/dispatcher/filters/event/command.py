@@ -22,12 +22,12 @@ class CommandFilter(AbstractEventFilter):
 
     def get_value(self, event: Message) -> Optional[str]:
         if event.text is not None:
-            command_text = event.text.split(" ", 1)[0]
+            command = event.text.split(" ", 1)[0]
 
             if self._ignore_case:
-                command_text = command_text.lower()
+                command = command.lower()
 
-            return command_text
+            return command
 
     def check_value(self, value: Optional[str]) -> bool:
         return value in self._commands
