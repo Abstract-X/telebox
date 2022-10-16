@@ -97,7 +97,7 @@ class EventQueue:
         finally:
             self._events.task_done()
 
-    def wait_event_processing(self) -> None:
+    def wait_events(self) -> None:
         while self._chat_events:
             time.sleep(_DELAY_SECS)
 

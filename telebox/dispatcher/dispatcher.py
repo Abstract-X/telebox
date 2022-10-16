@@ -394,7 +394,7 @@ class Dispatcher:
 
     def _finish_update_processing(self) -> None:
         logger.info("Update processing finishing...")
-        self._events.wait_event_processing()
+        self._events.wait_events()
         self._thread_pool = None
         logger.info("Update processing finished.")
 
@@ -405,8 +405,8 @@ class Dispatcher:
 
             # noinspection PyBroadException
             try:
-                logger.debug("Event processing started: %r.", event.event)
-                event_context_token = event_context.set(event)
+                logger.debug("Event processing started: %r.", event)
+                event_context_token = event_context.set(event.event)
 
                 for i in self._middlewares:
                     i.pre_process_event(event.event, event.event_type)
@@ -463,7 +463,7 @@ class Dispatcher:
                     error_handler_context.reset(error_handler_context_token)
 
                 events.set_event_as_processed(event)
-                logger.debug("Event processing finished: %r.", event.event)
+                logger.debug("Event processing finished: %r.", event)
 
 
 def _process_rate_limiting(event: Event, handler: EventHandler) -> bool:
