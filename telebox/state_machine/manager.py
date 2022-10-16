@@ -4,8 +4,8 @@ from telebox.state_machine.state import State
 from telebox.state_machine.storages.storage import AbstractStateStorage
 from telebox.state_machine.magazine import StateMagazine
 from telebox.state_machine.errors import (
-    StateAlreadyExistsError,
-    StateNameAlreadyExistsError,
+    StateExistsError,
+    StateNameExistsError,
     StateNotFoundError
 )
 
@@ -28,13 +28,13 @@ class StateManager:
 
     def add_state(self, state: State) -> None:
         if state.name in self._states:
-            raise StateNameAlreadyExistsError(
+            raise StateNameExistsError(
                 "State name {state_name!r} already exists!",
                 state_name=state.name
             )
 
         if state in self._states.values():
-            raise StateAlreadyExistsError(
+            raise StateExistsError(
                 "State {state!r} already exists!",
                 state=state
             )

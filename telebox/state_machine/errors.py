@@ -12,17 +12,17 @@ class StateMachineError(TeleboxError):
 
 
 @dataclass
-class StateAlreadyExistsError(StateMachineError):
+class StateExistsError(StateMachineError):
     state: State
 
 
 @dataclass
-class StateNameAlreadyExistsError(StateMachineError):
+class StateNameExistsError(StateMachineError):
     state_name: str
 
 
 @dataclass
-class TransitionAlreadyExistsError(StateMachineError):
+class TransitionExistsError(StateMachineError):
     source_state: State
     handler: AbstractEventHandler
     direction: Optional[str] = None

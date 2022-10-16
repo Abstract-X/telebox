@@ -1,4 +1,5 @@
-from typing import Optional
+from typing import Optional, Any
+import contextlib
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.storage import AbstractStateStorage
@@ -8,7 +9,8 @@ from telebox.state_machine.magazine import StateMagazine
 from telebox.state_machine.errors import (
     DestinationStateNotFoundError,
     NextStateNotFoundError,
-    PreviousStateNotFoundError
+    PreviousStateNotFoundError,
+    StateExistsError
 )
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
 from telebox.typing import Event
@@ -28,6 +30,9 @@ class StateMachine:
     def states(self) -> set[State]:
         return self._state_manager.states
 
+    def add_state(self, state: State) -> None:
+        self._state_manager.add_state(state)
+
     def add_transition(
         self,
         source_state: State,
@@ -43,8 +48,8 @@ class StateMachine:
         )
 
         for i in (source_state, destination_state):
-            if i not in self._state_manager.states:
-                self._state_manager.add_state(i)
+            with contextlib.suppress(StateExistsError):
+                self.add_state(i)
 
     def get_state(self, *, chat_id: int, user_id: Optional[int] = None) -> State:
         magazine = self._state_manager.load_magazine(chat_id=chat_id, user_id=user_id)
@@ -56,6 +61,7 @@ class StateMachine:
         event: Event,
         handler: AbstractEventHandler,
         direction: Optional[str] = None,
+        data: Any = None,
         *,
         chat_id: int,
         user_id: Optional[int] = None
@@ -83,6 +89,7 @@ class StateMachine:
             magazine=magazine,
             source_state=current_state,
             destination_state=next_state,
+            data=data,
             chat_id=chat_id,
             user_id=user_id
         )
@@ -90,6 +97,7 @@ class StateMachine:
     def set_previous_state(
         self,
         event: Event,
+        data: Any = None,
         *,
         chat_id: int,
         user_id: Optional[int] = None
@@ -110,6 +118,7 @@ class StateMachine:
             magazine=magazine,
             source_state=current_state,
             destination_state=previous_state,
+            data=data,
             chat_id=chat_id,
             user_id=user_id
         )
@@ -118,6 +127,7 @@ class StateMachine:
         self,
         state: State,
         event: Event,
+        data: Any = None,
         *,
         chat_id: int,
         user_id: Optional[int] = None
@@ -129,6 +139,7 @@ class StateMachine:
             magazine=magazine,
             source_state=current_state,
             destination_state=state,
+            data=data,
             chat_id=chat_id,
             user_id=user_id
         )
@@ -136,6 +147,7 @@ class StateMachine:
     def reset_state(
         self,
         event: Event,
+        data: Any = None,
         *,
         chat_id: int,
         user_id: Optional[int] = None,
@@ -144,9 +156,9 @@ class StateMachine:
         state = self.get_state(chat_id=chat_id, user_id=user_id)
 
         if with_exit:
-            state.process_exit(event)
+            state.process_exit(event, data)
 
-        state.process_enter(event)
+        state.process_enter(event, data)
 
     def _process_transition(
         self,
@@ -154,11 +166,12 @@ class StateMachine:
         magazine: StateMagazine,
         source_state: State,
         destination_state: State,
+        data: Any = None,
         *,
         chat_id: int,
         user_id: int
     ) -> None:
-        source_state.process_exit(event)
-        destination_state.process_enter(event)
+        source_state.process_exit(event, data)
+        destination_state.process_enter(event, data)
         magazine.set_state(str(destination_state))
         self._state_manager.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
