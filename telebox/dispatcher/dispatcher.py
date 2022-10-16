@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Union, Literal, TYPE_CHECKING
+from typing import Optional, Union, Literal, NoReturn, TYPE_CHECKING
 from dataclasses import dataclass
 import time
 
@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 from telebox.telegram_bot.types.types.update import Update
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
-from telebox.dispatcher.thread_pool import ThreadPool
 from telebox.dispatcher.event_queue import EventQueue
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
@@ -32,6 +31,7 @@ from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.rate_limiter import RateLimiter
 from telebox.dispatcher.server_root import ServerRoot
 from telebox.dispatcher.errors import DispatcherError
+from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet
 from telebox.utils.request_timeout import RequestTimeout
 from telebox.typing import Event
@@ -398,7 +398,7 @@ class Dispatcher:
         self._thread_pool = None
         logger.info("Update processing finished.")
 
-    def _run_event_processing(self, events: EventQueue) -> None:
+    def _run_event_processing(self, events: EventQueue) -> NoReturn:
         while True:
             event_context_token = event_handler_context_token = error_handler_context_token = None
             event = events.get_event()
