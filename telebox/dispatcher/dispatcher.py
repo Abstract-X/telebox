@@ -1,16 +1,16 @@
 import logging
-from typing import Optional, Union, Literal
+from typing import Optional, Union, Literal, NoReturn, TYPE_CHECKING
 from dataclasses import dataclass
 import time
 
 from cachetools import TTLCache
 import cherrypy
 
-from telebox.telegram_bot.telegram_bot import TelegramBot
+if TYPE_CHECKING:
+    from telebox.telegram_bot.telegram_bot import TelegramBot
 from telebox.telegram_bot.types.types.update import Update
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
-from telebox.dispatcher.thread_pool import ThreadPool
 from telebox.dispatcher.event_queue import EventQueue
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
@@ -31,6 +31,7 @@ from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.rate_limiter import RateLimiter
 from telebox.dispatcher.server_root import ServerRoot
 from telebox.dispatcher.errors import DispatcherError
+from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet
 from telebox.utils.request_timeout import RequestTimeout
 from telebox.typing import Event
@@ -69,7 +70,7 @@ class Dispatcher:
 
     def __init__(
         self,
-        bot: TelegramBot,
+        bot: "TelegramBot",
         *,
         drop_over_limit_events: bool = False,
         default_rate_limiters: Optional[dict[EventType, RateLimiter]] = None
@@ -393,19 +394,19 @@ class Dispatcher:
 
     def _finish_update_processing(self) -> None:
         logger.info("Update processing finishing...")
-        self._events.wait_event_processing()
+        self._events.wait_events()
         self._thread_pool = None
         logger.info("Update processing finished.")
 
-    def _run_event_processing(self, events: EventQueue) -> None:
+    def _run_event_processing(self, events: EventQueue) -> NoReturn:
         while True:
             event_context_token = event_handler_context_token = error_handler_context_token = None
             event = events.get_event()
 
             # noinspection PyBroadException
             try:
-                logger.debug("Event processing started: %r.", event.event)
-                event_context_token = event_context.set(event)
+                logger.debug("Event processing started: %r.", event)
+                event_context_token = event_context.set(event.event)
 
                 for i in self._middlewares:
                     i.pre_process_event(event.event, event.event_type)
@@ -462,7 +463,7 @@ class Dispatcher:
                     error_handler_context.reset(error_handler_context_token)
 
                 events.set_event_as_processed(event)
-                logger.debug("Event processing finished: %r.", event.event)
+                logger.debug("Event processing finished: %r.", event)
 
 
 def _process_rate_limiting(event: Event, handler: EventHandler) -> bool:
