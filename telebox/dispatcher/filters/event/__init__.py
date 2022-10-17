@@ -1,5 +1,6 @@
 from .command import CommandFilter
 from .start_command import StartCommandFilter
+from .reg_exp_start_command import RegExpStartCommandFilter
 from .text import TextFilter
 from .reg_exp_text import RegExpTextFilter
 from .content_type import ContentTypeFilter
