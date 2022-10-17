@@ -1,6 +1,7 @@
 from typing import Optional, Any
 
 from telebox.state_machine.machine import StateMachine
+from telebox.state_machine.state import State
 from telebox.utils.context.vars import event_context, event_handler_context
 
 
@@ -23,6 +24,16 @@ class ContextStateMachine:
     def set_previous_state(self, data: Any = None) -> None:
         event = event_context.get()
         self._machine.set_previous_state(
+            event=event,
+            data=data,
+            chat_id=event.chat_id,
+            user_id=event.user_id
+        )
+
+    def set_state(self, state: State, data: Any = None) -> None:
+        event = event_context.get()
+        self._machine.set_state(
+            state=state,
             event=event,
             data=data,
             chat_id=event.chat_id,
