@@ -1,3 +1,4 @@
+from .dispatcher import Dispatcher
 from .enums import EventType
 from .handlers import (
     AbstractHandler,

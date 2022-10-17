@@ -1,17 +1,9 @@
-from typing import Optional, Union, Literal, Any, TYPE_CHECKING
+from typing import Optional, Union, Literal, TYPE_CHECKING
 from datetime import datetime
 
 if TYPE_CHECKING:
     from telebox.telegram_bot.telegram_bot import TelegramBot
 from telebox.telegram_bot.types.types.message import Message
-from telebox.telegram_bot.types.types.inline_query import InlineQuery
-from telebox.telegram_bot.types.types.chosen_inline_result import ChosenInlineResult
-from telebox.telegram_bot.types.types.callback_query import CallbackQuery
-from telebox.telegram_bot.types.types.shipping_query import ShippingQuery
-from telebox.telegram_bot.types.types.pre_checkout_query import PreCheckoutQuery
-from telebox.telegram_bot.types.types.poll_answer import PollAnswer
-from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
-from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
 from telebox.telegram_bot.types.types.message_entity import MessageEntity
 from telebox.telegram_bot.types.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.telegram_bot.types.types.reply_keyboard_markup import ReplyKeyboardMarkup
@@ -42,47 +34,16 @@ from telebox.telegram_bot.types.types.chat_member_owner import ChatMemberOwner
 from telebox.telegram_bot.types.types.chat_member_administrator import ChatMemberAdministrator
 from telebox.utils.request_timeout import RequestTimeout
 from telebox.utils.not_set import NotSet
-from telebox.utils.context.vars import event_context
-from telebox.utils.context.telegram_bot.errors import InvalidEventError
-from telebox.typing import Event
-
-
-_HAVING_CHAT_ID_TYPES = frozenset({
-    Message,
-    CallbackQuery,
-    ChatMemberUpdated,
-    ChatJoinRequest
-})
-_HAVING_SENDER_CHAT_ID_TYPES = frozenset({
-    Message
-})
-_HAVING_USER_ID_TYPES = frozenset({
-    Message,
-    InlineQuery,
-    ChosenInlineResult,
-    CallbackQuery,
-    ShippingQuery,
-    PreCheckoutQuery,
-    PollAnswer,
-    ChatMemberUpdated,
-    ChatJoinRequest
-})
-_HAVING_MESSAGE_ID_TYPES = frozenset({
-    Message,
-    CallbackQuery
-})
-_HAVING_CALLBACK_QUERY_ID_TYPES = frozenset({
-    CallbackQuery
-})
-_HAVING_INLINE_QUERY_ID_TYPES = frozenset({
-    InlineQuery
-})
-_HAVING_SHIPPING_QUERY_ID_TYPES = frozenset({
-    ShippingQuery
-})
-_HAVING_PRE_CHECKOUT_QUERY_ID_TYPES = frozenset({
-    PreCheckoutQuery
-})
+from telebox.utils.context.utils import (
+    get_event_chat_id,
+    get_event_user_id,
+    get_event_sender_chat_id,
+    get_event_message_id,
+    get_event_callback_query_id,
+    get_event_inline_query_id,
+    get_event_shipping_query_id,
+    get_event_pre_checkout_query_id
+)
 
 
 class ContextTelegramBot:
@@ -109,7 +70,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_message(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             text=text,
             request_timeout=request_timeout,
             parse_mode=parse_mode,
@@ -117,7 +78,7 @@ class ContextTelegramBot:
             disable_web_page_preview=disable_web_page_preview,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -132,8 +93,8 @@ class ContextTelegramBot:
     ) -> Message:
         return self._bot.forward_message(
             chat_id=chat_id,
-            from_chat_id=_get_chat_id(),
-            message_id=_get_message_id(),
+            from_chat_id=get_event_chat_id(),
+            message_id=get_event_message_id(),
             request_timeout=request_timeout,
             disable_notification=disable_notification,
             protect_content=protect_content
@@ -149,7 +110,7 @@ class ContextTelegramBot:
         protect_content: Optional[bool] = None
     ):
         return self._bot.forward_message(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             from_chat_id=from_chat_id,
             message_id=message_id,
             request_timeout=request_timeout,
@@ -177,8 +138,8 @@ class ContextTelegramBot:
     ) -> MessageId:
         return self._bot.copy_message(
             chat_id=chat_id,
-            from_chat_id=_get_chat_id(),
-            message_id=_get_message_id(),
+            from_chat_id=get_event_chat_id(),
+            message_id=get_event_message_id(),
             request_timeout=request_timeout,
             caption=caption,
             parse_mode=parse_mode,
@@ -210,7 +171,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> MessageId:
         return self._bot.copy_message(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             from_chat_id=from_chat_id,
             message_id=message_id,
             request_timeout=request_timeout,
@@ -219,7 +180,7 @@ class ContextTelegramBot:
             caption_entities=caption_entities,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -243,7 +204,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_photo(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             photo=photo,
             request_timeout=request_timeout,
             caption=caption,
@@ -251,7 +212,7 @@ class ContextTelegramBot:
             caption_entities=caption_entities,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -279,7 +240,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_audio(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             audio=audio,
             request_timeout=request_timeout,
             caption=caption,
@@ -291,7 +252,7 @@ class ContextTelegramBot:
             thumb=thumb,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -317,7 +278,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_document(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             document=document,
             request_timeout=request_timeout,
             thumb=thumb,
@@ -327,7 +288,7 @@ class ContextTelegramBot:
             disable_content_type_detection=disable_content_type_detection,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -356,7 +317,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_video(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             video=video,
             request_timeout=request_timeout,
             duration=duration,
@@ -369,7 +330,7 @@ class ContextTelegramBot:
             supports_streaming=supports_streaming,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -397,7 +358,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_animation(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             animation=animation,
             request_timeout=request_timeout,
             duration=duration,
@@ -409,7 +370,7 @@ class ContextTelegramBot:
             caption_entities=caption_entities,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -434,7 +395,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_voice(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             voice=voice,
             request_timeout=request_timeout,
             caption=caption,
@@ -443,7 +404,7 @@ class ContextTelegramBot:
             duration=duration,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -467,7 +428,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_video_note(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             video_note=video_note,
             request_timeout=request_timeout,
             duration=duration,
@@ -475,7 +436,7 @@ class ContextTelegramBot:
             thumb=thumb,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -494,12 +455,12 @@ class ContextTelegramBot:
         allow_sending_without_reply: Optional[bool] = None
     ) -> list[Message]:
         return self._bot.send_media_group(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             media=media,
             request_timeout=request_timeout,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply
         )
 
@@ -524,7 +485,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_location(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             latitude=latitude,
             longitude=longitude,
             request_timeout=request_timeout,
@@ -534,7 +495,7 @@ class ContextTelegramBot:
             proximity_alert_radius=proximity_alert_radius,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -555,8 +516,8 @@ class ContextTelegramBot:
             latitude=latitude,
             longitude=longitude,
             request_timeout=request_timeout,
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             horizontal_accuracy=horizontal_accuracy,
             heading=heading,
             proximity_alert_radius=proximity_alert_radius,
@@ -572,8 +533,8 @@ class ContextTelegramBot:
     ) -> Message:
         return self._bot.stop_message_live_location(
             request_timeout=request_timeout,
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             reply_markup=reply_markup
         )
 
@@ -600,7 +561,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_venue(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             latitude=latitude,
             longitude=longitude,
             title=title,
@@ -612,7 +573,7 @@ class ContextTelegramBot:
             google_place_type=google_place_type,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -636,7 +597,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_contact(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             phone_number=phone_number,
             first_name=first_name,
             request_timeout=request_timeout,
@@ -644,7 +605,7 @@ class ContextTelegramBot:
             vcard=vcard,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -676,7 +637,7 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_poll(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             question=question,
             options=options,
             request_timeout=request_timeout,
@@ -692,7 +653,7 @@ class ContextTelegramBot:
             is_closed=is_closed,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -713,12 +674,12 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_dice(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout,
             emoji=emoji,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -730,7 +691,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.send_chat_action(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             action=action,
             request_timeout=request_timeout
         )
@@ -743,7 +704,7 @@ class ContextTelegramBot:
         limit: Optional[int] = None
     ) -> UserProfilePhotos:
         return self._bot.get_user_profile_photos(
-            user_id=_get_user_id(),
+            user_id=get_event_user_id(),
             request_timeout=request_timeout,
             offset=offset,
             limit=limit
@@ -758,8 +719,8 @@ class ContextTelegramBot:
         revoke_messages: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.ban_chat_member(
-            chat_id=_get_chat_id(),
-            user_id=_get_user_id() if user_id is None else user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
             request_timeout=request_timeout,
             until_date=until_date,
             revoke_messages=revoke_messages
@@ -773,8 +734,8 @@ class ContextTelegramBot:
         only_if_banned: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.unban_chat_member(
-            chat_id=_get_chat_id(),
-            user_id=_get_user_id() if user_id is None else user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
             request_timeout=request_timeout,
             only_if_banned=only_if_banned
         )
@@ -788,8 +749,8 @@ class ContextTelegramBot:
         until_date: Optional[datetime] = None
     ) -> Literal[True]:
         return self._bot.restrict_chat_member(
-            chat_id=_get_chat_id(),
-            user_id=_get_user_id() if user_id is None else user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
             permissions=permissions,
             request_timeout=request_timeout,
             until_date=until_date
@@ -813,8 +774,8 @@ class ContextTelegramBot:
         can_pin_messages: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.promote_chat_member(
-            chat_id=_get_chat_id(),
-            user_id=_get_user_id() if user_id is None else user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
             request_timeout=request_timeout,
             is_anonymous=is_anonymous,
             can_manage_chat=can_manage_chat,
@@ -837,8 +798,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.set_chat_administrator_custom_title(
-            chat_id=_get_chat_id(),
-            user_id=_get_user_id() if user_id is None else user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
             custom_title=custom_title,
             request_timeout=request_timeout
         )
@@ -850,8 +811,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.ban_chat_sender_chat(
-            chat_id=_get_chat_id(),
-            sender_chat_id=_get_sender_chat_id() if sender_chat_id is None else sender_chat_id,
+            chat_id=get_event_chat_id(),
+            sender_chat_id=get_event_sender_chat_id() if sender_chat_id is None else sender_chat_id,
             request_timeout=request_timeout
         )
 
@@ -862,8 +823,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.unban_chat_sender_chat(
-            chat_id=_get_chat_id(),
-            sender_chat_id=_get_sender_chat_id() if sender_chat_id is None else sender_chat_id,
+            chat_id=get_event_chat_id(),
+            sender_chat_id=get_event_sender_chat_id() if sender_chat_id is None else sender_chat_id,
             request_timeout=request_timeout
         )
 
@@ -874,7 +835,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.set_chat_permissions(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             permissions=permissions,
             request_timeout=request_timeout
         )
@@ -885,7 +846,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> str:
         return self._bot.export_chat_invite_link(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout
         )
 
@@ -899,7 +860,7 @@ class ContextTelegramBot:
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
         return self._bot.create_chat_invite_link(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout,
             name=name,
             expire_date=expire_date,
@@ -918,7 +879,7 @@ class ContextTelegramBot:
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
         return self._bot.edit_chat_invite_link(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             invite_link=invite_link,
             request_timeout=request_timeout,
             name=name,
@@ -934,7 +895,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> ChatInviteLink:
         return self._bot.revoke_chat_invite_link(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             invite_link=invite_link,
             request_timeout=request_timeout
         )
@@ -946,8 +907,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.approve_chat_join_request(
-            chat_id=_get_chat_id(),
-            user_id=_get_user_id() if user_id is None else user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
             request_timeout=request_timeout
         )
 
@@ -958,8 +919,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.decline_chat_join_request(
-            chat_id=_get_chat_id(),
-            user_id=_get_user_id() if user_id is None else user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
             request_timeout=request_timeout
         )
 
@@ -970,7 +931,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.set_chat_photo(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             photo=photo,
             request_timeout=request_timeout
         )
@@ -981,7 +942,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.delete_chat_photo(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout
         )
 
@@ -992,7 +953,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.set_chat_title(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             title=title,
             request_timeout=request_timeout
         )
@@ -1004,7 +965,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.set_chat_description(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             description=description,
             request_timeout=request_timeout
         )
@@ -1017,8 +978,8 @@ class ContextTelegramBot:
         disable_notification: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.pin_chat_message(
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             request_timeout=request_timeout,
             disable_notification=disable_notification
         )
@@ -1030,8 +991,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.unpin_chat_message(
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             request_timeout=request_timeout
         )
 
@@ -1041,7 +1002,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None,
     ) -> Literal[True]:
         return self._bot.unpin_all_chat_messages(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout
         )
 
@@ -1051,7 +1012,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.leave_chat(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout
         )
 
@@ -1061,7 +1022,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Chat:
         return self._bot.get_chat(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout
         )
 
@@ -1072,7 +1033,7 @@ class ContextTelegramBot:
     ) -> list[Union[ChatMemberOwner,
                     ChatMemberAdministrator]]:
         return self._bot.get_chat_administrators(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout
         )
 
@@ -1082,7 +1043,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> int:
         return self._bot.get_chat_member_count(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout
         )
 
@@ -1093,8 +1054,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> ChatMember:
         return self._bot.get_chat_member(
-            chat_id=_get_chat_id(),
-            user_id=_get_user_id() if user_id is None else user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
             request_timeout=request_timeout
         )
 
@@ -1105,7 +1066,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.set_chat_sticker_set(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             sticker_set_name=sticker_set_name,
             request_timeout=request_timeout
         )
@@ -1116,7 +1077,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.delete_chat_sticker_set(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             request_timeout=request_timeout
         )
 
@@ -1130,7 +1091,7 @@ class ContextTelegramBot:
         cache_time: Optional[int] = None
     ) -> Literal[True]:
         return self._bot.answer_callback_query(
-            callback_query_id=_get_callback_query_id(),
+            callback_query_id=get_event_callback_query_id(),
             request_timeout=request_timeout,
             text=text,
             show_alert=show_alert,
@@ -1146,7 +1107,7 @@ class ContextTelegramBot:
     ) -> Literal[True]:
         return self._bot.set_chat_menu_button(
             request_timeout=request_timeout,
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             menu_button=menu_button
         )
 
@@ -1157,7 +1118,7 @@ class ContextTelegramBot:
     ) -> Literal[True]:
         return self._bot.get_chat_menu_button(
             request_timeout=request_timeout,
-            chat_id=_get_chat_id()
+            chat_id=get_event_chat_id()
         )
 
     def edit_message_text(
@@ -1174,8 +1135,8 @@ class ContextTelegramBot:
         return self._bot.edit_message_text(
             text=text,
             request_timeout=request_timeout,
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             parse_mode=parse_mode,
             entities=entities,
             disable_web_page_preview=disable_web_page_preview,
@@ -1194,8 +1155,8 @@ class ContextTelegramBot:
     ) -> Message:
         return self._bot.edit_message_caption(
             request_timeout=request_timeout,
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -1213,8 +1174,8 @@ class ContextTelegramBot:
         return self._bot.edit_message_media(
             media=media,
             request_timeout=request_timeout,
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             reply_markup=reply_markup
         )
 
@@ -1227,8 +1188,8 @@ class ContextTelegramBot:
     ) -> Message:
         return self._bot.edit_message_reply_markup(
             request_timeout=request_timeout,
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             reply_markup=reply_markup
         )
 
@@ -1240,8 +1201,8 @@ class ContextTelegramBot:
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
         return self._bot.stop_poll(
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             request_timeout=request_timeout,
             reply_markup=reply_markup
         )
@@ -1253,8 +1214,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.delete_message(
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id,
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
             request_timeout=request_timeout
         )
 
@@ -1274,12 +1235,12 @@ class ContextTelegramBot:
                             None] = None
     ) -> Message:
         return self._bot.send_sticker(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             sticker=sticker,
             request_timeout=request_timeout,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -1291,7 +1252,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> File:
         return self._bot.upload_sticker_file(
-            user_id=_get_user_id(),
+            user_id=get_event_user_id(),
             png_sticker=png_sticker,
             request_timeout=request_timeout
         )
@@ -1310,7 +1271,7 @@ class ContextTelegramBot:
         mask_position: Optional[MaskPosition] = None
     ) -> Literal[True]:
         return self._bot.create_new_sticker_set(
-            user_id=_get_user_id(),
+            user_id=get_event_user_id(),
             name=name,
             title=title,
             emojis=emojis,
@@ -1334,7 +1295,7 @@ class ContextTelegramBot:
         mask_position: Optional[MaskPosition] = None
     ) -> Literal[True]:
         return self._bot.add_sticker_to_set(
-            user_id=_get_user_id(),
+            user_id=get_event_user_id(),
             name=name,
             emojis=emojis,
             request_timeout=request_timeout,
@@ -1353,7 +1314,7 @@ class ContextTelegramBot:
     ) -> Literal[True]:
         return self._bot.set_sticker_set_thumb(
             name=name,
-            user_id=_get_user_id(),
+            user_id=get_event_user_id(),
             request_timeout=request_timeout,
             thumb=thumb
         )
@@ -1370,7 +1331,7 @@ class ContextTelegramBot:
         switch_pm_parameter: Optional[str] = None
     ) -> Literal[True]:
         return self._bot.answer_inline_query(
-            inline_query_id=_get_inline_query_id(),
+            inline_query_id=get_event_inline_query_id(),
             results=results,
             request_timeout=request_timeout,
             cache_time=cache_time,
@@ -1412,7 +1373,7 @@ class ContextTelegramBot:
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._bot.send_invoice(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             title=title,
             description=description,
             payload=payload,
@@ -1437,7 +1398,7 @@ class ContextTelegramBot:
             is_flexible=is_flexible,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -1451,7 +1412,7 @@ class ContextTelegramBot:
         error_message: Optional[str] = None
     ) -> Literal[True]:
         return self._bot.answer_shipping_query(
-            shipping_query_id=_get_shipping_query_id(),
+            shipping_query_id=get_event_shipping_query_id(),
             ok=ok,
             request_timeout=request_timeout,
             shipping_options=shipping_options,
@@ -1466,7 +1427,7 @@ class ContextTelegramBot:
         error_message: Optional[str] = None
     ) -> Literal[True]:
         return self._bot.answer_pre_checkout_query(
-            pre_checkout_query_id=_get_pre_checkout_query_id(),
+            pre_checkout_query_id=get_event_pre_checkout_query_id(),
             ok=ok,
             request_timeout=request_timeout,
             error_message=error_message
@@ -1479,7 +1440,7 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None
     ) -> Literal[True]:
         return self._bot.set_passport_data_errors(
-            user_id=_get_user_id(),
+            user_id=get_event_user_id(),
             errors=errors,
             request_timeout=request_timeout
         )
@@ -1496,12 +1457,12 @@ class ContextTelegramBot:
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._bot.send_game(
-            chat_id=_get_chat_id(),
+            chat_id=get_event_chat_id(),
             game_short_name=game_short_name,
             request_timeout=request_timeout,
             disable_notification=disable_notification,
             protect_content=protect_content,
-            reply_to_message_id=_get_message_id() if with_reply else None,
+            reply_to_message_id=get_event_message_id() if with_reply else None,
             allow_sending_without_reply=allow_sending_without_reply,
             reply_markup=reply_markup
         )
@@ -1517,13 +1478,13 @@ class ContextTelegramBot:
         disable_edit_message: Optional[bool] = None
     ) -> Message:
         return self._bot.set_game_score(
-            user_id=_get_user_id() if user_id is None else user_id,
+            user_id=get_event_user_id() if user_id is None else user_id,
             score=score,
             request_timeout=request_timeout,
             force=force,
             disable_edit_message=disable_edit_message,
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id
         )
 
     def get_game_high_scores(
@@ -1534,52 +1495,8 @@ class ContextTelegramBot:
         request_timeout: Optional[RequestTimeout] = None,
     ) -> list[GameHighScore]:
         return self._bot.get_game_high_scores(
-            user_id=_get_user_id() if user_id is None else user_id,
+            user_id=get_event_user_id() if user_id is None else user_id,
             request_timeout=request_timeout,
-            chat_id=_get_chat_id(),
-            message_id=_get_message_id() if message_id is None else message_id
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id
         )
-
-
-def _get_chat_id() -> int:
-    return _get_event_value("chat_id", _HAVING_CHAT_ID_TYPES)
-
-
-def _get_sender_chat_id() -> int:
-    return _get_event_value("sender_chat_id", _HAVING_SENDER_CHAT_ID_TYPES)
-
-
-def _get_user_id() -> int:
-    return _get_event_value("user_id", _HAVING_USER_ID_TYPES)
-
-
-def _get_message_id() -> int:
-    return _get_event_value("message_id", _HAVING_MESSAGE_ID_TYPES)
-
-
-def _get_callback_query_id() -> str:
-    return _get_event_value("id", _HAVING_CALLBACK_QUERY_ID_TYPES)
-
-
-def _get_inline_query_id() -> str:
-    return _get_event_value("id", _HAVING_INLINE_QUERY_ID_TYPES)
-
-
-def _get_shipping_query_id() -> str:
-    return _get_event_value("id", _HAVING_SHIPPING_QUERY_ID_TYPES)
-
-
-def _get_pre_checkout_query_id() -> str:
-    return _get_event_value("id", _HAVING_PRE_CHECKOUT_QUERY_ID_TYPES)
-
-
-def _get_event_value(attribute: str, types: frozenset[Event]) -> Any:
-    event = event_context.get()
-
-    if type(event) in types:
-        value = getattr(event, attribute)
-
-        if value is not None:
-            return value
-
-    raise InvalidEventError(f"No {attribute} in event" + " {event!r}!", event=event)

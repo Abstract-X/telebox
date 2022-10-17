@@ -3,6 +3,10 @@ from typing import Optional, Any
 from telebox.state_machine.machine import StateMachine
 from telebox.state_machine.state import State
 from telebox.utils.context.vars import event_context, event_handler_context
+from telebox.utils.context.utils import (
+    get_event_chat_id,
+    get_event_user_id
+)
 
 
 class ContextStateMachine:
@@ -17,8 +21,8 @@ class ContextStateMachine:
             handler=event_handler_context.get(),
             direction=direction,
             data=data,
-            chat_id=event.chat_id,
-            user_id=event.user_id
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id()
         )
 
     def set_previous_state(self, data: Any = None) -> None:
@@ -26,8 +30,8 @@ class ContextStateMachine:
         self._machine.set_previous_state(
             event=event,
             data=data,
-            chat_id=event.chat_id,
-            user_id=event.user_id
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id()
         )
 
     def set_state(self, state: State, data: Any = None) -> None:
@@ -36,8 +40,8 @@ class ContextStateMachine:
             state=state,
             event=event,
             data=data,
-            chat_id=event.chat_id,
-            user_id=event.user_id
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id()
         )
 
     def reset_state(self, data: Any = None, *, with_exit: bool = True) -> None:
@@ -45,7 +49,7 @@ class ContextStateMachine:
         self._machine.reset_state(
             event=event,
             data=data,
-            chat_id=event.chat_id,
-            user_id=event.user_id,
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id(),
             with_exit=with_exit
         )
