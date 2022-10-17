@@ -1,8 +1,8 @@
 from typing import Any, Type
 
 from telebox.dispatcher.dispatcher import Event
-from telebox.utils.context.vars import event_context
-from telebox.utils.context.errors import InvalidEventError
+from telebox.context.vars import event_context
+from telebox.context.errors import InvalidEventError
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.inline_query import InlineQuery
 from telebox.telegram_bot.types.types.chosen_inline_result import ChosenInlineResult

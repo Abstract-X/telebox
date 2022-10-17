@@ -2,8 +2,8 @@ from typing import Optional, Any
 
 from telebox.state_machine.machine import StateMachine
 from telebox.state_machine.state import State
-from telebox.utils.context.vars import event_context, event_handler_context
-from telebox.utils.context.utils import (
+from telebox.context.vars import event_context, event_handler_context
+from telebox.context.utils import (
     get_event_chat_id,
     get_event_user_id
 )

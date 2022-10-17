@@ -34,7 +34,7 @@ from telebox.telegram_bot.types.types.chat_member_owner import ChatMemberOwner
 from telebox.telegram_bot.types.types.chat_member_administrator import ChatMemberAdministrator
 from telebox.utils.request_timeout import RequestTimeout
 from telebox.utils.not_set import NotSet
-from telebox.utils.context.utils import (
+from telebox.context.utils import (
     get_event_chat_id,
     get_event_user_id,
     get_event_sender_chat_id,

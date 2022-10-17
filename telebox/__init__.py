@@ -13,15 +13,17 @@ from .dispatcher import (
     RateLimiter
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
-from .utils import (
-    NamedSet,
-    RequestTimeout,
-    AbstractCallbackDataBuilder,
+from .context import (
     ContextTelegramBot,
     ContextStateMachine,
     event_context,
     event_handler_context,
-    error_handler_context,
+    error_handler_context
+)
+from .utils import (
+    NamedSet,
+    RequestTimeout,
+    AbstractCallbackDataBuilder,
     TaskExecutor,
     Env
 )

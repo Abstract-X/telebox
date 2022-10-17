@@ -24,7 +24,7 @@ from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet
 from telebox.utils.request_timeout import RequestTimeout
-from telebox.utils.context.vars import (
+from telebox.context.vars import (
     event_context,
     event_handler_context,
     error_handler_context
