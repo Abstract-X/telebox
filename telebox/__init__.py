@@ -5,8 +5,6 @@ from .dispatcher import (
     AbstractHandler,
     AbstractEventHandler,
     AbstractErrorHandler,
-    EventFilter,
-    ErrorFilter,
     AbstractFilter,
     AbstractEventFilter,
     AbstractErrorFilter,

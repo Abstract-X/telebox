@@ -1,12 +1,17 @@
 from typing import Optional
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
+from telebox.dispatcher.enums.event_type import EventType
 from telebox.telegram_bot.types.types.message import Message
+from telebox.typing import Event
 
 
 class NonStandardCommandFilter(AbstractEventFilter):
 
     def __init__(self, *commands: str, prefix: str, ignore_case: bool = True):
+        if not commands:
+            raise ValueError("No commands!")
+
         self._commands = set()
 
         for i in commands:
@@ -20,8 +25,8 @@ class NonStandardCommandFilter(AbstractEventFilter):
 
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Message) -> Optional[str]:
-        if event.text is not None:
+    def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
+        if isinstance(event, Message) and (event.text is not None):
             command_text = event.text.split(" ", 1)[0]
 
             if self._ignore_case:

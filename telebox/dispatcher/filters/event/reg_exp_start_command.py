@@ -1,22 +1,22 @@
-from typing import Optional
+from typing import Pattern, Optional
 
 from telebox.dispatcher.filters.event.command import CommandFilter
+from telebox.dispatcher.filters.event.start_command import get_payload
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.telegram_bot.utils import get_decoded_deep_link_payload
 from telebox.typing import Event
 
 
-class StartCommandFilter(CommandFilter):
+class RegExpStartCommandFilter(CommandFilter):
 
     def __init__(
         self,
-        *payloads: str,
+        *payloads: Pattern,
         username: str,
         with_decoding: bool = False,
         ignore_case: bool = True
     ):
         super().__init__("/start", username=username, ignore_case=ignore_case)
-        self._payloads = set(payloads)
+        self._payloads = payloads
         self._with_decoding = with_decoding
 
     def get_value(
@@ -37,21 +37,9 @@ class StartCommandFilter(CommandFilter):
         command, payload = value
 
         if super().check_value(command):
-            if self._payloads:
-                return payload in self._payloads
+            if self._payloads and (payload is not None):
+                return any(i.fullmatch(payload) is not None for i in self._payloads)
 
             return True
 
         return False
-
-
-def get_payload(text: str, *, with_decoding: bool) -> Optional[str]:
-    try:
-        payload = text.split(" ", 1)[1]
-    except IndexError:
-        payload = None
-    else:
-        if with_decoding:
-            payload = get_decoded_deep_link_payload(payload)
-
-    return payload
