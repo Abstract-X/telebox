@@ -2,8 +2,8 @@ from abc import abstractmethod
 from typing import Optional, Any
 
 from telebox.dispatcher.filters.filter import AbstractValueFilter
+from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.typing import Event
 
 
 class AbstractEventFilter(AbstractValueFilter):

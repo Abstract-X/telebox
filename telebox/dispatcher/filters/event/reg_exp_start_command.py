@@ -2,8 +2,8 @@ from typing import Pattern, Optional
 
 from telebox.dispatcher.filters.event.command import CommandFilter
 from telebox.dispatcher.filters.event.start_command import get_payload
+from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.typing import Event
 
 
 class RegExpStartCommandFilter(CommandFilter):

@@ -8,10 +8,10 @@ import cherrypy
 
 if TYPE_CHECKING:
     from telebox.telegram_bot.telegram_bot import TelegramBot
-from telebox.telegram_bot.types.types.update import Update
+from telebox.telegram_bot.types.types.update import Update, UpdateContent as Event
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
-from telebox.dispatcher.event_queue import EventQueue
+from telebox.dispatcher.event_queue import EventQueue, Event as Event_
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.handlers.error import AbstractErrorHandler
@@ -24,7 +24,6 @@ from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet
 from telebox.utils.request_timeout import RequestTimeout
-from telebox.typing import Event
 from telebox.utils.context.vars import (
     event_context,
     event_handler_context,
@@ -470,7 +469,7 @@ class Dispatcher:
                 logger.debug("Event processing finished: %r.", event)
 
 
-def _process_rate_limiting(event: Event, handler: EventHandler) -> bool:
+def _process_rate_limiting(event: Event_, handler: EventHandler) -> bool:
     if handler.rate_limiter is not None:
         if event.user_id not in handler.calls:
             handler.calls[event.user_id] = CallState(is_first=True)

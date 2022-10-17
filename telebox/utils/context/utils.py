@@ -1,5 +1,6 @@
-from typing import Any
+from typing import Any, Type
 
+from telebox.dispatcher.dispatcher import Event
 from telebox.utils.context.vars import event_context
 from telebox.utils.context.errors import InvalidEventError
 from telebox.telegram_bot.types.types.message import Message
@@ -11,7 +12,6 @@ from telebox.telegram_bot.types.types.pre_checkout_query import PreCheckoutQuery
 from telebox.telegram_bot.types.types.poll_answer import PollAnswer
 from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
 from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
-from telebox.typing import Event
 
 
 def get_event_chat_id() -> int:
@@ -88,7 +88,7 @@ def get_event_pre_checkout_query_id() -> str:
     )
 
 
-def _get_event_value(attribute: str, name: str, types: tuple[Event, ...]) -> Any:
+def _get_event_value(attribute: str, name: str, types: tuple[Type[Event], ...]) -> Any:
     event = event_context.get()
 
     if (not isinstance(event, types)) or (getattr(event, attribute) is None):

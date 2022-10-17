@@ -1,13 +1,13 @@
 from typing import Optional, TYPE_CHECKING
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
+from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 from telebox.state_machine.state import State
 if TYPE_CHECKING:
     from telebox.state_machine.machine import StateMachine
-from telebox.typing import Event
 
 
 class StateFilter(AbstractEventFilter):

@@ -1,7 +1,7 @@
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
+from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.telegram_bot.types.types.message import Message
-from telebox.typing import Event
 
 
 class ForwardedMessageFilter(AbstractEventFilter):

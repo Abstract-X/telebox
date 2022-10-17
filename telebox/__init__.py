@@ -1,6 +1,7 @@
 from .telegram_bot import TelegramBot, UpdateContentType, MessageContentType
 from .dispatcher import (
     Dispatcher,
+    Event,
     EventType,
     AbstractHandler,
     AbstractEventHandler,
@@ -12,7 +13,6 @@ from .dispatcher import (
     RateLimiter
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
-from .typing import Event
 from .utils import (
     NamedSet,
     RequestTimeout,

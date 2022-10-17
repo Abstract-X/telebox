@@ -1,8 +1,8 @@
 from typing import Pattern
 
 from telebox.dispatcher.filters.error_filter import AbstractErrorFilter
+from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.typing import Event
 
 
 class ErrorRegExpTextFilter(AbstractErrorFilter):

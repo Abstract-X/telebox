@@ -1,9 +1,9 @@
 from typing import Optional
 
 from telebox.dispatcher.filters.event.command import CommandFilter
+from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.telegram_bot.utils import get_decoded_deep_link_payload
-from telebox.typing import Event
 
 
 class StartCommandFilter(CommandFilter):

@@ -1,10 +1,10 @@
 from typing import Optional
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
+from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.enums.message_content_type import MessageContentType
-from telebox.typing import Event
 
 
 class ContentTypeFilter(AbstractEventFilter):
