@@ -33,6 +33,7 @@ class ContextStateMachine:
         event = event_context.get()
         self._machine.reset_state(
             event=event,
+            data=data,
             chat_id=event.chat_id,
             user_id=event.user_id,
             with_exit=with_exit
