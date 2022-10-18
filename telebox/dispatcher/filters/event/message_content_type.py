@@ -7,7 +7,7 @@ from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.enums.message_content_type import MessageContentType
 
 
-class ContentTypeFilter(AbstractEventFilter):
+class MessageContentTypeFilter(AbstractEventFilter):
 
     def __init__(self, *types: MessageContentType):
         if not types:
