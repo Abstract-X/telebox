@@ -22,7 +22,6 @@ from .context import (
 )
 from .utils import (
     NamedSet,
-    RequestTimeout,
     AbstractCallbackDataBuilder,
     TaskExecutor,
     Env
@@ -53,7 +52,6 @@ __all__ = [
     "event_handler_context",
     "error_handler_context",
     "NamedSet",
-    "RequestTimeout",
     "AbstractCallbackDataBuilder",
     "TaskExecutor",
     "Env"

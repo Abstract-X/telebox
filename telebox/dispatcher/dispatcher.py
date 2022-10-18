@@ -23,7 +23,6 @@ from telebox.dispatcher.server_root import ServerRoot
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet
-from telebox.utils.request_timeout import RequestTimeout
 from telebox.context.vars import (
     event_context,
     event_handler_context,
@@ -198,7 +197,7 @@ class Dispatcher:
         self,
         threads: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         delay_secs: Union[int, float] = 0.2,
         error_delay_secs: Union[int, float] = 5.0,
         limit: Optional[int] = None,
@@ -228,7 +227,7 @@ class Dispatcher:
                 # noinspection PyBroadException
                 try:
                     updates = self._bot.get_updates(
-                        request_timeout=request_timeout,
+                        timeout_secs=timeout_secs,
                         offset=offset_update_id,
                         limit=limit,
                         timeout=timeout,
@@ -298,22 +297,22 @@ class Dispatcher:
     def drop_pending_updates(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         with_delete_webhook: bool = True
     ) -> None:
         logger.debug("Dropping pending updates...")
 
         if with_delete_webhook:
-            self._bot.delete_webhook(request_timeout=request_timeout, drop_pending_updates=True)
+            self._bot.delete_webhook(timeout_secs=timeout_secs, drop_pending_updates=True)
         else:
             updates = self._bot.get_updates(
-                request_timeout=request_timeout,
+                timeout_secs=timeout_secs,
                 offset=-1
             )
 
             if updates:
                 self._bot.get_updates(
-                    request_timeout=request_timeout,
+                    timeout_secs=timeout_secs,
                     offset=updates[-1].update_id + 1
                 )
 
