@@ -14,6 +14,7 @@ from .state import StateFilter
 from .non_standard_command import NonStandardCommandFilter
 from .callback_data import CallbackDataFilter
 from .hashtag import HashtagFilter
+from .cashtag import CashtagFilter
 
 
 __all__ = [
@@ -32,5 +33,6 @@ __all__ = [
     "StateFilter",
     "NonStandardCommandFilter",
     "CallbackDataFilter",
-    "HashtagFilter"
+    "HashtagFilter",
+    "CashtagFilter"
 ]
