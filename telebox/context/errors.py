@@ -6,7 +6,7 @@ from telebox.dispatcher.dispatcher import Event
 
 @dataclass
 class ContextError(TeleboxError):
-    """General class for context errors."""
+    """Class for context errors."""
 
 
 @dataclass
