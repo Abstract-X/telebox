@@ -27,12 +27,9 @@ class NonStandardCommandFilter(AbstractEventFilter):
 
     def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
         if isinstance(event, Message) and (event.text is not None):
-            command_text = event.text.split(" ", 1)[0]
+            command = event.text.split(" ", 1)[0]
 
-            if self._ignore_case:
-                command_text = command_text.lower()
-
-            return command_text
+            return command.lower() if self._ignore_case else command
 
     def check_value(self, value: Optional[str]) -> bool:
         return value in self._commands

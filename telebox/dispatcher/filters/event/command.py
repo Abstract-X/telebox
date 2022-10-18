@@ -29,10 +29,7 @@ class CommandFilter(AbstractEventFilter):
         if isinstance(event, Message) and (event.text is not None):
             command = event.text.split(" ", 1)[0]
 
-            if self._ignore_case:
-                command = command.lower()
-
-            return command
+            return command.lower() if self._ignore_case else command
 
     def check_value(self, value: Optional[str]) -> bool:
         return value in self._commands
