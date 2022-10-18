@@ -16,7 +16,8 @@ from .event import (
     ChatTypeFilter,
     StateFilter,
     NonStandardCommandFilter,
-    CallbackDataFilter
+    CallbackDataFilter,
+    HashtagFilter
 )
 from .error import (
     ErrorTypeFilter,
@@ -44,6 +45,7 @@ __all__ = [
     "StateFilter",
     "NonStandardCommandFilter",
     "CallbackDataFilter",
+    "HashtagFilter",
     "ErrorTypeFilter",
     "ErrorTextFilter",
     "ErrorRegExpTextFilter"

@@ -13,6 +13,7 @@ from .chat_type import ChatTypeFilter
 from .state import StateFilter
 from .non_standard_command import NonStandardCommandFilter
 from .callback_data import CallbackDataFilter
+from .hashtag import HashtagFilter
 
 
 __all__ = [
@@ -30,5 +31,6 @@ __all__ = [
     "ChatTypeFilter",
     "StateFilter",
     "NonStandardCommandFilter",
-    "CallbackDataFilter"
+    "CallbackDataFilter",
+    "HashtagFilter"
 ]
