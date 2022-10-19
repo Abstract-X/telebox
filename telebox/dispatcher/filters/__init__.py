@@ -16,7 +16,8 @@ from .event import (
     NonStandardCommandFilter,
     CallbackDataFilter,
     HashtagFilter,
-    CashtagFilter
+    CashtagFilter,
+    MentionFilter
 )
 from .error import (
     ErrorTypeFilter,
@@ -46,5 +47,6 @@ __all__ = [
     "CashtagFilter",
     "ErrorTypeFilter",
     "ErrorTextFilter",
-    "ErrorRegExpTextFilter"
+    "ErrorRegExpTextFilter",
+    "MentionFilter"
 ]

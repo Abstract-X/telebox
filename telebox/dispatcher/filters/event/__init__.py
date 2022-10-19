@@ -13,6 +13,7 @@ from .non_standard_command import NonStandardCommandFilter
 from .callback_data import CallbackDataFilter
 from .hashtag import HashtagFilter
 from .cashtag import CashtagFilter
+from .mention import MentionFilter
 
 
 __all__ = [
@@ -30,5 +31,6 @@ __all__ = [
     "NonStandardCommandFilter",
     "CallbackDataFilter",
     "HashtagFilter",
-    "CashtagFilter"
+    "CashtagFilter",
+    "MentionFilter"
 ]
