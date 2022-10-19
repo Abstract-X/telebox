@@ -17,9 +17,6 @@ from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
 class UserIDFilter(AbstractEventFilter):
 
     def __init__(self, *ids: int):
-        if not ids:
-            raise ValueError("No user identifiers!")
-
         self._ids = set(ids)
 
     def get_value(self, event: Event, event_type: EventType) -> Optional[int]:
@@ -40,4 +37,4 @@ class UserIDFilter(AbstractEventFilter):
             return event.user_id
 
     def check_value(self, value: Optional[int]) -> bool:
-        return value in self._ids
+        return value in self._ids if self._ids else value is not None

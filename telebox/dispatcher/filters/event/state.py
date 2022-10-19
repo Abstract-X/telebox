@@ -13,9 +13,6 @@ if TYPE_CHECKING:
 class StateFilter(AbstractEventFilter):
 
     def __init__(self, *states: State, state_machine: "StateMachine"):
-        if not states:
-            raise ValueError("No states!")
-
         self._states = set(states)
         self._state_machine = state_machine
 
@@ -24,4 +21,4 @@ class StateFilter(AbstractEventFilter):
             return self._state_machine.get_state(chat_id=event.chat_id, user_id=event.user_id)
 
     def check_value(self, value: Optional[State]) -> bool:
-        return value in self._states
+        return value in self._states if self._states else value is not None

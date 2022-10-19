@@ -8,9 +8,6 @@ from telebox.telegram_bot.consts import message_entity_types
 class HashtagFilter(AbstractEventFilter):
 
     def __init__(self, *hashtags: str, ignore_case: bool = True):
-        if not hashtags:
-            raise ValueError("No hashtags!")
-
         self._hashtags = set()
 
         for i in hashtags:
@@ -36,4 +33,4 @@ class HashtagFilter(AbstractEventFilter):
         return hashtags
 
     def check_value(self, value: set[str]) -> bool:
-        return any(i in self._hashtags for i in value)
+        return any(i in self._hashtags for i in value) if self._hashtags else bool(value)

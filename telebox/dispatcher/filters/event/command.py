@@ -8,9 +8,6 @@ from telebox.telegram_bot.consts import message_entity_types
 class CommandFilter(AbstractEventFilter):
 
     def __init__(self, *commands: str, username: str, ignore_case: bool = True):
-        if not commands:
-            raise ValueError("No commands!")
-
         self._commands = set()
 
         for i in commands:
@@ -43,4 +40,4 @@ class CommandFilter(AbstractEventFilter):
         return commands
 
     def check_value(self, value: set[str]) -> bool:
-        return any(i in self._commands for i in value)
+        return any(i in self._commands for i in value) if self._commands else bool(value)

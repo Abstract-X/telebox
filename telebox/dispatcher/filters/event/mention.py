@@ -8,9 +8,6 @@ from telebox.telegram_bot.consts import message_entity_types
 class MentionFilter(AbstractEventFilter):
 
     def __init__(self, *mentions: str):
-        if not mentions:
-            raise ValueError("No mentions!")
-
         self._mentions = set()
 
         for i in mentions:
@@ -30,4 +27,4 @@ class MentionFilter(AbstractEventFilter):
         return mentions
 
     def check_value(self, value: set[str]) -> bool:
-        return any(i in self._mentions for i in value)
+        return any(i in self._mentions for i in value) if self._mentions else bool(value)

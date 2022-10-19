@@ -10,9 +10,6 @@ from telebox.telegram_bot.enums.message_content_type import MessageContentType
 class MessageContentTypeFilter(AbstractEventFilter):
 
     def __init__(self, *types: MessageContentType):
-        if not types:
-            raise ValueError("No content types!")
-
         self._types = set(types)
 
     def get_value(self, event: Event, event_type: EventType) -> Optional[MessageContentType]:
@@ -22,4 +19,4 @@ class MessageContentTypeFilter(AbstractEventFilter):
             return content_type
 
     def check_value(self, value: Optional[MessageContentType]) -> bool:
-        return value in self._types
+        return value in self._types if self._types else bool(value)

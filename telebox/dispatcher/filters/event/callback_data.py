@@ -10,9 +10,6 @@ from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 class CallbackDataFilter(AbstractEventFilter):
 
     def __init__(self, *keys: Any, builder: AbstractCallbackDataBuilder):
-        if not keys:
-            raise ValueError("No keys!")
-
         self._keys = set(keys)
         self._builder = builder
 
@@ -23,4 +20,4 @@ class CallbackDataFilter(AbstractEventFilter):
             return key
 
     def check_value(self, value: Optional[str]) -> bool:
-        return value in self._keys
+        return value in self._keys if self._keys else value is not None

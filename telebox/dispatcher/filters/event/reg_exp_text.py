@@ -16,4 +16,7 @@ class RegExpTextFilter(AbstractEventFilter):
             return event.get_text()
 
     def check_value(self, value: Optional[str]) -> bool:
-        return (value is not None) and any(i.fullmatch(value) is not None for i in self._texts)
+        return (
+            any(i.fullmatch(value) is not None for i in self._texts)
+            if self._texts else value is not None
+        )
