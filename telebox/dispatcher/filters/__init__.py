@@ -3,8 +3,6 @@ from .event_filter import AbstractEventFilter
 from .error_filter import AbstractErrorFilter
 from .event import (
     CommandFilter,
-    StartCommandFilter,
-    RegExpStartCommandFilter,
     TextFilter,
     RegExpTextFilter,
     MessageContentTypeFilter,
@@ -32,8 +30,6 @@ __all__ = [
     "AbstractEventFilter",
     "AbstractErrorFilter",
     "CommandFilter",
-    "StartCommandFilter",
-    "RegExpStartCommandFilter",
     "TextFilter",
     "RegExpTextFilter",
     "MessageContentTypeFilter",

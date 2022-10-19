@@ -14,3 +14,7 @@ class MessageEntity(Type):
     user: Optional[User] = None
     language: Optional[str] = None
     custom_emoji_id: Optional[str] = None
+
+    @property
+    def end_offset(self) -> int:
+        return self.offset + self.length

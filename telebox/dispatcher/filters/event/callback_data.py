@@ -9,18 +9,18 @@ from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 
 class CallbackDataFilter(AbstractEventFilter):
 
-    def __init__(self, *filter_keys: Any, builder: AbstractCallbackDataBuilder):
-        if not filter_keys:
-            raise ValueError("No filter keys!")
+    def __init__(self, *keys: Any, builder: AbstractCallbackDataBuilder):
+        if not keys:
+            raise ValueError("No keys!")
 
-        self._filter_keys = set(filter_keys)
+        self._keys = set(keys)
         self._builder = builder
 
     def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
         if isinstance(event, CallbackQuery) and (event.data is not None):
-            filter_key, _ = self._builder.parse(event.data)
+            key, _ = self._builder.parse(event.data)
 
-            return filter_key
+            return key
 
     def check_value(self, value: Optional[str]) -> bool:
-        return value in self._filter_keys
+        return value in self._keys

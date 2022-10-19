@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class AbstractCallbackDataBuilder(ABC):
 
     @abstractmethod
-    def build(self, filter_key, value=None) -> str:
+    def build(self, key, value=None) -> str:
         pass
 
     @abstractmethod

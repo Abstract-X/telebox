@@ -13,7 +13,7 @@ class RegExpTextFilter(AbstractEventFilter):
 
     def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
         if isinstance(event, Message):
-            return event.text
+            return event.get_text()
 
     def check_value(self, value: Optional[str]) -> bool:
         return (value is not None) and any(i.fullmatch(value) is not None for i in self._texts)

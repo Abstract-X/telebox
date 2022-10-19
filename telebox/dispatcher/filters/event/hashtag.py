@@ -1,9 +1,8 @@
-from typing import Optional
-
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.telegram_bot.types.types.message import Message
+from telebox.telegram_bot.consts import message_entity_types
 
 
 class HashtagFilter(AbstractEventFilter):
@@ -25,11 +24,16 @@ class HashtagFilter(AbstractEventFilter):
 
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
-        if isinstance(event, Message) and (event.text is not None):
-            hashtag = event.text.split(" ", 1)[0]
+    def get_value(self, event: Event, event_type: EventType) -> set[str]:
+        hashtags = set()
 
-            return hashtag.lower() if self._ignore_case else hashtag
+        if isinstance(event, Message):
+            for i in event.get_entities():
+                if i.type == message_entity_types.HASHTAG:
+                    hashtag = event.get_entity_text(i)
+                    hashtags.add(hashtag.lower() if self._ignore_case else hashtag)
 
-    def check_value(self, value: Optional[str]) -> bool:
-        return value in self._hashtags
+        return hashtags
+
+    def check_value(self, value: set[str]) -> bool:
+        return any(i in self._hashtags for i in value)

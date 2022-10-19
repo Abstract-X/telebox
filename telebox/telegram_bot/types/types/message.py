@@ -221,6 +221,29 @@ class Message(Type):
             else:
                 return get_message_private_url(self.chat.id, self.message_id)
 
+    def get_text(self) -> Optional[str]:
+        if self.text is not None:
+            return self.text
+        elif self.caption is not None:
+            return self.caption
+
+    def get_entity_text(self, entity: MessageEntity) -> Optional[str]:
+        text = self.get_text()
+
+        if text is not None:
+            bytes_ = text.encode("UTF-16-LE")
+            entity_bytes = bytes_[entity.offset * 2:entity.end_offset * 2]
+
+            return entity_bytes.decode("UTF-16-LE")
+
+    def get_entities(self) -> list[MessageEntity]:
+        if self.entities is not None:
+            return self.entities
+        elif self.caption_entities is not None:
+            return self.caption_entities
+
+        return []
+
 
 MessageContent = Union[
     str,

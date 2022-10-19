@@ -16,8 +16,11 @@ class TextFilter(AbstractEventFilter):
         self._ignore_case = ignore_case
 
     def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
-        if isinstance(event, Message) and (event.text is not None):
-            return event.text.lower() if self._ignore_case else event.text
+        if isinstance(event, Message):
+            text = event.get_text()
+
+            if text is not None:
+                return text.lower() if self._ignore_case else text
 
     def check_value(self, value: Optional[str]) -> bool:
         return value in self._texts
