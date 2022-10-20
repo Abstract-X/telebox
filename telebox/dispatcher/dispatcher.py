@@ -252,7 +252,7 @@ class Dispatcher:
     def run_server(
         self,
         threads: int,
-        webhook_path: str = "",
+        webhook_path: Optional[str] = None,
         *,
         host: str = "0.0.0.0",
         port: int = 443,
@@ -287,7 +287,7 @@ class Dispatcher:
         try:
             cherrypy.quickstart(
                 root=ServerRoot(self._process_update),
-                script_name=webhook_path
+                script_name=webhook_path.rstrip("/") if webhook_path else str()
             )
         finally:
             logger.info("Server stopped.")
