@@ -15,6 +15,7 @@ from .event import (
     StateFilter,
     NonStandardCommandFilter,
     CallbackDataFilter,
+    SimpleCallbackDataFilter,
     HashtagFilter,
     CashtagFilter,
     MentionFilter
@@ -43,6 +44,7 @@ __all__ = [
     "StateFilter",
     "NonStandardCommandFilter",
     "CallbackDataFilter",
+    "SimpleCallbackDataFilter",
     "HashtagFilter",
     "CashtagFilter",
     "ErrorTypeFilter",

@@ -11,6 +11,7 @@ from .chat_type import ChatTypeFilter
 from .state import StateFilter
 from .non_standard_command import NonStandardCommandFilter
 from .callback_data import CallbackDataFilter
+from .simple_callback_data import SimpleCallbackDataFilter
 from .hashtag import HashtagFilter
 from .cashtag import CashtagFilter
 from .mention import MentionFilter
@@ -30,6 +31,7 @@ __all__ = [
     "StateFilter",
     "NonStandardCommandFilter",
     "CallbackDataFilter",
+    "SimpleCallbackDataFilter",
     "HashtagFilter",
     "CashtagFilter",
     "MentionFilter"
