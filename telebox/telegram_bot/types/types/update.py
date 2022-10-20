@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
-from telebox.typing import UpdateContent
 from telebox.telegram_bot.enums.update_content_type import UpdateContentType
 from telebox.telegram_bot.errors import UnknownUpdateContentError
 from telebox.telegram_bot.types.type import Type
@@ -15,6 +14,20 @@ from telebox.telegram_bot.types.types.poll import Poll
 from telebox.telegram_bot.types.types.poll_answer import PollAnswer
 from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
 from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
+
+
+UpdateContent = Union[
+    Message,
+    InlineQuery,
+    ChosenInlineResult,
+    CallbackQuery,
+    ShippingQuery,
+    PreCheckoutQuery,
+    Poll,
+    PollAnswer,
+    ChatMemberUpdated,
+    ChatJoinRequest
+]
 
 
 @dataclass(unsafe_hash=True)

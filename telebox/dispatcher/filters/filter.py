@@ -1,17 +1,33 @@
 from abc import ABC, abstractmethod
-from enum import Enum
 
 
 class AbstractFilter(ABC):
 
     def __invert__(self):
-        return FilterExpression(self).__invert__()
+        return InvertFilter(self)
 
     def __and__(self, other):
-        return FilterExpression(self).__and__(other)
+        if isinstance(other, ConjunctionFilter):
+            return ConjunctionFilter(self, *other)
+        elif isinstance(other, AbstractFilter):
+            return ConjunctionFilter(self, other)
+
+        return NotImplemented
 
     def __or__(self, other):
-        return FilterExpression(self).__or__(other)
+        if isinstance(other, DisjunctionFilter):
+            return DisjunctionFilter(self, *other)
+        elif isinstance(other, AbstractFilter):
+            return DisjunctionFilter(self, other)
+
+        return NotImplemented
+
+    @abstractmethod
+    def get_result(self, *args, **kwargs) -> bool:
+        pass
+
+
+class AbstractValueFilter(AbstractFilter):
 
     @abstractmethod
     def get_value(self, *args, **kwargs):
@@ -22,118 +38,59 @@ class AbstractFilter(ABC):
         pass
 
 
-class ExpressionType(Enum):
-    NONE = "none"
-    FILTER = "filter"
-    INVERT = "invert"
-    AND = "and"
-    OR = "or"
+class AbstractSingleFilter(AbstractFilter, ABC):
 
-
-class AbstractExpression(ABC):
-
-    def __invert__(self):
-        return InvertExpression(self)
-
-    def __and__(self, other):
-        if isinstance(other, AndExpression):
-            return AndExpression(self, *other)
-        elif isinstance(other, AbstractExpression):
-            return AndExpression(self, other)
-        elif isinstance(other, AbstractFilter):
-            return AndExpression(self, FilterExpression(other))
-
-        return NotImplemented
-
-    def __or__(self, other):
-        if isinstance(other, OrExpression):
-            return OrExpression(self, *other)
-        elif isinstance(other, AbstractExpression):
-            return OrExpression(self, other)
-        elif isinstance(other, AbstractFilter):
-            return OrExpression(self, FilterExpression(other))
-
-        return NotImplemented
-
-    @abstractmethod
-    def get_type(self) -> ExpressionType:
-        pass
-
-
-class NoneExpression(AbstractExpression):
-
-    def __invert__(self):
-        return NotImplemented
-
-    def __and__(self, other):
-        return NotImplemented
-
-    def __or__(self, other):
-        return NotImplemented
-
-    def get_type(self) -> ExpressionType:
-        return ExpressionType.NONE
-
-
-class AbstractSingleExpression(AbstractExpression, ABC):
-
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, filter_: AbstractFilter):
+        self.filter = filter_
 
     def __repr__(self):
-        return f"{type(self).__name__}({self.value!r})"
+        return f"{type(self).__name__}({self.filter!r})"
 
 
-class AbstractMultipleExpression(AbstractExpression, ABC):
+class AbstractMultipleFilter(AbstractFilter, ABC):
 
-    def __init__(self, *values):
-        self.values = values
+    def __init__(self, *filters: AbstractFilter):
+        self.filters = filters
 
     def __repr__(self):
-        return f"{type(self).__name__}({', '.join(repr(i) for i in self.values)})"
+        return f"{type(self).__name__}({', '.join(repr(i) for i in self.filters)})"
 
     def __iter__(self):
-        return iter(self.values)
+        return iter(self.filters)
 
 
-class FilterExpression(AbstractSingleExpression):
-
-    def get_type(self) -> ExpressionType:
-        return ExpressionType.FILTER
-
-
-class InvertExpression(AbstractSingleExpression):
+class InvertFilter(AbstractSingleFilter):
 
     def __invert__(self):
-        return self.value
+        return self.filter
 
-    def get_type(self) -> ExpressionType:
-        return ExpressionType.INVERT
+    def get_result(self, *args, **kwargs) -> bool:
+        return not self.filter.get_result(*args, **kwargs)
 
 
-class AndExpression(AbstractMultipleExpression):
+class ConjunctionFilter(AbstractMultipleFilter):
 
     def __and__(self, other):
-        if isinstance(other, AndExpression):
-            return AndExpression(*self, *other)
-        elif isinstance(other, AbstractSingleExpression):
-            return AndExpression(*self, other)
+        if isinstance(other, ConjunctionFilter):
+            return ConjunctionFilter(*self, *other)
+        elif isinstance(other, AbstractFilter):
+            return ConjunctionFilter(*self, other)
 
-        return super().__and__(other)
+        return NotImplemented
 
-    def get_type(self) -> ExpressionType:
-        return ExpressionType.AND
+    def get_result(self, *args, **kwargs) -> bool:
+        return all(i.get_result(*args, **kwargs) for i in self.filters)
 
 
-class OrExpression(AbstractMultipleExpression):
+class DisjunctionFilter(AbstractMultipleFilter):
 
     def __or__(self, other):
-        if isinstance(other, OrExpression):
-            return OrExpression(*self, *other)
-        elif isinstance(other, AbstractSingleExpression):
-            return OrExpression(*self, other)
+        if isinstance(other, DisjunctionFilter):
+            return DisjunctionFilter(*self, *other)
+        elif isinstance(other, AbstractFilter):
+            return DisjunctionFilter(*self, other)
 
-        return super().__or__(other)
+        return NotImplemented
 
-    def get_type(self) -> ExpressionType:
-        return ExpressionType.OR
+    def get_result(self, *args, **kwargs) -> bool:
+        return any(i.get_result(*args, **kwargs) for i in self.filters)

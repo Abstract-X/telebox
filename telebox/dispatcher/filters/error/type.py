@@ -1,13 +1,16 @@
 from typing import Type
 
 from telebox.dispatcher.filters.error_filter import AbstractErrorFilter
+from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.typing import Event
 
 
 class ErrorTypeFilter(AbstractErrorFilter):
 
     def __init__(self, *types: Type[Exception], strictly: bool = False):
+        if not types:
+            raise ValueError("No types!")
+
         self._types = types
         self._strictly = strictly
 

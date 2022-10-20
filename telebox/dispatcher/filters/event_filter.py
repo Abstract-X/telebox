@@ -1,14 +1,28 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+from typing import Optional, Any
 
-from telebox.dispatcher.filters.filter import AbstractFilter
+from telebox.dispatcher.filters.filter import AbstractValueFilter
+from telebox.dispatcher.dispatcher import Event
+from telebox.dispatcher.enums.event_type import EventType
 
 
-class AbstractEventFilter(AbstractFilter, ABC):
+class AbstractEventFilter(AbstractValueFilter):
 
     @abstractmethod
-    def get_value(self, event):
+    def get_value(self, event: Event, event_type: EventType):
         pass
 
-    @abstractmethod
-    def check_value(self, value) -> bool:
-        pass
+    def get_result(
+        self,
+        event: Event,
+        event_type: EventType,
+        values: Optional[dict[type, Any]] = None
+    ) -> bool:
+        values = values or {}
+
+        try:
+            value = values[type(self)]
+        except KeyError:
+            value = values[type(self)] = self.get_value(event, event_type)
+
+        return self.check_value(value)

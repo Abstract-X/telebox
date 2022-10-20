@@ -54,7 +54,6 @@ from telebox.telegram_bot.types.types.chat_member_restricted import ChatMemberRe
 from telebox.telegram_bot.types.types.chat_member_left import ChatMemberLeft
 from telebox.telegram_bot.types.types.chat_member_banned import ChatMemberBanned
 from telebox.utils.not_set import NotSet
-from telebox.utils.request_timeout import RequestTimeout
 
 
 API_URL = "https://api.telegram.org"
@@ -78,14 +77,14 @@ class TelegramBot:
         api_url: str = API_URL,
         force_sending: bool = False,
         default_parse_mode: Union[str, NotSet] = NotSet(),
-        default_request_timeout: Optional[RequestTimeout] = None
+        default_timeout_secs: Union[int, float, None] = None
     ):
         self._session = session
         self.token = token
         self._api_url = api_url
         self._force_sending = force_sending
         self._default_parse_mode = default_parse_mode
-        self._default_request_timeout = default_request_timeout or RequestTimeout(150, 150)
+        self._default_timeout_secs = default_timeout_secs
         self._over_limit_times: dict[int, float] = {}
         self._serializer = Serializer()
         self._me: Optional[User] = None
@@ -109,7 +108,7 @@ class TelegramBot:
     def get_updates(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
         timeout: Optional[int] = None,
@@ -125,7 +124,7 @@ class TelegramBot:
                     "timeout": timeout,
                     "allowed_updates": allowed_updates
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             )
         ]
 
@@ -133,7 +132,7 @@ class TelegramBot:
         self,
         url: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         certificate: Optional[InputFile] = None,
         ip_address: Optional[str] = None,
         max_connections: Optional[int] = None,
@@ -152,13 +151,13 @@ class TelegramBot:
                 "drop_pending_updates": drop_pending_updates,
                 "secret_token": secret_token
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def delete_webhook(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         drop_pending_updates: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -166,39 +165,39 @@ class TelegramBot:
             parameters={
                 "drop_pending_updates": drop_pending_updates
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def get_webhook_info(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> WebhookInfo:
         return self._serializer.get_object(
-            data=self._send_request(method="getWebhookInfo", timeout=request_timeout),
+            data=self._send_request(method="getWebhookInfo", timeout_secs=timeout_secs),
             class_=WebhookInfo
         )
 
-    def get_me(self, *, request_timeout: Optional[RequestTimeout] = None) -> User:
+    def get_me(self, *, timeout_secs: Union[int, float, None] = None) -> User:
         self._me = self._serializer.get_object(
-            data=self._send_request(method="getMe", timeout=request_timeout),
+            data=self._send_request(method="getMe", timeout_secs=timeout_secs),
             class_=User
         )
 
         return self._me
 
-    def log_out(self, *, request_timeout: Optional[RequestTimeout] = None) -> Literal[True]:
-        return self._send_request(method="logOut", timeout=request_timeout)
+    def log_out(self, *, timeout_secs: Union[int, float, None] = None) -> Literal[True]:
+        return self._send_request(method="logOut", timeout_secs=timeout_secs)
 
-    def close(self, *, request_timeout: Optional[RequestTimeout] = None) -> Literal[True]:
-        return self._send_request(method="close", timeout=request_timeout)
+    def close(self, *, timeout_secs: Union[int, float, None] = None) -> Literal[True]:
+        return self._send_request(method="close", timeout_secs=timeout_secs)
 
     def send_message(
         self,
         chat_id: Union[int, str],
         text: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         parse_mode: Union[str, None, NotSet] = NotSet(),
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
@@ -227,7 +226,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -238,7 +237,7 @@ class TelegramBot:
         from_chat_id: Union[int, str],
         message_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None
     ) -> Message:
@@ -252,7 +251,7 @@ class TelegramBot:
                     "disable_notification": disable_notification,
                     "protect_content": protect_content
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -263,7 +262,7 @@ class TelegramBot:
         from_chat_id: Union[int, str],
         message_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NotSet(),
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -293,7 +292,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=MessageId
         )
@@ -303,7 +302,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         photo: Union[InputFile, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NotSet(),
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -332,7 +331,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -342,7 +341,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         audio: Union[InputFile, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NotSet(),
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -379,7 +378,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -389,7 +388,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         document: Union[InputFile, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NotSet(),
@@ -422,7 +421,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -432,7 +431,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         video: Union[InputFile, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
@@ -471,7 +470,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -481,7 +480,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         animation: Union[InputFile, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
@@ -518,7 +517,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -528,7 +527,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         voice: Union[InputFile, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NotSet(),
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -559,7 +558,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -569,7 +568,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         video_note: Union[InputFile, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
         thumb: Union[InputFile, str, None] = None,
@@ -598,7 +597,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -611,7 +610,7 @@ class TelegramBot:
                      list[InputMediaPhoto],
                      list[InputMediaVideo]],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -629,7 +628,7 @@ class TelegramBot:
                     "reply_to_message_id": reply_to_message_id,
                     "allow_sending_without_reply": allow_sending_without_reply
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             )
         ]
 
@@ -639,7 +638,7 @@ class TelegramBot:
         latitude: float,
         longitude: float,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         horizontal_accuracy: Optional[float] = None,
         live_period: Optional[int] = None,
         heading: Optional[int] = None,
@@ -671,7 +670,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -681,7 +680,7 @@ class TelegramBot:
         latitude: float,
         longitude: float,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -703,7 +702,7 @@ class TelegramBot:
                 "proximity_alert_radius": proximity_alert_radius,
                 "reply_markup": reply_markup
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
         return data if data is True else self._serializer.get_object(
@@ -714,7 +713,7 @@ class TelegramBot:
     def stop_message_live_location(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -728,7 +727,7 @@ class TelegramBot:
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
         return data if data is True else self._serializer.get_object(
@@ -744,7 +743,7 @@ class TelegramBot:
         title: str,
         address: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         foursquare_id: Optional[str] = None,
         foursquare_type: Optional[str] = None,
         google_place_id: Optional[str] = None,
@@ -778,7 +777,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -789,7 +788,7 @@ class TelegramBot:
         phone_number: str,
         first_name: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         last_name: Optional[str] = None,
         vcard: Optional[str] = None,
         disable_notification: Optional[bool] = None,
@@ -817,7 +816,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -828,7 +827,7 @@ class TelegramBot:
         question: str,
         options: list[str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         is_anonymous: Optional[bool] = None,
         type_: Optional[str] = None,
         allows_multiple_answers: Optional[bool] = None,
@@ -872,7 +871,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -881,7 +880,7 @@ class TelegramBot:
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -905,7 +904,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -915,7 +914,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         action: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="sendChatAction",
@@ -923,14 +922,14 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "action": action
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def get_user_profile_photos(
         self,
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None
     ) -> UserProfilePhotos:
@@ -942,7 +941,7 @@ class TelegramBot:
                     "offset": offset,
                     "limit": limit
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=UserProfilePhotos
         )
@@ -951,7 +950,7 @@ class TelegramBot:
         self,
         file_id: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> File:
         return self._serializer.get_object(
             data=self._send_request(
@@ -959,7 +958,7 @@ class TelegramBot:
                 parameters={
                     "file_id": file_id
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=File
         )
@@ -969,7 +968,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         until_date: Optional[datetime] = None,
         revoke_messages: Optional[bool] = None
     ) -> Literal[True]:
@@ -981,7 +980,7 @@ class TelegramBot:
                 "until_date": until_date,
                 "revoke_messages": revoke_messages
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def unban_chat_member(
@@ -989,7 +988,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         only_if_banned: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -999,7 +998,7 @@ class TelegramBot:
                 "user_id": user_id,
                 "only_if_banned": only_if_banned
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def restrict_chat_member(
@@ -1008,7 +1007,7 @@ class TelegramBot:
         user_id: int,
         permissions: ChatPermissions,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         until_date: Optional[datetime] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1019,7 +1018,7 @@ class TelegramBot:
                 "permissions": permissions,
                 "until_date": until_date
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def promote_chat_member(
@@ -1027,7 +1026,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         is_anonymous: Optional[bool] = None,
         can_manage_chat: Optional[bool] = None,
         can_post_messages: Optional[bool] = None,
@@ -1057,7 +1056,7 @@ class TelegramBot:
                 "can_invite_users": can_invite_users,
                 "can_pin_messages": can_pin_messages
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_chat_administrator_custom_title(
@@ -1066,7 +1065,7 @@ class TelegramBot:
         user_id: int,
         custom_title: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatAdministratorCustomTitle",
@@ -1075,7 +1074,7 @@ class TelegramBot:
                 "user_id": user_id,
                 "custom_title": custom_title
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def ban_chat_sender_chat(
@@ -1083,7 +1082,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         sender_chat_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="banChatSenderChat",
@@ -1091,7 +1090,7 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "sender_chat_id": sender_chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def unban_chat_sender_chat(
@@ -1099,7 +1098,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         sender_chat_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="unbanChatSenderChat",
@@ -1107,7 +1106,7 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "sender_chat_id": sender_chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_chat_permissions(
@@ -1115,7 +1114,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         permissions: ChatPermissions,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatPermissions",
@@ -1123,28 +1122,28 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "permissions": permissions
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def export_chat_invite_link(
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> str:
         return self._send_request(
             method="exportChatInviteLink",
             parameters={
                 "chat_id": chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def create_chat_invite_link(
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         name: Optional[str] = None,
         expire_date: Optional[datetime] = None,
         member_limit: Optional[int] = None,
@@ -1160,7 +1159,7 @@ class TelegramBot:
                     "member_limit": member_limit,
                     "creates_join_request": creates_join_request
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=ChatInviteLink
         )
@@ -1170,7 +1169,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         invite_link: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         name: Optional[str] = None,
         expire_date: Optional[datetime] = None,
         member_limit: Optional[int] = None,
@@ -1187,7 +1186,7 @@ class TelegramBot:
                     "member_limit": member_limit,
                     "creates_join_request": creates_join_request
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=ChatInviteLink
         )
@@ -1197,7 +1196,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         invite_link: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> ChatInviteLink:
         return self._serializer.get_object(
             data=self._send_request(
@@ -1206,7 +1205,7 @@ class TelegramBot:
                     "chat_id": chat_id,
                     "invite_link": invite_link
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=ChatInviteLink
         )
@@ -1216,7 +1215,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="approveChatJoinRequest",
@@ -1224,7 +1223,7 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "user_id": user_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def decline_chat_join_request(
@@ -1232,7 +1231,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="declineChatJoinRequest",
@@ -1240,7 +1239,7 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "user_id": user_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_chat_photo(
@@ -1248,7 +1247,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         photo: InputFile,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatPhoto",
@@ -1256,21 +1255,21 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "photo": photo
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def delete_chat_photo(
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="deleteChatPhoto",
             parameters={
                 "chat_id": chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
     
     def set_chat_title(
@@ -1278,7 +1277,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         title: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatTitle",
@@ -1286,7 +1285,7 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "title": title
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_chat_description(
@@ -1294,7 +1293,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         description: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatDescription",
@@ -1302,7 +1301,7 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "description": description
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def pin_chat_message(
@@ -1310,7 +1309,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         message_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         disable_notification: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1320,7 +1319,7 @@ class TelegramBot:
                 "message_id": message_id,
                 "disable_notification": disable_notification
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def unpin_chat_message(
@@ -1328,7 +1327,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         message_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="unpinChatMessage",
@@ -1336,42 +1335,42 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "message_id": message_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def unpin_all_chat_messages(
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
     ) -> Literal[True]:
         return self._send_request(
             method="unpinAllChatMessages",
             parameters={
                 "chat_id": chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def leave_chat(
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="leaveChat",
             parameters={
                 "chat_id": chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def get_chat(
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Chat:
         return self._serializer.get_object(
             data=self._send_request(
@@ -1379,7 +1378,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Chat
         )
@@ -1388,7 +1387,7 @@ class TelegramBot:
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> list[Union[ChatMemberOwner,
                     ChatMemberAdministrator]]:
         return [
@@ -1398,7 +1397,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             )
         ]
 
@@ -1406,14 +1405,14 @@ class TelegramBot:
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> int:
         return self._send_request(
             method="getChatMemberCount",
             parameters={
                 "chat_id": chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def get_chat_member(
@@ -1421,7 +1420,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> ChatMember:
         data = self._send_request(
             method="getChatMember",
@@ -1429,7 +1428,7 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "user_id": user_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
         return self._serializer.get_object(
@@ -1442,7 +1441,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         sticker_set_name: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatStickerSet",
@@ -1450,28 +1449,28 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "sticker_set_name": sticker_set_name
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def delete_chat_sticker_set(
         self,
         chat_id: Union[int, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="deleteChatStickerSet",
             parameters={
                 "chat_id": chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def answer_callback_query(
         self,
         callback_query_id: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         text: Optional[str] = None,
         show_alert: Optional[bool] = None,
         url: Optional[str] = None,
@@ -1486,14 +1485,14 @@ class TelegramBot:
                 "url": url,
                 "cache_time": cache_time
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_my_commands(
         self,
         commands: list[BotCommand],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None
     ) -> Literal[True]:
@@ -1504,13 +1503,13 @@ class TelegramBot:
                 "scope": scope,
                 "language_code": language_code
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def delete_my_commands(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None
     ) -> Literal[True]:
@@ -1520,13 +1519,13 @@ class TelegramBot:
                 "scope": scope,
                 "language_code": language_code
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def get_my_commands(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None
     ) -> list[BotCommand]:
@@ -1538,14 +1537,14 @@ class TelegramBot:
                     "scope": scope,
                     "language_code": language_code
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             )
         ]
 
     def set_chat_menu_button(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Optional[int] = None,
         menu_button: Optional[MenuButton] = None
     ) -> Literal[True]:
@@ -1555,13 +1554,13 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "menu_button": menu_button
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def get_chat_menu_button(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Optional[int] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1569,13 +1568,13 @@ class TelegramBot:
             parameters={
                 "chat_id": chat_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_my_default_administrator_rights(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         rights: Optional[ChatAdministratorRights] = None,
         for_channels: Optional[bool] = None
     ) -> Literal[True]:
@@ -1585,13 +1584,13 @@ class TelegramBot:
                 "rights": rights,
                 "for_channels": for_channels
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def get_my_default_administrator_rights(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         for_channels: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1599,14 +1598,14 @@ class TelegramBot:
             parameters={
                 "for_channels": for_channels
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def edit_message_text(
         self,
         text: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -1627,7 +1626,7 @@ class TelegramBot:
                 "disable_web_page_preview": disable_web_page_preview,
                 "reply_markup": reply_markup
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
         return data if data is True else self._serializer.get_object(
@@ -1638,7 +1637,7 @@ class TelegramBot:
     def edit_message_caption(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -1658,7 +1657,7 @@ class TelegramBot:
                 "caption_entities": caption_entities,
                 "reply_markup": reply_markup
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
         return data if data is True else self._serializer.get_object(
@@ -1670,7 +1669,7 @@ class TelegramBot:
         self,
         media: InputMedia,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -1685,7 +1684,7 @@ class TelegramBot:
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
         return data if data is True else self._serializer.get_object(
@@ -1696,7 +1695,7 @@ class TelegramBot:
     def edit_message_reply_markup(
         self,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -1710,7 +1709,7 @@ class TelegramBot:
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
         return data if data is True else self._serializer.get_object(
@@ -1723,7 +1722,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         message_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
         return self._serializer.get_object(
@@ -1734,7 +1733,7 @@ class TelegramBot:
                     "message_id": message_id,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Poll
         )
@@ -1744,7 +1743,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         message_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="deleteMessage",
@@ -1752,7 +1751,7 @@ class TelegramBot:
                 "chat_id": chat_id,
                 "message_id": message_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def send_sticker(
@@ -1760,7 +1759,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         sticker: Union[InputFile, str],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -1783,7 +1782,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -1792,7 +1791,7 @@ class TelegramBot:
         self,
         name: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> StickerSet:
         return self._serializer.get_object(
             data=self._send_request(
@@ -1800,7 +1799,7 @@ class TelegramBot:
                 parameters={
                     "name": name
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=StickerSet
         )
@@ -1809,7 +1808,7 @@ class TelegramBot:
         self,
         custom_emoji_ids: list[str],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> list[Sticker]:
         return [
             self._serializer.get_object(data=i, class_=Sticker)
@@ -1818,7 +1817,7 @@ class TelegramBot:
                 parameters={
                     "custom_emoji_ids": custom_emoji_ids
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             )
         ]
 
@@ -1827,7 +1826,7 @@ class TelegramBot:
         user_id: int,
         png_sticker: InputFile,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> File:
         return self._serializer.get_object(
             data=self._send_request(
@@ -1836,7 +1835,7 @@ class TelegramBot:
                     "user_id": user_id,
                     "png_sticker": png_sticker
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=File
         )
@@ -1848,7 +1847,7 @@ class TelegramBot:
         title: str,
         emojis: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         png_sticker: Union[InputFile, str, None] = None,
         tgs_sticker: Optional[InputFile] = None,
         webm_sticker: Optional[InputFile] = None,
@@ -1868,7 +1867,7 @@ class TelegramBot:
                 "contains_masks": contains_masks,
                 "mask_position": mask_position
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def add_sticker_to_set(
@@ -1877,7 +1876,7 @@ class TelegramBot:
         name: str,
         emojis: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         png_sticker: Union[InputFile, str, None] = None,
         tgs_sticker: Optional[InputFile] = None,
         webm_sticker: Optional[InputFile] = None,
@@ -1894,7 +1893,7 @@ class TelegramBot:
                 "webm_sticker": webm_sticker,
                 "mask_position": mask_position
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_sticker_position_in_set(
@@ -1902,7 +1901,7 @@ class TelegramBot:
         sticker: str,
         position: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setStickerPositionInSet",
@@ -1910,21 +1909,21 @@ class TelegramBot:
                 "sticker": sticker,
                 "position": position
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def delete_sticker_from_set(
         self,
         sticker: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="deleteStickerFromSet",
             parameters={
                 "sticker": sticker
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_sticker_set_thumb(
@@ -1932,7 +1931,7 @@ class TelegramBot:
         name: str,
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         thumb: Union[InputFile, str, None] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1942,7 +1941,7 @@ class TelegramBot:
                 "user_id": user_id,
                 "thumb": thumb
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def answer_inline_query(
@@ -1950,7 +1949,7 @@ class TelegramBot:
         inline_query_id: str,
         results: list[InlineQueryResult],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         cache_time: Optional[int] = None,
         is_personal: Optional[bool] = None,
         next_offset: Optional[str] = None,
@@ -1968,7 +1967,7 @@ class TelegramBot:
                 "switch_pm_text": switch_pm_text,
                 "switch_pm_parameter": switch_pm_parameter
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def answer_web_app_query(
@@ -1976,7 +1975,7 @@ class TelegramBot:
         web_app_query_id: str,
         result: InlineQueryResult,
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> SentWebAppMessage:
         return self._serializer.get_object(
             data=self._send_request(
@@ -1985,7 +1984,7 @@ class TelegramBot:
                     "web_app_query_id": web_app_query_id,
                     "result": result
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=SentWebAppMessage
         )
@@ -2000,7 +1999,7 @@ class TelegramBot:
         currency: str,
         prices: list[LabeledPrice],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         max_tip_amount: Optional[int] = None,
         suggested_tip_amounts: Optional[list[int]] = None,
         start_parameter: Optional[str] = None,
@@ -2054,7 +2053,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -2068,7 +2067,7 @@ class TelegramBot:
         currency: str,
         prices: list[LabeledPrice],
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         max_tip_amount: Optional[int] = None,
         suggested_tip_amounts: Optional[list[int]] = None,
         provider_data: Optional[str] = None,
@@ -2108,7 +2107,7 @@ class TelegramBot:
                 "send_email_to_provider": send_email_to_provider,
                 "is_flexible": is_flexible
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def answer_shipping_query(
@@ -2116,7 +2115,7 @@ class TelegramBot:
         shipping_query_id: str,
         ok: bool,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         shipping_options: Optional[list[ShippingOption]] = None,
         error_message: Optional[str] = None
     ) -> Literal[True]:
@@ -2128,7 +2127,7 @@ class TelegramBot:
                 "shipping_options": shipping_options,
                 "error_message": error_message
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def answer_pre_checkout_query(
@@ -2136,7 +2135,7 @@ class TelegramBot:
         pre_checkout_query_id: str,
         ok: bool,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         error_message: Optional[str] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -2146,7 +2145,7 @@ class TelegramBot:
                 "ok": ok,
                 "error_message": error_message
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def set_passport_data_errors(
@@ -2154,7 +2153,7 @@ class TelegramBot:
         user_id: int,
         errors: list[PassportElementError],
         *,
-        request_timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setPassportDataErrors",
@@ -2162,7 +2161,7 @@ class TelegramBot:
                 "user_id": user_id,
                 "errors": errors
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
     def send_game(
@@ -2170,7 +2169,7 @@ class TelegramBot:
         chat_id: int,
         game_short_name: str,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -2189,7 +2188,7 @@ class TelegramBot:
                     "allow_sending_without_reply": allow_sending_without_reply,
                     "reply_markup": reply_markup
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             ),
             class_=Message
         )
@@ -2199,7 +2198,7 @@ class TelegramBot:
         user_id: int,
         score: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         force: Optional[bool] = None,
         disable_edit_message: Optional[bool] = None,
         chat_id: Optional[int] = None,
@@ -2217,7 +2216,7 @@ class TelegramBot:
                 "message_id": message_id,
                 "inline_message_id": inline_message_id
             },
-            timeout=request_timeout
+            timeout_secs=timeout_secs
         )
 
         return data if data is True else self._serializer.get_object(
@@ -2229,7 +2228,7 @@ class TelegramBot:
         self,
         user_id: int,
         *,
-        request_timeout: Optional[RequestTimeout] = None,
+        timeout_secs: Union[int, float, None] = None,
         chat_id: Optional[int] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None
@@ -2244,7 +2243,7 @@ class TelegramBot:
                     "message_id": message_id,
                     "inline_message_id": inline_message_id
                 },
-                timeout=request_timeout
+                timeout_secs=timeout_secs
             )
         ]
 
@@ -2253,24 +2252,19 @@ class TelegramBot:
         method: str,
         *,
         parameters: Optional[dict[str, Any]] = None,
-        timeout: Optional[RequestTimeout] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Any:
         parameters = parameters or {}
         url = self._get_api_url(method)
         data, files = self._get_prepared_parameters(parameters)
-        timeout = timeout or self._default_request_timeout
+        timeout_secs = timeout_secs or self._default_timeout_secs
         chat_id = over_limit_chat_id = parameters.get("chat_id")
 
         if not isinstance(over_limit_chat_id, int):
             over_limit_chat_id = None
 
         while True:
-            response = self._session.post(
-                url=url,
-                json=data,
-                files=files,
-                timeout=(timeout.connect_secs, timeout.read_secs)
-            )
+            response = self._session.post(url, json=data, files=files, timeout=timeout_secs)
 
             try:
                 return self._process_response(response, method, parameters)

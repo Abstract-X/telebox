@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class TelegramBotError(TeleboxError):
-    """General class for Telegram Bot errors."""
+    """Class for Telegram Bot errors."""
 
 
 @dataclass

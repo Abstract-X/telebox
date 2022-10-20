@@ -1,4 +1,4 @@
-from .dispatcher import Dispatcher, EventFilter, ErrorFilter
+from .dispatcher import Dispatcher, Event
 from .enums import EventType
 from .handlers import (
     AbstractHandler,
@@ -12,3 +12,18 @@ from .filters import (
 )
 from .middlewares import Middleware
 from .rate_limiter import RateLimiter
+
+
+__all__ = [
+    "Dispatcher",
+    "Event",
+    "EventType",
+    "AbstractHandler",
+    "AbstractEventHandler",
+    "AbstractErrorHandler",
+    "AbstractFilter",
+    "AbstractEventFilter",
+    "AbstractErrorFilter",
+    "Middleware",
+    "RateLimiter"
+]

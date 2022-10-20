@@ -1,11 +1,12 @@
 import time
 from queue import Queue, SimpleQueue
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from threading import Lock
 from dataclasses import dataclass
 
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.typing import Event as Event_
+if TYPE_CHECKING:
+    from telebox.dispatcher.dispatcher import Event as Event_
 
 
 _DELAY_SECS = 0.05
@@ -44,7 +45,7 @@ _CHAT_ID_AND_USER_ID_GETTERS = {
 
 @dataclass
 class Event:
-    event: Event_
+    event: "Event_"
     event_type: EventType
     chat_id: Optional[int] = None
     user_id: Optional[int] = None
@@ -59,7 +60,7 @@ class EventQueue:
 
     def add_event(
         self,
-        event: Event_,
+        event: "Event_",
         event_type: EventType
     ) -> None:
         chat_id, user_id = _CHAT_ID_AND_USER_ID_GETTERS[event_type](event)
