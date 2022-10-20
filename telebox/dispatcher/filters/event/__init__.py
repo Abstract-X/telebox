@@ -15,6 +15,7 @@ from .simple_callback_data import SimpleCallbackDataFilter
 from .hashtag import HashtagFilter
 from .cashtag import CashtagFilter
 from .mention import MentionFilter
+from .text_mention import TextMentionFilter
 
 
 __all__ = [
@@ -34,5 +35,6 @@ __all__ = [
     "SimpleCallbackDataFilter",
     "HashtagFilter",
     "CashtagFilter",
-    "MentionFilter"
+    "MentionFilter",
+    "TextMentionFilter"
 ]

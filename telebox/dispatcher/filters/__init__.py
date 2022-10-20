@@ -18,7 +18,8 @@ from .event import (
     SimpleCallbackDataFilter,
     HashtagFilter,
     CashtagFilter,
-    MentionFilter
+    MentionFilter,
+    TextMentionFilter
 )
 from .error import (
     ErrorTypeFilter,
