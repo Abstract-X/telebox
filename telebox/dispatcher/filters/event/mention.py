@@ -14,7 +14,7 @@ class MentionFilter(AbstractEventFilter):
             if not i.startswith("@"):
                 i = f"@{i}"
 
-            self._mentions.add(i)
+            self._mentions.add(i.lower())
 
     def get_value(self, event: Event, event_type: EventType) -> set[str]:
         mentions = set()
@@ -22,7 +22,7 @@ class MentionFilter(AbstractEventFilter):
         if isinstance(event, Message):
             for i in event.get_entities():
                 if i.type == message_entity_types.MENTION:
-                    mentions.add(event.get_entity_text(i))
+                    mentions.add(event.get_entity_text(i).lower())
 
         return mentions
 

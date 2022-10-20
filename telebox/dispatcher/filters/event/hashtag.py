@@ -27,10 +27,19 @@ class HashtagFilter(AbstractEventFilter):
         if isinstance(event, Message):
             for i in event.get_entities():
                 if i.type == message_entity_types.HASHTAG:
-                    hashtag = event.get_entity_text(i)
-                    hashtags.add(hashtag.lower() if self._ignore_case else hashtag)
+                    hashtags.add(event.get_entity_text(i))
 
         return hashtags
 
     def check_value(self, value: set[str]) -> bool:
-        return any(i in self._hashtags for i in value) if self._hashtags else bool(value)
+        if not self._hashtags:
+            return bool(value)
+
+        for i in value:
+            if self._ignore_case:
+                i = i.lower()
+
+            if i in self._hashtags:
+                return True
+
+        return False

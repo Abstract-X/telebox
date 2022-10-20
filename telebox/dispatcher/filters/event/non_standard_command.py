@@ -1,3 +1,5 @@
+from typing import Optional
+
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
@@ -21,18 +23,21 @@ class NonStandardCommandFilter(AbstractEventFilter):
         self._prefix = prefix
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Event, event_type: EventType) -> set[str]:
-        commands = set()
-
+    def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
         if isinstance(event, Message):
             text = event.get_text()
 
             if text is not None:
-                for i in text.split(" "):
-                    if i.startswith(self._prefix):
-                        commands.add(i.lower() if self._ignore_case else i)
+                return text.split(" ", 1)[0]
 
-        return commands
+    def check_value(self, value: Optional[str]) -> bool:
+        if (value is not None) and value.startswith(self._prefix):
+            if not self._commands:
+                return True
 
-    def check_value(self, value: set[str]) -> bool:
-        return any(i in self._commands for i in value) if self._commands else bool(value)
+            if self._ignore_case:
+                value = value.lower()
+
+            return value in self._commands
+
+        return False

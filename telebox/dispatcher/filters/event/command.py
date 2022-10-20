@@ -1,3 +1,5 @@
+from typing import Optional
+
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
@@ -21,23 +23,23 @@ class CommandFilter(AbstractEventFilter):
 
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Event, event_type: EventType) -> set[str]:
-        commands = set()
-
+    def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
         if isinstance(event, Message):
             for i in event.get_entities():
-                if i.type == message_entity_types.BOT_COMMAND:
-                    command = event.get_entity_text(i)
+                if (i.type == message_entity_types.BOT_COMMAND) and (i.offset == 0):
+                    return event.get_entity_text(i)
 
-                    if self._ignore_case:
-                        command = command.lower() if self._ignore_case else command
-                    elif "@" in command:
-                        command, username = command.split("@", 1)
-                        command = f"{command}@{username.lower()}"
+    def check_value(self, value: Optional[str]) -> bool:
+        if value is not None:
+            if not self._commands:
+                return True
 
-                    commands.add(command)
+            if self._ignore_case:
+                value = value.lower()
+            elif "@" in value:
+                command, username = value.split("@", 1)
+                value = f"{command}@{username.lower()}"
 
-        return commands
+            return value in self._commands
 
-    def check_value(self, value: set[str]) -> bool:
-        return any(i in self._commands for i in value) if self._commands else bool(value)
+        return False

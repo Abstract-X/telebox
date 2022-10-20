@@ -8,6 +8,9 @@ from telebox.dispatcher.enums.event_type import EventType
 class ErrorTypeFilter(AbstractErrorFilter):
 
     def __init__(self, *types: Type[Exception], strictly: bool = False):
+        if not types:
+            raise ValueError("No types!")
+
         self._types = types
         self._strictly = strictly
 

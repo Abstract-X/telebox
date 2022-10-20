@@ -22,8 +22,7 @@ class CashtagFilter(AbstractEventFilter):
         if isinstance(event, Message):
             for i in event.get_entities():
                 if i.type == message_entity_types.CASHTAG:
-                    cashtag = event.get_entity_text(i)
-                    cashtags.add(cashtag)
+                    cashtags.add(event.get_entity_text(i))
 
         return cashtags
 
