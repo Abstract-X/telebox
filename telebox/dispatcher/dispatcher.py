@@ -17,6 +17,8 @@ from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.handlers.error import AbstractErrorHandler
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.filters.error_filter import AbstractErrorFilter
+from telebox.dispatcher.filters.event.none import NoneFilter
+from telebox.dispatcher.filters.error.none import ErrorNoneFilter
 from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.rate_limiter import RateLimiter
 from telebox.dispatcher.server_root import ServerRoot
@@ -183,6 +185,9 @@ class Dispatcher:
         handler: AbstractErrorHandler,
         filter_: Optional[AbstractErrorFilter] = None
     ) -> None:
+        if filter_ is None:
+            filter_ = ErrorNoneFilter()
+
         self._error_handlers.append(
             ErrorHandler(
                 handler=handler,
@@ -325,6 +330,9 @@ class Dispatcher:
         filter_: Optional[AbstractEventFilter] = None,
         rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
+        if filter_ is None:
+            filter_ = NoneFilter()
+
         if rate_limiter is NotSet():
             rate_limiter = self._default_rate_limiters.get(event_type)
 
@@ -350,7 +358,7 @@ class Dispatcher:
         values = {}
 
         for i in self._event_handlers[event_type]:
-            if i.filter.get_result(event, event_type, values):
+            if (i.filter is None) or i.filter.get_result(event, event_type, values):
                 return i
 
     def _get_error_handler(
@@ -362,7 +370,7 @@ class Dispatcher:
         values = {}
 
         for i in self._error_handlers:
-            if i.filter.get_result(error, event, event_type, values):
+            if (i.filter is None) or i.filter.get_result(error, event, event_type, values):
                 return i
 
     def _run_thread_pool(self, threads: int) -> None:
