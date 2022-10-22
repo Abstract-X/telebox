@@ -1,21 +1,55 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from typing import Optional, Any
 
-from telebox.dispatcher.filters.filter import AbstractValueFilter
-from telebox.dispatcher.typing import Event
 from telebox.dispatcher.enums.event_type import EventType
 
 
-class AbstractErrorFilter(AbstractValueFilter):
+class AbstractErrorBaseFilter(ABC):
+
+    def __invert__(self):
+        return InvertErrorFilter(self)
+
+    def __and__(self, other):
+        if isinstance(other, ConjunctionErrorFilter):
+            return ConjunctionErrorFilter(self, *other)
+        elif isinstance(other, AbstractErrorBaseFilter):
+            return ConjunctionErrorFilter(self, other)
+
+        return NotImplemented
+
+    def __or__(self, other):
+        if isinstance(other, DisjunctionErrorFilter):
+            return DisjunctionErrorFilter(self, *other)
+        elif isinstance(other, AbstractErrorBaseFilter):
+            return DisjunctionErrorFilter(self, other)
+
+        return NotImplemented
 
     @abstractmethod
-    def get_value(self, error: Exception, event: Event, event_type: EventType):
+    def get_result(
+        self,
+        error,
+        event,
+        event_type: EventType,
+        values: Optional[dict[type, Any]] = None
+    ) -> bool:
+        pass
+
+
+class AbstractErrorFilter(AbstractErrorBaseFilter, ABC):
+
+    @abstractmethod
+    def get_value(self, error, event, event_type: EventType):
+        pass
+
+    @abstractmethod
+    def check_value(self, value) -> bool:
         pass
 
     def get_result(
         self,
-        error: Exception,
-        event: Event,
+        error,
+        event,
         event_type: EventType,
         values: Optional[dict[type, Any]] = None
     ) -> bool:
@@ -27,3 +61,82 @@ class AbstractErrorFilter(AbstractValueFilter):
             value = values[type(self)] = self.get_value(error, event, event_type)
 
         return self.check_value(value)
+
+
+class InvertErrorFilter(AbstractErrorBaseFilter):
+
+    def __init__(self, filter_: AbstractErrorBaseFilter):
+        self.filter = filter_
+
+    def __repr__(self):
+        return f"{type(self).__name__}({self.filter!r})"
+
+    def __invert__(self):
+        return self.filter
+
+    def get_result(
+        self,
+        error,
+        event,
+        event_type: EventType,
+        values: Optional[dict[type, Any]] = None
+    ) -> bool:
+        return not self.filter.get_result(error, event, event_type, values)
+
+
+class ConjunctionErrorFilter(AbstractErrorBaseFilter):
+
+    def __init__(self, *filters: AbstractErrorBaseFilter):
+        self.filters = filters
+
+    def __repr__(self):
+        return f"{type(self).__name__}({', '.join(repr(i) for i in self.filters)})"
+
+    def __iter__(self):
+        return iter(self.filters)
+
+    def __and__(self, other):
+        if isinstance(other, ConjunctionErrorFilter):
+            return ConjunctionErrorFilter(*self, *other)
+        elif isinstance(other, AbstractErrorBaseFilter):
+            return ConjunctionErrorFilter(*self, other)
+
+        return NotImplemented
+
+    def get_result(
+        self,
+        error,
+        event,
+        event_type: EventType,
+        values: Optional[dict[type, Any]] = None
+    ) -> bool:
+        return all(i.get_result(error, event, event_type, values) for i in self.filters)
+
+
+class DisjunctionErrorFilter(AbstractErrorBaseFilter):
+
+    def __init__(self, *filters: AbstractErrorBaseFilter):
+        self.filters = filters
+
+    def __repr__(self):
+        return f"{type(self).__name__}({', '.join(repr(i) for i in self.filters)})"
+
+    def __iter__(self):
+        return iter(self.filters)
+
+    def __or__(self, other):
+        if isinstance(other, DisjunctionErrorFilter):
+            return DisjunctionErrorFilter(*self, *other)
+        elif isinstance(other, AbstractErrorBaseFilter):
+            return DisjunctionErrorFilter(*self, other)
+
+        return NotImplemented
+
+    def get_result(
+        self,
+        error,
+        event,
+        event_type: EventType,
+        values: Optional[dict[type, Any]] = None
+    ) -> bool:
+        return any(i.get_result(error, event, event_type, values) for i in self.filters)

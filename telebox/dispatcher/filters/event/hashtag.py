@@ -1,6 +1,8 @@
+from typing import Union
+
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.typing import Event
 from telebox.dispatcher.enums.event_type import EventType
+from telebox.dispatcher.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.consts import message_entity_types
 
@@ -21,13 +23,23 @@ class HashtagFilter(AbstractEventFilter):
 
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Event, event_type: EventType) -> set[str]:
+    def get_event_types(self) -> set[EventType]:
+        return {
+            EventType.MESSAGE,
+            EventType.EDITED_MESSAGE,
+            EventType.CHANNEL_POST,
+            EventType.EDITED_CHANNEL_POST,
+            EventType.MEDIA_GROUP
+        }
+
+    def get_value(self, event: Union[Message, MediaGroup], event_type: EventType) -> set[str]:
         hashtags = set()
 
-        if isinstance(event, Message):
-            for i in event.get_entities():
-                if i.type == message_entity_types.HASHTAG:
-                    hashtags.add(event.get_entity_text(i))
+        if isinstance(event, MediaGroup):
+            for i in event:
+                _gather_hashtags(i, hashtags)
+        else:
+            _gather_hashtags(event, hashtags)
 
         return hashtags
 
@@ -43,3 +55,9 @@ class HashtagFilter(AbstractEventFilter):
                 return True
 
         return False
+
+
+def _gather_hashtags(message: Message, hashtags: set[str]) -> None:
+    for i in message.get_entities():
+        if i.type == message_entity_types.HASHTAG:
+            hashtags.add(message.get_entity_text(i))

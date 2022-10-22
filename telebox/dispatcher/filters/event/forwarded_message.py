@@ -1,5 +1,6 @@
+from typing import Union
+
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.typing import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
@@ -7,8 +8,11 @@ from telebox.telegram_bot.types.types.message import Message
 
 class ForwardedMessageFilter(AbstractEventFilter):
 
-    def get_value(self, event: Event, event_type: EventType) -> bool:
-        return event.is_forwarded if isinstance(event, (Message, MediaGroup)) else False
+    def get_event_types(self) -> set[EventType]:
+        return {EventType.MESSAGE, EventType.CHANNEL_POST, EventType.MEDIA_GROUP}
+
+    def get_value(self, event: Union[Message, MediaGroup], event_type: EventType) -> bool:
+        return event.is_forwarded
 
     def check_value(self, value: bool) -> bool:
         return value

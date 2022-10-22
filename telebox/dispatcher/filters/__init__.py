@@ -1,4 +1,3 @@
-from .filter import AbstractFilter
 from .event_filter import AbstractEventFilter
 from .error_filter import AbstractErrorFilter
 from .event import (
@@ -30,7 +29,6 @@ from .error import (
 
 
 __all__ = [
-    "AbstractFilter",
     "AbstractEventFilter",
     "AbstractErrorFilter",
     "CommandFilter",

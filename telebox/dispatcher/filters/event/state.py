@@ -1,7 +1,6 @@
-from typing import Optional
+from typing import Optional, Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.typing import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
@@ -12,13 +11,30 @@ from telebox.state_machine.machine import StateMachine
 
 class StateFilter(AbstractEventFilter):
 
-    def __init__(self, *states: State, state_machine: StateMachine):
-        self._states = set(states)
-        self._state_machine = state_machine
+    def __init__(self, *states: State, machine: StateMachine):
+        if not states:
+            raise ValueError("No states!")
 
-    def get_value(self, event: Event, event_type: EventType) -> Optional[State]:
-        if isinstance(event, (Message, CallbackQuery, MediaGroup)) and (event.chat_id is not None):
-            return self._state_machine.get_state(chat_id=event.chat_id, user_id=event.user_id)
+        self._states = set(states)
+        self._machine = machine
+
+    def get_event_types(self) -> set[EventType]:
+        return {
+            EventType.MESSAGE,
+            EventType.EDITED_MESSAGE,
+            EventType.CHANNEL_POST,
+            EventType.EDITED_CHANNEL_POST,
+            EventType.MEDIA_GROUP,
+            EventType.CALLBACK_QUERY
+        }
+
+    def get_value(
+        self,
+        event: Union[Message, MediaGroup, CallbackQuery],
+        event_type: EventType
+    ) -> Optional[State]:
+        if event.chat_id is not None:
+            return self._machine.get_state(chat_id=event.chat_id, user_id=event.user_id)
 
     def check_value(self, value: Optional[State]) -> bool:
-        return value in self._states if self._states else value is not None
+        return value in self._states if value is not None else False

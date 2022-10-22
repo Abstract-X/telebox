@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.typing import Event
 from telebox.dispatcher.enums.event_type import EventType
+from telebox.dispatcher.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 
 
@@ -23,12 +23,24 @@ class NonStandardCommandFilter(AbstractEventFilter):
         self._prefix = prefix
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
-        if isinstance(event, Message):
-            text = event.get_text()
+    def get_event_types(self) -> set[EventType]:
+        return {
+            EventType.MESSAGE,
+            EventType.EDITED_MESSAGE,
+            EventType.CHANNEL_POST,
+            EventType.EDITED_CHANNEL_POST,
+            EventType.MEDIA_GROUP
+        }
 
-            if text is not None:
-                return text.split(" ", 1)[0]
+    def get_value(self, event: Union[Message, MediaGroup], event_type: EventType) -> Optional[str]:
+        if isinstance(event, MediaGroup):
+            for i in event:
+                command = _get_command(i)
+
+                if command is not None:
+                    return command
+
+        return _get_command(event)
 
     def check_value(self, value: Optional[str]) -> bool:
         if (value is not None) and value.startswith(self._prefix):
@@ -41,3 +53,10 @@ class NonStandardCommandFilter(AbstractEventFilter):
             return value in self._commands
 
         return False
+
+
+def _get_command(message: Message) -> Optional[str]:
+    text = message.get_text()
+
+    if text is not None:
+        return text.split(" ", 1)[0]

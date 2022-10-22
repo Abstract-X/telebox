@@ -6,7 +6,6 @@ from .handlers import (
     AbstractErrorHandler
 )
 from .filters import (
-    AbstractFilter,
     AbstractEventFilter,
     AbstractErrorFilter
 )
@@ -23,7 +22,6 @@ __all__ = [
     "AbstractHandler",
     "AbstractEventHandler",
     "AbstractErrorHandler",
-    "AbstractFilter",
     "AbstractEventFilter",
     "AbstractErrorFilter",
     "Middleware",
