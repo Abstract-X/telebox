@@ -2,6 +2,8 @@ from .telegram_bot import TelegramBot, UpdateContentType, MessageContentType
 from .dispatcher import (
     Dispatcher,
     Event,
+    EventHandler,
+    ErrorHandler,
     EventType,
     MediaGroupContentType,
     AbstractHandler,
@@ -34,6 +36,8 @@ __all__ = [
     "MessageContentType",
     "Dispatcher",
     "Event",
+    "EventHandler",
+    "ErrorHandler",
     "EventType",
     "AbstractHandler",
     "AbstractEventHandler",

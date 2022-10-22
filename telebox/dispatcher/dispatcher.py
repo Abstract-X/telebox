@@ -102,12 +102,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.MESSAGE, filter_, rate_limiter)
 
-    def check_message_handler(
+    def get_message_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.MESSAGE, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.MESSAGE, filter_)
 
     def add_edited_message_handler(
         self,
@@ -117,12 +117,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.EDITED_MESSAGE, filter_, rate_limiter)
 
-    def check_edited_message_handler(
+    def get_edited_message_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.EDITED_MESSAGE, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.EDITED_MESSAGE, filter_)
 
     def add_channel_post_handler(
         self,
@@ -131,12 +131,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.CHANNEL_POST, filter_, None)
 
-    def check_channel_post_handler(
+    def get_channel_post_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.CHANNEL_POST, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.CHANNEL_POST, filter_)
 
     def add_edited_channel_post_handler(
         self,
@@ -145,12 +145,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.EDITED_CHANNEL_POST, filter_, None)
 
-    def check_edited_channel_post_handler(
+    def get_edited_channel_post_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.EDITED_CHANNEL_POST, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.EDITED_CHANNEL_POST, filter_)
 
     def add_media_group_handler(
         self,
@@ -160,12 +160,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.MEDIA_GROUP, filter_, rate_limiter)
 
-    def check_media_group_handler(
+    def get_media_group_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.MEDIA_GROUP, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.MEDIA_GROUP, filter_)
 
     def add_inline_query_handler(
         self,
@@ -175,12 +175,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.INLINE_QUERY, filter_, rate_limiter)
 
-    def check_inline_query_handler(
+    def get_inline_query_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.INLINE_QUERY, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.INLINE_QUERY, filter_)
 
     def add_chosen_inline_result_handler(
         self,
@@ -190,12 +190,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.CHOSEN_INLINE_RESULT, filter_, rate_limiter)
 
-    def check_chosen_inline_result_handler(
+    def get_chosen_inline_result_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.CHOSEN_INLINE_RESULT, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.CHOSEN_INLINE_RESULT, filter_)
 
     def add_callback_query_handler(
         self,
@@ -205,12 +205,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.CALLBACK_QUERY, filter_, rate_limiter)
 
-    def check_callback_query_handler(
+    def get_callback_query_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.CALLBACK_QUERY, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.CALLBACK_QUERY, filter_)
 
     def add_shipping_query_handler(
         self,
@@ -220,12 +220,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.SHIPPING_QUERY, filter_, rate_limiter)
 
-    def check_shipping_query_handler(
+    def get_shipping_query_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.SHIPPING_QUERY, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.SHIPPING_QUERY, filter_)
 
     def add_pre_checkout_query_handler(
         self,
@@ -235,12 +235,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.PRE_CHECKOUT_QUERY, filter_, rate_limiter)
 
-    def check_pre_checkout_query_handler(
+    def get_pre_checkout_query_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.PRE_CHECKOUT_QUERY, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.PRE_CHECKOUT_QUERY, filter_)
 
     def add_poll_handler(
         self,
@@ -249,12 +249,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.POLL, filter_, None)
 
-    def check_poll_handler(
+    def get_poll_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.POLL, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.POLL, filter_)
 
     def add_poll_answer_handler(
         self,
@@ -264,12 +264,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.POLL_ANSWER, filter_, rate_limiter)
 
-    def check_poll_answer_handler(
+    def get_poll_answer_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.POLL_ANSWER, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.POLL_ANSWER, filter_)
 
     def add_my_chat_member_handler(
         self,
@@ -278,12 +278,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.MY_CHAT_MEMBER, filter_, None)
 
-    def check_my_chat_member_handler(
+    def get_my_chat_member_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.MY_CHAT_MEMBER, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.MY_CHAT_MEMBER, filter_)
 
     def add_chat_member_handler(
         self,
@@ -292,12 +292,12 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.CHAT_MEMBER, filter_, None)
 
-    def check_chat_member_handler(
+    def get_chat_member_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.CHAT_MEMBER, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.CHAT_MEMBER, filter_)
 
     def add_chat_join_request_handler(
         self,
@@ -306,22 +306,24 @@ class Dispatcher:
     ) -> None:
         self._add_event_handler(handler, EventType.CHAT_JOIN_REQUEST, filter_, None)
 
-    def check_chat_join_request_handler(
+    def get_chat_join_request_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None
-    ) -> bool:
-        return self._check_event_handler(handler, EventType.CHAT_JOIN_REQUEST, filter_)
+    ) -> EventHandler:
+        return self._get_event_handler(handler, EventType.CHAT_JOIN_REQUEST, filter_)
 
     def add_error_handler(
         self,
         handler: AbstractErrorHandler,
         filter_: Optional[AbstractErrorBaseFilter] = None
     ) -> None:
-        if self.check_error_handler(handler, filter_):
+        try:
+            self.get_error_handler(handler, filter_)
+        except DispatcherError:
             raise DispatcherError(
                 f"Error handler has already been added ({handler=}, {filter_=})!"
-            )
+            ) from None
 
         if filter_ is None:
             filter_ = self._error_none_filter
@@ -333,19 +335,19 @@ class Dispatcher:
             )
         )
 
-    def check_error_handler(
+    def get_error_handler(
         self,
         handler: AbstractErrorHandler,
         filter_: Optional[AbstractErrorBaseFilter] = None,
-    ) -> bool:
+    ) -> ErrorHandler:
         if filter_ is None:
             filter_ = self._none_filter
 
         for i in self._error_handlers:
             if (handler is i.handler) and (filter_ is i.filter):
-                return True
+                return i
 
-        return False
+        raise DispatcherError(f"Error handler not found ({handler=}, {filter_=})!")
 
     def add_middleware(self, middleware: Middleware) -> None:
         self._middlewares.append(middleware)
@@ -488,10 +490,12 @@ class Dispatcher:
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
-        if self._check_event_handler(handler, event_type, filter_):
+        try:
+            self._get_event_handler(handler, event_type, filter_)
+        except DispatcherError:
             raise DispatcherError(
                 f"Event handler has already been added ({handler=}, {filter_=})!"
-            )
+            ) from None
 
         if filter_ is None:
             filter_ = self._none_filter
@@ -516,22 +520,22 @@ class Dispatcher:
             )
         )
 
-    def _check_event_handler(
+    def _get_event_handler(
         self,
         handler: AbstractEventHandler,
         event_type: EventType,
         filter_: Optional[AbstractEventBaseFilter] = None,
-    ) -> bool:
+    ) -> EventHandler:
         if filter_ is None:
             filter_ = self._none_filter
 
         for i in self._event_handlers[event_type]:
             if (handler is i.handler) and (filter_ is i.filter):
-                return True
+                return i
 
-        return False
+        raise DispatcherError(f"Event handler not found ({handler=}, {filter_=})!")
 
-    def _get_event_handler(
+    def _get_handler_for_event(
         self,
         event: Event,
         event_type: EventType
@@ -542,7 +546,7 @@ class Dispatcher:
             if (i.filter is None) or i.filter.get_result(event, event_type, values):
                 return i
 
-    def _get_error_handler(
+    def _get_handler_for_error(
         self,
         error: Exception,
         event: Event,
@@ -651,7 +655,7 @@ class Dispatcher:
                 for i in self._middlewares:
                     i.pre_process_event(event.event, event.event_type)
 
-                event_handler = self._get_event_handler(
+                event_handler = self._get_handler_for_event(
                     event=event.event,
                     event_type=event.event_type
                 )
@@ -671,7 +675,7 @@ class Dispatcher:
                         for i in self._middlewares:
                             i.pre_process_error(error, event.event, event.event_type)
 
-                        error_handler = self._get_error_handler(
+                        error_handler = self._get_handler_for_error(
                             error=error,
                             event=event.event,
                             event_type=event.event_type
