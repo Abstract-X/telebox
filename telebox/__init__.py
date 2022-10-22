@@ -39,6 +39,7 @@ __all__ = [
     "EventHandler",
     "ErrorHandler",
     "EventType",
+    "MediaGroupContentType",
     "AbstractHandler",
     "AbstractEventHandler",
     "AbstractErrorHandler",
