@@ -1,5 +1,5 @@
 from telebox.dispatcher.middlewares.middleware import Middleware
-from telebox.dispatcher.dispatcher import Event
+from telebox.dispatcher.typing import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 from telebox.utils.callback_data_builders.builder import AbstractCallbackDataBuilder

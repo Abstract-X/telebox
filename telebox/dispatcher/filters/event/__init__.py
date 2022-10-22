@@ -16,6 +16,7 @@ from .hashtag import HashtagFilter
 from .cashtag import CashtagFilter
 from .mention import MentionFilter
 from .text_mention import TextMentionFilter
+from .media_group_content_type import MediaGroupContentTypeFilter
 
 
 __all__ = [
@@ -36,5 +37,6 @@ __all__ = [
     "HashtagFilter",
     "CashtagFilter",
     "MentionFilter",
-    "TextMentionFilter"
+    "TextMentionFilter",
+    "MediaGroupContentTypeFilter"
 ]

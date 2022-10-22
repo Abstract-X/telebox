@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
+from telebox.dispatcher.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.consts import message_entity_types
 
@@ -23,11 +23,24 @@ class CommandFilter(AbstractEventFilter):
 
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
-        if isinstance(event, Message):
-            for i in event.get_entities():
-                if (i.type == message_entity_types.BOT_COMMAND) and (i.offset == 0):
-                    return event.get_entity_text(i)
+    def get_event_types(self) -> set[EventType]:
+        return {
+            EventType.MESSAGE,
+            EventType.EDITED_MESSAGE,
+            EventType.CHANNEL_POST,
+            EventType.EDITED_CHANNEL_POST,
+            EventType.MEDIA_GROUP
+        }
+
+    def get_value(self, event: Union[Message, MediaGroup], event_type: EventType) -> Optional[str]:
+        if isinstance(event, MediaGroup):
+            for i in event:
+                command = _get_command(i)
+
+                if command is not None:
+                    return command
+
+        return _get_command(event)
 
     def check_value(self, value: Optional[str]) -> bool:
         if value is not None:
@@ -43,3 +56,9 @@ class CommandFilter(AbstractEventFilter):
             return value in self._commands
 
         return False
+
+
+def _get_command(message: Message) -> Optional[str]:
+    for i in message.get_entities():
+        if (i.type == message_entity_types.BOT_COMMAND) and (i.offset == 0):
+            return message.get_entity_text(i)

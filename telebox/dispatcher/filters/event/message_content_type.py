@@ -1,7 +1,4 @@
-from typing import Optional
-
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.enums.message_content_type import MessageContentType
@@ -10,13 +7,23 @@ from telebox.telegram_bot.enums.message_content_type import MessageContentType
 class MessageContentTypeFilter(AbstractEventFilter):
 
     def __init__(self, *types: MessageContentType):
+        if not types:
+            raise ValueError("No message content types!")
+
         self._types = set(types)
 
-    def get_value(self, event: Event, event_type: EventType) -> Optional[MessageContentType]:
-        if isinstance(event, Message):
-            _, content_type = event.content
+    def get_event_types(self) -> set[EventType]:
+        return {
+            EventType.MESSAGE,
+            EventType.EDITED_MESSAGE,
+            EventType.CHANNEL_POST,
+            EventType.EDITED_CHANNEL_POST
+        }
 
-            return content_type
+    def get_value(self, event: Message, event_type: EventType) -> MessageContentType:
+        _, content_type = event.content
 
-    def check_value(self, value: Optional[MessageContentType]) -> bool:
-        return value in self._types if self._types else bool(value)
+        return content_type
+
+    def check_value(self, value: MessageContentType) -> bool:
+        return value in self._types

@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
+from telebox.dispatcher.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 
 
@@ -13,21 +13,44 @@ class TextFilter(AbstractEventFilter):
         self._full_match = full_match
         self._ignore_case = ignore_case
 
-    def get_value(self, event: Event, event_type: EventType) -> Optional[str]:
-        if isinstance(event, Message):
-            return event.get_text()
+    def get_event_types(self) -> set[EventType]:
+        return {
+            EventType.MESSAGE,
+            EventType.EDITED_MESSAGE,
+            EventType.CHANNEL_POST,
+            EventType.EDITED_CHANNEL_POST,
+            EventType.MEDIA_GROUP
+        }
 
-    def check_value(self, value: Optional[str]) -> bool:
-        if value is not None:
-            if not self._texts:
-                return True
+    def get_value(self, event: Union[Message, MediaGroup], event_type: EventType) -> list[str]:
+        if isinstance(event, MediaGroup):
+            messages = event.messages
+        else:
+            messages = [event]
 
+        texts = []
+
+        for i in messages:
+            text = i.get_text()
+
+            if text is not None:
+                texts.append(text)
+
+        return texts
+
+    def check_value(self, value: list[str]) -> bool:
+        if not self._texts:
+            return bool(value)
+
+        for text in value:
             if self._ignore_case:
-                value = value.lower()
+                text = text.lower()
 
             if self._full_match:
-                return value in self._texts
+                if text in self._texts:
+                    return True
             else:
-                return any(i in value for i in self._texts)
+                if any(i in text for i in self._texts):
+                    return True
 
         return False

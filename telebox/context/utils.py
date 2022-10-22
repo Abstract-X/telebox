@@ -1,6 +1,7 @@
 from typing import Any, Type
 
-from telebox.dispatcher.dispatcher import Event
+from telebox.dispatcher.typing import Event
+from telebox.dispatcher.media_group import MediaGroup
 from telebox.context.vars import event_context
 from telebox.context.errors import InvalidEventError
 from telebox.telegram_bot.types.types.message import Message
@@ -18,7 +19,7 @@ def get_event_chat_id() -> int:
     return _get_event_value(
         attribute="chat_id",
         name="chat identifier",
-        types=(Message, CallbackQuery, ChatMemberUpdated, ChatJoinRequest)
+        types=(Message, CallbackQuery, MediaGroup, ChatMemberUpdated, ChatJoinRequest)
     )
 
 
@@ -31,6 +32,7 @@ def get_event_user_id() -> int:
             InlineQuery,
             ChosenInlineResult,
             CallbackQuery,
+            MediaGroup,
             ShippingQuery,
             PreCheckoutQuery,
             PollAnswer,
@@ -44,7 +46,7 @@ def get_event_sender_chat_id() -> int:
     return _get_event_value(
         attribute="sender_chat_id",
         name="sender chat identifier",
-        types=(Message,)
+        types=(Message, MediaGroup)
     )
 
 
