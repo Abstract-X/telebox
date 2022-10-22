@@ -19,7 +19,8 @@ from .event import (
     HashtagFilter,
     CashtagFilter,
     MentionFilter,
-    TextMentionFilter
+    TextMentionFilter,
+    MediaGroupContentTypeFilter
 )
 from .error import (
     ErrorTypeFilter,

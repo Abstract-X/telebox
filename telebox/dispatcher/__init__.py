@@ -1,5 +1,5 @@
 from .dispatcher import Dispatcher, Event
-from .enums import EventType
+from .enums import EventType, MediaGroupContentType
 from .handlers import (
     AbstractHandler,
     AbstractEventHandler,
@@ -12,12 +12,14 @@ from .filters import (
 )
 from .middlewares import Middleware
 from .rate_limiter import RateLimiter
+from .media_group import MediaGroup
 
 
 __all__ = [
     "Dispatcher",
     "Event",
     "EventType",
+    "MediaGroupContentType",
     "AbstractHandler",
     "AbstractEventHandler",
     "AbstractErrorHandler",
@@ -25,5 +27,6 @@ __all__ = [
     "AbstractEventFilter",
     "AbstractErrorFilter",
     "Middleware",
-    "RateLimiter"
+    "RateLimiter",
+    "MediaGroup"
 ]

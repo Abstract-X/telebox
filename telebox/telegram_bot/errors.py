@@ -1,10 +1,9 @@
 from dataclasses import dataclass
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Optional, Any
 from http import HTTPStatus
 
 from telebox.errors import TeleboxError
-if TYPE_CHECKING:
-    from telebox.telegram_bot.types.types.response_parameters import ResponseParameters
+from telebox.telegram_bot.types.types.response_parameters import ResponseParameters
 
 
 @dataclass
@@ -771,7 +770,7 @@ def get_request_error(
     status_code: int,
     description: str,
     *,
-    response_parameters: Optional["ResponseParameters"] = None
+    response_parameters: Optional[ResponseParameters] = None
 ) -> RequestError:
     kwargs = {
         "method": method,
@@ -804,7 +803,7 @@ def get_request_error(
 
 def _get_bad_request_error(
     kwargs: dict[str, Any],
-    response_parameters: "ResponseParameters"
+    response_parameters: ResponseParameters
 ) -> BadRequestError:
     lowered_description = kwargs["description"].lower()
 
@@ -930,7 +929,7 @@ def _get_request_entity_too_large_error(kwargs: dict[str, Any]) -> RequestEntity
 
 def _get_too_many_requests_error(
     kwargs: dict[str, Any],
-    response_parameters: "ResponseParameters"
+    response_parameters: ResponseParameters
 ) -> TooManyRequestsError:
     lowered_description = kwargs["description"].lower()
 

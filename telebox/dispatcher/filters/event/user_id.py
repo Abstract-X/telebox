@@ -1,8 +1,9 @@
 from typing import Optional
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.dispatcher import Event
+from telebox.dispatcher.typing import Event
 from telebox.dispatcher.enums.event_type import EventType
+from telebox.dispatcher.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.inline_query import InlineQuery
 from telebox.telegram_bot.types.types.chosen_inline_result import ChosenInlineResult
@@ -27,6 +28,7 @@ class UserIDFilter(AbstractEventFilter):
                 InlineQuery,
                 ChosenInlineResult,
                 CallbackQuery,
+                MediaGroup,
                 ShippingQuery,
                 PreCheckoutQuery,
                 PollAnswer,

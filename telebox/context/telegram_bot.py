@@ -1,8 +1,7 @@
-from typing import Optional, Union, Literal, TYPE_CHECKING
+from typing import Optional, Union, Literal
 from datetime import datetime
 
-if TYPE_CHECKING:
-    from telebox.telegram_bot.telegram_bot import TelegramBot
+from telebox.telegram_bot.telegram_bot import TelegramBot
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.message_entity import MessageEntity
 from telebox.telegram_bot.types.types.inline_keyboard_markup import InlineKeyboardMarkup
@@ -47,7 +46,7 @@ from telebox.context.utils import (
 
 class ContextTelegramBot:
 
-    def __init__(self, bot: "TelegramBot"):
+    def __init__(self, bot: TelegramBot):
         self._bot = bot
 
     def send_message(
