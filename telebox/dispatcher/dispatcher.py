@@ -1,16 +1,18 @@
 import logging
-from typing import Optional, Union, NoReturn, TYPE_CHECKING
+from typing import Optional, Union, NoReturn, Any
 from dataclasses import dataclass
+from threading import Thread, Lock
 import time
 
 from cachetools import TTLCache
 import cherrypy
 
-if TYPE_CHECKING:
-    from telebox.telegram_bot.telegram_bot import TelegramBot
-from telebox.telegram_bot.types.types.update import Update, UpdateContent as Event
+from telebox.telegram_bot.telegram_bot import TelegramBot
+from telebox.telegram_bot.types.types.update import Update
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
+from telebox.dispatcher.typing import Event
+from telebox.dispatcher.media_group import MediaGroup
 from telebox.dispatcher.event_queue import EventQueue, Event as Event_
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
@@ -33,6 +35,7 @@ from telebox.context.vars import (
 
 
 logger = logging.getLogger(__name__)
+_MEDIA_GROUP_GATHERING_DELAY_SECS = 0.1
 
 
 @dataclass
@@ -54,11 +57,22 @@ class CallState:
     is_first: bool
 
 
+class TimeContainer:
+
+    def __init__(self, initial_item: Any):
+        self.items = [initial_item]
+        self.time = time.monotonic()
+
+    def add(self, item: Any) -> None:
+        self.items.append(item)
+        self.time = time.monotonic()
+
+
 class Dispatcher:
 
     def __init__(
         self,
-        bot: "TelegramBot",
+        bot: TelegramBot,
         *,
         drop_over_limit_events: bool = False,
         default_rate_limiters: Optional[dict[EventType, RateLimiter]] = None
@@ -73,6 +87,9 @@ class Dispatcher:
         self._event_handlers: dict[EventType, list[EventHandler]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandler] = []
         self._middlewares: list[Middleware] = []
+        self._media_group_gathering_thread: Optional[Thread] = None
+        self._media_group_messages: dict[str, TimeContainer] = {}
+        self._media_group_message_lock = Lock()
 
     def add_message_handler(
         self,
@@ -89,6 +106,14 @@ class Dispatcher:
         rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
         self._add_event_handler(handler, EventType.EDITED_MESSAGE, filter_, rate_limiter)
+
+    def add_media_group_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventFilter] = None,
+        rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
+    ) -> None:
+        self._add_event_handler(handler, EventType.MEDIA_GROUP, filter_, rate_limiter)
 
     def add_channel_post_handler(
         self,
@@ -224,6 +249,7 @@ class Dispatcher:
         self._polling_is_used = True
         logger.debug("Polling is starting...")
         offset_update_id = None
+        self._run_media_group_gathering_thread()
         self._run_thread_pool(threads)
         logger.info("Polling started.")
 
@@ -252,6 +278,8 @@ class Dispatcher:
         except KeyboardInterrupt:
             logger.info("Polling stopped.")
             self._finish_update_processing()
+            self._media_group_gathering_thread = None
+            self._thread_pool = None
             self._polling_is_used = False
 
     def run_server(
@@ -286,6 +314,7 @@ class Dispatcher:
                 "server.ssl_private_key": ssl_private_key_path,
             })
 
+        self._run_media_group_gathering_thread()
         self._run_thread_pool(threads)
         logger.info("Server started.")
 
@@ -297,6 +326,8 @@ class Dispatcher:
         finally:
             logger.info("Server stopped.")
             self._finish_update_processing()
+            self._media_group_gathering_thread = None
+            self._thread_pool = None
             self._server_is_used = False
 
     def drop_pending_updates(
@@ -373,6 +404,13 @@ class Dispatcher:
             if (i.filter is None) or i.filter.get_result(error, event, event_type, values):
                 return i
 
+    def _run_media_group_gathering_thread(self) -> None:
+        self._media_group_gathering_thread = Thread(
+            target=self._run_media_group_gathering,
+            daemon=True
+        )
+        self._media_group_gathering_thread.start()
+
     def _run_thread_pool(self, threads: int) -> None:
         self._thread_pool = ThreadPool(
             threads=threads,
@@ -383,23 +421,49 @@ class Dispatcher:
 
     def _process_update(self, update: Update) -> None:
         logger.debug("Update received: %r.", update)
-        event, event_type = update.content
+        event, content_type = update.content
+        event_type = EventType(content_type.value)
 
-        if (
-            self._drop_over_limit_events
-            and isinstance(event, (Message, CallbackQuery))
-            and event.chat_id in self._bot.over_limit_chat_ids
-        ):
-            logger.debug("Event from over limit chat dropped: %r.", event)
+        if isinstance(event, Message) and (event.media_group_id is not None):
+            with self._media_group_message_lock:
+                if event.media_group_id in self._media_group_messages:
+                    self._media_group_messages[event.media_group_id].add(event)
+                else:
+                    self._media_group_messages[event.media_group_id] = TimeContainer(event)
         else:
-            logger.debug("Event added to queue: %r.", event)
-            self._events.add_event(event, event_type)
+            if self._check_over_limit_event(event):
+                logger.debug("Event from over limit chat dropped: %r.", event)
+            else:
+                logger.debug("Event added to queue: %r.", event)
+                self._events.add_event(event, event_type)
+
+    def _check_over_limit_event(self, event: Event) -> bool:
+        return (
+            self._drop_over_limit_events
+            and isinstance(event, (Message, CallbackQuery, MediaGroup))
+            and event.chat_id in self._bot.over_limit_chat_ids
+        )
 
     def _finish_update_processing(self) -> None:
         logger.info("Update processing finishing...")
         self._events.wait_events()
-        self._thread_pool = None
         logger.info("Update processing finished.")
+
+    def _run_media_group_gathering(self) -> NoReturn:
+        while True:
+            with self._media_group_message_lock:
+                for i in tuple(self._media_group_messages):
+                    if (time.monotonic() - self._media_group_messages[i].time) > 0.1:
+                        event = MediaGroup(self._media_group_messages[i].items)
+                        del self._media_group_messages[i]
+
+                        if self._check_over_limit_event(event):
+                            logger.debug("Event from over limit chat dropped: %r.", event)
+                        else:
+                            logger.debug("Event added to queue: %r.", event)
+                            self._events.add_event(event, EventType.MEDIA_GROUP)
+
+            time.sleep(_MEDIA_GROUP_GATHERING_DELAY_SECS)
 
     def _run_event_processing(self, events: EventQueue) -> NoReturn:
         while True:

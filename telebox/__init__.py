@@ -3,6 +3,7 @@ from .dispatcher import (
     Dispatcher,
     Event,
     EventType,
+    MediaGroupContentType,
     AbstractHandler,
     AbstractEventHandler,
     AbstractErrorHandler,

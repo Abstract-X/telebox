@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from telebox.errors import TeleboxError
-from telebox.dispatcher.dispatcher import Event
+from telebox.dispatcher.typing import Event
 
 
 @dataclass

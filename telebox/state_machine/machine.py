@@ -13,7 +13,7 @@ from telebox.state_machine.errors import (
     StateExistsError
 )
 from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
-from telebox.dispatcher.dispatcher import Event
+from telebox.dispatcher.typing import Event
 
 
 class StateMachine:

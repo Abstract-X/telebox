@@ -1,4 +1,4 @@
-from telebox.dispatcher.dispatcher import Event
+from telebox.dispatcher.typing import Event
 from telebox.dispatcher.enums.event_type import EventType
 
 
