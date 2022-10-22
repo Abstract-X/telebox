@@ -11,6 +11,7 @@ from telebox.telegram_bot.telegram_bot import TelegramBot
 from telebox.telegram_bot.types.types.update import Update
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
+from telebox.telegram_bot.errors import UnknownUpdateContentError, UnknownMessageContentError
 from telebox.dispatcher.typing import Event
 from telebox.dispatcher.media_group import MediaGroup
 from telebox.dispatcher.event_queue import EventQueue, Event as Event_
@@ -424,21 +425,44 @@ class Dispatcher:
 
     def _process_update(self, update: Update) -> None:
         logger.debug("Update received: %r.", update)
-        event, content_type = update.content
+
+        try:
+            event, content_type = update.content
+        except UnknownUpdateContentError:
+            logger.debug(
+                "Update skipped because it contains an unknown content type: %r.",
+                update
+            )
+
+            return
+
         event_type = EventType(content_type.value)
 
-        if isinstance(event, Message) and (event.media_group_id is not None):
-            with self._media_group_message_lock:
-                if event.media_group_id in self._media_group_messages:
-                    self._media_group_messages[event.media_group_id].add(event)
-                else:
-                    self._media_group_messages[event.media_group_id] = TimeContainer(event)
+        if isinstance(event, Message):
+            try:
+                event.content  # noqa
+            except UnknownMessageContentError:
+                logger.debug(
+                    "Event skipped because it contains an unknown content type: %r.",
+                    event
+                )
+
+                return
+
+            if event.media_group_id is not None:
+                with self._media_group_message_lock:
+                    if event.media_group_id in self._media_group_messages:
+                        self._media_group_messages[event.media_group_id].add(event)
+                    else:
+                        self._media_group_messages[event.media_group_id] = TimeContainer(event)
+
+                return
+
+        if self._check_over_limit_event(event):
+            logger.debug("Event from over limit chat dropped: %r.", event)
         else:
-            if self._check_over_limit_event(event):
-                logger.debug("Event from over limit chat dropped: %r.", event)
-            else:
-                logger.debug("Event added to queue: %r.", event)
-                self._events.add_event(event, event_type)
+            logger.debug("Event added to queue: %r.", event)
+            self._events.add_event(event, event_type)
 
     def _check_over_limit_event(self, event: Event) -> bool:
         return (
