@@ -56,7 +56,7 @@ class StateManager:
         chat_id: int,
         user_id: Optional[int] = None
     ) -> StateMagazine:
-        states = self._storage.load(chat_id=chat_id, user_id=user_id)
+        states = self._storage.load_states(chat_id=chat_id, user_id=user_id)
 
         if not states:
             states = [str(self._initial_state)]
@@ -70,4 +70,4 @@ class StateManager:
         chat_id: int,
         user_id: Optional[int] = None
     ) -> None:
-        self._storage.save(list(magazine), chat_id=chat_id, user_id=user_id)
+        self._storage.save_states(list(magazine), chat_id=chat_id, user_id=user_id)

@@ -12,7 +12,13 @@ class FileStateStorage(AbstractStateStorage):
         self._path = path
         self._lock = Lock()
 
-    def save(self, states: list[str], *, chat_id: int, user_id: Optional[int] = None) -> None:
+    def save_states(
+        self,
+        states: list[str],
+        *,
+        chat_id: int,
+        user_id: Optional[int] = None
+    ) -> None:
         with self._lock:
             stored_states = self._load_stored_states()
             stored_states.setdefault(str(chat_id), {})[str(user_id)] = states
@@ -20,7 +26,7 @@ class FileStateStorage(AbstractStateStorage):
             with open(self._path, "w", encoding="UTF-8") as stream:
                 ujson.dump(stored_states, stream)
 
-    def load(self, *, chat_id: int, user_id: Optional[int] = None) -> list[str]:
+    def load_states(self, *, chat_id: int, user_id: Optional[int] = None) -> list[str]:
         with self._lock:
             stored_states = self._load_stored_states()
 

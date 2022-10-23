@@ -17,7 +17,13 @@ class MemoryStateStorage(AbstractStateStorage):
     def __init__(self):
         self._states: StateDict = {}
 
-    def save(self, states: list[str], *, chat_id: int, user_id: Optional[int] = None) -> None:
+    def save_states(
+        self,
+        states: list[str],
+        *,
+        chat_id: int,
+        user_id: Optional[int] = None
+    ) -> None:
         try:
             self._states[chat_id][user_id] = states[:]
         except KeyError:
@@ -25,7 +31,7 @@ class MemoryStateStorage(AbstractStateStorage):
                 user_id: states[:]
             }
 
-    def load(self, *, chat_id: int, user_id: Optional[int] = None) -> list[str]:
+    def load_states(self, *, chat_id: int, user_id: Optional[int] = None) -> list[str]:
         try:
             return self._states[chat_id][user_id][:]
         except KeyError:
