@@ -1,4 +1,11 @@
-from .dispatcher import Dispatcher, Event, EventHandler, ErrorHandler
+from .dispatcher import (
+    Dispatcher,
+    Event,
+    EventHandler,
+    ErrorHandler,
+    none_filter,
+    error_none_filter
+)
 from .enums import EventType, MediaGroupContentType
 from .handlers import AbstractEventHandler, AbstractErrorHandler
 from .filters import AbstractEventFilter, AbstractErrorFilter
@@ -12,6 +19,8 @@ __all__ = [
     "Event",
     "EventHandler",
     "ErrorHandler",
+    "none_filter",
+    "error_none_filter",
     "EventType",
     "MediaGroupContentType",
     "AbstractEventHandler",

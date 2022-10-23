@@ -36,6 +36,8 @@ from telebox.context.vars import (
 
 
 logger = logging.getLogger(__name__)
+none_filter = NoneFilter()
+error_none_filter = ErrorNoneFilter()
 _MEDIA_GROUP_GATHERING_DELAY_SECS = 0.1
 
 
@@ -91,8 +93,6 @@ class Dispatcher:
         self._media_group_gathering_thread: Optional[Thread] = None
         self._media_group_messages: dict[str, TimeContainer] = {}
         self._media_group_message_lock = Lock()
-        self._none_filter = NoneFilter()
-        self._error_none_filter = ErrorNoneFilter()
 
     def add_message_handler(
         self,
@@ -324,7 +324,7 @@ class Dispatcher:
             )
 
         if filter_ is None:
-            filter_ = self._error_none_filter
+            filter_ = error_none_filter
 
         self._error_handlers.append(
             ErrorHandler(
@@ -336,10 +336,10 @@ class Dispatcher:
     def get_error_handler(
         self,
         handler: AbstractErrorHandler,
-        filter_: Optional[AbstractErrorBaseFilter] = None,
+        filter_: Optional[AbstractErrorBaseFilter] = None
     ) -> Optional[ErrorHandler]:
         if filter_ is None:
-            filter_ = self._none_filter
+            filter_ = error_none_filter
 
         for i in self._error_handlers:
             if (handler is i.handler) and (filter_ is i.filter):
@@ -492,7 +492,7 @@ class Dispatcher:
             )
 
         if filter_ is None:
-            filter_ = self._none_filter
+            filter_ = none_filter
 
         if not filter_.check_event_type(event_type):
             raise DispatcherError(f"{event_type!r} is not supported by this filter!")
@@ -518,10 +518,10 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         event_type: EventType,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractEventBaseFilter] = None
     ) -> Optional[EventHandler]:
         if filter_ is None:
-            filter_ = self._none_filter
+            filter_ = none_filter
 
         for i in self._event_handlers[event_type]:
             if (handler is i.handler) and (filter_ is i.filter):

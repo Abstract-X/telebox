@@ -1,3 +1,4 @@
+from .none import NoneFilter
 from .command import CommandFilter
 from .text import TextFilter
 from .reg_exp_text import RegExpTextFilter
@@ -20,6 +21,7 @@ from .media_group_content_type import MediaGroupContentTypeFilter
 
 
 __all__ = [
+    "NoneFilter",
     "CommandFilter",
     "TextFilter",
     "RegExpTextFilter",
