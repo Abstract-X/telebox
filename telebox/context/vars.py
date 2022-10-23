@@ -1,8 +1,8 @@
 from contextvars import ContextVar
 
 from telebox.dispatcher.typing import Event
-from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
-from telebox.dispatcher.handlers.handlers.error import AbstractErrorHandler
+from telebox.dispatcher.handlers.event import AbstractEventHandler
+from telebox.dispatcher.handlers.error import AbstractErrorHandler
 
 
 event_context: ContextVar[Event] = ContextVar("event_context")

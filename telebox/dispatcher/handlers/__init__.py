@@ -1,9 +1,8 @@
-from .handler import AbstractHandler
-from .handlers import AbstractEventHandler, AbstractErrorHandler
+from .event import AbstractEventHandler
+from .error import AbstractErrorHandler
 
 
 __all__ = [
-    "AbstractHandler",
     "AbstractEventHandler",
     "AbstractErrorHandler"
 ]

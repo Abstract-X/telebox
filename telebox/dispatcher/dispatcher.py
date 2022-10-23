@@ -16,8 +16,8 @@ from telebox.dispatcher.typing import Event
 from telebox.dispatcher.media_group import MediaGroup
 from telebox.dispatcher.event_queue import EventQueue, Event as Event_
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
-from telebox.dispatcher.handlers.handlers.error import AbstractErrorHandler
+from telebox.dispatcher.handlers.event import AbstractEventHandler
+from telebox.dispatcher.handlers.error import AbstractErrorHandler
 from telebox.dispatcher.filters.event_filter import AbstractEventBaseFilter
 from telebox.dispatcher.filters.error_filter import AbstractErrorBaseFilter
 from telebox.dispatcher.filters.event.none import NoneFilter
@@ -662,7 +662,7 @@ class Dispatcher:
                         i.process_event(event.event, event.event_type)
 
                     try:
-                        event_handler.handler.process(event.event)
+                        event_handler.handler.process_event(event.event)
                     except Exception as error:
                         for i in self._middlewares:
                             i.pre_process_error(error, event.event, event.event_type)
@@ -684,7 +684,11 @@ class Dispatcher:
                             i.process_error(error, event.event, event.event_type)
 
                         try:
-                            error_handler.handler.process(error, event.event, event.event_type)
+                            error_handler.handler.process_error(
+                                error,
+                                event.event,
+                                event.event_type
+                            )
                         finally:
                             for i in self._middlewares:
                                 i.post_process_error(error, event.event, event.event_type)
