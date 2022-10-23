@@ -318,12 +318,10 @@ class Dispatcher:
         handler: AbstractErrorHandler,
         filter_: Optional[AbstractErrorBaseFilter] = None
     ) -> None:
-        try:
-            self.get_error_handler(handler, filter_)
-        except DispatcherError:
+        if self.get_error_handler(handler, filter_) is not None:
             raise DispatcherError(
                 f"Error handler has already been added ({handler=}, {filter_=})!"
-            ) from None
+            )
 
         if filter_ is None:
             filter_ = self._error_none_filter
@@ -339,15 +337,13 @@ class Dispatcher:
         self,
         handler: AbstractErrorHandler,
         filter_: Optional[AbstractErrorBaseFilter] = None,
-    ) -> ErrorHandler:
+    ) -> Optional[ErrorHandler]:
         if filter_ is None:
             filter_ = self._none_filter
 
         for i in self._error_handlers:
             if (handler is i.handler) and (filter_ is i.filter):
                 return i
-
-        raise DispatcherError(f"Error handler not found ({handler=}, {filter_=})!")
 
     def add_middleware(self, middleware: Middleware) -> None:
         self._middlewares.append(middleware)
@@ -490,12 +486,10 @@ class Dispatcher:
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limiter: Union[RateLimiter, None, NotSet] = NotSet()
     ) -> None:
-        try:
-            self._get_event_handler(handler, event_type, filter_)
-        except DispatcherError:
+        if self._get_event_handler(handler, event_type, filter_) is not None:
             raise DispatcherError(
                 f"Event handler has already been added ({handler=}, {filter_=})!"
-            ) from None
+            )
 
         if filter_ is None:
             filter_ = self._none_filter
@@ -525,15 +519,13 @@ class Dispatcher:
         handler: AbstractEventHandler,
         event_type: EventType,
         filter_: Optional[AbstractEventBaseFilter] = None,
-    ) -> EventHandler:
+    ) -> Optional[EventHandler]:
         if filter_ is None:
             filter_ = self._none_filter
 
         for i in self._event_handlers[event_type]:
             if (handler is i.handler) and (filter_ is i.filter):
                 return i
-
-        raise DispatcherError(f"Event handler not found ({handler=}, {filter_=})!")
 
     def _get_handler_for_event(
         self,
