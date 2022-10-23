@@ -12,7 +12,7 @@ from telebox.state_machine.errors import (
     PreviousStateNotFoundError,
     StateExistsError
 )
-from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
+from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.typing import Event
 
 

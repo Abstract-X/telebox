@@ -1,7 +1,7 @@
 from typing import Optional
 
 from telebox.state_machine.state import State
-from telebox.dispatcher.handlers.handlers.event import AbstractEventHandler
+from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.state_machine.errors import (
     TransitionExistsError,
     DestinationStateNotFoundError
