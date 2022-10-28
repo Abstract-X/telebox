@@ -1,6 +1,5 @@
 from telebox.dispatcher.filters.error_filter import AbstractErrorFilter
 from telebox.dispatcher.typing import Event
-from telebox.dispatcher.enums.event_type import EventType
 
 
 class ErrorTextFilter(AbstractErrorFilter):
@@ -13,7 +12,7 @@ class ErrorTextFilter(AbstractErrorFilter):
         self._full_match = full_match
         self._ignore_case = ignore_case
 
-    def get_value(self, error: Exception, event: Event, event_type: EventType) -> str:
+    def get_value(self, error: Exception, event: Event) -> str:
         return str(error)
 
     def check_value(self, value: str) -> bool:

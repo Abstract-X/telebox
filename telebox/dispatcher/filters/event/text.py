@@ -2,7 +2,7 @@ from typing import Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.media_group import MediaGroup
+from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 
 
@@ -22,7 +22,7 @@ class TextFilter(AbstractEventFilter):
             EventType.MEDIA_GROUP
         }
 
-    def get_value(self, event: Union[Message, MediaGroup], event_type: EventType) -> list[str]:
+    def get_value(self, event: Union[Message, MediaGroup]) -> list[str]:
         if isinstance(event, MediaGroup):
             messages = event.messages
         else:

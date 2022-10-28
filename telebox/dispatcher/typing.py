@@ -10,7 +10,7 @@ from telebox.telegram_bot.types.types.poll import Poll
 from telebox.telegram_bot.types.types.poll_answer import PollAnswer
 from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
 from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
-from telebox.dispatcher.media_group import MediaGroup
+from telebox.dispatcher.utils.media_group import MediaGroup
 
 
 Event = Union[

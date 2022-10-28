@@ -13,7 +13,7 @@ class SimpleCallbackDataFilter(AbstractEventFilter):
     def get_event_types(self) -> set[EventType]:
         return {EventType.CALLBACK_QUERY}
 
-    def get_value(self, event: CallbackQuery, event_type: EventType) -> Optional[str]:
+    def get_value(self, event: CallbackQuery) -> Optional[str]:
         return event.data
 
     def check_value(self, value: Optional[str]) -> bool:

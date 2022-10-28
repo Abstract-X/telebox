@@ -34,12 +34,7 @@ class AbstractEventBaseFilter(ABC):
         pass
 
     @abstractmethod
-    def get_result(
-        self,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
+    def get_result(self, event, values: Optional[dict[type, Any]] = None) -> bool:
         pass
 
 
@@ -49,25 +44,20 @@ class AbstractEventFilter(AbstractEventBaseFilter, ABC):
         return event_type in self.get_event_types()
 
     @abstractmethod
-    def get_value(self, event, event_type: EventType):
+    def get_value(self, event):
         pass
 
     @abstractmethod
     def check_value(self, value) -> bool:
         pass
 
-    def get_result(
-        self,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
+    def get_result(self, event, values: Optional[dict[type, Any]] = None) -> bool:
         values = values or {}
 
         try:
             value = values[type(self)]
         except KeyError:
-            value = values[type(self)] = self.get_value(event, event_type)
+            value = values[type(self)] = self.get_value(event)
 
         return self.check_value(value)
 
@@ -89,13 +79,8 @@ class InvertEventFilter(AbstractEventBaseFilter):
     def check_event_type(self, event_type: EventType) -> bool:
         return event_type in self.filter.get_event_types()
 
-    def get_result(
-        self,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
-        return not self.filter.get_result(event, event_type, values)
+    def get_result(self, event, values: Optional[dict[type, Any]] = None) -> bool:
+        return not self.filter.get_result(event, values)
 
 
 class ConjunctionEventFilter(AbstractEventBaseFilter):
@@ -132,13 +117,8 @@ class ConjunctionEventFilter(AbstractEventBaseFilter):
 
         return True
 
-    def get_result(
-        self,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
-        return all(i.get_result(event, event_type, values) for i in self.filters)
+    def get_result(self, event, values: Optional[dict[type, Any]] = None) -> bool:
+        return all(i.get_result(event, values) for i in self.filters)
 
 
 class DisjunctionEventFilter(AbstractEventBaseFilter):
@@ -175,10 +155,5 @@ class DisjunctionEventFilter(AbstractEventBaseFilter):
 
         return True
 
-    def get_result(
-        self,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
-        return any(i.get_result(event, event_type, values) for i in self.filters)
+    def get_result(self, event, values: Optional[dict[type, Any]] = None) -> bool:
+        return any(i.get_result(event, values) for i in self.filters)

@@ -2,7 +2,7 @@ from typing import Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.media_group import MediaGroup
+from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.consts import message_entity_types
 
@@ -21,7 +21,7 @@ class TextMentionFilter(AbstractEventFilter):
             EventType.MEDIA_GROUP
         }
 
-    def get_value(self, event: Union[Message, MediaGroup], event_type: EventType) -> set[str]:
+    def get_value(self, event: Union[Message, MediaGroup]) -> set[str]:
         mentions = set()
 
         if isinstance(event, MediaGroup):

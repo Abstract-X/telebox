@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.media_group import MediaGroup
+from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.callback_query import CallbackQuery
 from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
@@ -33,8 +33,7 @@ class ChatIDFilter(AbstractEventFilter):
                      MediaGroup,
                      CallbackQuery,
                      ChatMemberUpdated,
-                     ChatJoinRequest],
-        event_type: EventType
+                     ChatJoinRequest]
     ) -> Optional[int]:
         return event.chat_id
 

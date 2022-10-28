@@ -1,6 +1,7 @@
 from .event_filter import AbstractEventFilter
 from .error_filter import AbstractErrorFilter
 from .event import (
+    NoneFilter,
     CommandFilter,
     TextFilter,
     RegExpTextFilter,
@@ -22,6 +23,7 @@ from .event import (
     MediaGroupContentTypeFilter
 )
 from .error import (
+    ErrorNoneFilter,
     ErrorTypeFilter,
     ErrorTextFilter,
     ErrorRegExpTextFilter

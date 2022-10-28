@@ -2,8 +2,6 @@ from .telegram_bot import TelegramBot, UpdateContentType, MessageContentType
 from .dispatcher import (
     Dispatcher,
     Event,
-    EventHandler,
-    ErrorHandler,
     EventType,
     MediaGroupContentType,
     AbstractEventHandler,
@@ -11,7 +9,10 @@ from .dispatcher import (
     AbstractEventFilter,
     AbstractErrorFilter,
     Middleware,
-    RateLimiter
+    RateLimit,
+    Limit,
+    get_event_chat_id,
+    get_event_user_id
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
 from .context import (
@@ -35,8 +36,6 @@ __all__ = [
     "MessageContentType",
     "Dispatcher",
     "Event",
-    "EventHandler",
-    "ErrorHandler",
     "EventType",
     "MediaGroupContentType",
     "AbstractEventHandler",
@@ -44,7 +43,8 @@ __all__ = [
     "AbstractEventFilter",
     "AbstractErrorFilter",
     "Middleware",
-    "RateLimiter",
+    "RateLimit",
+    "Limit",
     "StateMachine",
     "State",
     "AbstractStateStorage",
@@ -56,7 +56,9 @@ __all__ = [
     "NamedSet",
     "AbstractCallbackDataBuilder",
     "TaskExecutor",
-    "Env"
+    "Env",
+    "get_event_chat_id",
+    "get_event_user_id"
 ]
 
 
