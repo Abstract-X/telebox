@@ -15,7 +15,7 @@ class CallbackDataFilter(AbstractEventFilter):
     def get_event_types(self) -> set[EventType]:
         return {EventType.CALLBACK_QUERY}
 
-    def get_value(self, event: CallbackQuery, event_type: EventType) -> Optional[str]:
+    def get_value(self, event: CallbackQuery) -> Optional[str]:
         if event.data is not None:
             key, _ = self._builder.parse(event.data)
 

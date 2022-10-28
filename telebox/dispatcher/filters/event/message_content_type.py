@@ -20,7 +20,7 @@ class MessageContentTypeFilter(AbstractEventFilter):
             EventType.EDITED_CHANNEL_POST
         }
 
-    def get_value(self, event: Message, event_type: EventType) -> MessageContentType:
+    def get_value(self, event: Message) -> MessageContentType:
         _, content_type = event.content
 
         return content_type

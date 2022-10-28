@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.media_group import MediaGroup
+from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.inline_query import InlineQuery
 from telebox.telegram_bot.types.types.chosen_inline_result import ChosenInlineResult
@@ -48,8 +48,7 @@ class UserIDFilter(AbstractEventFilter):
                      PreCheckoutQuery,
                      PollAnswer,
                      ChatMemberUpdated,
-                     ChatJoinRequest],
-        event_type: EventType
+                     ChatJoinRequest]
     ) -> Optional[int]:
         return event.user_id
 

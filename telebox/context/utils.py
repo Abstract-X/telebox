@@ -1,102 +1,72 @@
-from typing import Any, Type
+from typing import Any, Callable
 
 from telebox.dispatcher.typing import Event
-from telebox.dispatcher.media_group import MediaGroup
 from telebox.context.vars import event_context
 from telebox.context.errors import InvalidEventError
-from telebox.telegram_bot.types.types.message import Message
-from telebox.telegram_bot.types.types.inline_query import InlineQuery
-from telebox.telegram_bot.types.types.chosen_inline_result import ChosenInlineResult
-from telebox.telegram_bot.types.types.callback_query import CallbackQuery
-from telebox.telegram_bot.types.types.shipping_query import ShippingQuery
-from telebox.telegram_bot.types.types.pre_checkout_query import PreCheckoutQuery
-from telebox.telegram_bot.types.types.poll_answer import PollAnswer
-from telebox.telegram_bot.types.types.chat_member_updated import ChatMemberUpdated
-from telebox.telegram_bot.types.types.chat_join_request import ChatJoinRequest
+from telebox.dispatcher.utils import events as event_utils
 
 
 def get_event_chat_id() -> int:
     return _get_event_value(
-        attribute="chat_id",
-        name="chat identifier",
-        types=(Message, CallbackQuery, MediaGroup, ChatMemberUpdated, ChatJoinRequest)
+        event_utils.get_event_chat_id,
+        "chat identifier"
     )
 
 
 def get_event_user_id() -> int:
     return _get_event_value(
-        attribute="user_id",
-        name="user identifier",
-        types=(
-            Message,
-            InlineQuery,
-            ChosenInlineResult,
-            CallbackQuery,
-            MediaGroup,
-            ShippingQuery,
-            PreCheckoutQuery,
-            PollAnswer,
-            ChatMemberUpdated,
-            ChatJoinRequest
-        )
+        event_utils.get_event_user_id,
+        "user identifier"
     )
 
 
 def get_event_sender_chat_id() -> int:
     return _get_event_value(
-        attribute="sender_chat_id",
-        name="sender chat identifier",
-        types=(Message, MediaGroup)
+        event_utils.get_event_sender_chat_id,
+        "sender chat identifier"
     )
 
 
 def get_event_message_id() -> int:
     return _get_event_value(
-        attribute="message_id",
-        name="message identifier",
-        types=(Message, CallbackQuery)
+        event_utils.get_event_message_id,
+        "message identifier"
     )
 
 
 def get_event_callback_query_id() -> str:
     return _get_event_value(
-        attribute="id",
-        name="callback query identifier",
-        types=(CallbackQuery,)
+        event_utils.get_event_callback_query_id,
+        "callback query identifier"
     )
 
 
 def get_event_inline_query_id() -> str:
     return _get_event_value(
-        attribute="id",
-        name="inline query identifier",
-        types=(InlineQuery,)
+        event_utils.get_event_inline_query_id,
+        "inline query identifier"
     )
 
 
 def get_event_shipping_query_id() -> str:
     return _get_event_value(
-        attribute="id",
-        name="shipping query identifier",
-        types=(ShippingQuery,)
+        event_utils.get_event_shipping_query_id,
+        "shipping query identifier"
     )
 
 
 def get_event_pre_checkout_query_id() -> str:
     return _get_event_value(
-        attribute="id",
-        name="pre checkout query identifier",
-        types=(PreCheckoutQuery,)
+        event_utils.get_event_pre_checkout_query_id,
+        "pre checkout query identifier"
     )
 
 
-def _get_event_value(attribute: str, name: str, types: tuple[Type[Event], ...]) -> Any:
+def _get_event_value(getter: Callable[[Event], Any], name: str) -> Any:
     event = event_context.get()
+    value = getter(event)
 
-    if (not isinstance(event, types)) or (getattr(event, attribute) is None):
-        raise InvalidEventError(
-            f"No {name} in event" + " {event!r}!",
-            event=event
-        ) from None
+    if value is None:
+        raise InvalidEventError(f"No {name} in event" + " {event!r}!", event=event)
 
-    return getattr(event, attribute)
+    return value

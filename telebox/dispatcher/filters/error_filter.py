@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Any
 
-from telebox.dispatcher.enums.event_type import EventType
-
 
 class AbstractErrorBaseFilter(ABC):
 
@@ -26,39 +24,27 @@ class AbstractErrorBaseFilter(ABC):
         return NotImplemented
 
     @abstractmethod
-    def get_result(
-        self,
-        error,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
+    def get_result(self, error, event, values: Optional[dict[type, Any]] = None) -> bool:
         pass
 
 
 class AbstractErrorFilter(AbstractErrorBaseFilter, ABC):
 
     @abstractmethod
-    def get_value(self, error, event, event_type: EventType):
+    def get_value(self, error, event):
         pass
 
     @abstractmethod
     def check_value(self, value) -> bool:
         pass
 
-    def get_result(
-        self,
-        error,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
+    def get_result(self, error, event, values: Optional[dict[type, Any]] = None) -> bool:
         values = values or {}
 
         try:
             value = values[type(self)]
         except KeyError:
-            value = values[type(self)] = self.get_value(error, event, event_type)
+            value = values[type(self)] = self.get_value(error, event)
 
         return self.check_value(value)
 
@@ -74,14 +60,8 @@ class InvertErrorFilter(AbstractErrorBaseFilter):
     def __invert__(self):
         return self.filter
 
-    def get_result(
-        self,
-        error,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
-        return not self.filter.get_result(error, event, event_type, values)
+    def get_result(self, error, event, values: Optional[dict[type, Any]] = None) -> bool:
+        return not self.filter.get_result(error, event, values)
 
 
 class ConjunctionErrorFilter(AbstractErrorBaseFilter):
@@ -103,14 +83,8 @@ class ConjunctionErrorFilter(AbstractErrorBaseFilter):
 
         return NotImplemented
 
-    def get_result(
-        self,
-        error,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
-        return all(i.get_result(error, event, event_type, values) for i in self.filters)
+    def get_result(self, error, event, values: Optional[dict[type, Any]] = None) -> bool:
+        return all(i.get_result(error, event, values) for i in self.filters)
 
 
 class DisjunctionErrorFilter(AbstractErrorBaseFilter):
@@ -132,11 +106,5 @@ class DisjunctionErrorFilter(AbstractErrorBaseFilter):
 
         return NotImplemented
 
-    def get_result(
-        self,
-        error,
-        event,
-        event_type: EventType,
-        values: Optional[dict[type, Any]] = None
-    ) -> bool:
-        return any(i.get_result(error, event, event_type, values) for i in self.filters)
+    def get_result(self, error, event, values: Optional[dict[type, Any]] = None) -> bool:
+        return any(i.get_result(error, event, values) for i in self.filters)

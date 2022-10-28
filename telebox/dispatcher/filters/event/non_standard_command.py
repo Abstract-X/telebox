@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.media_group import MediaGroup
+from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.telegram_bot.types.types.message import Message
 
 
@@ -32,7 +32,7 @@ class NonStandardCommandFilter(AbstractEventFilter):
             EventType.MEDIA_GROUP
         }
 
-    def get_value(self, event: Union[Message, MediaGroup], event_type: EventType) -> Optional[str]:
+    def get_value(self, event: Union[Message, MediaGroup]) -> Optional[str]:
         if isinstance(event, MediaGroup):
             for i in event:
                 command = _get_command(i)
