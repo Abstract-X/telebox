@@ -1,5 +1,5 @@
-from .event_filter import AbstractEventFilter
-from .error_filter import AbstractErrorFilter
+from .event_filter import AbstractEventFilter, AbstractEventBaseFilter
+from .error_filter import AbstractErrorFilter, AbstractErrorBaseFilter
 from .event import (
     NoneFilter,
     CommandFilter,
@@ -32,7 +32,9 @@ from .error import (
 
 __all__ = [
     "AbstractEventFilter",
+    "AbstractEventBaseFilter",
     "AbstractErrorFilter",
+    "AbstractErrorBaseFilter",
     "CommandFilter",
     "TextFilter",
     "RegExpTextFilter",

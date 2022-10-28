@@ -1,7 +1,12 @@
 from .dispatcher import Dispatcher, Event
 from .enums import EventType, MediaGroupContentType
 from .handlers import AbstractEventHandler, AbstractErrorHandler
-from .filters import AbstractEventFilter, AbstractErrorFilter
+from .filters import (
+    AbstractEventFilter,
+    AbstractErrorFilter,
+    AbstractEventBaseFilter,
+    AbstractErrorBaseFilter
+)
 from .middlewares import Middleware
 from .utils import MediaGroup, RateLimit, Limit, get_event_chat_id, get_event_user_id
 
@@ -15,6 +20,8 @@ __all__ = [
     "AbstractErrorHandler",
     "AbstractEventFilter",
     "AbstractErrorFilter",
+    "AbstractEventBaseFilter",
+    "AbstractErrorBaseFilter",
     "Middleware",
     "MediaGroup",
     "RateLimit",
