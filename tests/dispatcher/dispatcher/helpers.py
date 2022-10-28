@@ -1,6 +1,6 @@
 from typing import Literal
 
-from telebox import EventType, AbstractEventHandler, AbstractEventFilter
+from telebox import EventType, MediaGroup, AbstractEventHandler, AbstractEventFilter
 from telebox.telegram_bot.types import Message, CallbackQuery
 
 
@@ -25,6 +25,12 @@ class ChannelPostHandler(AbstractEventHandler):
 class EditedChannelPostHandler(AbstractEventHandler):
 
     def process_event(self, event: Message) -> None:
+        pass
+
+
+class MediaGroupHandler(AbstractEventHandler):
+
+    def process_event(self, event: MediaGroup) -> None:
         pass
 
 
@@ -70,6 +76,18 @@ class EditedChannelPostFilter(AbstractEventFilter):
         return {EventType.EDITED_CHANNEL_POST}
 
     def get_value(self, event: Message) -> Literal[True]:
+        return True
+
+    def check_value(self, value: bool) -> bool:
+        return value
+
+
+class MediaGroupFilter(AbstractEventFilter):
+
+    def get_event_types(self) -> set[EventType]:
+        return {EventType.MEDIA_GROUP}
+
+    def get_value(self, event: MediaGroup) -> Literal[True]:
         return True
 
     def check_value(self, value: bool) -> bool:
