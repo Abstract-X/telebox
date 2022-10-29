@@ -44,6 +44,18 @@ class TransitionScheme:
         handlers = source_states.setdefault(handler, {})
         handlers[direction] = destination_state
 
+    def check_transition(
+        self,
+        source_state: State,
+        destination_state: State,
+        handler: AbstractEventHandler,
+        direction: Optional[str] = None
+    ) -> bool:
+        try:
+            return self._transitions[source_state][handler][direction] is destination_state
+        except KeyError:
+            return False
+
     def get_destination_state(
         self,
         source_state: State,
