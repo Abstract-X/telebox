@@ -346,8 +346,8 @@ class Dispatcher:
 
     def check_error_handler(
         self,
-        handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        handler: AbstractErrorHandler,
+        filter_: Optional[AbstractErrorBaseFilter] = None
     ) -> bool:
         filter_ = _get_error_filter(filter_)
 
