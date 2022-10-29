@@ -312,47 +312,37 @@ class Dispatcher:
     def check_poll_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        filter_: Optional[AbstractEventBaseFilter] = None
     ) -> bool:
-        return self._check_event_handler(handler, EventType.POLL, filter_, rate_limit)
+        return self._check_event_handler(handler, EventType.POLL, filter_, None)
 
     def check_poll_answer_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        filter_: Optional[AbstractEventBaseFilter] = None
     ) -> bool:
-        return self._check_event_handler(handler, EventType.POLL_ANSWER, filter_, rate_limit)
+        return self._check_event_handler(handler, EventType.POLL_ANSWER, filter_, None)
 
     def check_my_chat_member_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        filter_: Optional[AbstractEventBaseFilter] = None
     ) -> bool:
-        return self._check_event_handler(handler, EventType.MY_CHAT_MEMBER, filter_, rate_limit)
+        return self._check_event_handler(handler, EventType.MY_CHAT_MEMBER, filter_, None)
 
     def check_chat_member_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        filter_: Optional[AbstractEventBaseFilter] = None
     ) -> bool:
-        return self._check_event_handler(handler, EventType.CHAT_MEMBER, filter_, rate_limit)
+        return self._check_event_handler(handler, EventType.CHAT_MEMBER, filter_, None)
 
     def check_chat_join_request_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        filter_: Optional[AbstractEventBaseFilter] = None
     ) -> bool:
-        return self._check_event_handler(
-            handler,
-            EventType.CHAT_JOIN_REQUEST,
-            filter_,
-            rate_limit
-        )
+        return self._check_event_handler(handler, EventType.CHAT_JOIN_REQUEST, filter_, None)
 
     def check_error_handler(
         self,
