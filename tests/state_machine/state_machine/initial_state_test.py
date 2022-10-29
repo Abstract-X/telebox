@@ -8,3 +8,4 @@ def test() -> None:
     machine = StateMachine(initial_state, MemoryStateStorage())
 
     assert machine.initial_state is initial_state
+    assert machine.check_state(initial_state)
