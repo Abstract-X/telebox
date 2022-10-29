@@ -4,7 +4,6 @@ from telebox.state_machine.storages import MemoryStateStorage
 
 def test() -> None:
     state = State()
-    storage = MemoryStateStorage()
-    machine = StateMachine(state, storage)
+    machine = StateMachine(state, MemoryStateStorage())
 
     assert machine.initial_state is state
