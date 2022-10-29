@@ -1,6 +1,14 @@
 from typing import Literal
 
-from telebox import EventType, MediaGroup, AbstractEventHandler, AbstractEventFilter
+from telebox import (
+    Event,
+    EventType,
+    MediaGroup,
+    AbstractEventHandler,
+    AbstractErrorHandler,
+    AbstractEventFilter,
+    AbstractErrorFilter
+)
 from telebox.telegram_bot.types import (
     Message,
     InlineQuery,
@@ -102,6 +110,12 @@ class ChatMemberHandler(AbstractEventHandler):
 class ChatJoinRequestHandler(AbstractEventHandler):
 
     def process_event(self, event: ChatJoinRequest) -> None:
+        pass
+
+
+class ErrorHandler(AbstractErrorHandler):
+
+    def process_error(self, error: Exception, event: Event) -> None:
         pass
 
 
@@ -279,6 +293,15 @@ class ChatJoinRequestFilter(AbstractEventFilter):
         return {EventType.CHAT_JOIN_REQUEST}
 
     def get_value(self, event: ChatJoinRequest) -> Literal[True]:
+        return True
+
+    def check_value(self, value: bool) -> bool:
+        return value
+
+
+class ErrorFilter(AbstractErrorFilter):
+
+    def get_value(self, error: Exception, event: Event) -> Literal[True]:
         return True
 
     def check_value(self, value: bool) -> bool:
