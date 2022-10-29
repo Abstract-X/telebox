@@ -41,6 +41,9 @@ class StateManager:
 
         self._states[state.name] = state
 
+    def check_state(self, state: State) -> bool:
+        return state in self.states
+
     def get_state(self, name: str) -> State:
         try:
             return self._states[name]

@@ -1,5 +1,4 @@
 from typing import Optional, Any
-import contextlib
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.storage import AbstractStateStorage
@@ -9,8 +8,7 @@ from telebox.state_machine.magazine import StateMagazine
 from telebox.state_machine.errors import (
     DestinationStateNotFoundError,
     NextStateNotFoundError,
-    PreviousStateNotFoundError,
-    StateExistsError
+    PreviousStateNotFoundError
 )
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.typing import Event
@@ -48,8 +46,25 @@ class StateMachine:
         )
 
         for i in (source_state, destination_state):
-            with contextlib.suppress(StateExistsError):
+            if not self.check_state(i):
                 self.add_state(i)
+
+    def check_state(self, state: State) -> bool:
+        return self._state_manager.check_state(state)
+
+    def check_transition(
+        self,
+        source_state: State,
+        destination_state: State,
+        handler: AbstractEventHandler,
+        direction: Optional[str] = None
+    ) -> bool:
+        return self._transition_scheme.check_transition(
+            source_state,
+            destination_state,
+            handler,
+            direction
+        )
 
     def get_state(self, *, chat_id: int, user_id: Optional[int] = None) -> State:
         magazine = self._state_manager.load_magazine(chat_id=chat_id, user_id=user_id)
