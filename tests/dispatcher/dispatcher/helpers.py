@@ -1,7 +1,12 @@
 from typing import Literal
 
 from telebox import EventType, MediaGroup, AbstractEventHandler, AbstractEventFilter
-from telebox.telegram_bot.types import Message, InlineQuery, CallbackQuery
+from telebox.telegram_bot.types import (
+    Message,
+    InlineQuery,
+    ChosenInlineResult,
+    CallbackQuery
+)
 
 
 class MessageHandler(AbstractEventHandler):
@@ -37,6 +42,12 @@ class MediaGroupHandler(AbstractEventHandler):
 class InlineQueryHandler(AbstractEventHandler):
 
     def process_event(self, event: InlineQuery) -> None:
+        pass
+
+
+class ChosenInlineResultHandler(AbstractEventHandler):
+
+    def process_event(self, event: ChosenInlineResult) -> None:
         pass
 
 
@@ -106,6 +117,18 @@ class InlineQueryFilter(AbstractEventFilter):
         return {EventType.INLINE_QUERY}
 
     def get_value(self, event: InlineQuery) -> Literal[True]:
+        return True
+
+    def check_value(self, value: bool) -> bool:
+        return value
+
+
+class ChosenInlineResultFilter(AbstractEventFilter):
+
+    def get_event_types(self) -> set[EventType]:
+        return {EventType.CHOSEN_INLINE_RESULT}
+
+    def get_value(self, event: ChosenInlineResult) -> Literal[True]:
         return True
 
     def check_value(self, value: bool) -> bool:
