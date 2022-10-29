@@ -92,6 +92,12 @@ class MyChatMemberHandler(AbstractEventHandler):
         pass
 
 
+class ChatMemberHandler(AbstractEventHandler):
+
+    def process_event(self, event: ChatMemberUpdated) -> None:
+        pass
+
+
 class MessageFilter(AbstractEventFilter):
 
     def get_event_types(self) -> set[EventType]:
@@ -240,6 +246,18 @@ class MyChatMemberFilter(AbstractEventFilter):
 
     def get_event_types(self) -> set[EventType]:
         return {EventType.MY_CHAT_MEMBER}
+
+    def get_value(self, event: ChatMemberUpdated) -> Literal[True]:
+        return True
+
+    def check_value(self, value: bool) -> bool:
+        return value
+
+
+class ChatMemberFilter(AbstractEventFilter):
+
+    def get_event_types(self) -> set[EventType]:
+        return {EventType.CHAT_MEMBER}
 
     def get_value(self, event: ChatMemberUpdated) -> Literal[True]:
         return True
