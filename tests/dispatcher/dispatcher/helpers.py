@@ -8,7 +8,8 @@ from telebox.telegram_bot.types import (
     CallbackQuery,
     ShippingQuery,
     PreCheckoutQuery,
-    Poll
+    Poll,
+    PollAnswer
 )
 
 
@@ -75,6 +76,12 @@ class PreCheckoutQueryHandler(AbstractEventHandler):
 class PollHandler(AbstractEventHandler):
 
     def process_event(self, event: Poll) -> None:
+        pass
+
+
+class PollAnswerHandler(AbstractEventHandler):
+
+    def process_event(self, event: PollAnswer) -> None:
         pass
 
 
@@ -204,6 +211,18 @@ class PollFilter(AbstractEventFilter):
         return {EventType.POLL}
 
     def get_value(self, event: Poll) -> Literal[True]:
+        return True
+
+    def check_value(self, value: bool) -> bool:
+        return value
+
+
+class PollAnswerFilter(AbstractEventFilter):
+
+    def get_event_types(self) -> set[EventType]:
+        return {EventType.POLL_ANSWER}
+
+    def get_value(self, event: PollAnswer) -> Literal[True]:
         return True
 
     def check_value(self, value: bool) -> bool:
