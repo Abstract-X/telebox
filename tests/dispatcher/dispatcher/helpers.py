@@ -10,7 +10,8 @@ from telebox.telegram_bot.types import (
     PreCheckoutQuery,
     Poll,
     PollAnswer,
-    ChatMemberUpdated
+    ChatMemberUpdated,
+    ChatJoinRequest
 )
 
 
@@ -95,6 +96,12 @@ class MyChatMemberHandler(AbstractEventHandler):
 class ChatMemberHandler(AbstractEventHandler):
 
     def process_event(self, event: ChatMemberUpdated) -> None:
+        pass
+
+
+class ChatJoinRequestHandler(AbstractEventHandler):
+
+    def process_event(self, event: ChatJoinRequest) -> None:
         pass
 
 
@@ -260,6 +267,18 @@ class ChatMemberFilter(AbstractEventFilter):
         return {EventType.CHAT_MEMBER}
 
     def get_value(self, event: ChatMemberUpdated) -> Literal[True]:
+        return True
+
+    def check_value(self, value: bool) -> bool:
+        return value
+
+
+class ChatJoinRequestFilter(AbstractEventFilter):
+
+    def get_event_types(self) -> set[EventType]:
+        return {EventType.CHAT_JOIN_REQUEST}
+
+    def get_value(self, event: ChatJoinRequest) -> Literal[True]:
         return True
 
     def check_value(self, value: bool) -> bool:
