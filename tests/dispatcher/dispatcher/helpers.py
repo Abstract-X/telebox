@@ -9,7 +9,8 @@ from telebox.telegram_bot.types import (
     ShippingQuery,
     PreCheckoutQuery,
     Poll,
-    PollAnswer
+    PollAnswer,
+    ChatMemberUpdated
 )
 
 
@@ -82,6 +83,12 @@ class PollHandler(AbstractEventHandler):
 class PollAnswerHandler(AbstractEventHandler):
 
     def process_event(self, event: PollAnswer) -> None:
+        pass
+
+
+class MyChatMemberHandler(AbstractEventHandler):
+
+    def process_event(self, event: ChatMemberUpdated) -> None:
         pass
 
 
@@ -223,6 +230,18 @@ class PollAnswerFilter(AbstractEventFilter):
         return {EventType.POLL_ANSWER}
 
     def get_value(self, event: PollAnswer) -> Literal[True]:
+        return True
+
+    def check_value(self, value: bool) -> bool:
+        return value
+
+
+class MyChatMemberFilter(AbstractEventFilter):
+
+    def get_event_types(self) -> set[EventType]:
+        return {EventType.MY_CHAT_MEMBER}
+
+    def get_value(self, event: ChatMemberUpdated) -> Literal[True]:
         return True
 
     def check_value(self, value: bool) -> bool:
