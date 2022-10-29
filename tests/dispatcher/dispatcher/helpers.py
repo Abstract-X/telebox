@@ -51,6 +51,12 @@ class ChosenInlineResultHandler(AbstractEventHandler):
         pass
 
 
+class CallbackQueryHandler(AbstractEventHandler):
+
+    def process_event(self, event: CallbackQuery) -> None:
+        pass
+
+
 class MessageFilter(AbstractEventFilter):
 
     def get_event_types(self) -> set[EventType]:
