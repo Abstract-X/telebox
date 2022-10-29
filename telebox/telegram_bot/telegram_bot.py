@@ -53,7 +53,7 @@ from telebox.telegram_bot.types.types.chat_member_member import ChatMemberMember
 from telebox.telegram_bot.types.types.chat_member_restricted import ChatMemberRestricted
 from telebox.telegram_bot.types.types.chat_member_left import ChatMemberLeft
 from telebox.telegram_bot.types.types.chat_member_banned import ChatMemberBanned
-from telebox.utils.not_set import NotSet
+from telebox.utils.not_set import NotSet, NOT_SET
 
 
 API_URL = "https://api.telegram.org"
@@ -76,7 +76,7 @@ class TelegramBot:
         *,
         api_url: str = API_URL,
         force_sending: bool = False,
-        default_parse_mode: Union[str, NotSet] = NotSet(),
+        default_parse_mode: Union[str, NotSet] = NOT_SET,
         default_timeout_secs: Union[int, float, None] = None
     ):
         self._session = session
@@ -198,7 +198,7 @@ class TelegramBot:
         text: str,
         *,
         timeout_secs: Union[int, float, None] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
@@ -264,7 +264,7 @@ class TelegramBot:
         *,
         timeout_secs: Union[int, float, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -304,7 +304,7 @@ class TelegramBot:
         *,
         timeout_secs: Union[int, float, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -343,7 +343,7 @@ class TelegramBot:
         *,
         timeout_secs: Union[int, float, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
         duration: Optional[int] = None,
         performer: Optional[str] = None,
@@ -391,7 +391,7 @@ class TelegramBot:
         timeout_secs: Union[int, float, None] = None,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_content_type_detection: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
@@ -437,7 +437,7 @@ class TelegramBot:
         height: Optional[int] = None,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
@@ -486,7 +486,7 @@ class TelegramBot:
         height: Optional[int] = None,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -529,7 +529,7 @@ class TelegramBot:
         *,
         timeout_secs: Union[int, float, None] = None,
         caption: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
         duration: Optional[int] = None,
         disable_notification: Optional[bool] = None,
@@ -833,7 +833,7 @@ class TelegramBot:
         allows_multiple_answers: Optional[bool] = None,
         correct_option_id: Optional[int] = None,
         explanation: Optional[str] = None,
-        explanation_parse_mode: Union[str, None, NotSet] = NotSet(),
+        explanation_parse_mode: Union[str, None, NotSet] = NOT_SET,
         explanation_entities: Optional[list[MessageEntity]] = None,
         open_period: Optional[int] = None,
         close_date: Optional[datetime] = None,
@@ -1609,7 +1609,7 @@ class TelegramBot:
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
         reply_markup: Optional[ReplyKeyboardMarkup] = None
@@ -1642,7 +1642,7 @@ class TelegramBot:
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
         caption: Optional[str] = None,
-        parse_mode: Union[str, None, NotSet] = NotSet(),
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Union[Message, Literal[True]]:
@@ -2283,9 +2283,9 @@ class TelegramBot:
         return f"{self._api_url}/bot{self.token}/{method}"
 
     def _get_parse_mode(self, parse_mode: Union[str, None, NotSet]) -> Optional[str]:
-        if parse_mode is not NotSet():
+        if parse_mode is not NOT_SET:
             return parse_mode
-        elif self._default_parse_mode is not NotSet():
+        elif self._default_parse_mode is not NOT_SET:
             return self._default_parse_mode
 
     def _get_prepared_parameters(

@@ -27,7 +27,7 @@ from telebox.dispatcher.utils.timed_container import TimedContainer
 from telebox.dispatcher.utils.server_root import ServerRoot
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
-from telebox.utils.not_set import NotSet
+from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.dispatcher.utils.events import get_event_chat_id
 from telebox.context.vars import (
     event_context,
@@ -47,6 +47,10 @@ class EventHandler:
     handler: AbstractEventHandler
     filter: AbstractEventBaseFilter
     rate_limiter: Optional[RateLimiter] = None
+
+    @property
+    def rate_limit(self) -> Optional[RateLimit]:
+        return self.rate_limiter.limit if self.rate_limiter is not None else None
 
 
 @dataclass
@@ -82,7 +86,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.MESSAGE, filter_, rate_limit)
 
@@ -90,7 +94,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.EDITED_MESSAGE, filter_, rate_limit)
 
@@ -98,7 +102,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.CHANNEL_POST, filter_, rate_limit)
 
@@ -106,7 +110,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.EDITED_CHANNEL_POST, filter_, rate_limit)
 
@@ -114,7 +118,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.MEDIA_GROUP, filter_, rate_limit)
 
@@ -122,7 +126,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.INLINE_QUERY, filter_, rate_limit)
 
@@ -130,7 +134,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.CHOSEN_INLINE_RESULT, filter_, rate_limit)
 
@@ -138,7 +142,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.CALLBACK_QUERY, filter_, rate_limit)
 
@@ -146,7 +150,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.SHIPPING_QUERY, filter_, rate_limit)
 
@@ -154,7 +158,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.PRE_CHECKOUT_QUERY, filter_, rate_limit)
 
@@ -198,8 +202,7 @@ class Dispatcher:
         handler: AbstractErrorHandler,
         filter_: Optional[AbstractErrorBaseFilter] = None
     ) -> None:
-        if filter_ is None:
-            filter_ = _error_none_filter
+        filter_ = _get_error_filter(filter_)
 
         self._error_handlers.append(
             ErrorHandler(
@@ -210,6 +213,156 @@ class Dispatcher:
 
     def add_middleware(self, middleware: Middleware) -> None:
         self._middlewares.append(middleware)
+
+    def check_message_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.MESSAGE, filter_, rate_limit)
+
+    def check_edited_message_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.EDITED_MESSAGE, filter_, rate_limit)
+
+    def check_channel_post_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.CHANNEL_POST, filter_, rate_limit)
+
+    def check_edited_channel_post_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(
+            handler,
+            EventType.EDITED_CHANNEL_POST,
+            filter_,
+            rate_limit
+        )
+
+    def check_media_group_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.MEDIA_GROUP, filter_, rate_limit)
+
+    def check_inline_query_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.INLINE_QUERY, filter_, rate_limit)
+
+    def check_chosen_inline_result_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(
+            handler,
+            EventType.CHOSEN_INLINE_RESULT,
+            filter_,
+            rate_limit
+        )
+
+    def check_callback_query_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.CALLBACK_QUERY, filter_, rate_limit)
+
+    def check_shipping_query_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.SHIPPING_QUERY, filter_, rate_limit)
+
+    def check_pre_checkout_query_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(
+            handler,
+            EventType.PRE_CHECKOUT_QUERY,
+            filter_,
+            rate_limit
+        )
+
+    def check_poll_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.POLL, filter_, None)
+
+    def check_poll_answer_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.POLL_ANSWER, filter_, None)
+
+    def check_my_chat_member_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.MY_CHAT_MEMBER, filter_, None)
+
+    def check_chat_member_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.CHAT_MEMBER, filter_, None)
+
+    def check_chat_join_request_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> bool:
+        return self._check_event_handler(handler, EventType.CHAT_JOIN_REQUEST, filter_, None)
+
+    def check_error_handler(
+        self,
+        handler: AbstractErrorHandler,
+        filter_: Optional[AbstractErrorBaseFilter] = None
+    ) -> bool:
+        filter_ = _get_error_filter(filter_)
+
+        for i in self._error_handlers:
+            if (i.handler is handler) and (i.filter is filter_):
+                return True
+
+        return False
+
+    def check_middleware(self, middleware: Middleware) -> bool:
+        for i in self._middlewares:
+            if i is middleware:
+                return True
+
+        return False
 
     def run_polling(
         self,
@@ -347,24 +500,42 @@ class Dispatcher:
         handler: AbstractEventHandler,
         event_type: EventType,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NotSet()
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
-        if filter_ is None:
-            filter_ = _none_filter
+        filter_ = _get_event_filter(filter_)
 
         if not filter_.check_event_type(event_type):
             raise DispatcherError(f"{event_type!r} is not supported by this filter!")
 
-        if rate_limit is NotSet():
-            rate_limit = self._default_rate_limit
-
+        rate_limit = self._get_rate_limit(rate_limit)
+        rate_limiter = RateLimiter(rate_limit) if rate_limit is not None else None
         self._event_handlers[event_type].append(
             EventHandler(
                 handler=handler,
                 filter=filter_,
-                rate_limiter=RateLimiter(rate_limit) if rate_limit is not None else None
+                rate_limiter=rate_limiter
             )
         )
+
+    def _check_event_handler(
+        self,
+        handler: AbstractEventHandler,
+        event_type: EventType,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        filter_ = _get_event_filter(filter_)
+        rate_limit = self._get_rate_limit(rate_limit)
+
+        for i in self._event_handlers[event_type]:
+            if (
+                (i.handler is handler)
+                and (i.filter is filter_)
+                and (i.rate_limit is rate_limit)
+            ):
+                return True
+
+        return False
 
     def _get_event_handler(self, event: Event, event_type: EventType) -> Optional[EventHandler]:
         values = {}
@@ -379,6 +550,12 @@ class Dispatcher:
         for i in self._error_handlers:
             if i.filter.get_result(error, event, values):
                 return i
+
+    def _get_rate_limit(
+        self,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> Optional[RateLimit]:
+        return rate_limit if rate_limit is not NOT_SET else self._default_rate_limit
 
     def _run_media_group_gathering_thread(self) -> None:
         self._media_group_gathering_thread = Thread(
@@ -520,3 +697,15 @@ class Dispatcher:
             finally:
                 events.set_event_as_processed(event)
                 logger.debug("Event processing finished: %r.", event)
+
+
+def _get_event_filter(
+    filter_: Optional[AbstractEventBaseFilter] = None
+) -> AbstractEventBaseFilter:
+    return filter_ if filter_ is not None else _none_filter
+
+
+def _get_error_filter(
+    filter_: Optional[AbstractErrorBaseFilter] = None
+) -> AbstractErrorBaseFilter:
+    return filter_ if filter_ is not None else _error_none_filter
