@@ -6,7 +6,8 @@ from telebox.telegram_bot.types import (
     InlineQuery,
     ChosenInlineResult,
     CallbackQuery,
-    ShippingQuery
+    ShippingQuery,
+    PreCheckoutQuery
 )
 
 
@@ -61,6 +62,12 @@ class CallbackQueryHandler(AbstractEventHandler):
 class ShippingQueryHandler(AbstractEventHandler):
 
     def process_event(self, event: ShippingQuery) -> None:
+        pass
+
+
+class PreCheckoutQueryHandler(AbstractEventHandler):
+
+    def process_event(self, event: PreCheckoutQuery) -> None:
         pass
 
 
@@ -166,6 +173,18 @@ class ShippingQueryFilter(AbstractEventFilter):
         return {EventType.SHIPPING_QUERY}
 
     def get_value(self, event: ShippingQuery) -> Literal[True]:
+        return True
+
+    def check_value(self, value: bool) -> bool:
+        return value
+
+
+class PreCheckoutQueryFilter(AbstractEventFilter):
+
+    def get_event_types(self) -> set[EventType]:
+        return {EventType.PRE_CHECKOUT_QUERY}
+
+    def get_value(self, event: PreCheckoutQuery) -> Literal[True]:
         return True
 
     def check_value(self, value: bool) -> bool:
