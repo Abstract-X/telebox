@@ -1,4 +1,4 @@
-from telebox import State
+from telebox import State, AbstractEventHandler
 
 
 class InitialState(State):
@@ -7,3 +7,9 @@ class InitialState(State):
 
 class FooState(State):
     pass
+
+
+class Handler(AbstractEventHandler):
+
+    def process_event(self, event) -> None:
+        pass
