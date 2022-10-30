@@ -79,12 +79,10 @@ class Dispatcher:
         self._event_handlers: dict[EventType, list[EventHandler]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandler] = []
         self._middlewares: list[Middleware] = []
+        self.router = Router(self)
         self._media_group_gathering_thread: Optional[Thread] = None
         self._media_group_messages: dict[str, TimedContainer] = {}
         self._media_group_message_lock = Lock()
-
-    def get_router(self) -> Router:
-        return Router(self)
 
     def add_message_handler(
         self,
