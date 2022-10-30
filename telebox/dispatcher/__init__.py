@@ -8,7 +8,7 @@ from .filters import (
     AbstractErrorBaseFilter
 )
 from .middlewares import Middleware
-from .utils import MediaGroup, RateLimit, Limit, get_event_chat_id, get_event_user_id
+from .utils import MediaGroup, RateLimit, Limit, Router, get_event_chat_id, get_event_user_id
 
 
 __all__ = [
@@ -26,6 +26,7 @@ __all__ = [
     "MediaGroup",
     "RateLimit",
     "Limit",
+    "Router",
     "get_event_chat_id",
     "get_event_user_id"
 ]

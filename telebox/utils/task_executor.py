@@ -42,7 +42,7 @@ class TaskExecutor:
         logger.info("Tasks started.")
 
     def wait_tasks(self) -> None:
-        logger.info("Tasks finishing...")
+        logger.info("Finishing tasks...")
         self._tasks.join()
         logger.info("Tasks finished.")
 
