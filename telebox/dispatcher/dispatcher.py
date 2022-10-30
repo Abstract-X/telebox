@@ -622,7 +622,7 @@ class Dispatcher:
         )
 
     def _finish_update_processing(self) -> None:
-        logger.info("Update processing finishing...")
+        logger.info("Finishing update processing...")
         self._events.wait_events()
         logger.info("Update processing finished.")
 
