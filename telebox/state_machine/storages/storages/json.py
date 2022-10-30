@@ -6,7 +6,7 @@ import ujson
 from telebox.state_machine.storages.storage import AbstractStateStorage
 
 
-class FileStateStorage(AbstractStateStorage):
+class JSONStateStorage(AbstractStateStorage):
 
     def __init__(self, path: str):
         self._path = path
