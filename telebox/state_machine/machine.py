@@ -1,4 +1,5 @@
-from typing import Optional, Any
+from __future__ import annotations
+from typing import Optional, Any, TYPE_CHECKING
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.storage import AbstractStateStorage
@@ -11,7 +12,8 @@ from telebox.state_machine.errors import (
     PreviousStateNotFoundError
 )
 from telebox.dispatcher.handlers.event import AbstractEventHandler
-from telebox.dispatcher.typing import Event
+if TYPE_CHECKING:
+    from telebox.dispatcher.typing import Event
 
 
 class StateMachine:
