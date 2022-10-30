@@ -25,6 +25,7 @@ from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 from telebox.dispatcher.utils.timed_container import TimedContainer
 from telebox.dispatcher.utils.server_root import ServerRoot
+from telebox.dispatcher.utils.router import Router
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet, NOT_SET
@@ -81,6 +82,9 @@ class Dispatcher:
         self._media_group_gathering_thread: Optional[Thread] = None
         self._media_group_messages: dict[str, TimedContainer] = {}
         self._media_group_message_lock = Lock()
+
+    def get_router(self) -> Router:
+        return Router(self)
 
     def add_message_handler(
         self,
