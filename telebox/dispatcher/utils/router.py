@@ -25,6 +25,9 @@ class Router:
 
         return NotImplemented
 
+    def __iadd__(self, other) -> "Router":
+        return self.__add__(other)
+
     def add_message_handler(
         self,
         handler: AbstractEventHandler,
