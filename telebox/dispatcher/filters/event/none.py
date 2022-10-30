@@ -1,6 +1,10 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
-from telebox.dispatcher.dispatcher import Event
 from telebox.dispatcher.enums.event_type import EventType
+if TYPE_CHECKING:
+    from telebox.dispatcher.typing import Event
 
 
 class NoneFilter(AbstractEventFilter):

@@ -1,5 +1,9 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 from telebox.dispatcher.filters.error_filter import AbstractErrorFilter
-from telebox.dispatcher.typing import Event
+if TYPE_CHECKING:
+    from telebox.dispatcher.typing import Event
 
 
 class ErrorTextFilter(AbstractErrorFilter):
