@@ -75,8 +75,11 @@ class TaskExecutor:
     def wait_tasks(self) -> None:
         logger.info("Finishing tasks...")
 
-        while self._pending_tasks:
-            time.sleep(_TASK_WAITING_DELAY_SECS)
+        if self._allow_pending_tasks:
+            while self._pending_tasks:
+                time.sleep(_TASK_WAITING_DELAY_SECS)
+
+            self._pending_task_processing_thread = None
 
         self._tasks.join()
         logger.info("Tasks finished.")
