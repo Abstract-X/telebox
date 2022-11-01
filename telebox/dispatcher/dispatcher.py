@@ -370,11 +370,10 @@ class Dispatcher:
         self,
         threads: int,
         *,
-        timeout_secs: Union[int, float, None] = None,
-        delay_secs: Union[int, float] = 0.2,
-        error_delay_secs: Union[int, float] = 5.0,
+        delay_secs: Union[int, float] = 0,
+        error_delay_secs: Union[int, float] = 5,
         limit: Optional[int] = None,
-        timeout: Optional[int] = None,
+        timeout: Optional[int] = 10,
         allowed_updates: Optional[list[str]] = None
     ) -> None:
         if self._polling_is_used:
@@ -401,7 +400,6 @@ class Dispatcher:
                 # noinspection PyBroadException
                 try:
                     updates = self._bot.get_updates(
-                        timeout_secs=timeout_secs,
                         offset=offset_update_id,
                         limit=limit,
                         timeout=timeout,
