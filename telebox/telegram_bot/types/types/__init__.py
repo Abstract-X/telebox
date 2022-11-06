@@ -22,6 +22,9 @@ from .venue import Venue
 from .web_app_data import WebAppData
 from .proximity_alert_triggered import ProximityAlertTriggered
 from .message_auto_delete_timer_changed import MessageAutoDeleteTimerChanged
+from .forum_topic_created import ForumTopicCreated
+from .forum_topic_closed import ForumTopicClosed
+from .forum_topic_reopened import ForumTopicReopened
 from .video_chat_scheduled import VideoChatScheduled
 from .video_chat_started import VideoChatStarted
 from .video_chat_ended import VideoChatEnded
@@ -52,6 +55,7 @@ from .chat_member_updated import ChatMemberUpdated
 from .chat_join_request import ChatJoinRequest
 from .chat_permissions import ChatPermissions
 from .chat_location import ChatLocation
+from .forum_topic import ForumTopic
 from .bot_command import BotCommand
 from .bot_command_scope import BotCommandScope
 from .bot_command_scope_default import BotCommandScopeDefault
@@ -158,6 +162,9 @@ __all__ = [
     "WebAppData",
     "ProximityAlertTriggered",
     "MessageAutoDeleteTimerChanged",
+    "ForumTopicCreated",
+    "ForumTopicClosed",
+    "ForumTopicReopened",
     "VideoChatScheduled",
     "VideoChatStarted",
     "VideoChatEnded",
@@ -188,6 +195,7 @@ __all__ = [
     "ChatJoinRequest",
     "ChatPermissions",
     "ChatLocation",
+    "ForumTopic",
     "BotCommand",
     "BotCommandScope",
     "BotCommandScopeDefault",

@@ -750,7 +750,7 @@ class RetryAfterError(TooManyRequestsError):
 
 @dataclass
 class InternalServerError(RequestError):
-    """Error class for 500 status code."""
+    """Error class for 500+ status code."""
 
 
 @dataclass
@@ -761,6 +761,17 @@ class ServerIsRestartingError(InternalServerError):
         'error_code': 500,
         'ok': False
     }
+    """
+
+
+@dataclass
+class BadGatewayError(InternalServerError):
+    """Error class for this response:
+        {
+            'description': 'Bad Gateway',
+            'error_code': 502,
+            'ok': False
+        }
     """
 
 
@@ -795,7 +806,7 @@ def get_request_error(
         return _get_request_entity_too_large_error(kwargs)
     elif status_code == HTTPStatus.TOO_MANY_REQUESTS:
         return _get_too_many_requests_error(kwargs, response_parameters)
-    elif status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+    elif status_code >= HTTPStatus.INTERNAL_SERVER_ERROR:
         return _get_internal_server_error(kwargs)
 
     return RequestError(None, **kwargs)
@@ -942,7 +953,11 @@ def _get_too_many_requests_error(
 def _get_internal_server_error(kwargs: dict[str, Any]) -> InternalServerError:
     lowered_description = kwargs["description"].lower()
 
-    if "restart" in lowered_description:
-        return ServerIsRestartingError(None, **kwargs)
+    for message, error_type in (
+        ("restart", ServerIsRestartingError),
+        ("bad gateway", BadGatewayError)
+    ):
+        if message in lowered_description:
+            return error_type(None, **kwargs)
 
     return InternalServerError(None, **kwargs)

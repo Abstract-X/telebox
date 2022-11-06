@@ -27,6 +27,9 @@ from telebox.telegram_bot.types.types.invoice import Invoice
 from telebox.telegram_bot.types.types.successful_payment import SuccessfulPayment
 from telebox.telegram_bot.types.types.passport_data import PassportData
 from telebox.telegram_bot.types.types.proximity_alert_triggered import ProximityAlertTriggered
+from telebox.telegram_bot.types.types.forum_topic_created import ForumTopicCreated
+from telebox.telegram_bot.types.types.forum_topic_closed import ForumTopicClosed
+from telebox.telegram_bot.types.types.forum_topic_reopened import ForumTopicReopened
 from telebox.telegram_bot.types.types.video_chat_scheduled import VideoChatScheduled
 from telebox.telegram_bot.types.types.video_chat_started import VideoChatStarted
 from telebox.telegram_bot.types.types.video_chat_ended import VideoChatEnded
@@ -47,6 +50,7 @@ class Message(Type):
     message_id: int
     date: datetime
     chat: "Chat"
+    message_thread_id: Optional[int] = None
     from_: Optional[User] = None
     sender_chat: Optional["Chat"] = None
     forward_from: Optional[User] = None
@@ -55,6 +59,7 @@ class Message(Type):
     forward_signature: Optional[str] = None
     forward_sender_name: Optional[str] = None
     forward_date: Optional[datetime] = None
+    is_topic_message: Optional[Literal[True]] = None
     is_automatic_forward: Optional[Literal[True]] = None
     reply_to_message: Optional["Message"] = None
     via_bot: Optional[User] = None
@@ -97,6 +102,9 @@ class Message(Type):
     connected_website: Optional[str] = None
     passport_data: Optional[PassportData] = None
     proximity_alert_triggered: Optional[ProximityAlertTriggered] = None
+    forum_topic_created: Optional[ForumTopicCreated] = None
+    forum_topic_closed: Optional[ForumTopicClosed] = None
+    forum_topic_reopened: Optional[ForumTopicReopened] = None
     video_chat_scheduled: Optional[VideoChatScheduled] = None
     video_chat_started: Optional[VideoChatStarted] = None
     video_chat_ended: Optional[VideoChatEnded] = None
@@ -173,6 +181,12 @@ class Message(Type):
             return self.passport_data, MessageContentType.PASSPORT_DATA
         elif self.proximity_alert_triggered is not None:
             return self.proximity_alert_triggered, MessageContentType.PROXIMITY_ALERT_TRIGGERED
+        elif self.forum_topic_created is not None:
+            return self.forum_topic_created, MessageContentType.FORUM_TOPIC_CREATED
+        elif self.forum_topic_closed is not None:
+            return self.forum_topic_closed, MessageContentType.FORUM_TOPIC_CLOSED
+        elif self.forum_topic_reopened is not None:
+            return self.forum_topic_reopened, MessageContentType.FORUM_TOPIC_REOPENED
         elif self.video_chat_scheduled is not None:
             return self.video_chat_scheduled, MessageContentType.VIDEO_CHAT_SCHEDULED
         elif self.video_chat_started is not None:
@@ -271,6 +285,9 @@ MessageContent = Union[
     SuccessfulPayment,
     PassportData,
     ProximityAlertTriggered,
+    ForumTopicCreated,
+    ForumTopicClosed,
+    ForumTopicReopened,
     VideoChatScheduled,
     VideoChatStarted,
     VideoChatEnded,
