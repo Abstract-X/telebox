@@ -14,6 +14,7 @@ class ChatMemberRestricted(Type):
     can_change_info: bool
     can_invite_users: bool
     can_pin_messages: bool
+    can_manage_topics: bool
     can_send_messages: bool
     can_send_media_messages: bool
     can_send_polls: bool
