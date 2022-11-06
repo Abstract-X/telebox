@@ -36,6 +36,7 @@ from telebox.telegram_bot.types.types.bot_command import BotCommand
 from telebox.telegram_bot.types.types.bot_command_scope import BotCommandScope
 from telebox.telegram_bot.types.types.menu_button import MenuButton
 from telebox.telegram_bot.types.types.chat_administrator_rights import ChatAdministratorRights
+from telebox.telegram_bot.types.types.forum_topic import ForumTopic
 from telebox.telegram_bot.types.types.poll import Poll
 from telebox.telegram_bot.types.types.sticker import Sticker
 from telebox.telegram_bot.types.types.sticker_set import StickerSet
@@ -198,6 +199,7 @@ class TelegramBot:
         text: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
@@ -217,6 +219,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "text": text,
+                    "message_thread_id": message_thread_id,
                     "parse_mode": self._get_parse_mode(parse_mode),
                     "entities": entities,
                     "disable_web_page_preview": disable_web_page_preview,
@@ -238,6 +241,7 @@ class TelegramBot:
         message_id: int,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None
     ) -> Message:
@@ -248,6 +252,7 @@ class TelegramBot:
                     "chat_id": chat_id,
                     "from_chat_id": from_chat_id,
                     "message_id": message_id,
+                    "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content
                 },
@@ -263,6 +268,7 @@ class TelegramBot:
         message_id: int,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -283,6 +289,7 @@ class TelegramBot:
                     "chat_id": chat_id,
                     "from_chat_id": from_chat_id,
                     "message_id": message_id,
+                    "message_thread_id": message_thread_id,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
@@ -303,6 +310,7 @@ class TelegramBot:
         photo: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -322,6 +330,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "photo": photo,
+                    "message_thread_id": message_thread_id,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
@@ -342,6 +351,7 @@ class TelegramBot:
         audio: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -365,6 +375,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "audio": audio,
+                    "message_thread_id": message_thread_id,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
@@ -389,6 +400,7 @@ class TelegramBot:
         document: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         thumb: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
@@ -410,6 +422,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "document": document,
+                    "message_thread_id": message_thread_id,
                     "thumb": thumb,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(parse_mode),
@@ -432,6 +445,7 @@ class TelegramBot:
         video: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
@@ -456,6 +470,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "video": video,
+                    "message_thread_id": message_thread_id,
                     "duration": duration,
                     "width": width,
                     "height": height,
@@ -481,6 +496,7 @@ class TelegramBot:
         animation: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
@@ -504,6 +520,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "animation": animation,
+                    "message_thread_id": message_thread_id,
                     "duration": duration,
                     "width": width,
                     "height": height,
@@ -528,6 +545,7 @@ class TelegramBot:
         voice: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -548,6 +566,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "voice": voice,
+                    "message_thread_id": message_thread_id,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(parse_mode),
                     "caption_entities": caption_entities,
@@ -569,6 +588,7 @@ class TelegramBot:
         video_note: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
         thumb: Union[InputFile, str, None] = None,
@@ -588,6 +608,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "video_note": video_note,
+                    "message_thread_id": message_thread_id,
                     "duration": duration,
                     "length": length,
                     "thumb": thumb,
@@ -611,6 +632,7 @@ class TelegramBot:
                      list[InputMediaVideo]],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -623,6 +645,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "media": media,
+                    "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -639,6 +662,7 @@ class TelegramBot:
         longitude: float,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         horizontal_accuracy: Optional[float] = None,
         live_period: Optional[int] = None,
         heading: Optional[int] = None,
@@ -660,6 +684,7 @@ class TelegramBot:
                     "chat_id": chat_id,
                     "latitude": latitude,
                     "longitude": longitude,
+                    "message_thread_id": message_thread_id,
                     "horizontal_accuracy": horizontal_accuracy,
                     "live_period": live_period,
                     "heading": heading,
@@ -744,6 +769,7 @@ class TelegramBot:
         address: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         foursquare_id: Optional[str] = None,
         foursquare_type: Optional[str] = None,
         google_place_id: Optional[str] = None,
@@ -767,6 +793,7 @@ class TelegramBot:
                     "longitude": longitude,
                     "title": title,
                     "address": address,
+                    "message_thread_id": message_thread_id,
                     "foursquare_id": foursquare_id,
                     "foursquare_type": foursquare_type,
                     "google_place_id": google_place_id,
@@ -789,6 +816,7 @@ class TelegramBot:
         first_name: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         last_name: Optional[str] = None,
         vcard: Optional[str] = None,
         disable_notification: Optional[bool] = None,
@@ -808,6 +836,7 @@ class TelegramBot:
                     "chat_id": chat_id,
                     "phone_number": phone_number,
                     "first_name": first_name,
+                    "message_thread_id": message_thread_id,
                     "last_name": last_name,
                     "vcard": vcard,
                     "disable_notification": disable_notification,
@@ -828,6 +857,7 @@ class TelegramBot:
         options: list[str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         is_anonymous: Optional[bool] = None,
         type_: Optional[str] = None,
         allows_multiple_answers: Optional[bool] = None,
@@ -855,6 +885,7 @@ class TelegramBot:
                     "chat_id": chat_id,
                     "question": question,
                     "options": options,
+                    "message_thread_id": message_thread_id,
                     "is_anonymous": is_anonymous,
                     "type": type_,
                     "allows_multiple_answers": allows_multiple_answers,
@@ -881,6 +912,7 @@ class TelegramBot:
         chat_id: Union[int, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -897,6 +929,7 @@ class TelegramBot:
                 method="sendDice",
                 parameters={
                     "chat_id": chat_id,
+                    "message_thread_id": message_thread_id,
                     "emoji": emoji,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -1037,7 +1070,8 @@ class TelegramBot:
         can_promote_members: Optional[bool] = None,
         can_change_info: Optional[bool] = None,
         can_invite_users: Optional[bool] = None,
-        can_pin_messages: Optional[bool] = None
+        can_pin_messages: Optional[bool] = None,
+        can_manage_topics: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
             method="promoteChatMember",
@@ -1054,7 +1088,8 @@ class TelegramBot:
                 "can_promote_members": can_promote_members,
                 "can_change_info": can_change_info,
                 "can_invite_users": can_invite_users,
-                "can_pin_messages": can_pin_messages
+                "can_pin_messages": can_pin_messages,
+                "can_manage_topics": can_manage_topics
             },
             timeout_secs=timeout_secs
         )
@@ -1466,6 +1501,126 @@ class TelegramBot:
             timeout_secs=timeout_secs
         )
 
+    def get_forum_topic_icon_stickers(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> list[Sticker]:
+        return [
+            self._serializer.get_object(data=i, class_=Sticker)
+            for i in self._send_request(
+                method="getForumTopicIconStickers",
+                timeout_secs=timeout_secs
+            )
+        ]
+
+    def create_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        icon_color: Optional[int] = None,
+        icon_custom_emoji_id: Optional[str] = None
+    ) -> ForumTopic:
+        return self._serializer.get_object(
+            data=self._send_request(
+                method="createForumTopic",
+                parameters={
+                    "chat_id": chat_id,
+                    "name": name,
+                    "icon_color": icon_color,
+                    "icon_custom_emoji_id": icon_custom_emoji_id
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=ForumTopic
+        )
+
+    def edit_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+        name: str,
+        icon_custom_emoji_id: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="editForumTopic",
+            parameters={
+                "chat_id": chat_id,
+                "message_thread_id": message_thread_id,
+                "name": name,
+                "icon_custom_emoji_id": icon_custom_emoji_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def close_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="closeForumTopic",
+            parameters={
+                "chat_id": chat_id,
+                "message_thread_id": message_thread_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def reopen_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="reopenForumTopic",
+            parameters={
+                "chat_id": chat_id,
+                "message_thread_id": message_thread_id
+            },
+            timeout_secs=timeout_secs
+        )
+    
+    def delete_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="deleteForumTopic",
+            parameters={
+                "chat_id": chat_id,
+                "message_thread_id": message_thread_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def unpin_all_forum_topic_messages(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="unpinAllForumTopicMessages",
+            parameters={
+                "chat_id": chat_id,
+                "message_thread_id": message_thread_id
+            },
+            timeout_secs=timeout_secs
+        )
+
     def answer_callback_query(
         self,
         callback_query_id: str,
@@ -1760,6 +1915,7 @@ class TelegramBot:
         sticker: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -1776,6 +1932,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "sticker": sticker,
+                    "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -2000,6 +2157,7 @@ class TelegramBot:
         prices: list[LabeledPrice],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         max_tip_amount: Optional[int] = None,
         suggested_tip_amounts: Optional[list[int]] = None,
         start_parameter: Optional[str] = None,
@@ -2032,6 +2190,7 @@ class TelegramBot:
                     "provider_token": provider_token,
                     "currency": currency,
                     "prices": prices,
+                    "message_thread_id": message_thread_id,
                     "max_tip_amount": max_tip_amount,
                     "suggested_tip_amounts": suggested_tip_amounts,
                     "start_parameter": start_parameter,
@@ -2170,6 +2329,7 @@ class TelegramBot:
         game_short_name: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -2182,6 +2342,7 @@ class TelegramBot:
                 parameters={
                     "chat_id": chat_id,
                     "game_short_name": game_short_name,
+                    "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,

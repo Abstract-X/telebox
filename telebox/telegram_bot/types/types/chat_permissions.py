@@ -14,3 +14,4 @@ class ChatPermissions(Type):
     can_change_info: Optional[bool] = None
     can_invite_users: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
+    can_manage_topics: Optional[bool] = None

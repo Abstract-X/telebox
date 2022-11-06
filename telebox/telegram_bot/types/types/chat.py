@@ -19,7 +19,10 @@ class Chat(Type):
     username: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    is_forum: Optional[Literal[True]] = None
     photo: Optional[ChatPhoto] = None
+    active_usernames: Optional[list[str]] = None
+    emoji_status_custom_emoji_id: Optional[str] = None
     bio: Optional[str] = None
     has_private_forwards: Optional[Literal[True]] = None
     has_restricted_voice_and_video_messages: Optional[Literal[True]] = None
