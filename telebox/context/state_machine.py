@@ -14,7 +14,13 @@ class ContextStateMachine:
     def __init__(self, machine: StateMachine):
         self._machine = machine
 
-    def set_next_state(self, direction: Optional[str] = None, data: Any = None) -> None:
+    def set_next_state(
+        self,
+        direction: Optional[str] = None,
+        data: Any = None,
+        *,
+        for_chat: bool = False
+    ) -> None:
         event = event_context.get()
         self._machine.set_next_state(
             event=event,
@@ -22,34 +28,40 @@ class ContextStateMachine:
             direction=direction,
             data=data,
             chat_id=get_event_chat_id(),
-            user_id=get_event_user_id()
+            user_id=None if for_chat else get_event_user_id()
         )
 
-    def set_previous_state(self, data: Any = None) -> None:
+    def set_previous_state(self, data: Any = None, *, for_chat: bool = False) -> None:
         event = event_context.get()
         self._machine.set_previous_state(
             event=event,
             data=data,
             chat_id=get_event_chat_id(),
-            user_id=get_event_user_id()
+            user_id=None if for_chat else get_event_user_id()
         )
 
-    def set_state(self, state: State, data: Any = None) -> None:
+    def set_state(self, state: State, data: Any = None, *, for_chat: bool = False) -> None:
         event = event_context.get()
         self._machine.set_state(
             state=state,
             event=event,
             data=data,
             chat_id=get_event_chat_id(),
-            user_id=get_event_user_id()
+            user_id=None if for_chat else get_event_user_id()
         )
 
-    def reset_state(self, data: Any = None, *, with_exit: bool = True) -> None:
+    def reset_state(
+        self,
+        data: Any = None,
+        *,
+        with_exit: bool = True,
+        for_chat: bool = False
+    ) -> None:
         event = event_context.get()
         self._machine.reset_state(
             event=event,
             data=data,
             chat_id=get_event_chat_id(),
-            user_id=get_event_user_id(),
+            user_id=None if for_chat else get_event_user_id(),
             with_exit=with_exit
         )
