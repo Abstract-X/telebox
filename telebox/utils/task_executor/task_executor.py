@@ -31,6 +31,12 @@ class TaskExecutor:
         self._pending_tasks = []
         self._pending_task_lock = Lock()
 
+    def __enter__(self):
+        self.run_tasks()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.wait_tasks()
+
     def add_task(
         self,
         task: Callable,
