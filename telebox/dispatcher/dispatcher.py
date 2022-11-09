@@ -400,6 +400,7 @@ class Dispatcher:
                 # noinspection PyBroadException
                 try:
                     updates = self._bot.get_updates(
+                        timeout_secs=timeout + 1 if timeout else None,
                         offset=offset_update_id,
                         limit=limit,
                         timeout=timeout,
