@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from typing import Optional, Literal
 
 from telebox.telegram_bot.types.type import Type
-from telebox.telegram_bot.utils import get_url, get_user_mention_url, get_full_name
+from telebox.telegram_bot.utils.users import get_full_name
+from telebox.telegram_bot.utils.deep_links import get_username_link, get_user_link
 
 
 @dataclass(unsafe_hash=True)
@@ -24,10 +25,10 @@ class User(Type):
         return get_full_name(self.first_name, self.last_name)
 
     @property
-    def url(self) -> Optional[str]:
+    def link(self) -> Optional[str]:
         if self.username is not None:
-            return get_url(self.username)
+            return get_username_link(self.username)
 
     @property
-    def mention_url(self) -> str:
-        return get_user_mention_url(self.id)
+    def mention_link(self) -> str:
+        return get_user_link(self.id)

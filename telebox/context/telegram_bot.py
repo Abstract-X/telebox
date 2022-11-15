@@ -1,7 +1,7 @@
 from typing import Optional, Union, Literal
 from datetime import datetime
 
-from telebox.telegram_bot.telegram_bot import TelegramBot
+from telebox.telegram_bot.bot import TelegramBot
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.types.types.message_entity import MessageEntity
 from telebox.telegram_bot.types.types.inline_keyboard_markup import InlineKeyboardMarkup

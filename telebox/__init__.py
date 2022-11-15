@@ -1,4 +1,4 @@
-from .telegram_bot import TelegramBot, UpdateContentType, MessageContentType
+from .telegram_bot import TelegramBot, get_bot, UpdateContentType, MessageContentType
 from .dispatcher import (
     Dispatcher,
     Event,
@@ -38,6 +38,7 @@ from .utils import (
 
 __all__ = [
     "TelegramBot",
+    "get_bot",
     "UpdateContentType",
     "MessageContentType",
     "Dispatcher",
