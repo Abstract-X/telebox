@@ -655,7 +655,7 @@ class Dispatcher:
                 event_handler = self._get_event_handler(event.event, event.event_type)
 
                 if event_handler is None:
-                    logger.warning("No handler found for event: %r.", event)
+                    logger.debug("No handler found for event: %r.", event)
                     continue
 
                 event_handler_context.set(event_handler.handler)
