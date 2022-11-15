@@ -6,7 +6,7 @@ import time
 
 import cherrypy
 
-from telebox.telegram_bot.telegram_bot import TelegramBot
+from telebox.telegram_bot.bot import TelegramBot
 from telebox.telegram_bot.types.types.update import Update
 from telebox.telegram_bot.types.types.message import Message
 from telebox.telegram_bot.errors import UnknownUpdateContentError, UnknownMessageContentError

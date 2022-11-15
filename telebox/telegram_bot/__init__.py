@@ -1,4 +1,4 @@
-from .telegram_bot import TelegramBot
+from .bot import TelegramBot
 from .enums import UpdateContentType, MessageContentType
 
 
