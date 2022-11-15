@@ -2505,3 +2505,54 @@ class TelegramBot:
         for i in set(self._over_limit_times):
             if current_time > self._over_limit_times[i]:
                 del self._over_limit_times[i]
+
+
+class TelegramBotContext:
+
+    def __init__(
+        self,
+        token: str,
+        *,
+        api_url: str = API_URL,
+        force_sending: bool = False,
+        default_parse_mode: Union[str, NotSet] = NOT_SET,
+        default_timeout_secs: Union[int, float, None] = None
+    ):
+        self._token = token
+        self._api_url = api_url
+        self._force_sending = force_sending
+        self._default_parse_mode = default_parse_mode
+        self._default_timeout_secs = default_timeout_secs
+        self._session: Optional[Session] = None
+
+    def __enter__(self) -> TelegramBot:
+        self._session = Session()
+
+        return TelegramBot(
+            self._session,
+            token=self._token,
+            api_url=self._api_url,
+            force_sending=self._force_sending,
+            default_parse_mode=self._default_parse_mode,
+            default_timeout_secs=self._default_timeout_secs
+        )
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._session.close()
+
+
+def get_bot(
+    token: str,
+    *,
+    api_url: str = API_URL,
+    force_sending: bool = False,
+    default_parse_mode: Union[str, NotSet] = NOT_SET,
+    default_timeout_secs: Union[int, float, None] = None
+) -> TelegramBotContext:
+    return TelegramBotContext(
+        token,
+        api_url=api_url,
+        force_sending=force_sending,
+        default_parse_mode=default_parse_mode,
+        default_timeout_secs=default_timeout_secs
+    )
