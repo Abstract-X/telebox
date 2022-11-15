@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from telebox.telegram_bot.types.type import Type
-from telebox.telegram_bot.utils import get_full_name
+from telebox.telegram_bot.utils.users import get_full_name
 
 
 @dataclass(unsafe_hash=True)

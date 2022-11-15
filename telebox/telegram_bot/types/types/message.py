@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Literal, Union, TYPE_CHECKING
 
-from telebox.telegram_bot.types.type import Type
-from telebox.telegram_bot.utils import get_message_public_url, get_message_private_url
 from telebox.telegram_bot.consts import chat_types
+from telebox.telegram_bot.utils.deep_links import get_message_public_link, get_message_private_link
 from telebox.telegram_bot.enums.message_content_type import MessageContentType
 from telebox.telegram_bot.errors import UnknownMessageContentError
+from telebox.telegram_bot.types.type import Type
 from telebox.telegram_bot.types.types.user import User
 from telebox.telegram_bot.types.types.message_entity import MessageEntity
 from telebox.telegram_bot.types.types.animation import Animation
@@ -228,12 +228,12 @@ class Message(Type):
         return self.reply_to_message is not None
 
     @property
-    def url(self) -> Optional[str]:
+    def link(self) -> Optional[str]:
         if self.chat.type in {chat_types.CHANNEL, chat_types.SUPERGROUP}:
             if self.chat.username is not None:
-                return get_message_public_url(self.chat.username, self.message_id)
+                return get_message_public_link(self.chat.username, self.message_id)
             else:
-                return get_message_private_url(self.chat.id, self.message_id)
+                return get_message_private_link(self.chat.id, self.message_id)
 
     def get_text(self) -> Optional[str]:
         if self.text is not None:
