@@ -25,7 +25,7 @@ class Task:
 
 class TaskExecutor:
 
-    def __init__(self, threads: int, *, allow_pending_tasks: bool = True):
+    def __init__(self, threads: int, *, allow_pending_tasks: bool = False):
         self._thread_pool = ThreadPool(threads, self._run_task_processing)
         self._allow_pending_tasks = allow_pending_tasks
         self._pending_task_processing_thread: Optional[Thread] = None
