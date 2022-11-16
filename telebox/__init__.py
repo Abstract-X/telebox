@@ -32,7 +32,9 @@ from .utils import (
     NamedSet,
     AbstractCallbackDataBuilder,
     TaskExecutor,
-    Env
+    Env,
+    get_html_text,
+    get_markdown_text
 )
 
 
@@ -70,6 +72,8 @@ __all__ = [
     "AbstractCallbackDataBuilder",
     "TaskExecutor",
     "Env",
+    "get_html_text",
+    "get_markdown_text",
     "get_event_chat_id",
     "get_event_user_id"
 ]

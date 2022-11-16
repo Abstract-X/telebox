@@ -3,6 +3,7 @@ from .named_set import NamedSet
 from .callback_data_builders import AbstractCallbackDataBuilder
 from .task_executor import TaskExecutor
 from .env import Env
+from .text import get_html_text, get_markdown_text
 
 
 __all__ = [
@@ -11,5 +12,7 @@ __all__ = [
     "NamedSet",
     "AbstractCallbackDataBuilder",
     "TaskExecutor",
-    "Env"
+    "Env",
+    "get_html_text",
+    "get_markdown_text"
 ]
