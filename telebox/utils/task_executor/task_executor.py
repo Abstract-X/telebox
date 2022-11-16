@@ -4,9 +4,10 @@ from dataclasses import dataclass
 from threading import Thread, Lock
 from queue import Queue
 import time
+import uuid
 
 from telebox.utils.thread_pool import ThreadPool
-from telebox.utils.task_executor.errors import TaskExecutorError
+from telebox.utils.task_executor.errors import TaskExecutorError, PendingTaskNotFoundError
 
 
 logger = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ _TASK_WAITING_DELAY_SECS = 0.1
 
 @dataclass
 class Task:
+    id: str
     task: Callable
     args: tuple
     kwargs: dict[str, Any]
@@ -28,7 +30,7 @@ class TaskExecutor:
         self._allow_pending_tasks = allow_pending_tasks
         self._pending_task_processing_thread: Optional[Thread] = None
         self._tasks = Queue()
-        self._pending_tasks = []
+        self._pending_tasks: list[tuple[Task, float]] = []
         self._pending_task_lock = Lock()
 
     def __enter__(self):
@@ -43,8 +45,10 @@ class TaskExecutor:
         delay_secs: Union[int, float, None] = None,
         args: tuple = (),
         kwargs: Optional[dict[str, Any]] = None
-    ) -> None:
+    ) -> str:
+        task_id = str(uuid.uuid4())
         task = Task(
+            id=task_id,
             task=task,
             args=args,
             kwargs=kwargs or {}
@@ -64,6 +68,17 @@ class TaskExecutor:
         else:
             logger.debug("Task added to queue: %r.", task)
             self._tasks.put(task, block=False)
+
+        return task_id
+
+    def remove_pending_task(self, id_: str) -> None:
+        with self._pending_task_lock:
+            for index, task_items in enumerate(self._pending_tasks):
+                if task_items[0].id == id_:
+                    self._pending_tasks.pop(index)
+                    break
+            else:
+                raise PendingTaskNotFoundError("Pending task with ID {id!r} not found!", id=id_)
 
     def run_tasks(self) -> None:
         logger.debug("Tasks is starting...")
