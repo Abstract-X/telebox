@@ -34,7 +34,7 @@ class TaskExecutor:
         self._pending_task_lock = Lock()
 
     def __enter__(self):
-        self.run_tasks()
+        self.start_tasks()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.wait_tasks()
@@ -80,7 +80,7 @@ class TaskExecutor:
             else:
                 raise PendingTaskNotFoundError("Pending task with ID {id!r} not found!", id=id_)
 
-    def run_tasks(self) -> None:
+    def start_tasks(self) -> None:
         logger.debug("Tasks is starting...")
 
         if self._allow_pending_tasks:
