@@ -1767,7 +1767,7 @@ class TelegramBot:
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
-        reply_markup: Optional[ReplyKeyboardMarkup] = None
+        reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Union[Message, Literal[True]]:
         data = self._send_request(
             method="editMessageText",
