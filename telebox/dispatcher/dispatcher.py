@@ -2,6 +2,7 @@ import logging
 from typing import Optional, Union, NoReturn
 from dataclasses import dataclass
 from threading import Thread, Lock
+from requests.exceptions import Timeout as RequestTimeoutError
 import time
 
 import cherrypy
@@ -406,6 +407,8 @@ class Dispatcher:
                         timeout=timeout,
                         allowed_updates=allowed_updates
                     )
+                except RequestTimeoutError:
+                    logger.error("Timeout for requesting updates has expired!")
                 except Exception:
                     logger.exception("An error occurred while receiving updates!")
                     time.sleep(error_delay_secs)
