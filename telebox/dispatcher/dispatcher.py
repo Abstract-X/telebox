@@ -7,10 +7,10 @@ import time
 
 import cherrypy
 
-from telebox.telegram_bot.bot import TelegramBot
-from telebox.telegram_bot.types.types.update import Update
-from telebox.telegram_bot.types.types.message import Message
-from telebox.telegram_bot.errors import UnknownUpdateContentError, UnknownMessageContentError
+from telebox.bot.bot import Bot
+from telebox.bot.types.types.update import Update
+from telebox.bot.types.types.message import Message
+from telebox.bot.errors import UnknownUpdateContentError, UnknownMessageContentError
 from telebox.dispatcher.typing import Event
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.dispatcher.utils.event_queue import EventQueue
@@ -65,7 +65,7 @@ class Dispatcher:
 
     def __init__(
         self,
-        bot: TelegramBot,
+        bot: Bot,
         *,
         drop_over_limit_events: bool = False,
         default_rate_limit: Optional[RateLimit] = None

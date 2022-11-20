@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from telebox.telegram_bot.types.types.message import Message
+from telebox.bot.types.types.message import Message
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
 

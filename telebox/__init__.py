@@ -1,4 +1,4 @@
-from .telegram_bot import TelegramBot, get_bot, UpdateContentType, MessageContentType
+from .bot import Bot, get_bot, UpdateContentType, MessageContentType
 from .dispatcher import (
     Dispatcher,
     Event,
@@ -20,7 +20,7 @@ from .dispatcher import (
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
 from .context import (
-    ContextTelegramBot,
+    ContextBot,
     ContextStateMachine,
     event_context,
     event_handler_context,
@@ -39,7 +39,7 @@ from .utils import (
 
 
 __all__ = [
-    "TelegramBot",
+    "Bot",
     "get_bot",
     "UpdateContentType",
     "MessageContentType",
@@ -61,7 +61,7 @@ __all__ = [
     "StateMachine",
     "State",
     "AbstractStateStorage",
-    "ContextTelegramBot",
+    "ContextBot",
     "ContextStateMachine",
     "event_context",
     "event_handler_context",
@@ -82,8 +82,8 @@ __all__ = [
 def _evaluate_type_annotations() -> None:
     from typing import get_type_hints
 
-    from .telegram_bot.types.types.chat import Chat
-    from .telegram_bot.types.types.message import Message
+    from .bot.types.types.chat import Chat
+    from .bot.types.types.message import Message
 
     classes = (Chat, Message)
     mapping = {i.__name__: i for i in classes}

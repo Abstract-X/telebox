@@ -3,8 +3,8 @@ from typing import Callable
 import cherrypy
 import ujson
 
-from telebox.telegram_bot.types.types.update import Update
-from telebox.telegram_bot.serializer import Serializer
+from telebox.bot.types.types.update import Update
+from telebox.bot.serializer import Serializer
 
 
 class ServerRoot:

@@ -3,7 +3,7 @@ from typing import Optional, Any
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.utils.callback_data_builders.builder import AbstractCallbackDataBuilder
-from telebox.telegram_bot.types.types.callback_query import CallbackQuery
+from telebox.bot.types.types.callback_query import CallbackQuery
 
 
 class CallbackDataFilter(AbstractEventFilter):

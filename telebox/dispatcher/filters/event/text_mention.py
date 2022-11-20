@@ -3,8 +3,8 @@ from typing import Union
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.utils.media_group import MediaGroup
-from telebox.telegram_bot.types.types.message import Message
-from telebox.telegram_bot.consts import message_entity_types
+from telebox.bot.types.types.message import Message
+from telebox.bot.consts import message_entity_types
 
 
 class TextMentionFilter(AbstractEventFilter):
