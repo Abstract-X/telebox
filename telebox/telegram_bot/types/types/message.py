@@ -258,6 +258,16 @@ class Message(Type):
 
         return []
 
+    def get_command_args(self) -> list[str]:
+        text = self.get_text()
+        args = []
+
+        for i in text.split(" ")[1:]:
+            if i:
+                args.append(i)
+
+        return args
+
 
 MessageContent = Union[
     str,
