@@ -20,7 +20,8 @@ from .event import (
     CashtagFilter,
     MentionFilter,
     TextMentionFilter,
-    MediaGroupContentTypeFilter
+    MediaGroupContentTypeFilter,
+    NewChatMemberIDFilter
 )
 from .error import (
     ErrorNoneFilter,
@@ -54,5 +55,6 @@ __all__ = [
     "ErrorTypeFilter",
     "ErrorTextFilter",
     "ErrorRegExpTextFilter",
-    "MentionFilter"
+    "MentionFilter",
+    "NewChatMemberIDFilter"
 ]
