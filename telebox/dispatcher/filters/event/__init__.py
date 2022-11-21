@@ -19,6 +19,7 @@ from .mention import MentionFilter
 from .text_mention import TextMentionFilter
 from .media_group_content_type import MediaGroupContentTypeFilter
 from .new_chat_member_id import NewChatMemberIDFilter
+from .left_chat_member_id import LeftChatMemberIDFilter
 
 
 __all__ = [
@@ -42,5 +43,6 @@ __all__ = [
     "MentionFilter",
     "TextMentionFilter",
     "MediaGroupContentTypeFilter",
-    "NewChatMemberIDFilter"
+    "NewChatMemberIDFilter",
+    "LeftChatMemberIDFilter"
 ]
