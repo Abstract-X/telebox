@@ -3,8 +3,8 @@ from typing import Optional, Union
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.utils.media_group import MediaGroup
-from telebox.telegram_bot.types.types.message import Message
-from telebox.telegram_bot.types.types.callback_query import CallbackQuery
+from telebox.bot.types.types.message import Message
+from telebox.bot.types.types.callback_query import CallbackQuery
 from telebox.state_machine.state import State
 from telebox.state_machine.machine import StateMachine
 

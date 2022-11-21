@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from telebox.telegram_bot.types.types.message import Message
+from telebox.bot.types.types.message import Message
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
 
@@ -22,6 +22,10 @@ class MediaGroup:
     @property
     def id(self) -> str:
         return self.messages[0].media_group_id
+
+    @property
+    def message_thread_id(self) -> Optional[int]:
+        return self.messages[0].message_thread_id
 
     @property
     def content_types(self) -> set[MediaGroupContentType]:

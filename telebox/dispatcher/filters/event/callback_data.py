@@ -3,7 +3,7 @@ from typing import Optional, Any
 from telebox.dispatcher.filters.event_filter import AbstractEventFilter
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.utils.callback_data_builders.builder import AbstractCallbackDataBuilder
-from telebox.telegram_bot.types.types.callback_query import CallbackQuery
+from telebox.bot.types.types.callback_query import CallbackQuery
 
 
 class CallbackDataFilter(AbstractEventFilter):
@@ -17,7 +17,7 @@ class CallbackDataFilter(AbstractEventFilter):
 
     def get_value(self, event: CallbackQuery) -> Optional[str]:
         if event.data is not None:
-            key, _ = self._builder.parse(event.data)
+            key, _ = self._builder.get_parsed_data(event.data)
 
             return key
 

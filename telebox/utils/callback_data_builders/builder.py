@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 class AbstractCallbackDataBuilder(ABC):
 
     @abstractmethod
-    def build(self, key, value=None) -> str:
+    def get_builded_data(self, key, value=None) -> str:
         pass
 
     @abstractmethod
-    def parse(self, data: str):
+    def get_parsed_data(self, data: str):
         pass

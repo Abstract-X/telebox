@@ -1,6 +1,6 @@
 from typing import Callable
 
-from telebox.telegram_bot.utils.formatting import get_escaped_html_text, get_escaped_markdown_text
+from telebox.bot.utils.formatting import get_escaped_html_text, get_escaped_markdown_text
 
 
 def get_html_text(template: str, /, *args, **kwargs) -> str:
