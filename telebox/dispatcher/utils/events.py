@@ -36,6 +36,10 @@ TYPES_WITH_USER_ID = frozenset({
     ChatMemberUpdated,
     ChatJoinRequest
 })
+TYPES_WITH_MESSAGE_THREAD_ID = frozenset({
+    Message,
+    MediaGroup
+})
 TYPES_WITH_SENDER_CHAT_ID = frozenset({
     Message,
     MediaGroup
@@ -64,6 +68,10 @@ def get_event_chat_id(event: Event) -> Optional[int]:
 
 def get_event_user_id(event: Event) -> Optional[int]:
     return event.user_id if type(event) in TYPES_WITH_USER_ID else None
+
+
+def get_event_message_thread_id(event: Event) -> Optional[int]:
+    return event.message_thread_id if type(event) in TYPES_WITH_MESSAGE_THREAD_ID else None
 
 
 def get_event_sender_chat_id(event: Event) -> Optional[int]:

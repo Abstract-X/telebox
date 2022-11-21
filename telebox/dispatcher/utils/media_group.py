@@ -24,6 +24,10 @@ class MediaGroup:
         return self.messages[0].media_group_id
 
     @property
+    def message_thread_id(self) -> Optional[int]:
+        return self.messages[0].message_thread_id
+
+    @property
     def content_types(self) -> set[MediaGroupContentType]:
         content_types = set()
 
