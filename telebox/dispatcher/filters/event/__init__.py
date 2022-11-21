@@ -9,7 +9,8 @@ from .user_id import UserIDFilter
 from .reply_message import ReplyMessageFilter
 from .forwarded_message import ForwardedMessageFilter
 from .chat_type import ChatTypeFilter
-from .state import StateFilter
+from .chat_state import ChatStateFilter
+from .user_state import UserStateFilter
 from .non_standard_command import NonStandardCommandFilter
 from .callback_data import CallbackDataFilter
 from .simple_callback_data import SimpleCallbackDataFilter
@@ -34,7 +35,8 @@ __all__ = [
     "ReplyMessageFilter",
     "ForwardedMessageFilter",
     "ChatTypeFilter",
-    "StateFilter",
+    "ChatStateFilter",
+    "UserStateFilter",
     "NonStandardCommandFilter",
     "CallbackDataFilter",
     "SimpleCallbackDataFilter",

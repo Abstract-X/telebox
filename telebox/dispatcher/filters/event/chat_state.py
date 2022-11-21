@@ -9,7 +9,7 @@ from telebox.state_machine.state import State
 from telebox.state_machine.machine import StateMachine
 
 
-class StateFilter(AbstractEventFilter):
+class ChatStateFilter(AbstractEventFilter):
 
     def __init__(self, *states: State, machine: StateMachine):
         if not states:
@@ -30,7 +30,7 @@ class StateFilter(AbstractEventFilter):
 
     def get_value(self, event: Union[Message, MediaGroup, CallbackQuery]) -> Optional[State]:
         if event.chat_id is not None:
-            return self._machine.get_state(chat_id=event.chat_id, user_id=event.user_id)
+            return self._machine.get_state(chat_id=event.chat_id)
 
     def check_value(self, value: Optional[State]) -> bool:
-        return value in self._states if value is not None else False
+        return value in self._states
