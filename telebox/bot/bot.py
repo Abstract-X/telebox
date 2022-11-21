@@ -2457,18 +2457,38 @@ class Bot:
         files = []
 
         for name, value in parameters.items():
-            if value is not None:
-                if isinstance(value, InputFile):
-                    files.append((name, (value.name or secrets.token_urlsafe(16), value.content)))
-                else:
-                    if isinstance(value, datetime):
-                        value = convert_datetime_to_timestamp(value)
-                    elif is_dataclass(value):
-                        value = self._serializer.get_data(value)
+            if value is None:
+                continue
 
-                    data[name] = value
+            if isinstance(value, InputFile):
+                files.append((name, (value.name or secrets.token_urlsafe(16), value.content)))
+            else:
+                data[name] = self._get_prepared_parameter(value)
 
         return data, files
+
+    def _get_prepared_parameter(self, value: Any) -> Any:
+        if is_dataclass(value):
+            return self._serializer.get_data(value)
+        elif isinstance(value, datetime):
+            return convert_datetime_to_timestamp(value)
+        elif isinstance(value, list):
+            return self._get_prepared_list_parameter(value)
+
+        return value
+
+    def _get_prepared_list_parameter(self, value: list[Any]) -> list[Any]:
+        prepared_value = []
+
+        for i in value:
+            if isinstance(i, list):
+                result = self._get_prepared_list_parameter(i)
+            else:
+                result = self._get_prepared_parameter(i)
+
+            prepared_value.append(result)
+
+        return prepared_value
 
     def _process_response(
         self,
