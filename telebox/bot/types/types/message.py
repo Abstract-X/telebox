@@ -220,6 +220,11 @@ class Message(Type):
         return self.from_.id if self.from_ is not None else None
 
     @property
+    def message_topic_id(self) -> Optional[int]:
+        if self.is_topic_message:
+            return self.message_thread_id
+
+    @property
     def is_forwarded(self) -> bool:
         return self.forward_date is not None
 
