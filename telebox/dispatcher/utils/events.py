@@ -1,8 +1,9 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Any, Optional, Iterable, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from telebox.dispatcher.typing import Event
+from telebox.dispatcher.errors import InvalidEventError
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.bot.types.types.message import Message
 from telebox.bot.types.types.inline_query import InlineQuery
@@ -16,38 +17,6 @@ from telebox.bot.types.types.chat_member_updated import ChatMemberUpdated
 from telebox.bot.types.types.chat_join_request import ChatJoinRequest
 
 
-TYPES_WITH_CHAT_ID = frozenset({
-    Message,
-    MediaGroup,
-    CallbackQuery,
-    ChatMemberUpdated,
-    ChatJoinRequest
-})
-TYPES_WITH_USER_ID = frozenset({
-    Message,
-    MediaGroup,
-    InlineQuery,
-    ChosenInlineResult,
-    CallbackQuery,
-    ShippingQuery,
-    PreCheckoutQuery,
-    Poll,
-    PollAnswer,
-    ChatMemberUpdated,
-    ChatJoinRequest
-})
-TYPES_WITH_MESSAGE_THREAD_ID = frozenset({
-    Message,
-    MediaGroup
-})
-TYPES_WITH_SENDER_CHAT_ID = frozenset({
-    Message,
-    MediaGroup
-})
-TYPES_WITH_MESSAGE_ID = frozenset({
-    Message,
-    CallbackQuery
-})
 TYPES_WITH_CALLBACK_QUERY_ID = frozenset({
     CallbackQuery
 })
@@ -62,37 +31,123 @@ TYPES_PRE_CHECKOUT_QUERY_ID = frozenset({
 })
 
 
-def get_event_chat_id(event: Event) -> Optional[int]:
-    return event.chat_id if type(event) in TYPES_WITH_CHAT_ID else None
+def get_event_chat_id(event: Event, *, strictly: bool = False) -> Optional[int]:
+    return _get_event_attribute(
+        attribute="chat_id",
+        name="chat identifier",
+        event=event,
+        types=frozenset((
+            Message,
+            MediaGroup,
+            CallbackQuery,
+            ChatMemberUpdated,
+            ChatJoinRequest
+        )),
+        strictly=strictly
+    )
 
 
-def get_event_user_id(event: Event) -> Optional[int]:
-    return event.user_id if type(event) in TYPES_WITH_USER_ID else None
+def get_event_user_id(event: Event, *, strictly: bool = False) -> Optional[int]:
+    return _get_event_attribute(
+        attribute="user_id",
+        name="user identifier",
+        event=event,
+        types=frozenset((
+            Message,
+            MediaGroup,
+            InlineQuery,
+            ChosenInlineResult,
+            CallbackQuery,
+            ShippingQuery,
+            PreCheckoutQuery,
+            Poll,
+            PollAnswer,
+            ChatMemberUpdated,
+            ChatJoinRequest
+        )),
+        strictly=strictly
+    )
 
 
-def get_event_message_thread_id(event: Event) -> Optional[int]:
-    return event.message_thread_id if type(event) in TYPES_WITH_MESSAGE_THREAD_ID else None
+def get_event_message_topic_id(event: Event, *, strictly: bool = False) -> Optional[int]:
+    return _get_event_attribute(
+        attribute="message_topic_id",
+        name="message topic identifier",
+        event=event,
+        types=frozenset((Message, MediaGroup)),
+        strictly=strictly
+    )
 
 
-def get_event_sender_chat_id(event: Event) -> Optional[int]:
-    return event.sender_chat_id if type(event) in TYPES_WITH_SENDER_CHAT_ID else None
+def get_event_sender_chat_id(event: Event, *, strictly: bool = False) -> Optional[int]:
+    return _get_event_attribute(
+        attribute="sender_chat_id",
+        name="sender chat identifier",
+        event=event,
+        types=frozenset((Message, MediaGroup)),
+        strictly=strictly
+    )
 
 
-def get_event_message_id(event: Event) -> Optional[int]:
-    return event.message_id if type(event) in TYPES_WITH_MESSAGE_ID else None
+def get_event_message_id(event: Event, *, strictly: bool = False) -> Optional[int]:
+    return _get_event_attribute(
+        attribute="message_id",
+        name="message identifier",
+        event=event,
+        types=frozenset((Message, MediaGroup)),
+        strictly=strictly
+    )
 
 
-def get_event_callback_query_id(event: Event) -> Optional[str]:
-    return event.id if type(event) in TYPES_WITH_CALLBACK_QUERY_ID else None
+def get_event_callback_query_id(event: Event, *, strictly: bool = False) -> Optional[str]:
+    return _get_event_attribute(
+        attribute="id",
+        name="callback query identifier",
+        event=event,
+        types=(CallbackQuery,),
+        strictly=strictly
+    )
 
 
-def get_event_inline_query_id(event: Event) -> Optional[str]:
-    return event.id if type(event) in TYPES_WITH_INLINE_QUERY_ID else None
+def get_event_inline_query_id(event: Event, *, strictly: bool = False) -> Optional[str]:
+    return _get_event_attribute(
+        attribute="id",
+        name="inline query identifier",
+        event=event,
+        types=(InlineQuery,),
+        strictly=strictly
+    )
 
 
-def get_event_shipping_query_id(event: Event) -> Optional[str]:
-    return event.id if type(event) in TYPES_WITH_SHIPPING_QUERY_ID else None
+def get_event_shipping_query_id(event: Event, *, strictly: bool = False) -> Optional[str]:
+    return _get_event_attribute(
+        attribute="id",
+        name="shipping query identifier",
+        event=event,
+        types=(ShippingQuery,),
+        strictly=strictly
+    )
 
 
-def get_event_pre_checkout_query_id(event: Event) -> Optional[str]:
-    return event.id if type(event) in TYPES_PRE_CHECKOUT_QUERY_ID else None
+def get_event_pre_checkout_query_id(event: Event, *, strictly: bool = False) -> Optional[str]:
+    return _get_event_attribute(
+        attribute="id",
+        name="pre checkout query identifier",
+        event=event,
+        types=(PreCheckoutQuery,),
+        strictly=strictly
+    )
+
+
+def _get_event_attribute(
+    attribute,
+    name: str,
+    event: Event,
+    types: Iterable[type],
+    *,
+    strictly: bool
+) -> Any:
+    if type(event) in types:
+        return getattr(event, attribute)
+    elif strictly:
+        raise InvalidEventError(f"No {name} in event" + " {event!r}!", event=event)
