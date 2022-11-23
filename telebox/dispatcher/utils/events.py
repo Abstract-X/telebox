@@ -94,7 +94,7 @@ def get_event_message_id(event: Event, *, strictly: bool = False) -> Optional[in
         attribute="message_id",
         name="message identifier",
         event=event,
-        types=frozenset((Message, MediaGroup)),
+        types=frozenset((Message, MediaGroup, CallbackQuery)),
         strictly=strictly
     )
 
