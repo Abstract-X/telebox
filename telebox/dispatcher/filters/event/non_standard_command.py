@@ -8,7 +8,7 @@ from telebox.bot.types.types.message import Message
 
 class NonStandardCommandFilter(AbstractEventFilter):
 
-    def __init__(self, *commands: str, prefix: str, ignore_case: bool = True):
+    def __init__(self, *commands: str, prefix: str = "", ignore_case: bool = True):
         self._commands = set()
 
         for i in commands:
