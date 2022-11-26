@@ -225,6 +225,11 @@ class Message(Type):
             return self.message_thread_id
 
     @property
+    def best_photo(self) -> Optional[PhotoSize]:
+        if self.photo:
+            return self.photo[-1]
+
+    @property
     def is_forwarded(self) -> bool:
         return self.forward_date is not None
 
