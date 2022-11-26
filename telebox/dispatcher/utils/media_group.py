@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Optional, Literal
 
 from telebox.bot.types.types.message import Message
-from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.chat import Chat
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
@@ -92,14 +91,6 @@ class MediaGroup:
             content_types.add(content_type)
 
         return content_types
-
-    @property
-    def caption(self) -> Optional[str]:
-        return self.messages[0].caption
-
-    @property
-    def caption_entities(self) -> Optional[list[MessageEntity]]:
-        return self.messages[0].caption_entities
 
     @property
     def date(self) -> datetime:
