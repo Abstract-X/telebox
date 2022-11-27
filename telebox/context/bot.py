@@ -455,10 +455,10 @@ class ContextBot:
 
     def send_media_group(
         self,
-        media: Union[list[InputMediaAudio],
-                     list[InputMediaDocument],
-                     list[InputMediaPhoto],
-                     list[InputMediaVideo]],
+        media: list[Union[InputMediaAudio,
+                          InputMediaDocument,
+                          InputMediaPhoto,
+                          InputMediaVideo]],
         *,
         timeout_secs: Union[int, float, None] = None,
         with_reply: bool = False,
