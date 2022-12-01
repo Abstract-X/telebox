@@ -39,6 +39,8 @@ from telebox.bot.types.types.input_media_video import InputMediaVideo
 from telebox.bot.types.types.input_media_animation import InputMediaAnimation
 from telebox.bot.types.types.input_media_audio import InputMediaAudio
 from telebox.bot.types.types.input_media_document import InputMediaDocument
+from telebox.bot.types.types.force_reply import ForceReply
+from telebox.bot.types.types.reply_keyboard_remove import ReplyKeyboardRemove
 from telebox.bot.types.types.inline_query_result_article import InlineQueryResultArticle
 from telebox.bot.types.types.inline_query_result_photo import InlineQueryResultPhoto
 from telebox.bot.types.types.inline_query_result_gif import InlineQueryResultGif
@@ -106,7 +108,9 @@ from telebox.bot.types.types.passport_element_error_unspecified import (
 
 DataclassObject = TypeVar("DataclassObject")
 _DEFAULT_POST_SERIALIZATION_CLASSES = (
-    # ChatMember types
+    ForceReply,
+    ReplyKeyboardRemove,
+
     ChatMemberOwner,
     ChatMemberAdministrator,
     ChatMemberAdministrator,
@@ -115,7 +119,6 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
     ChatMemberLeft,
     ChatMemberBanned,
 
-    # BotCommandScope types
     BotCommandScopeDefault,
     BotCommandScopeAllPrivateChats,
     BotCommandScopeAllGroupChats,
@@ -124,19 +127,16 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
     BotCommandScopeChatAdministrators,
     BotCommandScopeChatMember,
 
-    # MenuButton types
     MenuButtonCommands,
     MenuButtonWebApp,
     MenuButtonDefault,
 
-    # InputMedia types
     InputMediaPhoto,
     InputMediaVideo,
     InputMediaAnimation,
     InputMediaAudio,
     InputMediaDocument,
 
-    # InlineQueryResult types
     InlineQueryResultArticle,
     InlineQueryResultPhoto,
     InlineQueryResultGif,
@@ -158,7 +158,6 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
     InlineQueryResultCachedVoice,
     InlineQueryResultCachedAudio,
 
-    # PassportElementError types
     PassportElementErrorDataField,
     PassportElementErrorFrontSide,
     PassportElementErrorReverseSide,
@@ -204,15 +203,15 @@ def _get_dataclass_factory() -> Factory:
 
     for class_ in _DEFAULT_POST_SERIALIZATION_CLASSES:
         for field in dataclasses.fields(class_):
-            if isinstance(field.default, str):
+            if field.default not in frozenset((None, dataclasses.MISSING)):
                 schemas[class_] = Schema(
                     post_serialize=_get_post_default_serializer(field.name, field.default)
                 )
 
-                break
-
     return Factory(
-        default_schema=Schema(omit_default=True),
+        default_schema=Schema(
+            omit_default=True
+        ),
         schemas=schemas
     )
 

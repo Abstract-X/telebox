@@ -626,10 +626,10 @@ class Bot:
     def send_media_group(
         self,
         chat_id: Union[int, str],
-        media: Union[list[InputMediaAudio],
-                     list[InputMediaDocument],
-                     list[InputMediaPhoto],
-                     list[InputMediaVideo]],
+        media: list[Union[InputMediaAudio,
+                          InputMediaDocument,
+                          InputMediaPhoto,
+                          InputMediaVideo]],
         *,
         timeout_secs: Union[int, float, None] = None,
         message_thread_id: Optional[int] = None,
@@ -2533,12 +2533,14 @@ class TelegramBotContext:
         self,
         token: str,
         *,
+        get_me: bool = True,
         api_url: str = API_URL,
         force_sending: bool = False,
         default_parse_mode: Union[str, NotSet] = NOT_SET,
         default_timeout_secs: Union[int, float, None] = None
     ):
         self._token = token
+        self._get_me = get_me
         self._api_url = api_url
         self._force_sending = force_sending
         self._default_parse_mode = default_parse_mode
@@ -2547,8 +2549,7 @@ class TelegramBotContext:
 
     def __enter__(self) -> Bot:
         self._session = Session()
-
-        return Bot(
+        bot = Bot(
             self._session,
             token=self._token,
             api_url=self._api_url,
@@ -2557,6 +2558,11 @@ class TelegramBotContext:
             default_timeout_secs=self._default_timeout_secs
         )
 
+        if self._get_me:
+            bot.get_me()
+
+        return bot
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._session.close()
 
@@ -2564,6 +2570,7 @@ class TelegramBotContext:
 def get_bot(
     token: str,
     *,
+    get_me: bool = True,
     api_url: str = API_URL,
     force_sending: bool = False,
     default_parse_mode: Union[str, NotSet] = NOT_SET,
@@ -2571,6 +2578,7 @@ def get_bot(
 ) -> TelegramBotContext:
     return TelegramBotContext(
         token,
+        get_me=get_me,
         api_url=api_url,
         force_sending=force_sending,
         default_parse_mode=default_parse_mode,

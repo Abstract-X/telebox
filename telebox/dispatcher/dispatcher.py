@@ -10,7 +10,6 @@ import cherrypy
 from telebox.bot.bot import Bot
 from telebox.bot.types.types.update import Update
 from telebox.bot.types.types.message import Message
-from telebox.bot.errors import UnknownUpdateContentError, UnknownMessageContentError
 from telebox.dispatcher.typing import Event
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.dispatcher.utils.event_queue import EventQueue
@@ -42,6 +41,7 @@ logger = logging.getLogger(__name__)
 _none_filter = NoneFilter()
 _error_none_filter = ErrorNoneFilter()
 _MEDIA_GROUP_GATHERING_DELAY_SECS = 0.1
+_DROPPED_UNKNOWN_UPDATE_MESSAGE = "Update dropped because it contains an unknown content type: %r."
 
 
 @dataclass
@@ -578,27 +578,16 @@ class Dispatcher:
 
     def _process_update(self, update: Update) -> None:
         logger.debug("Update received: %r.", update)
+        event = update.content
 
-        try:
-            event, content_type = update.content
-        except UnknownUpdateContentError:
-            logger.debug(
-                "Update skipped because it contains an unknown content type: %r.",
-                update
-            )
+        if event is None:
+            logger.debug(_DROPPED_UNKNOWN_UPDATE_MESSAGE, update)
 
             return
 
-        event_type = EventType(content_type.value)
-
         if isinstance(event, Message):
-            try:
-                event.content  # noqa
-            except UnknownMessageContentError:
-                logger.debug(
-                    "Event skipped because it contains an unknown content type: %r.",
-                    event
-                )
+            if event.content is None:
+                logger.debug(_DROPPED_UNKNOWN_UPDATE_MESSAGE, update)
 
                 return
 
@@ -615,7 +604,7 @@ class Dispatcher:
             logger.debug("Event from over limit chat dropped: %r.", event)
         else:
             logger.debug("Event added to queue: %r.", event)
-            self._events.add_event(event, event_type)
+            self._events.add_event(event, EventType(update.content_type.value))
 
     def _check_over_limit_event(self, event: Event) -> bool:
         return (

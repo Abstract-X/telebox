@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Optional, Union
 
 from telebox.bot.enums.update_content_type import UpdateContentType
-from telebox.bot.errors import UnknownUpdateContentError
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.message import Message
 from telebox.bot.types.types.inline_query import InlineQuery
@@ -48,35 +47,56 @@ class Update(Type):
     chat_member: Optional[ChatMemberUpdated] = None
     chat_join_request: Optional[ChatJoinRequest] = None
 
-    @property
-    def content(self) -> tuple[UpdateContent, UpdateContentType]:
+    def __post_init__(self) -> None:
         if self.message is not None:
-            return self.message, UpdateContentType.MESSAGE
+            self._content = self.message
+            self._content_type = UpdateContentType.MESSAGE
         elif self.edited_message is not None:
-            return self.edited_message, UpdateContentType.EDITED_MESSAGE
+            self._content = self.edited_message
+            self._content_type = UpdateContentType.EDITED_MESSAGE
         elif self.channel_post is not None:
-            return self.channel_post, UpdateContentType.CHANNEL_POST
+            self._content = self.channel_post
+            self._content_type = UpdateContentType.CHANNEL_POST
         elif self.edited_channel_post is not None:
-            return self.edited_channel_post, UpdateContentType.EDITED_CHANNEL_POST
+            self._content = self.edited_channel_post
+            self._content_type = UpdateContentType.EDITED_CHANNEL_POST
         elif self.inline_query is not None:
-            return self.inline_query, UpdateContentType.INLINE_QUERY
+            self._content = self.inline_query
+            self._content_type = UpdateContentType.INLINE_QUERY
         elif self.chosen_inline_result is not None:
-            return self.chosen_inline_result, UpdateContentType.CHOSEN_INLINE_RESULT
+            self._content = self.chosen_inline_result
+            self._content_type = UpdateContentType.CHOSEN_INLINE_RESULT
         elif self.callback_query is not None:
-            return self.callback_query, UpdateContentType.CALLBACK_QUERY
+            self._content = self.callback_query
+            self._content_type = UpdateContentType.CALLBACK_QUERY
         elif self.shipping_query is not None:
-            return self.shipping_query, UpdateContentType.SHIPPING_QUERY
+            self._content = self.shipping_query
+            self._content_type = UpdateContentType.SHIPPING_QUERY
         elif self.pre_checkout_query is not None:
-            return self.pre_checkout_query, UpdateContentType.PRE_CHECKOUT_QUERY
+            self._content = self.pre_checkout_query
+            self._content_type = UpdateContentType.PRE_CHECKOUT_QUERY
         elif self.poll is not None:
-            return self.poll, UpdateContentType.POLL
+            self._content = self.poll
+            self._content_type = UpdateContentType.POLL
         elif self.poll_answer is not None:
-            return self.poll_answer, UpdateContentType.POLL_ANSWER
+            self._content = self.poll_answer
+            self._content_type = UpdateContentType.POLL_ANSWER
         elif self.my_chat_member is not None:
-            return self.my_chat_member, UpdateContentType.MY_CHAT_MEMBER
+            self._content = self.my_chat_member
+            self._content_type = UpdateContentType.MY_CHAT_MEMBER
         elif self.chat_member is not None:
-            return self.chat_member, UpdateContentType.CHAT_MEMBER
+            self._content = self.chat_member
+            self._content_type = UpdateContentType.CHAT_MEMBER
         elif self.chat_join_request is not None:
-            return self.chat_join_request, UpdateContentType.CHAT_JOIN_REQUEST
+            self._content = self.chat_join_request
+            self._content_type = UpdateContentType.CHAT_JOIN_REQUEST
+        else:
+            self._content = self._content_type = None
 
-        raise UnknownUpdateContentError("Unknown update content!")
+    @property
+    def content(self) -> Optional[UpdateContent]:
+        return self._content
+
+    @property
+    def content_type(self) -> Optional[UpdateContentType]:
+        return self._content_type

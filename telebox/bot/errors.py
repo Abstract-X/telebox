@@ -12,16 +12,6 @@ class BotError(TeleboxError):
 
 
 @dataclass
-class UnknownUpdateContentError(BotError):
-    """Class for unknown update content error."""
-
-
-@dataclass
-class UnknownMessageContentError(BotError):
-    """Class for unknown message content error."""
-
-
-@dataclass
 class RequestError(BotError):
     """Class for Telegram Bot API request error."""
     DEFAULT_TEMPLATE = "\n".join((
