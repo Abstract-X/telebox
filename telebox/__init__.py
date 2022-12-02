@@ -32,6 +32,7 @@ from .utils import (
     NamedSet,
     AbstractCallbackDataBuilder,
     TaskExecutor,
+    ThreadPool,
     Env,
     get_html_text,
     get_markdown_text
@@ -71,6 +72,7 @@ __all__ = [
     "NamedSet",
     "AbstractCallbackDataBuilder",
     "TaskExecutor",
+    "ThreadPool",
     "Env",
     "get_html_text",
     "get_markdown_text",

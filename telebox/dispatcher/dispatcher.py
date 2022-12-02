@@ -572,7 +572,8 @@ class Dispatcher:
         self._thread_pool = ThreadPool(
             threads=threads,
             target=self._run_event_processing,
-            args=(self._events,)
+            args=(self._events,),
+            with_barrier=True
         )
         self._thread_pool.start()
 
