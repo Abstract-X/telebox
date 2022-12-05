@@ -21,9 +21,7 @@ class MessageContentTypeFilter(AbstractEventFilter):
         }
 
     def get_value(self, event: Message) -> MessageContentType:
-        _, content_type = event.content
-
-        return content_type
+        return event.content_type
 
     def check_value(self, value: MessageContentType) -> bool:
         return value in self._types

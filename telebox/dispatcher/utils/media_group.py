@@ -86,8 +86,7 @@ class MediaGroup:
         content_types = set()
 
         for i in self.messages:
-            _, content_type = i.content
-            content_type = MediaGroupContentType(content_type.value)
+            content_type = MediaGroupContentType(i.content_type.value)
             content_types.add(content_type)
 
         return content_types
