@@ -6,8 +6,9 @@ import secrets
 from http import HTTPStatus
 
 from requests import Session, Response
+import ujson
 
-from telebox.bot.serializer import Serializer, convert_datetime_to_timestamp
+from telebox.bot.converters import DataclassConverter, get_timestamp
 from telebox.bot.errors import get_request_error, BotError, RetryAfterError
 from telebox.bot.consts import chat_member_statuses
 from telebox.bot.types.types.response_parameters import ResponseParameters
@@ -87,7 +88,7 @@ class Bot:
         self._default_parse_mode = default_parse_mode
         self._default_timeout_secs = default_timeout_secs
         self._over_limit_times: dict[int, float] = {}
-        self._serializer = Serializer()
+        self._dataclass_converter = DataclassConverter()
         self._me: Optional[User] = None
 
     @property
@@ -116,7 +117,7 @@ class Bot:
         allowed_updates: Optional[list[str]] = None
     ) -> list[Update]:
         return [
-            self._serializer.get_object(data=i, class_=Update)
+            self._dataclass_converter.get_object(data=i, class_=Update)
             for i in self._send_request(
                 method="getUpdates",
                 parameters={
@@ -174,13 +175,13 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> WebhookInfo:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(method="getWebhookInfo", timeout_secs=timeout_secs),
             class_=WebhookInfo
         )
 
     def get_me(self, *, timeout_secs: Union[int, float, None] = None) -> User:
-        self._me = self._serializer.get_object(
+        self._me = self._dataclass_converter.get_object(
             data=self._send_request(method="getMe", timeout_secs=timeout_secs),
             class_=User
         )
@@ -213,7 +214,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendMessage",
                 parameters={
@@ -245,7 +246,7 @@ class Bot:
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="forwardMessage",
                 parameters={
@@ -282,7 +283,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> MessageId:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="copyMessage",
                 parameters={
@@ -324,7 +325,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendPhoto",
                 parameters={
@@ -369,7 +370,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendAudio",
                 parameters={
@@ -416,7 +417,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendDocument",
                 parameters={
@@ -464,7 +465,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendVideo",
                 parameters={
@@ -514,7 +515,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendAnimation",
                 parameters={
@@ -560,7 +561,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendVoice",
                 parameters={
@@ -602,7 +603,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendVideoNote",
                 parameters={
@@ -639,7 +640,7 @@ class Bot:
         allow_sending_without_reply: Optional[bool] = None
     ) -> list[Message]:
         return [
-            self._serializer.get_object(data=i, class_=Message)
+            self._dataclass_converter.get_object(data=i, class_=Message)
             for i in self._send_request(
                 method="sendMediaGroup",
                 parameters={
@@ -677,7 +678,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendLocation",
                 parameters={
@@ -730,7 +731,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._serializer.get_object(
+        return data if data is True else self._dataclass_converter.get_object(
             data=data,
             class_=Message
         )
@@ -755,7 +756,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._serializer.get_object(
+        return data if data is True else self._dataclass_converter.get_object(
             data=data,
             class_=Message
         )
@@ -784,7 +785,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendVenue",
                 parameters={
@@ -829,7 +830,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendContact",
                 parameters={
@@ -878,7 +879,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendPoll",
                 parameters={
@@ -924,7 +925,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendDice",
                 parameters={
@@ -966,7 +967,7 @@ class Bot:
         offset: Optional[int] = None,
         limit: Optional[int] = None
     ) -> UserProfilePhotos:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="getUserProfilePhotos",
                 parameters={
@@ -985,7 +986,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> File:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="getFile",
                 parameters={
@@ -1184,7 +1185,7 @@ class Bot:
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="createChatInviteLink",
                 parameters={
@@ -1210,7 +1211,7 @@ class Bot:
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="editChatInviteLink",
                 parameters={
@@ -1233,7 +1234,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> ChatInviteLink:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="revokeChatInviteLink",
                 parameters={
@@ -1407,7 +1408,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> Chat:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="getChat",
                 parameters={
@@ -1426,7 +1427,7 @@ class Bot:
     ) -> list[Union[ChatMemberOwner,
                     ChatMemberAdministrator]]:
         return [
-            self._serializer.get_object(data=i, class_=_CHAT_MEMBER_TYPES[i["status"]])
+            self._dataclass_converter.get_object(data=i, class_=_CHAT_MEMBER_TYPES[i["status"]])
             for i in self._send_request(
                 method="getChatAdministrators",
                 parameters={
@@ -1466,7 +1467,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=data,
             class_=_CHAT_MEMBER_TYPES[data["status"]]
         )
@@ -1507,7 +1508,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None
     ) -> list[Sticker]:
         return [
-            self._serializer.get_object(data=i, class_=Sticker)
+            self._dataclass_converter.get_object(data=i, class_=Sticker)
             for i in self._send_request(
                 method="getForumTopicIconStickers",
                 timeout_secs=timeout_secs
@@ -1523,7 +1524,7 @@ class Bot:
         icon_color: Optional[int] = None,
         icon_custom_emoji_id: Optional[str] = None
     ) -> ForumTopic:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="createForumTopic",
                 parameters={
@@ -1685,7 +1686,7 @@ class Bot:
         language_code: Optional[str] = None
     ) -> list[BotCommand]:
         return [
-            self._serializer.get_object(data=i, class_=BotCommand)
+            self._dataclass_converter.get_object(data=i, class_=BotCommand)
             for i in self._send_request(
                 method="getMyCommands",
                 parameters={
@@ -1784,7 +1785,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._serializer.get_object(
+        return data if data is True else self._dataclass_converter.get_object(
             data=data,
             class_=Message
         )
@@ -1815,7 +1816,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._serializer.get_object(
+        return data if data is True else self._dataclass_converter.get_object(
             data=data,
             class_=Message
         )
@@ -1842,7 +1843,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._serializer.get_object(
+        return data if data is True else self._dataclass_converter.get_object(
             data=data,
             class_=Message
         )
@@ -1867,7 +1868,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._serializer.get_object(
+        return data if data is True else self._dataclass_converter.get_object(
             data=data,
             class_=Message
         )
@@ -1880,7 +1881,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="stopPoll",
                 parameters={
@@ -1926,7 +1927,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendSticker",
                 parameters={
@@ -1950,7 +1951,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> StickerSet:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="getStickerSet",
                 parameters={
@@ -1968,7 +1969,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None
     ) -> list[Sticker]:
         return [
-            self._serializer.get_object(data=i, class_=Sticker)
+            self._dataclass_converter.get_object(data=i, class_=Sticker)
             for i in self._send_request(
                 method="getCustomEmojiStickers",
                 parameters={
@@ -1985,7 +1986,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> File:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="uploadStickerFile",
                 parameters={
@@ -2134,7 +2135,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> SentWebAppMessage:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="answerWebAppQuery",
                 parameters={
@@ -2179,7 +2180,7 @@ class Bot:
         allow_sending_without_reply: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendInvoice",
                 parameters={
@@ -2336,7 +2337,7 @@ class Bot:
         allow_sending_without_reply: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
-        return self._serializer.get_object(
+        return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendGame",
                 parameters={
@@ -2380,7 +2381,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._serializer.get_object(
+        return data if data is True else self._dataclass_converter.get_object(
             data=data,
             class_=Message
         )
@@ -2395,7 +2396,7 @@ class Bot:
         inline_message_id: Optional[str] = None
     ) -> list[GameHighScore]:
         return [
-            self._serializer.get_object(data=i, class_=GameHighScore)
+            self._dataclass_converter.get_object(data=i, class_=GameHighScore)
             for i in self._send_request(
                 method="getGameHighScores",
                 parameters={
@@ -2456,39 +2457,50 @@ class Bot:
         data = {}
         files = []
 
-        for name, value in parameters.items():
-            if value is None:
+        for name, parameter in parameters.items():
+            if parameter is None:
                 continue
 
-            if isinstance(value, InputFile):
-                files.append((name, (value.name or secrets.token_urlsafe(16), value.content)))
+            if isinstance(parameter, InputFile):
+                files.append((
+                    name,
+                    (
+                        parameter.name or secrets.token_urlsafe(16),
+                        parameter.content
+                    )
+                ))
             else:
-                data[name] = self._get_prepared_parameter(value)
+                parameter = self._get_prepared_parameter(parameter)
+
+                if isinstance(parameter, (dict, list)):
+                    data[name] = ujson.dumps(parameter)
+                else:
+                    data[name] = parameter
 
         return data, files
 
-    def _get_prepared_parameter(self, value: Any) -> Any:
-        if is_dataclass(value):
-            return self._serializer.get_data(value)
-        elif isinstance(value, datetime):
-            return convert_datetime_to_timestamp(value)
-        elif isinstance(value, list):
-            return self._get_prepared_list_parameter(value)
+    def _get_prepared_parameter(self, parameter: Any) -> Any:
+        if is_dataclass(parameter):
+            return self._dataclass_converter.get_data(parameter)
+        elif isinstance(parameter, datetime):
+            return get_timestamp(parameter)
+        elif isinstance(parameter, list):
+            return self._get_prepared_list_parameter(parameter)
 
-        return value
+        return parameter
 
-    def _get_prepared_list_parameter(self, value: list[Any]) -> list[Any]:
-        prepared_value = []
+    def _get_prepared_list_parameter(self, parameter: list[Any]) -> list[Any]:
+        prepared_parameter = []
 
-        for i in value:
+        for i in parameter:
             if isinstance(i, list):
                 result = self._get_prepared_list_parameter(i)
             else:
                 result = self._get_prepared_parameter(i)
 
-            prepared_value.append(result)
+            prepared_parameter.append(result)
 
-        return prepared_value
+        return prepared_parameter
 
     def _process_response(
         self,
@@ -2504,7 +2516,7 @@ class Bot:
             except KeyError:
                 response_parameters = None
             else:
-                response_parameters = self._serializer.get_object(
+                response_parameters = self._dataclass_converter.get_object(
                     data=response_parameter_data,
                     class_=ResponseParameters
                 )

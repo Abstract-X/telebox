@@ -170,15 +170,15 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
 )
 
 
-def convert_datetime_to_timestamp(datetime: Optional[datetime_]) -> int:
+def get_timestamp(datetime: Optional[datetime_]) -> int:
     return int(datetime.timestamp()) if datetime is not None else 0
 
 
-def convert_timestamp_to_datetime(timestamp: int) -> Optional[datetime_]:
+def get_datetime(timestamp: int) -> Optional[datetime_]:
     return datetime_.fromtimestamp(timestamp, tz=timezone.utc) if timestamp else None
 
 
-class Serializer:
+class DataclassConverter:
 
     # noinspection PyMethodMayBeStatic
     def get_object(
@@ -196,8 +196,8 @@ class Serializer:
 def _get_dataclass_factory() -> Factory:
     schemas = {
         datetime_: Schema(
-            serializer=convert_datetime_to_timestamp,
-            parser=convert_timestamp_to_datetime
+            serializer=get_timestamp,
+            parser=get_datetime
         )
     }
 
