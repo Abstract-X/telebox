@@ -2425,7 +2425,7 @@ class Bot:
             over_limit_chat_id = None
 
         while True:
-            response = self._session.post(url, json=data, files=files, timeout=timeout_secs)
+            response = self._session.post(url, data=data, files=files, timeout=timeout_secs)
 
             try:
                 return self._process_response(response, method, parameters)
