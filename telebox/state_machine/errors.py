@@ -12,11 +12,6 @@ class StateMachineError(TeleboxError):
 
 
 @dataclass
-class StateExistsError(StateMachineError):
-    state: State
-
-
-@dataclass
 class StateNameExistsError(StateMachineError):
     state_name: str
 

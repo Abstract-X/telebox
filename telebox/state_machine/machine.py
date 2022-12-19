@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Union, Any, TYPE_CHECKING
+from typing import Optional, Union, Any, Iterable, TYPE_CHECKING
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.storage import AbstractStateStorage
@@ -33,8 +33,9 @@ class StateMachine:
     def states(self) -> set[State]:
         return self._state_manager.states
 
-    def add_state(self, state: State) -> None:
-        self._state_manager.add_state(state)
+    def add_states(self, states: Iterable[State]) -> None:
+        for i in states:
+            self._state_manager.add_state(i)
 
     def add_transition(
         self,
@@ -49,10 +50,7 @@ class StateMachine:
             handler=handler,
             direction=direction
         )
-
-        for i in (source_state, destination_state):
-            if not self.check_state(i):
-                self.add_state(i)
+        self.add_states((source_state, destination_state))
 
     def add_transitions(self, transitions: TransitionDict) -> None:
         for source_state in transitions:
