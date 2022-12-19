@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import dataclasses
-from typing import Iterable, Any
+from typing import Any
 
 
 @dataclass
@@ -29,5 +29,5 @@ class NamedSet:
     def __contains__(self, item):
         return item in self._items
 
-    def get(self, *, exclude: Iterable[Any] = ()) -> set[Any]:
-        return {i for i in self._items if i not in exclude}
+    def get(self, *excluded: Any) -> set[Any]:
+        return {i for i in self._items if i not in excluded}
