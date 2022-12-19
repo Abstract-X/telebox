@@ -51,8 +51,7 @@ class StateMachine:
         )
 
         for i in (source_state, destination_state):
-            if not self.check_state(i):
-                self.add_state(i)
+            self.add_state(i)
 
     def add_transitions(self, transitions: TransitionDict) -> None:
         for source_state in transitions:
