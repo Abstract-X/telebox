@@ -30,6 +30,10 @@ class MediaGroup:
         return self.messages[0].chat
 
     @property
+    def message_id(self) -> int:
+        return self.messages[0].message_id
+
+    @property
     def message_thread_id(self) -> Optional[int]:
         return self.messages[0].message_thread_id
 
