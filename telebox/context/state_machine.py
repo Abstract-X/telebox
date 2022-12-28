@@ -14,6 +14,12 @@ class ContextStateMachine:
     def __init__(self, machine: StateMachine):
         self._machine = machine
 
+    def get_state(self, *, for_chat: bool = False) -> State:
+        return self._machine.get_state(
+            chat_id=get_event_chat_id(),
+            user_id=None if for_chat else get_event_user_id()
+        )
+
     def set_next_state(
         self,
         direction: Optional[str] = None,
