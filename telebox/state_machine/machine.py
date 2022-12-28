@@ -85,8 +85,8 @@ class StateMachine:
 
     def set_next_state(
         self,
-        event: Event,
         handler: AbstractEventHandler,
+        event: Optional[Event] = None,
         direction: Optional[str] = None,
         data: Any = None,
         *,
@@ -123,7 +123,7 @@ class StateMachine:
 
     def set_previous_state(
         self,
-        event: Event,
+        event: Optional[Event] = None,
         data: Any = None,
         *,
         chat_id: int,
@@ -153,7 +153,7 @@ class StateMachine:
     def set_state(
         self,
         state: State,
-        event: Event,
+        event: Optional[Event] = None,
         data: Any = None,
         *,
         chat_id: int,
@@ -173,7 +173,7 @@ class StateMachine:
 
     def reset_state(
         self,
-        event: Event,
+        event: Optional[Event] = None,
         data: Any = None,
         *,
         chat_id: int,
@@ -183,22 +183,22 @@ class StateMachine:
         state = self.get_state(chat_id=chat_id, user_id=user_id)
 
         if with_exit:
-            state.process_exit(event, data)
+            state.process_exit(chat_id, user_id, event, data)
 
-        state.process_enter(event, data)
+        state.process_enter(chat_id, user_id, event, data)
 
     def _process_transition(
         self,
-        event: Event,
         magazine: StateMagazine,
         source_state: State,
         destination_state: State,
+        event: Optional[Event] = None,
         data: Any = None,
         *,
         chat_id: int,
         user_id: int
     ) -> None:
-        source_state.process_exit(event, data)
-        destination_state.process_enter(event, data)
+        source_state.process_exit(chat_id, user_id, event, data)
+        destination_state.process_enter(chat_id, user_id, event, data)
         magazine.set_state(str(destination_state))
         self._state_manager.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
