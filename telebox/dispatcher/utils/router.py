@@ -4,7 +4,7 @@ from typing import Optional, Union, TYPE_CHECKING
 if TYPE_CHECKING:
     from telebox.dispatcher.dispatcher import Dispatcher
 from telebox.dispatcher.handlers.event import AbstractEventHandler
-from telebox.dispatcher.filters.event_filter import AbstractEventBaseFilter
+from telebox.dispatcher.filters.events.filter import AbstractEventBaseFilter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 from telebox.utils.not_set import NotSet, NOT_SET
 

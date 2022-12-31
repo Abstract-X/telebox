@@ -16,10 +16,10 @@ from telebox.dispatcher.utils.event_queue import EventQueue
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.error import AbstractErrorHandler
-from telebox.dispatcher.filters.event_filter import AbstractEventBaseFilter
-from telebox.dispatcher.filters.error_filter import AbstractErrorBaseFilter
-from telebox.dispatcher.filters.event.none import NoneFilter
-from telebox.dispatcher.filters.error.none import ErrorNoneFilter
+from telebox.dispatcher.filters.events.filter import AbstractEventBaseFilter
+from telebox.dispatcher.filters.errors.filter import AbstractErrorBaseFilter
+from telebox.dispatcher.filters.events.filters.none import NoneFilter
+from telebox.dispatcher.filters.errors.filters.none import NoneErrorFilter
 from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
@@ -39,7 +39,7 @@ from telebox.context.vars import (
 
 logger = logging.getLogger(__name__)
 _none_filter = NoneFilter()
-_error_none_filter = ErrorNoneFilter()
+_none_error_filter = NoneErrorFilter()
 _MEDIA_GROUP_GATHERING_DELAY_SECS = 0.1
 _DROPPED_UNKNOWN_UPDATE_MESSAGE = "Update dropped because it contains an unknown content type: %r."
 
@@ -542,17 +542,17 @@ class Dispatcher:
         return False
 
     def _get_event_handler(self, event: Event, event_type: EventType) -> Optional[EventHandler]:
-        values = {}
+        results = {}
 
         for i in self._event_handlers[event_type]:
-            if i.filter.get_result(event, values):
+            if i.filter.get_result(event, results):
                 return i
 
     def _get_error_handler(self, error: Exception, event: Event) -> Optional[ErrorHandler]:
-        values = {}
+        results = {}
 
         for i in self._error_handlers:
-            if i.filter.get_result(error, event, values):
+            if i.filter.get_result(error, event, results):
                 return i
 
     def _get_rate_limit(
@@ -702,4 +702,4 @@ def _get_event_filter(
 def _get_error_filter(
     filter_: Optional[AbstractErrorBaseFilter] = None
 ) -> AbstractErrorBaseFilter:
-    return filter_ if filter_ is not None else _error_none_filter
+    return filter_ if filter_ is not None else _none_error_filter
