@@ -12,6 +12,14 @@ from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentT
 class MediaGroup:
     messages: list[Message]
 
+    def __post_init__(self):
+        self._content_types = set()
+
+        for i in self.messages:
+            self._content_types.add(
+                MediaGroupContentType(i.content_type.value)
+            )
+
     def __iter__(self):
         return iter(self.messages)
 
@@ -91,13 +99,7 @@ class MediaGroup:
 
     @property
     def content_types(self) -> set[MediaGroupContentType]:
-        content_types = set()
-
-        for i in self.messages:
-            content_type = MediaGroupContentType(i.content_type.value)
-            content_types.add(content_type)
-
-        return content_types
+        return self._content_types
 
     @property
     def date(self) -> datetime:
