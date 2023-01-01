@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class ForumTopic(Type):
     message_thread_id: int
     name: str

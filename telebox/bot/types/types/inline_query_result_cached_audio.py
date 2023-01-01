@@ -8,7 +8,7 @@ from telebox.bot.types.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.types.input_message_content import InputMessageContent
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class InlineQueryResultCachedAudio(Type):
     id: str
     audio_file_id: str

@@ -5,7 +5,7 @@ from telebox.bot.consts import menu_button_types
 from telebox.bot.types.types.web_app_info import WebAppInfo
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class MenuButtonWebApp(Type):
     text: str
     web_app: WebAppInfo

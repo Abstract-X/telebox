@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.message_entity import MessageEntity
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class InputTextMessageContent(Type):
     message_text: str
     parse_mode: Optional[str] = None

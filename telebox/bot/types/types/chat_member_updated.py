@@ -9,7 +9,7 @@ from telebox.bot.types.types.chat_member import ChatMember
 from telebox.bot.types.types.chat_invite_link import ChatInviteLink
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class ChatMemberUpdated(Type):
     chat: Chat
     from_: User

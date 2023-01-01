@@ -29,7 +29,7 @@ UpdateContent = Union[
 ]
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class Update(Type):
     update_id: int
     message: Optional[Message] = None

@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.labeled_price import LabeledPrice
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class InputInvoiceMessageContent(Type):
     title: str
     description: str

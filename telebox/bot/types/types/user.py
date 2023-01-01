@@ -6,7 +6,7 @@ from telebox.bot.utils.users import get_full_name
 from telebox.bot.utils.deep_links import get_username_link, get_user_link
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class User(Type):
     id: int
     is_bot: bool
