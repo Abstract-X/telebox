@@ -5,7 +5,7 @@ from telebox.bot.types.types.encrypted_passport_element import EncryptedPassport
 from telebox.bot.types.types.encrypted_credentials import EncryptedCredentials
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class PassportData(Type):
     data: list[EncryptedPassportElement]
     credentials: EncryptedCredentials

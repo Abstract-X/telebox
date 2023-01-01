@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from telebox.bot.types.types.chat import Chat
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class Message(Type):
     message_id: int
     date: datetime

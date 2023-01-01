@@ -6,7 +6,7 @@ from telebox.bot.types.types.user import User
 from telebox.bot.types.types.message import Message
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class CallbackQuery(Type):
     id: str
     from_: User

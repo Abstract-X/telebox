@@ -7,7 +7,7 @@ from telebox.bot.types.types.login_url import LoginUrl
 from telebox.bot.types.types.callback_game import CallbackGame
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class InlineKeyboardButton(Type):
     text: str
     url: Optional[str] = None

@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.photo_size import PhotoSize
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class Document(Type):
     file_id: str
     file_unique_id: str

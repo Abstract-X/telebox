@@ -6,7 +6,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class ChatInviteLink(Type):
     invite_link: str
     creator: User

@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.order_info import OrderInfo
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class SuccessfulPayment(Type):
     currency: str
     total_amount: int

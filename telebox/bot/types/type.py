@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class Type:
     pass

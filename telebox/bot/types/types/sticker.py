@@ -7,7 +7,7 @@ from telebox.bot.types.types.file import File
 from telebox.bot.types.types.mask_position import MaskPosition
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class Sticker(Type):
     file_id: str
     file_unique_id: str

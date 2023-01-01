@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.keyboard_button import KeyboardButton
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class ReplyKeyboardMarkup(Type):
     keyboard: list[list[KeyboardButton]]
     resize_keyboard: Optional[bool] = None

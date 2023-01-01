@@ -5,7 +5,7 @@ from telebox.bot.types.types.user import User
 from telebox.bot.types.types.shipping_address import ShippingAddress
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class ShippingQuery(Type):
     id: str
     from_: User

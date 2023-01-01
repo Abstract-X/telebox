@@ -8,7 +8,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class MediaGroup:
     messages: list[Message]
 
