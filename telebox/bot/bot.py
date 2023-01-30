@@ -5,7 +5,7 @@ from dataclasses import is_dataclass
 import secrets
 from http import HTTPStatus
 
-from requests import Session, Response
+from requests import Session, Response, RequestException
 import ujson
 
 from telebox.bot.converters import DataclassConverter, get_timestamp
@@ -77,16 +77,23 @@ class Bot:
         token: str,
         *,
         api_url: str = API_URL,
-        force_sending: bool = False,
-        default_parse_mode: Union[str, NotSet] = NOT_SET,
-        default_timeout_secs: Union[int, float, None] = None
+        parse_mode: Union[str, NotSet] = NOT_SET,
+        timeout_secs: Union[int, float, None] = None,
+        retries: int = 0,
+        retry_delay_secs: Union[int, float] = 0,
+        wait_on_rate_limit: bool = False
     ):
+        if retries < 0:
+            raise ValueError("Number of retries cannot be less than zero!")
+
         self._session = session
         self.token = token
         self._api_url = api_url
-        self._force_sending = force_sending
-        self._default_parse_mode = default_parse_mode
-        self._default_timeout_secs = default_timeout_secs
+        self._parse_mode = parse_mode
+        self._timeout_secs = timeout_secs
+        self._retries = retries
+        self._retry_delay_secs = retry_delay_secs
+        self._wait_on_rate_limit = wait_on_rate_limit
         self._over_limit_times: dict[int, float] = {}
         self._dataclass_converter = DataclassConverter()
         self._me: Optional[User] = None
@@ -2419,14 +2426,24 @@ class Bot:
         parameters = parameters or {}
         url = self._get_api_url(method)
         data, files = self._get_prepared_parameters(parameters)
-        timeout_secs = timeout_secs or self._default_timeout_secs
+        timeout_secs = timeout_secs or self._timeout_secs
         chat_id = over_limit_chat_id = parameters.get("chat_id")
 
         if not isinstance(over_limit_chat_id, int):
             over_limit_chat_id = None
 
+        retries = 0
+
         while True:
-            response = self._session.post(url, data=data, files=files, timeout=timeout_secs)
+            try:
+                response = self._session.post(url, data=data, files=files, timeout=timeout_secs)
+            except RequestException:
+                if retries == self._retries:
+                    raise
+
+                retries += 1
+                time.sleep(self._retry_delay_secs)
+                continue
 
             try:
                 return self._process_response(response, method, parameters)
@@ -2436,7 +2453,7 @@ class Bot:
                 if over_limit_chat_id is not None:
                     self._over_limit_times[chat_id] = time.monotonic() + error.retry_after
 
-                if not self._force_sending:
+                if not self._wait_on_rate_limit:
                     raise
 
                 time.sleep(error.retry_after)
@@ -2447,8 +2464,8 @@ class Bot:
     def _get_parse_mode(self, parse_mode: Union[str, None, NotSet]) -> Optional[str]:
         if parse_mode is not NOT_SET:
             return parse_mode
-        elif self._default_parse_mode is not NOT_SET:
-            return self._default_parse_mode
+        elif self._parse_mode is not NOT_SET:
+            return self._parse_mode
 
     def _get_prepared_parameters(
         self,
@@ -2547,16 +2564,20 @@ class TelegramBotContext:
         *,
         get_me: bool = True,
         api_url: str = API_URL,
-        force_sending: bool = False,
-        default_parse_mode: Union[str, NotSet] = NOT_SET,
-        default_timeout_secs: Union[int, float, None] = None
+        parse_mode: Union[str, NotSet] = NOT_SET,
+        timeout_secs: Union[int, float, None] = None,
+        retries: int = 0,
+        retry_delay_secs: Union[int, float] = 0,
+        wait_on_rate_limit: bool = False
     ):
         self._token = token
         self._get_me = get_me
         self._api_url = api_url
-        self._force_sending = force_sending
-        self._default_parse_mode = default_parse_mode
-        self._default_timeout_secs = default_timeout_secs
+        self._parse_mode = parse_mode
+        self._timeout_secs = timeout_secs
+        self._retries = retries
+        self._retry_delay_secs = retry_delay_secs
+        self._wait_on_rate_limit = wait_on_rate_limit
         self._session: Optional[Session] = None
 
     def __enter__(self) -> Bot:
@@ -2565,9 +2586,11 @@ class TelegramBotContext:
             self._session,
             token=self._token,
             api_url=self._api_url,
-            force_sending=self._force_sending,
-            default_parse_mode=self._default_parse_mode,
-            default_timeout_secs=self._default_timeout_secs
+            parse_mode=self._parse_mode,
+            timeout_secs=self._timeout_secs,
+            retries=self._retries,
+            retry_delay_secs=self._retry_delay_secs,
+            wait_on_rate_limit=self._wait_on_rate_limit
         )
 
         if self._get_me:
@@ -2584,15 +2607,19 @@ def get_bot(
     *,
     get_me: bool = True,
     api_url: str = API_URL,
-    force_sending: bool = False,
-    default_parse_mode: Union[str, NotSet] = NOT_SET,
-    default_timeout_secs: Union[int, float, None] = None
+    parse_mode: Union[str, NotSet] = NOT_SET,
+    timeout_secs: Union[int, float, None] = None,
+    retries: int = 0,
+    retry_delay_secs: Union[int, float] = 0,
+    wait_on_rate_limit: bool = False
 ) -> TelegramBotContext:
     return TelegramBotContext(
         token,
         get_me=get_me,
         api_url=api_url,
-        force_sending=force_sending,
-        default_parse_mode=default_parse_mode,
-        default_timeout_secs=default_timeout_secs
+        parse_mode=parse_mode,
+        timeout_secs=timeout_secs,
+        retries=retries,
+        retry_delay_secs=retry_delay_secs,
+        wait_on_rate_limit=wait_on_rate_limit
     )
