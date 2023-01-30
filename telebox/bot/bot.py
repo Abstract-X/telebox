@@ -5,7 +5,7 @@ from dataclasses import is_dataclass
 import secrets
 from http import HTTPStatus
 
-from requests import Session, Response
+from requests import Session, Response, RequestException
 import ujson
 
 from telebox.bot.converters import DataclassConverter, get_timestamp
@@ -79,13 +79,20 @@ class Bot:
         api_url: str = API_URL,
         parse_mode: Union[str, NotSet] = NOT_SET,
         timeout_secs: Union[int, float, None] = None,
+        retries: int = 0,
+        retry_delay_secs: Union[int, float] = 0,
         wait_on_rate_limit: bool = False
     ):
+        if retries < 0:
+            raise ValueError("Number of retries cannot be less than zero!")
+
         self._session = session
         self.token = token
         self._api_url = api_url
         self._parse_mode = parse_mode
         self._timeout_secs = timeout_secs
+        self._retries = retries
+        self._retry_delay_secs = retry_delay_secs
         self._wait_on_rate_limit = wait_on_rate_limit
         self._over_limit_times: dict[int, float] = {}
         self._dataclass_converter = DataclassConverter()
@@ -2425,8 +2432,18 @@ class Bot:
         if not isinstance(over_limit_chat_id, int):
             over_limit_chat_id = None
 
+        retries = 0
+
         while True:
-            response = self._session.post(url, data=data, files=files, timeout=timeout_secs)
+            try:
+                response = self._session.post(url, data=data, files=files, timeout=timeout_secs)
+            except RequestException:
+                if retries == self._retries:
+                    raise
+
+                retries += 1
+                time.sleep(self._retry_delay_secs)
+                continue
 
             try:
                 return self._process_response(response, method, parameters)
@@ -2549,6 +2566,8 @@ class TelegramBotContext:
         api_url: str = API_URL,
         parse_mode: Union[str, NotSet] = NOT_SET,
         timeout_secs: Union[int, float, None] = None,
+        retries: int = 0,
+        retry_delay_secs: Union[int, float] = 0,
         wait_on_rate_limit: bool = False
     ):
         self._token = token
@@ -2556,6 +2575,8 @@ class TelegramBotContext:
         self._api_url = api_url
         self._parse_mode = parse_mode
         self._timeout_secs = timeout_secs
+        self._retries = retries
+        self._retry_delay_secs = retry_delay_secs
         self._wait_on_rate_limit = wait_on_rate_limit
         self._session: Optional[Session] = None
 
@@ -2567,6 +2588,8 @@ class TelegramBotContext:
             api_url=self._api_url,
             parse_mode=self._parse_mode,
             timeout_secs=self._timeout_secs,
+            retries=self._retries,
+            retry_delay_secs=self._retry_delay_secs,
             wait_on_rate_limit=self._wait_on_rate_limit
         )
 
@@ -2586,6 +2609,8 @@ def get_bot(
     api_url: str = API_URL,
     parse_mode: Union[str, NotSet] = NOT_SET,
     timeout_secs: Union[int, float, None] = None,
+    retries: int = 0,
+    retry_delay_secs: Union[int, float] = 0,
     wait_on_rate_limit: bool = False
 ) -> TelegramBotContext:
     return TelegramBotContext(
@@ -2594,5 +2619,7 @@ def get_bot(
         api_url=api_url,
         parse_mode=parse_mode,
         timeout_secs=timeout_secs,
+        retries=retries,
+        retry_delay_secs=retry_delay_secs,
         wait_on_rate_limit=wait_on_rate_limit
     )
