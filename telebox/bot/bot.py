@@ -2445,6 +2445,8 @@ class Bot:
                 time.sleep(self._retry_delay_secs)
                 continue
 
+            retries = 0
+
             try:
                 return self._process_response(response, method, parameters)
             except RetryAfterError as error:
