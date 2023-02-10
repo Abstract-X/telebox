@@ -5,6 +5,7 @@ from typing import Optional, Literal
 from telebox.bot.types.types.message import Message
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.chat import Chat
+from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
 
@@ -52,6 +53,14 @@ class MediaGroup:
     @property
     def from_(self) -> Optional[User]:
         return self.messages[0].from_
+
+    @property
+    def caption(self) -> Optional[str]:
+        return self.messages[0].caption
+
+    @property
+    def caption_entities(self) -> Optional[list[MessageEntity]]:
+        return self.messages[0].caption_entities
 
     @property
     def sender_chat(self) -> Optional[Chat]:
