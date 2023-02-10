@@ -622,7 +622,7 @@ class Dispatcher:
         while True:
             with self._media_group_message_lock:
                 for i in tuple(self._media_group_messages):
-                    if (time.monotonic() - self._media_group_messages[i].time) > 0.1:
+                    if (time.monotonic() - self._media_group_messages[i].time) > 1:
                         event = MediaGroup(self._media_group_messages[i].items)
                         del self._media_group_messages[i]
 
