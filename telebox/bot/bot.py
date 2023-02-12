@@ -228,7 +228,7 @@ class Bot:
                     "chat_id": chat_id,
                     "text": text,
                     "message_thread_id": message_thread_id,
-                    "parse_mode": self._get_parse_mode(parse_mode),
+                    "parse_mode": self._get_parse_mode(parse_mode, with_entities=bool(entities)),
                     "entities": entities,
                     "disable_web_page_preview": disable_web_page_preview,
                     "disable_notification": disable_notification,
@@ -299,7 +299,10 @@ class Bot:
                     "message_id": message_id,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
-                    "parse_mode": self._get_parse_mode(parse_mode),
+                    "parse_mode": self._get_parse_mode(
+                        parse_mode,
+                        with_entities=bool(caption_entities)
+                    ),
                     "caption_entities": caption_entities,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -340,7 +343,10 @@ class Bot:
                     "photo": photo,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
-                    "parse_mode": self._get_parse_mode(parse_mode),
+                    "parse_mode": self._get_parse_mode(
+                        parse_mode,
+                        with_entities=bool(caption_entities)
+                    ),
                     "caption_entities": caption_entities,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -385,7 +391,10 @@ class Bot:
                     "audio": audio,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
-                    "parse_mode": self._get_parse_mode(parse_mode),
+                    "parse_mode": self._get_parse_mode(
+                        parse_mode,
+                        with_entities=bool(caption_entities)
+                    ),
                     "caption_entities": caption_entities,
                     "duration": duration,
                     "performer": performer,
@@ -433,7 +442,10 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "thumb": thumb,
                     "caption": caption,
-                    "parse_mode": self._get_parse_mode(parse_mode),
+                    "parse_mode": self._get_parse_mode(
+                        parse_mode,
+                        with_entities=bool(caption_entities)
+                    ),
                     "caption_entities": caption_entities,
                     "disable_content_type_detection": disable_content_type_detection,
                     "disable_notification": disable_notification,
@@ -484,7 +496,10 @@ class Bot:
                     "height": height,
                     "thumb": thumb,
                     "caption": caption,
-                    "parse_mode": self._get_parse_mode(parse_mode),
+                    "parse_mode": self._get_parse_mode(
+                        parse_mode,
+                        with_entities=bool(caption_entities)
+                    ),
                     "caption_entities": caption_entities,
                     "supports_streaming": supports_streaming,
                     "disable_notification": disable_notification,
@@ -534,7 +549,10 @@ class Bot:
                     "height": height,
                     "thumb": thumb,
                     "caption": caption,
-                    "parse_mode": self._get_parse_mode(parse_mode),
+                    "parse_mode": self._get_parse_mode(
+                        parse_mode,
+                        with_entities=bool(caption_entities)
+                    ),
                     "caption_entities": caption_entities,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -576,7 +594,10 @@ class Bot:
                     "voice": voice,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
-                    "parse_mode": self._get_parse_mode(parse_mode),
+                    "parse_mode": self._get_parse_mode(
+                        parse_mode,
+                        with_entities=bool(caption_entities)
+                    ),
                     "caption_entities": caption_entities,
                     "duration": duration,
                     "disable_notification": disable_notification,
@@ -899,7 +920,10 @@ class Bot:
                     "allows_multiple_answers": allows_multiple_answers,
                     "correct_option_id": correct_option_id,
                     "explanation": explanation,
-                    "explanation_parse_mode": self._get_parse_mode(explanation_parse_mode),
+                    "explanation_parse_mode": self._get_parse_mode(
+                        explanation_parse_mode,
+                        with_entities=bool(explanation_entities)
+                    ),
                     "explanation_entities": explanation_entities,
                     "open_period": open_period,
                     "close_date": close_date,
@@ -1784,7 +1808,7 @@ class Bot:
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
-                "parse_mode": self._get_parse_mode(parse_mode),
+                "parse_mode": self._get_parse_mode(parse_mode, with_entities=bool(entities)),
                 "entities": entities,
                 "disable_web_page_preview": disable_web_page_preview,
                 "reply_markup": reply_markup
@@ -1816,7 +1840,10 @@ class Bot:
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
                 "caption": caption,
-                "parse_mode": self._get_parse_mode(parse_mode),
+                "parse_mode": self._get_parse_mode(
+                    parse_mode,
+                    with_entities=bool(caption_entities)
+                ),
                 "caption_entities": caption_entities,
                 "reply_markup": reply_markup
             },
@@ -2463,10 +2490,15 @@ class Bot:
     def _get_api_url(self, method: str) -> str:
         return f"{self._api_url}/bot{self.token}/{method}"
 
-    def _get_parse_mode(self, parse_mode: Union[str, None, NotSet]) -> Optional[str]:
+    def _get_parse_mode(
+        self,
+        parse_mode: Union[str, None, NotSet],
+        *,
+        with_entities: bool
+    ) -> Optional[str]:
         if parse_mode is not NOT_SET:
             return parse_mode
-        elif self._parse_mode is not NOT_SET:
+        elif self._parse_mode is not NOT_SET and not with_entities:
             return self._parse_mode
 
     def _get_prepared_parameters(
