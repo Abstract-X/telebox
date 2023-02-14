@@ -88,6 +88,18 @@ class Router:
             rate_limit
         )
 
+    def add_channel_media_group_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> None:
+        self._dispatcher.add_channel_media_group_handler(
+            handler,
+            self._get_filter(filter_),
+            rate_limit
+        )
+
     def add_inline_query_handler(
         self,
         handler: AbstractEventHandler,
