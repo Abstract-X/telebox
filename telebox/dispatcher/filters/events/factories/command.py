@@ -47,8 +47,6 @@ class CommandFilter(AbstractEventFilter):
         return {
             EventType.MESSAGE,
             EventType.EDITED_MESSAGE,
-            EventType.CHANNEL_POST,
-            EventType.EDITED_CHANNEL_POST,
             EventType.MEDIA_GROUP
         }
 

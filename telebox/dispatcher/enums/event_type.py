@@ -7,6 +7,7 @@ class EventType(Enum):
     CHANNEL_POST = "channel_post"
     EDITED_CHANNEL_POST = "edited_channel_post"
     MEDIA_GROUP = "media_group"
+    CHANNEL_MEDIA_GROUP = "channel_media_group"
     INLINE_QUERY = "inline_query"
     CHOSEN_INLINE_RESULT = "chosen_inline_result"
     CALLBACK_QUERY = "callback_query"
