@@ -49,7 +49,8 @@ class CommandFilter(AbstractEventFilter):
             EventType.EDITED_MESSAGE,
             EventType.CHANNEL_POST,
             EventType.EDITED_CHANNEL_POST,
-            EventType.MEDIA_GROUP
+            EventType.MEDIA_GROUP,
+            EventType.CHANNEL_MEDIA_GROUP
         }
 
     def check_event(self, event: Union[Message, MediaGroup]) -> bool:

@@ -21,6 +21,7 @@ class ChatFilter(AbstractEventFilter):
             EventType.CHANNEL_POST,
             EventType.EDITED_CHANNEL_POST,
             EventType.MEDIA_GROUP,
+            EventType.CHANNEL_MEDIA_GROUP,
             EventType.CALLBACK_QUERY,
             EventType.MY_CHAT_MEMBER,
             EventType.CHAT_MEMBER,
