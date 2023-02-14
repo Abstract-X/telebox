@@ -23,7 +23,7 @@ from telebox.dispatcher.filters.errors.filters.none import NoneErrorFilter
 from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
-from telebox.dispatcher.utils.timed_container import TimedContainer
+from telebox.dispatcher.utils.media_group_container import MediaGroupContainer
 from telebox.dispatcher.utils.server_root import ServerRoot
 from telebox.dispatcher.utils.router import Router
 from telebox.dispatcher.errors import DispatcherError
@@ -82,7 +82,7 @@ class Dispatcher:
         self._middlewares: list[Middleware] = []
         self.router = Router(self)
         self._media_group_gathering_thread: Optional[Thread] = None
-        self._media_group_messages: dict[str, TimedContainer] = {}
+        self._media_group_containers: dict[str, MediaGroupContainer] = {}
         self._media_group_message_lock = Lock()
 
     def add_message_handler(
@@ -124,6 +124,14 @@ class Dispatcher:
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(handler, EventType.MEDIA_GROUP, filter_, rate_limit)
+
+    def add_channel_media_group_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> None:
+        self._add_event_handler(handler, EventType.CHANNEL_MEDIA_GROUP, filter_, rate_limit)
 
     def add_inline_query_handler(
         self,
@@ -261,6 +269,19 @@ class Dispatcher:
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> bool:
         return self._check_event_handler(handler, EventType.MEDIA_GROUP, filter_, rate_limit)
+
+    def check_channel_media_group_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+    ) -> bool:
+        return self._check_event_handler(
+            handler,
+            EventType.CHANNEL_MEDIA_GROUP,
+            filter_,
+            rate_limit
+        )
 
     def check_inline_query_handler(
         self,
@@ -594,10 +615,13 @@ class Dispatcher:
 
             if event.media_group_id is not None:
                 with self._media_group_message_lock:
-                    if event.media_group_id in self._media_group_messages:
-                        self._media_group_messages[event.media_group_id].add(event)
+                    if event.media_group_id not in self._media_group_containers:
+                        self._media_group_containers[event.media_group_id] = MediaGroupContainer(
+                            event=event,
+                            event_type=EventType(update.content_type.value)
+                        )
                     else:
-                        self._media_group_messages[event.media_group_id] = TimedContainer(event)
+                        self._media_group_containers[event.media_group_id].add_event(event)
 
                 return
 
@@ -605,7 +629,8 @@ class Dispatcher:
             logger.debug("Event from over limit chat dropped: %r.", event)
         else:
             logger.debug("Event added to queue: %r.", event)
-            self._events.add_event(event, EventType(update.content_type.value))
+            event_type = EventType(update.content_type.value)
+            self._events.add_event(event, event_type)
 
     def _check_over_limit_event(self, event: Event) -> bool:
         return (
@@ -621,16 +646,23 @@ class Dispatcher:
     def _run_media_group_gathering(self) -> NoReturn:
         while True:
             with self._media_group_message_lock:
-                for i in tuple(self._media_group_messages):
-                    if (time.monotonic() - self._media_group_messages[i].time) > 1:
-                        event = MediaGroup(self._media_group_messages[i].items)
-                        del self._media_group_messages[i]
+                for media_group_id in tuple(self._media_group_containers):
+                    if (time.monotonic() - self._media_group_containers[media_group_id].time) >= 1:
+                        container = self._media_group_containers.pop(media_group_id)
+                        event = MediaGroup(container.events)
 
                         if self._check_over_limit_event(event):
                             logger.debug("Event from over limit chat dropped: %r.", event)
                         else:
+                            if container.event_type is EventType.MESSAGE:
+                                event_type = EventType.MEDIA_GROUP
+                            elif container.event_type is EventType.CHANNEL_POST:
+                                event_type = EventType.CHANNEL_MEDIA_GROUP
+                            else:
+                                raise RuntimeError("Unknown message type!")
+
                             logger.debug("Event added to queue: %r.", event)
-                            self._events.add_event(event, EventType.MEDIA_GROUP)
+                            self._events.add_event(event, event_type)
 
             time.sleep(_MEDIA_GROUP_GATHERING_DELAY_SECS)
 

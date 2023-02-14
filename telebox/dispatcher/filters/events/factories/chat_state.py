@@ -37,6 +37,7 @@ class ChatStateFilter(AbstractEventFilter):
             EventType.CHANNEL_POST,
             EventType.EDITED_CHANNEL_POST,
             EventType.MEDIA_GROUP,
+            EventType.CHANNEL_MEDIA_GROUP,
             EventType.CALLBACK_QUERY
         }
 
