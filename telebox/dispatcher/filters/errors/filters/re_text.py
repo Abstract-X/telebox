@@ -21,4 +21,4 @@ class RETextErrorFilter(AbstractErrorFilter):
         if self._full_match:
             return any(i.fullmatch(text) is not None for i in self._patterns)
         else:
-            return any(i.match(text) is not None for i in self._patterns)
+            return any(i.search(text) is not None for i in self._patterns)
