@@ -49,7 +49,7 @@ class RETextFilter(AbstractEventFilter):
                 if any(i.fullmatch(text) is not None for i in self._patterns):
                     return True
             else:
-                if any(i.match(text) is not None for i in self._patterns):
+                if any(i.search(text) is not None for i in self._patterns):
                     return True
 
         return False

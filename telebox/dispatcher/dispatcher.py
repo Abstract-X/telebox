@@ -602,34 +602,37 @@ class Dispatcher:
         logger.debug("Update received: %r.", update)
         event = update.content
 
-        if event is None:
+        if (
+            (event is None)
+            or (isinstance(event, Message) and (event.content is None))
+        ):
             logger.debug(_DROPPED_UNKNOWN_UPDATE_MESSAGE, update)
 
             return
 
-        if isinstance(event, Message):
-            if event.content is None:
-                logger.debug(_DROPPED_UNKNOWN_UPDATE_MESSAGE, update)
+        event_type = EventType(update.content_type.value)
 
-                return
+        if (
+            (event_type in frozenset((EventType.MESSAGE, EventType.CHANNEL_POST)))
+            and (event.media_group_id is not None)
+        ):
+            event: Message
 
-            if event.media_group_id is not None:
-                with self._media_group_message_lock:
-                    if event.media_group_id not in self._media_group_containers:
-                        self._media_group_containers[event.media_group_id] = MediaGroupContainer(
-                            event=event,
-                            event_type=EventType(update.content_type.value)
-                        )
-                    else:
-                        self._media_group_containers[event.media_group_id].add_event(event)
+            with self._media_group_message_lock:
+                if event.media_group_id not in self._media_group_containers:
+                    self._media_group_containers[event.media_group_id] = MediaGroupContainer(
+                        event=event,
+                        event_type=event_type
+                    )
+                else:
+                    self._media_group_containers[event.media_group_id].add_event(event)
 
-                return
+            return
 
         if self._check_over_limit_event(event):
             logger.debug("Event from over limit chat dropped: %r.", event)
         else:
             logger.debug("Event added to queue: %r.", event)
-            event_type = EventType(update.content_type.value)
             self._events.add_event(event, event_type)
 
     def _check_over_limit_event(self, event: Event) -> bool:
@@ -659,7 +662,9 @@ class Dispatcher:
                             elif container.event_type is EventType.CHANNEL_POST:
                                 event_type = EventType.CHANNEL_MEDIA_GROUP
                             else:
-                                raise RuntimeError("Unknown message type!")
+                                raise RuntimeError(
+                                    f"Unknown message type {container.event_type!r}!"
+                                )
 
                             logger.debug("Event added to queue: %r.", event)
                             self._events.add_event(event, event_type)
