@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.utils.users import get_full_name
 
 
-@dataclass(eq=False)
+@dataclass
 class InputContactMessageContent(Type):
     phone_number: str
     first_name: str

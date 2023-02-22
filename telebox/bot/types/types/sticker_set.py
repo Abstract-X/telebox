@@ -6,7 +6,7 @@ from telebox.bot.types.types.sticker import Sticker
 from telebox.bot.types.types.photo_size import PhotoSize
 
 
-@dataclass(eq=False)
+@dataclass
 class StickerSet(Type):
     name: str
     title: str

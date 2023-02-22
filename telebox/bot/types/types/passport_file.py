@@ -4,7 +4,7 @@ from datetime import datetime
 from telebox.bot.types.type import Type
 
 
-@dataclass(eq=False)
+@dataclass
 class PassportFile(Type):
     file_id: str
     file_unique_id: str

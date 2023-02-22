@@ -9,7 +9,7 @@ from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
 
-@dataclass(eq=False)
+@dataclass
 class MediaGroup:
     messages: list[Message]
 

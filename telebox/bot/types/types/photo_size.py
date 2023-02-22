@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass(eq=False)
+@dataclass
 class PhotoSize(Type):
     file_id: str
     file_unique_id: str

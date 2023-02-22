@@ -9,7 +9,7 @@ from requests import Session, Response, RequestException
 import ujson
 
 from telebox.bot.converters import DataclassConverter, get_timestamp
-from telebox.bot.errors import get_request_error, BotError, RetryAfterError
+from telebox.bot.errors import get_request_error, BotError, RetryAfterError, InternalServerError
 from telebox.bot.consts import chat_member_statuses
 from telebox.bot.types.types.response_parameters import ResponseParameters
 from telebox.bot.types.types.update import Update
@@ -2464,7 +2464,7 @@ class Bot:
         while True:
             try:
                 response = self._session.post(url, data=data, files=files, timeout=timeout_secs)
-            except RequestException:
+            except (RequestException, InternalServerError):
                 if retries == self._retries:
                     raise
 

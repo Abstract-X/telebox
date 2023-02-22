@@ -8,7 +8,7 @@ from telebox.bot.types.types.user import User
 from telebox.bot.types.types.chat_invite_link import ChatInviteLink
 
 
-@dataclass(eq=False)
+@dataclass
 class ChatJoinRequest(Type):
     chat: Chat
     from_: User

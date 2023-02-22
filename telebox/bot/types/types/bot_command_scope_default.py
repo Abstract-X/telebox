@@ -4,6 +4,6 @@ from telebox.bot.types.type import Type
 from telebox.bot.consts import bot_command_scope_types
 
 
-@dataclass(eq=False)
+@dataclass
 class BotCommandScopeDefault(Type):
     type: str = bot_command_scope_types.DEFAULT

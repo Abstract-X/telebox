@@ -7,7 +7,7 @@ from telebox.bot.consts import chat_member_statuses
 from telebox.bot.types.types.user import User
 
 
-@dataclass(eq=False)
+@dataclass
 class ChatMemberBanned(Type):
     user: User
     until_date: Optional[datetime] = None  # None instead of 0

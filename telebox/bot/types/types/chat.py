@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from telebox.bot.types.types.message import Message
 
 
-@dataclass(eq=False)
+@dataclass
 class Chat(Type):
     id: int
     type: str

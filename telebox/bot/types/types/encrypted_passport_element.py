@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.passport_file import PassportFile
 
 
-@dataclass(eq=False)
+@dataclass
 class EncryptedPassportElement(Type):
     type: str
     hash: str

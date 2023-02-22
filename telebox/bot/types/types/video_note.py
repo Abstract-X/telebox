@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.photo_size import PhotoSize
 
 
-@dataclass(eq=False)
+@dataclass
 class VideoNote(Type):
     file_id: str
     file_unique_id: str
