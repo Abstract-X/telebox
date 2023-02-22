@@ -76,7 +76,7 @@ from .input_media_video import InputMediaVideo
 from .input_media_animation import InputMediaAnimation
 from .input_media_audio import InputMediaAudio
 from .input_media_document import InputMediaDocument
-from .input_file import InputFile
+from .input_file import InputFile, get_input_file_by_path
 from .sticker import Sticker
 from .sticker_set import StickerSet
 from .mask_position import MaskPosition
@@ -217,6 +217,7 @@ __all__ = [
     "InputMediaAudio",
     "InputMediaDocument",
     "InputFile",
+    "get_input_file_by_path",
     "Sticker",
     "StickerSet",
     "MaskPosition",
