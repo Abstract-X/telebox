@@ -33,7 +33,7 @@ from .context import (
 from .utils import (
     NotSet,
     NOT_SET,
-    NamedSet,
+    Group,
     AbstractCallbackDataBuilder,
     TaskExecutor,
     ThreadPool,
@@ -77,7 +77,7 @@ __all__ = [
     "error_handler_context",
     "NotSet",
     "NOT_SET",
-    "NamedSet",
+    "Group",
     "AbstractCallbackDataBuilder",
     "TaskExecutor",
     "ThreadPool",

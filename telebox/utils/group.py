@@ -4,7 +4,7 @@ from typing import Any
 
 
 @dataclass
-class NamedSet:
+class Group:
 
     def __post_init__(self):
         self._items = _get_items(self)
@@ -28,13 +28,13 @@ class NamedSet:
         return {i for i in self._items if i not in excluded}
 
 
-def _get_items(set_: NamedSet) -> set[Any]:
+def _get_items(group: Group) -> set[Any]:
     items = set()
-    fields = {i.name for i in dataclasses.fields(set_)}
+    fields = {i.name for i in dataclasses.fields(group)}
 
-    for name, value in vars(set_).items():
+    for name, value in vars(group).items():
         if name in fields:
-            if isinstance(value, NamedSet):
+            if isinstance(value, Group):
                 items.update(
                     _get_items(value)
                 )
