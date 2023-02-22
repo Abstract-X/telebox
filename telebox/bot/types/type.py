@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
 
-@dataclass(eq=False)
+@dataclass
 class Type:
     pass

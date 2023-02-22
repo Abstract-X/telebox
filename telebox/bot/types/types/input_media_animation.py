@@ -7,7 +7,7 @@ from telebox.bot.types.types.input_file import InputFile
 from telebox.bot.types.types.message_entity import MessageEntity
 
 
-@dataclass(eq=False)
+@dataclass
 class InputMediaAnimation(Type):
     media: str
     thumb: Union[InputFile, str, None] = None

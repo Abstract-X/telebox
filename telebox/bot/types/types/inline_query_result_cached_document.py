@@ -8,7 +8,7 @@ from telebox.bot.types.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.types.input_message_content import InputMessageContent
 
 
-@dataclass(eq=False)
+@dataclass
 class InlineQueryResultCachedDocument(Type):
     id: str
     title: str

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from telebox.bot.types.type import Type
 
 
-@dataclass(eq=False)
+@dataclass
 class MaskPosition(Type):
     point: str
     x_shift: float

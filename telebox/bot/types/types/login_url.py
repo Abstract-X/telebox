@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass(eq=False)
+@dataclass
 class LoginUrl(Type):
     url: str
     forward_text: Optional[str] = None

@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass(eq=False)
+@dataclass
 class WebhookInfo(Type):
     url: str
     has_custom_certificate: bool

@@ -6,7 +6,7 @@ from telebox.bot.types.types.user import User
 from telebox.bot.types.types.order_info import OrderInfo
 
 
-@dataclass(eq=False)
+@dataclass
 class PreCheckoutQuery(Type):
     id: str
     from_: User

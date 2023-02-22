@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass(eq=False)
+@dataclass
 class ChatPermissions(Type):
     can_send_messages: Optional[bool] = None
     can_send_media_messages: Optional[bool] = None

@@ -4,6 +4,6 @@ from datetime import datetime
 from telebox.bot.types.type import Type
 
 
-@dataclass(eq=False)
+@dataclass
 class VideoChatScheduled(Type):
     start_date: datetime

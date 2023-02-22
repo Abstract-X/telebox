@@ -7,7 +7,7 @@ from telebox.bot.types.types.poll_option import PollOption
 from telebox.bot.types.types.message_entity import MessageEntity
 
 
-@dataclass(eq=False)
+@dataclass
 class Poll(Type):
     id: str
     question: str

@@ -6,7 +6,7 @@ from telebox.bot.types.types.keyboard_button_poll_type import KeyboardButtonPoll
 from telebox.bot.types.types.web_app_info import WebAppInfo
 
 
-@dataclass(eq=False)
+@dataclass
 class KeyboardButton(Type):
     text: str
     request_contact: Optional[bool] = None

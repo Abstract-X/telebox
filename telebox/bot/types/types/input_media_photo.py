@@ -6,7 +6,7 @@ from telebox.bot.consts import input_media_types
 from telebox.bot.types.types.message_entity import MessageEntity
 
 
-@dataclass(eq=False)
+@dataclass
 class InputMediaPhoto(Type):
     media: str
     caption: Optional[str] = None

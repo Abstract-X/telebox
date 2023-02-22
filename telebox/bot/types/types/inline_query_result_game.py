@@ -6,7 +6,7 @@ from telebox.bot.consts import inline_query_result_types
 from telebox.bot.types.types.inline_keyboard_markup import InlineKeyboardMarkup
 
 
-@dataclass(eq=False)
+@dataclass
 class InlineQueryResultGame(Type):
     id: str
     game_short_name: str
