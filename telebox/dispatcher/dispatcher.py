@@ -1,10 +1,11 @@
 import logging
 from typing import Optional, Union, NoReturn
 from dataclasses import dataclass
-from threading import Thread, Lock
-from requests.exceptions import Timeout as RequestTimeoutError
+from threading import Thread, Lock, Event as ThreadingEvent
+import contextlib
 import time
 
+from requests.exceptions import Timeout as RequestTimeoutError
 import cherrypy
 
 from telebox.bot.bot import Bot
@@ -84,6 +85,7 @@ class Dispatcher:
         self._media_group_gathering_thread: Optional[Thread] = None
         self._media_group_containers: dict[str, MediaGroupContainer] = {}
         self._media_group_message_lock = Lock()
+        self._polling_stopping_event = ThreadingEvent()
 
     def add_message_handler(
         self,
@@ -411,14 +413,13 @@ class Dispatcher:
             raise ValueError("Error delay seconds cannot be negative!")
 
         self._polling_is_used = True
-        logger.debug("Polling is starting...")
         offset_update_id = None
         self._run_media_group_gathering_thread()
         self._run_thread_pool(threads)
         logger.info("Polling started.")
 
-        try:
-            while True:
+        with contextlib.suppress(KeyboardInterrupt):
+            while not self._polling_stopping_event.is_set():
                 # noinspection PyBroadException
                 try:
                     updates = self._bot.get_updates(
@@ -441,12 +442,18 @@ class Dispatcher:
                         offset_update_id = updates[-1].update_id + 1
 
                     time.sleep(delay_secs)
-        except KeyboardInterrupt:
-            logger.info("Polling stopped.")
-            self._finish_update_processing()
-            self._media_group_gathering_thread = None
-            self._thread_pool = None
-            self._polling_is_used = False
+
+        self._polling_stopping_event.clear()
+        logger.info("Polling stopped.")
+        self._finish_update_processing()
+        self._polling_is_used = False
+
+    def stop_polling(self) -> None:
+        if not self._polling_is_used:
+            raise DispatcherError("Polling not running!")
+
+        logger.info("Polling stopping...")
+        self._polling_stopping_event.set()
 
     def run_server(
         self,
@@ -465,7 +472,6 @@ class Dispatcher:
             raise DispatcherError("Server cannot be run while polling is used!")
 
         self._server_is_used = True
-        logger.debug("Server is starting...")
         cherrypy.config.update({
             "server.socket_host": host,
             "server.socket_port": port,
@@ -483,18 +489,20 @@ class Dispatcher:
         self._run_media_group_gathering_thread()
         self._run_thread_pool(threads)
         logger.info("Server started.")
+        cherrypy.quickstart(
+            root=ServerRoot(self._process_update),
+            script_name=webhook_path.rstrip("/") if webhook_path else str()
+        )
+        logger.info("Server stopped.")
+        self._finish_update_processing()
+        self._server_is_used = False
 
-        try:
-            cherrypy.quickstart(
-                root=ServerRoot(self._process_update),
-                script_name=webhook_path.rstrip("/") if webhook_path else str()
-            )
-        finally:
-            logger.info("Server stopped.")
-            self._finish_update_processing()
-            self._media_group_gathering_thread = None
-            self._thread_pool = None
-            self._server_is_used = False
+    def stop_server(self) -> None:
+        if not self._server_is_used:
+            raise DispatcherError("Server not running!")
+
+        logger.info("Server stopping...")
+        cherrypy.engine.exit()
 
     def drop_pending_updates(
         self,
@@ -644,6 +652,8 @@ class Dispatcher:
     def _finish_update_processing(self) -> None:
         logger.info("Finishing update processing...")
         self._events.wait_events()
+        self._media_group_gathering_thread = None
+        self._thread_pool = None
         logger.info("Update processing finished.")
 
     def _run_media_group_gathering(self) -> NoReturn:
