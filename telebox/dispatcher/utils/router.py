@@ -17,15 +17,17 @@ class Router:
         filter_: Optional[AbstractEventBaseFilter] = None
     ):
         self._dispatcher = dispatcher
-        self._filter = filter_
+        self.filter = filter_
 
-    def __add__(self, other) -> "Router":
+    def __add__(self, other: Union[AbstractEventBaseFilter, Router]) -> Router:
         if isinstance(other, AbstractEventBaseFilter):
             return Router(self._dispatcher, self._get_filter(other))
+        elif isinstance(other, Router):
+            return Router(self._dispatcher, self._get_filter(other.filter))
 
         return NotImplemented
 
-    def __iadd__(self, other) -> "Router":
+    def __iadd__(self, other: Union[AbstractEventBaseFilter, Router]) -> Router:
         return self.__add__(other)
 
     def add_message_handler(
@@ -197,8 +199,8 @@ class Router:
 
     def _get_filter(self, filter_: AbstractEventBaseFilter) -> Optional[AbstractEventBaseFilter]:
         if filter_ is None:
-            return self._filter
-        elif self._filter is None:
+            return self.filter
+        elif self.filter is None:
             return filter_
 
-        return self._filter & filter_
+        return self.filter & filter_
