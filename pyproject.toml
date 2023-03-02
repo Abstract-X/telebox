@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "telebox"
-version = "0.16.3"
+version = "0.16.4"
 authors = [
   { name="Abstract-X", email="abstract-x-mail@protonmail.com" },
 ]
