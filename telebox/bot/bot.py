@@ -2102,6 +2102,7 @@ class Bot:
         sticker: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        emoji: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -2119,6 +2120,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "sticker": sticker,
+                    "emoji": emoji,
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
