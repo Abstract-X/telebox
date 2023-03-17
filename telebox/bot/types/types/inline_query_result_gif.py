@@ -12,11 +12,11 @@ from telebox.bot.types.types.input_message_content import InputMessageContent
 class InlineQueryResultGif(Type):
     id: str
     gif_url: str
-    thumb_url: str
+    thumbnail_url: str
     gif_width: Optional[int] = None
     gif_height: Optional[int] = None
     gif_duration: Optional[int] = None
-    thumb_mime_type: Optional[str] = None
+    thumbnail_mime_type: Optional[str] = None
     title: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[str] = None

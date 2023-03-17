@@ -12,7 +12,7 @@ from telebox.bot.types.types.input_message_content import InputMessageContent
 class InlineQueryResultPhoto(Type):
     id: str
     photo_url: str
-    thumb_url: str
+    thumbnail_url: str
     photo_width: Optional[int] = None
     photo_height: Optional[int] = None
     title: Optional[str] = None

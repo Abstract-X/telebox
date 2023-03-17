@@ -11,5 +11,5 @@ class VideoNote(Type):
     file_unique_id: str
     length: int
     duration: int
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
     file_size: Optional[int] = None

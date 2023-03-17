@@ -14,4 +14,4 @@ class StickerSet(Type):
     is_animated: bool
     is_video: bool
     stickers: list[Sticker]
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None

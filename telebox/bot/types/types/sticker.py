@@ -16,7 +16,7 @@ class Sticker(Type):
     height: int
     is_animated: bool
     is_video: bool
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
     emoji: Optional[str] = None
     set_name: Optional[str] = None
     premium_animation: Optional[File] = None
