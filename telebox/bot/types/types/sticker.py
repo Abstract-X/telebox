@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Literal
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.photo_size import PhotoSize
@@ -22,4 +22,5 @@ class Sticker(Type):
     premium_animation: Optional[File] = None
     mask_position: Optional[MaskPosition] = None
     custom_emoji_id: Optional[str] = None
+    needs_repainting: Optional[Literal[True]] = None
     file_size: Optional[int] = None
