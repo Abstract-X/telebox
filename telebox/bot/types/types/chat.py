@@ -34,6 +34,7 @@ class Chat(Type):
     permissions: Optional[ChatPermissions] = None
     slow_mode_delay: Optional[int] = None
     message_auto_delete_time: Optional[int] = None
+    has_aggressive_anti_spam_enabled: Optional[Literal[True]] = None
     has_hidden_members: Optional[Literal[True]] = None
     has_protected_content: Optional[Literal[True]] = None
     sticker_set_name: Optional[str] = None
