@@ -24,6 +24,7 @@ from telebox.bot.types.types.forum_topic import ForumTopic
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.poll import Poll
 from telebox.bot.types.types.mask_position import MaskPosition
+from telebox.bot.types.types.input_sticker import InputSticker
 from telebox.bot.types.types.inline_query_result import InlineQueryResult
 from telebox.bot.types.types.labeled_price import LabeledPrice
 from telebox.bot.types.types.shipping_option import ShippingOption
@@ -1446,26 +1447,22 @@ class ContextBot:
         self,
         name: str,
         title: str,
-        emojis: str,
+        stickers: list[InputSticker],
+        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        contains_masks: Optional[bool] = None,
-        mask_position: Optional[MaskPosition] = None
+        sticker_type: Optional[str] = None,
+        needs_repainting: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.create_new_sticker_set(
             user_id=get_event_user_id(),
             name=name,
             title=title,
-            emojis=emojis,
+            stickers=stickers,
+            sticker_format=sticker_format,
             timeout_secs=timeout_secs,
-            png_sticker=png_sticker,
-            tgs_sticker=tgs_sticker,
-            webm_sticker=webm_sticker,
-            contains_masks=contains_masks,
-            mask_position=mask_position
+            sticker_type=sticker_type,
+            needs_repainting=needs_repainting
         )
 
     def add_sticker_to_set(

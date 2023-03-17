@@ -89,6 +89,7 @@ from .input_file import InputFile, get_input_file_by_path
 from .sticker import Sticker
 from .sticker_set import StickerSet
 from .mask_position import MaskPosition
+from .input_sticker import InputSticker
 from .inline_query import InlineQuery
 from .inline_query_result import InlineQueryResult
 from .inline_query_result_article import InlineQueryResultArticle
@@ -240,6 +241,7 @@ __all__ = [
     "Sticker",
     "StickerSet",
     "MaskPosition",
+    "InputSticker",
     "InlineQuery",
     "InlineQueryResult",
     "InlineQueryResultArticle",
