@@ -43,7 +43,6 @@ from telebox.bot.types.types.forum_topic import ForumTopic
 from telebox.bot.types.types.poll import Poll
 from telebox.bot.types.types.sticker import Sticker
 from telebox.bot.types.types.sticker_set import StickerSet
-from telebox.bot.types.types.mask_position import MaskPosition
 from telebox.bot.types.types.input_sticker import InputSticker
 from telebox.bot.types.types.inline_query_result import InlineQueryResult
 from telebox.bot.types.types.sent_web_app_message import SentWebAppMessage
