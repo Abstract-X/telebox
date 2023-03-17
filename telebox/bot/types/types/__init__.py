@@ -38,6 +38,7 @@ from .web_app_info import WebAppInfo
 from .reply_keyboard_markup import ReplyKeyboardMarkup
 from .keyboard_button import KeyboardButton
 from .keyboard_button_request_user import KeyboardButtonRequestUser
+from .keyboard_button_request_chat import KeyboardButtonRequestChat
 from .keyboard_button_poll_type import KeyboardButtonPollType
 from .reply_keyboard_remove import ReplyKeyboardRemove
 from .inline_keyboard_markup import InlineKeyboardMarkup
@@ -183,6 +184,7 @@ __all__ = [
     "ReplyKeyboardMarkup",
     "KeyboardButton",
     "KeyboardButtonRequestUser",
+    "KeyboardButtonRequestChat",
     "KeyboardButtonPollType",
     "ReplyKeyboardRemove",
     "InlineKeyboardMarkup",
