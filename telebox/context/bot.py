@@ -23,7 +23,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.forum_topic import ForumTopic
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.poll import Poll
-from telebox.bot.types.types.mask_position import MaskPosition
+from telebox.bot.types.types.input_sticker import InputSticker
 from telebox.bot.types.types.inline_query_result import InlineQueryResult
 from telebox.bot.types.types.labeled_price import LabeledPrice
 from telebox.bot.types.types.shipping_option import ShippingOption
@@ -237,7 +237,7 @@ class ContextBot:
         duration: Optional[int] = None,
         performer: Optional[str] = None,
         title: Optional[str] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         allow_sending_without_reply: Optional[bool] = None,
@@ -258,7 +258,7 @@ class ContextBot:
             duration=duration,
             performer=performer,
             title=title,
-            thumb=thumb,
+            thumbnail=thumbnail,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
@@ -272,7 +272,7 @@ class ContextBot:
         *,
         timeout_secs: Union[int, float, None] = None,
         with_reply: bool = False,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -291,7 +291,7 @@ class ContextBot:
             document=document,
             timeout_secs=timeout_secs,
             message_thread_id=get_event_message_topic_id(strictly=False),
-            thumb=thumb,
+            thumbnail=thumbnail,
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -312,7 +312,7 @@ class ContextBot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -335,7 +335,7 @@ class ContextBot:
             duration=duration,
             width=width,
             height=height,
-            thumb=thumb,
+            thumbnail=thumbnail,
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -357,7 +357,7 @@ class ContextBot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -379,7 +379,7 @@ class ContextBot:
             duration=duration,
             width=width,
             height=height,
-            thumb=thumb,
+            thumbnail=thumbnail,
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -434,7 +434,7 @@ class ContextBot:
         with_reply: bool = False,
         duration: Optional[int] = None,
         length: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         allow_sending_without_reply: Optional[bool] = None,
@@ -451,7 +451,7 @@ class ContextBot:
             message_thread_id=get_event_message_topic_id(strictly=False),
             duration=duration,
             length=length,
-            thumb=thumb,
+            thumbnail=thumbnail,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
@@ -1407,6 +1407,7 @@ class ContextBot:
         *,
         with_reply: bool = False,
         timeout_secs: Union[int, float, None] = None,
+        emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         allow_sending_without_reply: Optional[bool] = None,
@@ -1420,6 +1421,7 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             sticker=sticker,
             timeout_secs=timeout_secs,
+            emoji=emoji,
             message_thread_id=get_event_message_topic_id(strictly=False),
             disable_notification=disable_notification,
             protect_content=protect_content,
@@ -1430,13 +1432,15 @@ class ContextBot:
 
     def upload_sticker_file(
         self,
-        png_sticker: InputFile,
+        sticker: InputFile,
+        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> File:
         return self._bot.upload_sticker_file(
             user_id=get_event_user_id(),
-            png_sticker=png_sticker,
+            sticker=sticker,
+            sticker_format=sticker_format,
             timeout_secs=timeout_secs
         )
 
@@ -1444,62 +1448,50 @@ class ContextBot:
         self,
         name: str,
         title: str,
-        emojis: str,
+        stickers: list[InputSticker],
+        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        contains_masks: Optional[bool] = None,
-        mask_position: Optional[MaskPosition] = None
+        sticker_type: Optional[str] = None,
+        needs_repainting: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.create_new_sticker_set(
             user_id=get_event_user_id(),
             name=name,
             title=title,
-            emojis=emojis,
+            stickers=stickers,
+            sticker_format=sticker_format,
             timeout_secs=timeout_secs,
-            png_sticker=png_sticker,
-            tgs_sticker=tgs_sticker,
-            webm_sticker=webm_sticker,
-            contains_masks=contains_masks,
-            mask_position=mask_position
+            sticker_type=sticker_type,
+            needs_repainting=needs_repainting
         )
 
     def add_sticker_to_set(
         self,
         name: str,
-        emojis: str,
+        sticker: InputSticker,
         *,
-        timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        mask_position: Optional[MaskPosition] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._bot.add_sticker_to_set(
             user_id=get_event_user_id(),
             name=name,
-            emojis=emojis,
-            timeout_secs=timeout_secs,
-            png_sticker=png_sticker,
-            tgs_sticker=tgs_sticker,
-            webm_sticker=webm_sticker,
-            mask_position=mask_position
+            sticker=sticker,
+            timeout_secs=timeout_secs
         )
 
-    def set_sticker_set_thumb(
+    def set_sticker_set_thumbnail(
         self,
         name: str,
         *,
         timeout_secs: Union[int, float, None] = None,
-        thumb: Union[InputFile, str, None] = None
+        thumbnail: Union[InputFile, str, None] = None
     ) -> Literal[True]:
-        return self._bot.set_sticker_set_thumb(
+        return self._bot.set_sticker_set_thumbnail(
             name=name,
             user_id=get_event_user_id(),
             timeout_secs=timeout_secs,
-            thumb=thumb
+            thumbnail=thumbnail
         )
 
     def answer_inline_query(

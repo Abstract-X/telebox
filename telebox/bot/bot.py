@@ -35,6 +35,8 @@ from telebox.bot.types.types.chat_invite_link import ChatInviteLink
 from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.bot_command import BotCommand
 from telebox.bot.types.types.bot_command_scope import BotCommandScope
+from telebox.bot.types.types.bot_description import BotDescription
+from telebox.bot.types.types.bot_short_description import BotShortDescription
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.chat_administrator_rights import ChatAdministratorRights
 from telebox.bot.types.types.forum_topic import ForumTopic
@@ -42,6 +44,7 @@ from telebox.bot.types.types.poll import Poll
 from telebox.bot.types.types.sticker import Sticker
 from telebox.bot.types.types.sticker_set import StickerSet
 from telebox.bot.types.types.mask_position import MaskPosition
+from telebox.bot.types.types.input_sticker import InputSticker
 from telebox.bot.types.types.inline_query_result import InlineQueryResult
 from telebox.bot.types.types.sent_web_app_message import SentWebAppMessage
 from telebox.bot.types.types.labeled_price import LabeledPrice
@@ -374,7 +377,7 @@ class Bot:
         duration: Optional[int] = None,
         performer: Optional[str] = None,
         title: Optional[str] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -401,7 +404,7 @@ class Bot:
                     "duration": duration,
                     "performer": performer,
                     "title": title,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -420,7 +423,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None,
         message_thread_id: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -442,7 +445,7 @@ class Bot:
                     "chat_id": chat_id,
                     "document": document,
                     "message_thread_id": message_thread_id,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
@@ -471,7 +474,7 @@ class Bot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -497,7 +500,7 @@ class Bot:
                     "duration": duration,
                     "width": width,
                     "height": height,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
@@ -527,7 +530,7 @@ class Bot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -552,7 +555,7 @@ class Bot:
                     "duration": duration,
                     "width": width,
                     "height": height,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
@@ -626,7 +629,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -646,7 +649,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "duration": duration,
                     "length": length,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -1812,6 +1815,72 @@ class Bot:
             )
         ]
 
+    def set_my_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        description: Optional[str] = None,
+        language_code: Optional[str] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setMyDescription",
+            parameters={
+                "description": description,
+                "language_code": language_code
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def get_my_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        language_code: Optional[str] = None
+    ) -> BotDescription:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getMyDescription",
+                parameters={
+                    "language_code": language_code
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=BotDescription
+        )
+
+    def set_my_short_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        short_description: Optional[str] = None,
+        language_code: Optional[str] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setMyShortDescription",
+            parameters={
+                "short_description": short_description,
+                "language_code": language_code
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def get_my_short_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        language_code: Optional[str] = None
+    ) -> BotShortDescription:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getMyShortDescription",
+                parameters={
+                    "language_code": language_code
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=BotShortDescription
+        )
+
     def set_chat_menu_button(
         self,
         *,
@@ -2034,6 +2103,7 @@ class Bot:
         sticker: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        emoji: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -2051,6 +2121,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "sticker": sticker,
+                    "emoji": emoji,
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -2100,7 +2171,8 @@ class Bot:
     def upload_sticker_file(
         self,
         user_id: int,
-        png_sticker: InputFile,
+        sticker: InputFile,
+        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> File:
@@ -2109,7 +2181,8 @@ class Bot:
                 method="uploadStickerFile",
                 parameters={
                     "user_id": user_id,
-                    "png_sticker": png_sticker
+                    "sticker": sticker,
+                    "sticker_format": sticker_format
                 },
                 timeout_secs=timeout_secs
             ),
@@ -2121,14 +2194,12 @@ class Bot:
         user_id: int,
         name: str,
         title: str,
-        emojis: str,
+        stickers: list[InputSticker],
+        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        contains_masks: Optional[bool] = None,
-        mask_position: Optional[MaskPosition] = None
+        sticker_type: Optional[str] = None,
+        needs_repainting: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
             method="createNewStickerSet",
@@ -2136,12 +2207,10 @@ class Bot:
                 "user_id": user_id,
                 "name": name,
                 "title": title,
-                "emojis": emojis,
-                "png_sticker": png_sticker,
-                "tgs_sticker": tgs_sticker,
-                "webm_sticker": webm_sticker,
-                "contains_masks": contains_masks,
-                "mask_position": mask_position
+                "stickers": stickers,
+                "sticker_format": sticker_format,
+                "sticker_type": sticker_type,
+                "needs_repainting": needs_repainting
             },
             timeout_secs=timeout_secs
         )
@@ -2150,24 +2219,16 @@ class Bot:
         self,
         user_id: int,
         name: str,
-        emojis: str,
+        sticker: InputSticker,
         *,
-        timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        mask_position: Optional[MaskPosition] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="addStickerToSet",
             parameters={
                 "user_id": user_id,
                 "name": name,
-                "emojis": emojis,
-                "png_sticker": png_sticker,
-                "tgs_sticker": tgs_sticker,
-                "webm_sticker": webm_sticker,
-                "mask_position": mask_position
+                "sticker": sticker
             },
             timeout_secs=timeout_secs
         )
@@ -2202,20 +2263,114 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-    def set_sticker_set_thumb(
+    def set_sticker_emoji_list(
+        self,
+        sticker: str,
+        emoji_list: list[str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerEmojiList",
+            parameters={
+                "sticker": sticker,
+                "emoji_list": emoji_list
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_keywords(
+        self,
+        sticker: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        keywords: Optional[list[str]] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerKeywords",
+            parameters={
+                "sticker": sticker,
+                "keywords": keywords
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_mask_position(
+        self,
+        sticker: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        mask_position: Optional[MaskPosition] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerMaskPosition",
+            parameters={
+                "sticker": sticker,
+                "mask_position": mask_position
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_set_title(
+        self,
+        name: str,
+        title: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerSetTitle",
+            parameters={
+                "name": name,
+                "title": title
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_custom_emoji_sticker_set_thumbnail(
+        self,
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        custom_emoji_id: Optional[str] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setCustomEmojiStickerSetThumbnail",
+            parameters={
+                "name": name,
+                "custom_emoji_id": custom_emoji_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def delete_sticker_set(
+        self,
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="deleteStickerSet",
+            parameters={
+                "name": name
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_set_thumbnail(
         self,
         name: str,
         user_id: int,
         *,
         timeout_secs: Union[int, float, None] = None,
-        thumb: Union[InputFile, str, None] = None
+        thumbnail: Union[InputFile, str, None] = None
     ) -> Literal[True]:
         return self._send_request(
-            method="setStickerSetThumb",
+            method="setStickerSetthumbnail",
             parameters={
                 "name": name,
                 "user_id": user_id,
-                "thumb": thumb
+                "thumbnail": thumbnail
             },
             timeout_secs=timeout_secs
         )

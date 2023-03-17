@@ -15,4 +15,4 @@ class Audio(Type):
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
     file_size: Optional[int] = None
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None

@@ -72,6 +72,8 @@ from .bot_command_scope_all_chat_administrators import BotCommandScopeAllChatAdm
 from .bot_command_scope_chat import BotCommandScopeChat
 from .bot_command_scope_chat_administrators import BotCommandScopeChatAdministrators
 from .bot_command_scope_chat_member import BotCommandScopeChatMember
+from .bot_description import BotDescription
+from .bot_short_description import BotShortDescription
 from .menu_button import MenuButton
 from .menu_button_commands import MenuButtonCommands
 from .menu_button_web_app import MenuButtonWebApp
@@ -87,6 +89,7 @@ from .input_file import InputFile, get_input_file_by_path
 from .sticker import Sticker
 from .sticker_set import StickerSet
 from .mask_position import MaskPosition
+from .input_sticker import InputSticker
 from .inline_query import InlineQuery
 from .inline_query_result import InlineQueryResult
 from .inline_query_result_article import InlineQueryResultArticle
@@ -220,6 +223,8 @@ __all__ = [
     "BotCommandScopeChat",
     "BotCommandScopeChatAdministrators",
     "BotCommandScopeChatMember",
+    "BotDescription",
+    "BotShortDescription",
     "MenuButton",
     "MenuButtonCommands",
     "MenuButtonWebApp",
@@ -236,6 +241,7 @@ __all__ = [
     "Sticker",
     "StickerSet",
     "MaskPosition",
+    "InputSticker",
     "InlineQuery",
     "InlineQueryResult",
     "InlineQueryResultArticle",

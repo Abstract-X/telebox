@@ -13,7 +13,7 @@ class InlineQueryResultVideo(Type):
     id: str
     video_url: str
     mime_type: str
-    thumb_url: str
+    thumbnail_url: str
     title: str
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
