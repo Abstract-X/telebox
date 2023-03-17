@@ -1432,13 +1432,15 @@ class ContextBot:
 
     def upload_sticker_file(
         self,
-        png_sticker: InputFile,
+        sticker: InputFile,
+        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> File:
         return self._bot.upload_sticker_file(
             user_id=get_event_user_id(),
-            png_sticker=png_sticker,
+            sticker=sticker,
+            sticker_format=sticker_format,
             timeout_secs=timeout_secs
         )
 
