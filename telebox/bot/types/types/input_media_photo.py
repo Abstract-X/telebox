@@ -12,4 +12,5 @@ class InputMediaPhoto(Type):
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    has_spoiler: Optional[bool] = None
     type: str = input_media_types.PHOTO
