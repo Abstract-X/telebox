@@ -36,6 +36,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.bot_command import BotCommand
 from telebox.bot.types.types.bot_command_scope import BotCommandScope
 from telebox.bot.types.types.bot_description import BotDescription
+from telebox.bot.types.types.bot_short_description import BotShortDescription
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.chat_administrator_rights import ChatAdministratorRights
 from telebox.bot.types.types.forum_topic import ForumTopic
@@ -1860,6 +1861,23 @@ class Bot:
                 "language_code": language_code
             },
             timeout_secs=timeout_secs
+        )
+
+    def get_my_short_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        language_code: Optional[str] = None
+    ) -> BotShortDescription:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getMyShortDescription",
+                parameters={
+                    "language_code": language_code
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=BotShortDescription
         )
 
     def set_chat_menu_button(

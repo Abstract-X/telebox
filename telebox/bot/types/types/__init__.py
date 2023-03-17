@@ -73,6 +73,7 @@ from .bot_command_scope_chat import BotCommandScopeChat
 from .bot_command_scope_chat_administrators import BotCommandScopeChatAdministrators
 from .bot_command_scope_chat_member import BotCommandScopeChatMember
 from .bot_description import BotDescription
+from .bot_short_description import BotShortDescription
 from .menu_button import MenuButton
 from .menu_button_commands import MenuButtonCommands
 from .menu_button_web_app import MenuButtonWebApp
@@ -222,6 +223,7 @@ __all__ = [
     "BotCommandScopeChatAdministrators",
     "BotCommandScopeChatMember",
     "BotDescription",
+    "BotShortDescription",
     "MenuButton",
     "MenuButtonCommands",
     "MenuButtonWebApp",
