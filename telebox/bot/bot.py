@@ -43,6 +43,7 @@ from telebox.bot.types.types.forum_topic import ForumTopic
 from telebox.bot.types.types.poll import Poll
 from telebox.bot.types.types.sticker import Sticker
 from telebox.bot.types.types.sticker_set import StickerSet
+from telebox.bot.types.types.mask_position import MaskPosition
 from telebox.bot.types.types.input_sticker import InputSticker
 from telebox.bot.types.types.inline_query_result import InlineQueryResult
 from telebox.bot.types.types.sent_web_app_message import SentWebAppMessage
@@ -2290,6 +2291,22 @@ class Bot:
             parameters={
                 "sticker": sticker,
                 "keywords": keywords
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_mask_position(
+        self,
+        sticker: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        mask_position: Optional[MaskPosition] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerMaskPosition",
+            parameters={
+                "sticker": sticker,
+                "mask_position": mask_position
             },
             timeout_secs=timeout_secs
         )
