@@ -325,6 +325,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -348,6 +349,7 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -473,6 +475,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -501,6 +504,7 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "supports_streaming": supports_streaming,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -527,6 +531,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -554,6 +559,7 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
