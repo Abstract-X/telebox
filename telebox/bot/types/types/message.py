@@ -24,11 +24,15 @@ from telebox.bot.types.types.venue import Venue
 from telebox.bot.types.types.location import Location
 from telebox.bot.types.types.invoice import Invoice
 from telebox.bot.types.types.successful_payment import SuccessfulPayment
+from telebox.bot.types.types.write_access_allowed import WriteAccessAllowed
 from telebox.bot.types.types.passport_data import PassportData
 from telebox.bot.types.types.proximity_alert_triggered import ProximityAlertTriggered
 from telebox.bot.types.types.forum_topic_created import ForumTopicCreated
+from telebox.bot.types.types.forum_topic_edited import ForumTopicEdited
 from telebox.bot.types.types.forum_topic_closed import ForumTopicClosed
 from telebox.bot.types.types.forum_topic_reopened import ForumTopicReopened
+from telebox.bot.types.types.general_forum_topic_hidden import GeneralForumTopicHidden
+from telebox.bot.types.types.general_forum_topic_unhidden import GeneralForumTopicUnhidden
 from telebox.bot.types.types.video_chat_scheduled import VideoChatScheduled
 from telebox.bot.types.types.video_chat_started import VideoChatStarted
 from telebox.bot.types.types.video_chat_ended import VideoChatEnded
@@ -100,11 +104,15 @@ class Message(Type):
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
     connected_website: Optional[str] = None
+    write_access_allowed: Optional[WriteAccessAllowed] = None
     passport_data: Optional[PassportData] = None
     proximity_alert_triggered: Optional[ProximityAlertTriggered] = None
     forum_topic_created: Optional[ForumTopicCreated] = None
+    forum_topic_edited: Optional[ForumTopicEdited] = None
     forum_topic_closed: Optional[ForumTopicClosed] = None
     forum_topic_reopened: Optional[ForumTopicReopened] = None
+    general_forum_topic_hidden: Optional[GeneralForumTopicHidden] = None
+    general_forum_topic_unhidden: Optional[GeneralForumTopicUnhidden] = None
     video_chat_scheduled: Optional[VideoChatScheduled] = None
     video_chat_started: Optional[VideoChatStarted] = None
     video_chat_ended: Optional[VideoChatEnded] = None
@@ -203,6 +211,9 @@ class Message(Type):
         elif self.connected_website is not None:
             self._content = self.connected_website
             self._content_type = MessageContentType.CONNECTED_WEBSITE
+        elif self.write_access_allowed is not None:
+            self._content = self.write_access_allowed
+            self._content_type = MessageContentType.WRITE_ACCESS_ALLOWED
         elif self.passport_data is not None:
             self._content = self.passport_data
             self._content_type = MessageContentType.PASSPORT_DATA
@@ -212,12 +223,21 @@ class Message(Type):
         elif self.forum_topic_created is not None:
             self._content = self.forum_topic_created
             self._content_type = MessageContentType.FORUM_TOPIC_CREATED
+        elif self.forum_topic_edited is not None:
+            self._content = self.forum_topic_edited
+            self._content_type = MessageContentType.FORUM_TOPIC_EDITED
         elif self.forum_topic_closed is not None:
             self._content = self.forum_topic_closed
             self._content_type = MessageContentType.FORUM_TOPIC_CLOSED
         elif self.forum_topic_reopened is not None:
             self._content = self.forum_topic_reopened
             self._content_type = MessageContentType.FORUM_TOPIC_REOPENED
+        elif self.general_forum_topic_hidden is not None:
+            self._content = self.general_forum_topic_hidden
+            self._content_type = MessageContentType.GENERAL_FORUM_TOPIC_HIDDEN
+        elif self.general_forum_topic_unhidden is not None:
+            self._content = self.general_forum_topic_unhidden
+            self._content_type = MessageContentType.GENERAL_FORUM_TOPIC_UNHIDDEN
         elif self.video_chat_scheduled is not None:
             self._content = self.video_chat_scheduled
             self._content_type = MessageContentType.VIDEO_CHAT_SCHEDULED
