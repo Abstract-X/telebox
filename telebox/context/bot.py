@@ -775,6 +775,7 @@ class ContextBot:
         user_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_independent_chat_permissions: Optional[bool] = None,
         until_date: Optional[datetime] = None
     ) -> Literal[True]:
         return self._bot.restrict_chat_member(
@@ -782,6 +783,7 @@ class ContextBot:
             user_id=get_event_user_id() if user_id is None else user_id,
             permissions=permissions,
             timeout_secs=timeout_secs,
+            use_independent_chat_permissions=use_independent_chat_permissions,
             until_date=until_date
         )
 
@@ -863,12 +865,14 @@ class ContextBot:
         self,
         permissions: ChatPermissions,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        use_independent_chat_permissions: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.set_chat_permissions(
             chat_id=get_event_chat_id(),
             permissions=permissions,
-            timeout_secs=timeout_secs
+            timeout_secs=timeout_secs,
+            use_independent_chat_permissions=use_independent_chat_permissions
         )
 
     def export_chat_invite_link(
