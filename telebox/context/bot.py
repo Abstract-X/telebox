@@ -73,7 +73,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             text=text,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             parse_mode=parse_mode,
             entities=entities,
             disable_web_page_preview=disable_web_page_preview,
@@ -97,7 +99,9 @@ class ContextBot:
             from_chat_id=get_event_chat_id(),
             message_id=get_event_message_id(),
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             disable_notification=disable_notification,
             protect_content=protect_content
         )
@@ -116,7 +120,9 @@ class ContextBot:
             from_chat_id=from_chat_id,
             message_id=message_id,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             disable_notification=disable_notification,
             protect_content=protect_content
         )
@@ -144,7 +150,9 @@ class ContextBot:
             from_chat_id=get_event_chat_id(),
             message_id=get_event_message_id(),
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -179,7 +187,9 @@ class ContextBot:
             from_chat_id=from_chat_id,
             message_id=message_id,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -213,7 +223,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             photo=photo,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -251,7 +263,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             audio=audio,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -290,7 +304,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             document=document,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             thumbnail=thumbnail,
             caption=caption,
             parse_mode=parse_mode,
@@ -331,7 +347,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             video=video,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             duration=duration,
             width=width,
             height=height,
@@ -375,7 +393,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             animation=animation,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             duration=duration,
             width=width,
             height=height,
@@ -414,7 +434,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             voice=voice,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -448,7 +470,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             video_note=video_note,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             duration=duration,
             length=length,
             thumbnail=thumbnail,
@@ -476,7 +500,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             media=media,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
@@ -508,7 +534,9 @@ class ContextBot:
             latitude=latitude,
             longitude=longitude,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             horizontal_accuracy=horizontal_accuracy,
             live_period=live_period,
             heading=heading,
@@ -587,7 +615,9 @@ class ContextBot:
             title=title,
             address=address,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             foursquare_id=foursquare_id,
             foursquare_type=foursquare_type,
             google_place_id=google_place_id,
@@ -622,7 +652,9 @@ class ContextBot:
             phone_number=phone_number,
             first_name=first_name,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             last_name=last_name,
             vcard=vcard,
             disable_notification=disable_notification,
@@ -663,7 +695,9 @@ class ContextBot:
             question=question,
             options=options,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             is_anonymous=is_anonymous,
             type_=type_,
             allows_multiple_answers=allows_multiple_answers,
@@ -699,7 +733,9 @@ class ContextBot:
         return self._bot.send_dice(
             chat_id=get_event_chat_id(),
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             emoji=emoji,
             disable_notification=disable_notification,
             protect_content=protect_content,
@@ -716,7 +752,7 @@ class ContextBot:
         message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         if message_thread_id is None:
-            message_thread_id = get_event_message_topic_id()
+            message_thread_id = get_event_message_topic_id(strictly=False)
 
         return self._bot.send_chat_action(
             chat_id=get_event_chat_id(),
@@ -1422,7 +1458,9 @@ class ContextBot:
             sticker=sticker,
             timeout_secs=timeout_secs,
             emoji=emoji,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
@@ -1556,7 +1594,9 @@ class ContextBot:
             currency=currency,
             prices=prices,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             max_tip_amount=max_tip_amount,
             suggested_tip_amounts=suggested_tip_amounts,
             start_parameter=start_parameter,
@@ -1636,7 +1676,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             game_short_name=game_short_name,
             timeout_secs=timeout_secs,
-            message_thread_id=get_event_message_topic_id(strictly=False),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
