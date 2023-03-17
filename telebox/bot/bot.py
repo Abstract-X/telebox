@@ -2278,6 +2278,22 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
+    def set_sticker_keywords(
+        self,
+        sticker: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        keywords: Optional[list[str]] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerKeywords",
+            parameters={
+                "sticker": sticker,
+                "keywords": keywords
+            },
+            timeout_secs=timeout_secs
+        )
+
     def set_sticker_set_title(
         self,
         name: str,
