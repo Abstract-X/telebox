@@ -1812,6 +1812,22 @@ class Bot:
             )
         ]
 
+    def set_my_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        description: Optional[str] = None,
+        language_code: Optional[str] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setMyDescription",
+            parameters={
+                "description": description,
+                "language_code": language_code
+            },
+            timeout_secs=timeout_secs
+        )
+
     def set_chat_menu_button(
         self,
         *,
