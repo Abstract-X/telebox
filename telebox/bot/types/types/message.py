@@ -78,6 +78,7 @@ class Message(Type):
     voice: Optional[Voice] = None
     caption: Optional[str] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    has_media_spoiler: Optional[Literal[True]] = None
     contact: Optional[Contact] = None
     dice: Optional[Dice] = None
     game: Optional[Game] = None
