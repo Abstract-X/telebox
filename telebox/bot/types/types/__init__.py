@@ -23,8 +23,11 @@ from .web_app_data import WebAppData
 from .proximity_alert_triggered import ProximityAlertTriggered
 from .message_auto_delete_timer_changed import MessageAutoDeleteTimerChanged
 from .forum_topic_created import ForumTopicCreated
+from .forum_topic_edited import ForumTopicEdited
 from .forum_topic_closed import ForumTopicClosed
 from .forum_topic_reopened import ForumTopicReopened
+from .general_forum_topic_hidden import GeneralForumTopicHidden
+from .general_forum_topic_unhidden import GeneralForumTopicUnhidden
 from .video_chat_scheduled import VideoChatScheduled
 from .video_chat_started import VideoChatStarted
 from .video_chat_ended import VideoChatEnded
@@ -116,6 +119,7 @@ from .shipping_address import ShippingAddress
 from .order_info import OrderInfo
 from .shipping_option import ShippingOption
 from .successful_payment import SuccessfulPayment
+from .write_access_allowed import WriteAccessAllowed
 from .shipping_query import ShippingQuery
 from .pre_checkout_query import PreCheckoutQuery
 from .passport_data import PassportData
@@ -163,8 +167,11 @@ __all__ = [
     "ProximityAlertTriggered",
     "MessageAutoDeleteTimerChanged",
     "ForumTopicCreated",
+    "ForumTopicEdited",
     "ForumTopicClosed",
     "ForumTopicReopened",
+    "GeneralForumTopicHidden",
+    "GeneralForumTopicUnhidden",
     "VideoChatScheduled",
     "VideoChatStarted",
     "VideoChatEnded",
@@ -257,6 +264,7 @@ __all__ = [
     "OrderInfo",
     "ShippingOption",
     "SuccessfulPayment",
+    "WriteAccessAllowed",
     "ShippingQuery",
     "PreCheckoutQuery",
     "PassportData",

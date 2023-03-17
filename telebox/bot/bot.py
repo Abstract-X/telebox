@@ -325,6 +325,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -348,6 +349,7 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -473,6 +475,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -501,6 +504,7 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "supports_streaming": supports_streaming,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -527,6 +531,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -554,6 +559,7 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -979,13 +985,15 @@ class Bot:
         chat_id: Union[int, str],
         action: str,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         return self._send_request(
             method="sendChatAction",
             parameters={
                 "chat_id": chat_id,
-                "action": action
+                "action": action,
+                "message_thread_id": message_thread_id
             },
             timeout_secs=timeout_secs
         )
@@ -1573,10 +1581,10 @@ class Bot:
         self,
         chat_id: Union[int, str],
         message_thread_id: int,
-        name: str,
-        icon_custom_emoji_id: str,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        name: Optional[str] = None,
+        icon_custom_emoji_id: Optional[str] = None
     ) -> Literal[True]:
         return self._send_request(
             method="editForumTopic",
@@ -1649,6 +1657,78 @@ class Bot:
             parameters={
                 "chat_id": chat_id,
                 "message_thread_id": message_thread_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def edit_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="editGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id,
+                "name": name
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def close_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="closeGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def reopen_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="reopenGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def hide_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="hideGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def unhide_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="unhideGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
             },
             timeout_secs=timeout_secs
         )

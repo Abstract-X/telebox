@@ -199,6 +199,7 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         allow_sending_without_reply: Optional[bool] = None,
@@ -216,6 +217,7 @@ class ContextBot:
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            has_spoiler=has_spoiler,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
@@ -314,6 +316,7 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -336,6 +339,7 @@ class ContextBot:
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            has_spoiler=has_spoiler,
             supports_streaming=supports_streaming,
             disable_notification=disable_notification,
             protect_content=protect_content,
@@ -357,6 +361,7 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         allow_sending_without_reply: Optional[bool] = None,
@@ -378,6 +383,7 @@ class ContextBot:
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            has_spoiler=has_spoiler,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
@@ -706,12 +712,17 @@ class ContextBot:
         self,
         action: str,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
+        if message_thread_id is None:
+            message_thread_id = get_event_message_topic_id()
+
         return self._bot.send_chat_action(
             chat_id=get_event_chat_id(),
             action=action,
-            timeout_secs=timeout_secs
+            timeout_secs=timeout_secs,
+            message_thread_id=message_thread_id
         )
 
     def get_user_profile_photos(
@@ -1119,11 +1130,11 @@ class ContextBot:
 
     def edit_forum_topic(
         self,
-        name: str,
-        icon_custom_emoji_id: str,
         message_thread_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        name: Optional[str] = None,
+        icon_custom_emoji_id: Optional[str] = None
     ) -> Literal[True]:
         if message_thread_id is None:
             message_thread_id = get_event_message_topic_id()
@@ -1131,9 +1142,9 @@ class ContextBot:
         return self._bot.edit_forum_topic(
             chat_id=get_event_chat_id(),
             message_thread_id=message_thread_id,
+            timeout_secs=timeout_secs,
             name=name,
-            icon_custom_emoji_id=icon_custom_emoji_id,
-            timeout_secs=timeout_secs
+            icon_custom_emoji_id=icon_custom_emoji_id
         )
 
     def close_forum_topic(
@@ -1193,6 +1204,58 @@ class ContextBot:
         return self._bot.unpin_all_forum_topic_messages(
             chat_id=get_event_chat_id(),
             message_thread_id=message_thread_id,
+            timeout_secs=timeout_secs
+        )
+
+    def edit_general_forum_topic(
+        self,
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.edit_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            name=name,
+            timeout_secs=timeout_secs
+        )
+
+    def close_general_forum_topic(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.close_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            timeout_secs=timeout_secs
+        )
+
+    def reopen_general_forum_topic(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.reopen_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            timeout_secs=timeout_secs
+        )
+
+    def hide_general_forum_topic(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.hide_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            timeout_secs=timeout_secs
+        )
+
+    def unhide_general_forum_topic(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.unhide_general_forum_topic(
+            chat_id=get_event_chat_id(),
             timeout_secs=timeout_secs
         )
 

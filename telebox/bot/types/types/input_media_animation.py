@@ -17,4 +17,5 @@ class InputMediaAnimation(Type):
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
+    has_spoiler: Optional[bool] = None
     type: str = input_media_types.ANIMATION
