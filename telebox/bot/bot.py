@@ -985,13 +985,15 @@ class Bot:
         chat_id: Union[int, str],
         action: str,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         return self._send_request(
             method="sendChatAction",
             parameters={
                 "chat_id": chat_id,
-                "action": action
+                "action": action,
+                "message_thread_id": message_thread_id
             },
             timeout_secs=timeout_secs
         )

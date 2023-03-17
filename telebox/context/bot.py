@@ -712,12 +712,17 @@ class ContextBot:
         self,
         action: str,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
+        if message_thread_id is None:
+            message_thread_id = get_event_message_topic_id()
+
         return self._bot.send_chat_action(
             chat_id=get_event_chat_id(),
             action=action,
-            timeout_secs=timeout_secs
+            timeout_secs=timeout_secs,
+            message_thread_id=message_thread_id
         )
 
     def get_user_profile_photos(
