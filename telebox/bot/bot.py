@@ -2217,24 +2217,16 @@ class Bot:
         self,
         user_id: int,
         name: str,
-        emojis: str,
+        sticker: InputSticker,
         *,
-        timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        mask_position: Optional[MaskPosition] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="addStickerToSet",
             parameters={
                 "user_id": user_id,
                 "name": name,
-                "emojis": emojis,
-                "png_sticker": png_sticker,
-                "tgs_sticker": tgs_sticker,
-                "webm_sticker": webm_sticker,
-                "mask_position": mask_position
+                "sticker": sticker
             },
             timeout_secs=timeout_secs
         )

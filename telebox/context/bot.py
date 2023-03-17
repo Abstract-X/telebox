@@ -23,7 +23,6 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.forum_topic import ForumTopic
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.poll import Poll
-from telebox.bot.types.types.mask_position import MaskPosition
 from telebox.bot.types.types.input_sticker import InputSticker
 from telebox.bot.types.types.inline_query_result import InlineQueryResult
 from telebox.bot.types.types.labeled_price import LabeledPrice
@@ -1468,23 +1467,15 @@ class ContextBot:
     def add_sticker_to_set(
         self,
         name: str,
-        emojis: str,
+        sticker: InputSticker,
         *,
-        timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        mask_position: Optional[MaskPosition] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._bot.add_sticker_to_set(
             user_id=get_event_user_id(),
             name=name,
-            emojis=emojis,
-            timeout_secs=timeout_secs,
-            png_sticker=png_sticker,
-            tgs_sticker=tgs_sticker,
-            webm_sticker=webm_sticker,
-            mask_position=mask_position
+            sticker=sticker,
+            timeout_secs=timeout_secs
         )
 
     def set_sticker_set_thumb(
