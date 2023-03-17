@@ -2263,6 +2263,22 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
+    def set_sticker_set_title(
+        self,
+        name: str,
+        title: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerSetTitle",
+            parameters={
+                "name": name,
+                "title": title
+            },
+            timeout_secs=timeout_secs
+        )
+
     def set_custom_emoji_sticker_set_thumbnail(
         self,
         name: str,
