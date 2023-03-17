@@ -1125,11 +1125,11 @@ class ContextBot:
 
     def edit_forum_topic(
         self,
-        name: str,
-        icon_custom_emoji_id: str,
         message_thread_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        name: Optional[str] = None,
+        icon_custom_emoji_id: Optional[str] = None
     ) -> Literal[True]:
         if message_thread_id is None:
             message_thread_id = get_event_message_topic_id()
@@ -1137,9 +1137,9 @@ class ContextBot:
         return self._bot.edit_forum_topic(
             chat_id=get_event_chat_id(),
             message_thread_id=message_thread_id,
+            timeout_secs=timeout_secs,
             name=name,
-            icon_custom_emoji_id=icon_custom_emoji_id,
-            timeout_secs=timeout_secs
+            icon_custom_emoji_id=icon_custom_emoji_id
         )
 
     def close_forum_topic(

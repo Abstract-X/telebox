@@ -1579,10 +1579,10 @@ class Bot:
         self,
         chat_id: Union[int, str],
         message_thread_id: int,
-        name: str,
-        icon_custom_emoji_id: str,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        name: Optional[str] = None,
+        icon_custom_emoji_id: Optional[str] = None
     ) -> Literal[True]:
         return self._send_request(
             method="editForumTopic",
