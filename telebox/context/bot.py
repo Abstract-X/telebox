@@ -1202,6 +1202,58 @@ class ContextBot:
             timeout_secs=timeout_secs
         )
 
+    def edit_general_forum_topic(
+        self,
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.edit_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            name=name,
+            timeout_secs=timeout_secs
+        )
+
+    def close_general_forum_topic(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.close_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            timeout_secs=timeout_secs
+        )
+
+    def reopen_general_forum_topic(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.reopen_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            timeout_secs=timeout_secs
+        )
+
+    def hide_general_forum_topic(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.hide_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            timeout_secs=timeout_secs
+        )
+
+    def unhide_general_forum_topic(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._bot.unhide_general_forum_topic(
+            chat_id=get_event_chat_id(),
+            timeout_secs=timeout_secs
+        )
+
     def answer_callback_query(
         self,
         *,

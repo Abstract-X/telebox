@@ -1659,6 +1659,78 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
+    def edit_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="editGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id,
+                "name": name
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def close_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="closeGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def reopen_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="reopenGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def hide_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="hideGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def unhide_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="unhideGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
     def answer_callback_query(
         self,
         callback_query_id: str,
