@@ -2295,6 +2295,20 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
+    def delete_sticker_set(
+        self,
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="deleteStickerSet",
+            parameters={
+                "name": name
+            },
+            timeout_secs=timeout_secs
+        )
+
     def set_sticker_set_thumb(
         self,
         name: str,
