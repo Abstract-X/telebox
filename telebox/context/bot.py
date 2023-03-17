@@ -237,7 +237,7 @@ class ContextBot:
         duration: Optional[int] = None,
         performer: Optional[str] = None,
         title: Optional[str] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         allow_sending_without_reply: Optional[bool] = None,
@@ -258,7 +258,7 @@ class ContextBot:
             duration=duration,
             performer=performer,
             title=title,
-            thumb=thumb,
+            thumbnail=thumbnail,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
@@ -272,7 +272,7 @@ class ContextBot:
         *,
         timeout_secs: Union[int, float, None] = None,
         with_reply: bool = False,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -291,7 +291,7 @@ class ContextBot:
             document=document,
             timeout_secs=timeout_secs,
             message_thread_id=get_event_message_topic_id(strictly=False),
-            thumb=thumb,
+            thumbnail=thumbnail,
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -312,7 +312,7 @@ class ContextBot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -335,7 +335,7 @@ class ContextBot:
             duration=duration,
             width=width,
             height=height,
-            thumb=thumb,
+            thumbnail=thumbnail,
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -357,7 +357,7 @@ class ContextBot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -379,7 +379,7 @@ class ContextBot:
             duration=duration,
             width=width,
             height=height,
-            thumb=thumb,
+            thumbnail=thumbnail,
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -434,7 +434,7 @@ class ContextBot:
         with_reply: bool = False,
         duration: Optional[int] = None,
         length: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         allow_sending_without_reply: Optional[bool] = None,
@@ -451,7 +451,7 @@ class ContextBot:
             message_thread_id=get_event_message_topic_id(strictly=False),
             duration=duration,
             length=length,
-            thumb=thumb,
+            thumbnail=thumbnail,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_to_message_id=get_event_message_id() if with_reply else None,
@@ -1480,18 +1480,18 @@ class ContextBot:
             timeout_secs=timeout_secs
         )
 
-    def set_sticker_set_thumb(
+    def set_sticker_set_thumbnail(
         self,
         name: str,
         *,
         timeout_secs: Union[int, float, None] = None,
-        thumb: Union[InputFile, str, None] = None
+        thumbnail: Union[InputFile, str, None] = None
     ) -> Literal[True]:
-        return self._bot.set_sticker_set_thumb(
+        return self._bot.set_sticker_set_thumbnail(
             name=name,
             user_id=get_event_user_id(),
             timeout_secs=timeout_secs,
-            thumb=thumb
+            thumbnail=thumbnail
         )
 
     def answer_inline_query(

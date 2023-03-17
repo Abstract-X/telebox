@@ -377,7 +377,7 @@ class Bot:
         duration: Optional[int] = None,
         performer: Optional[str] = None,
         title: Optional[str] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -404,7 +404,7 @@ class Bot:
                     "duration": duration,
                     "performer": performer,
                     "title": title,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -423,7 +423,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None,
         message_thread_id: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -445,7 +445,7 @@ class Bot:
                     "chat_id": chat_id,
                     "document": document,
                     "message_thread_id": message_thread_id,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
@@ -474,7 +474,7 @@ class Bot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -500,7 +500,7 @@ class Bot:
                     "duration": duration,
                     "width": width,
                     "height": height,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
@@ -530,7 +530,7 @@ class Bot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -555,7 +555,7 @@ class Bot:
                     "duration": duration,
                     "width": width,
                     "height": height,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
@@ -629,7 +629,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -649,7 +649,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "duration": duration,
                     "length": length,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -2357,20 +2357,20 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-    def set_sticker_set_thumb(
+    def set_sticker_set_thumbnail(
         self,
         name: str,
         user_id: int,
         *,
         timeout_secs: Union[int, float, None] = None,
-        thumb: Union[InputFile, str, None] = None
+        thumbnail: Union[InputFile, str, None] = None
     ) -> Literal[True]:
         return self._send_request(
-            method="setStickerSetThumb",
+            method="setStickerSetthumbnail",
             parameters={
                 "name": name,
                 "user_id": user_id,
-                "thumb": thumb
+                "thumbnail": thumbnail
             },
             timeout_secs=timeout_secs
         )
