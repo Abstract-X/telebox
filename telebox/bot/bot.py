@@ -1081,6 +1081,7 @@ class Bot:
         permissions: ChatPermissions,
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_independent_chat_permissions: Optional[bool] = None,
         until_date: Optional[datetime] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1089,6 +1090,7 @@ class Bot:
                 "chat_id": chat_id,
                 "user_id": user_id,
                 "permissions": permissions,
+                "use_independent_chat_permissions": use_independent_chat_permissions,
                 "until_date": until_date
             },
             timeout_secs=timeout_secs
@@ -1189,13 +1191,15 @@ class Bot:
         chat_id: Union[int, str],
         permissions: ChatPermissions,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        use_independent_chat_permissions: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatPermissions",
             parameters={
                 "chat_id": chat_id,
-                "permissions": permissions
+                "permissions": permissions,
+                "use_independent_chat_permissions": use_independent_chat_permissions
             },
             timeout_secs=timeout_secs
         )
