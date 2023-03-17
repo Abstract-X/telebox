@@ -28,6 +28,8 @@ from .forum_topic_closed import ForumTopicClosed
 from .forum_topic_reopened import ForumTopicReopened
 from .general_forum_topic_hidden import GeneralForumTopicHidden
 from .general_forum_topic_unhidden import GeneralForumTopicUnhidden
+from .user_shared import UserShared
+from .chat_shared import ChatShared
 from .video_chat_scheduled import VideoChatScheduled
 from .video_chat_started import VideoChatStarted
 from .video_chat_ended import VideoChatEnded
@@ -174,6 +176,8 @@ __all__ = [
     "ForumTopicReopened",
     "GeneralForumTopicHidden",
     "GeneralForumTopicUnhidden",
+    "UserShared",
+    "ChatShared",
     "VideoChatScheduled",
     "VideoChatStarted",
     "VideoChatEnded",
