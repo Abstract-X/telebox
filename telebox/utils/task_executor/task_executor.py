@@ -7,7 +7,7 @@ import time
 import uuid
 
 from telebox.utils.thread_pool import ThreadPool
-from telebox.utils.task_executor.errors import TaskExecutorError, PendingTaskNotFoundError
+from telebox.utils.task_executor.errors import PendingTaskNotFoundError
 
 
 logger = logging.getLogger(__name__)
@@ -25,9 +25,8 @@ class Task:
 
 class TaskExecutor:
 
-    def __init__(self, threads: int, *, allow_pending_tasks: bool = False):
+    def __init__(self, threads: int):
         self._thread_pool = ThreadPool(threads, self._run_task_processing, with_barrier=True)
-        self._allow_pending_tasks = allow_pending_tasks
         self._pending_task_processing_thread: Optional[Thread] = None
         self._tasks = Queue()
         self._pending_tasks: list[tuple[Task, float]] = []
@@ -55,9 +54,6 @@ class TaskExecutor:
         )
 
         if delay_secs is not None:
-            if not self._allow_pending_tasks:
-                raise TaskExecutorError("Pending tasks are not allowed!")
-
             if delay_secs < 0:
                 raise ValueError("Delay seconds cannot be negative!")
 
@@ -82,26 +78,21 @@ class TaskExecutor:
 
     def start_tasks(self) -> None:
         logger.debug("Tasks is starting...")
-
-        if self._allow_pending_tasks:
-            self._pending_task_processing_thread = Thread(
-                target=self._run_pending_task_processing,
-                daemon=True
-            )
-            self._pending_task_processing_thread.start()
-
+        self._pending_task_processing_thread = Thread(
+            target=self._run_pending_task_processing,
+            daemon=True
+        )
+        self._pending_task_processing_thread.start()
         self._thread_pool.start()
         logger.info("Tasks started.")
 
     def wait_tasks(self) -> None:
         logger.info("Finishing tasks...")
 
-        if self._allow_pending_tasks:
-            while self._pending_tasks:
-                time.sleep(_TASK_WAITING_DELAY_SECS)
+        while self._pending_tasks:
+            time.sleep(_TASK_WAITING_DELAY_SECS)
 
-            self._pending_task_processing_thread = None
-
+        self._pending_task_processing_thread = None
         self._tasks.join()
         logger.info("Tasks finished.")
 
