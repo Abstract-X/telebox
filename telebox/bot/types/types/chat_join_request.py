@@ -12,6 +12,7 @@ from telebox.bot.types.types.chat_invite_link import ChatInviteLink
 class ChatJoinRequest(Type):
     chat: Chat
     from_: User
+    user_chat_id: int
     date: datetime
     bio: Optional[str] = None
     invite_link: Optional[ChatInviteLink] = None

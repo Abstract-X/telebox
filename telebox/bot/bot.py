@@ -1,4 +1,4 @@
-from typing import Union, Optional, Any, Literal
+from typing import Union, Optional, Any, Literal, IO
 import time
 from datetime import datetime
 from dataclasses import is_dataclass
@@ -6,9 +6,10 @@ import secrets
 from http import HTTPStatus
 
 from requests import Session, Response, RequestException
+from requests_toolbelt import MultipartEncoder
 import ujson
 
-from telebox.bot.converters import DataclassConverter, get_timestamp
+from telebox.bot.utils.converters import DataclassConverter, get_timestamp
 from telebox.bot.errors import get_request_error, BotError, RetryAfterError, InternalServerError
 from telebox.bot.consts import chat_member_statuses
 from telebox.bot.types.types.response_parameters import ResponseParameters
@@ -35,6 +36,8 @@ from telebox.bot.types.types.chat_invite_link import ChatInviteLink
 from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.bot_command import BotCommand
 from telebox.bot.types.types.bot_command_scope import BotCommandScope
+from telebox.bot.types.types.bot_description import BotDescription
+from telebox.bot.types.types.bot_short_description import BotShortDescription
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.chat_administrator_rights import ChatAdministratorRights
 from telebox.bot.types.types.forum_topic import ForumTopic
@@ -42,6 +45,7 @@ from telebox.bot.types.types.poll import Poll
 from telebox.bot.types.types.sticker import Sticker
 from telebox.bot.types.types.sticker_set import StickerSet
 from telebox.bot.types.types.mask_position import MaskPosition
+from telebox.bot.types.types.input_sticker import InputSticker
 from telebox.bot.types.types.inline_query_result import InlineQueryResult
 from telebox.bot.types.types.sent_web_app_message import SentWebAppMessage
 from telebox.bot.types.types.labeled_price import LabeledPrice
@@ -94,7 +98,6 @@ class Bot:
         self._retries = retries
         self._retry_delay_secs = retry_delay_secs
         self._wait_on_rate_limit = wait_on_rate_limit
-        self._over_limit_times: dict[int, float] = {}
         self._dataclass_converter = DataclassConverter()
         self._me: Optional[User] = None
 
@@ -107,12 +110,6 @@ class Bot:
             )
 
         return self._me
-
-    @property
-    def over_limit_chat_ids(self) -> set[int]:
-        self._remove_irrelevant_over_limit_delay_secs()
-
-        return set(self._over_limit_times)
 
     def get_updates(
         self,
@@ -325,6 +322,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -348,6 +346,7 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -372,7 +371,7 @@ class Bot:
         duration: Optional[int] = None,
         performer: Optional[str] = None,
         title: Optional[str] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -399,7 +398,7 @@ class Bot:
                     "duration": duration,
                     "performer": performer,
                     "title": title,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -418,7 +417,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None,
         message_thread_id: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -440,7 +439,7 @@ class Bot:
                     "chat_id": chat_id,
                     "document": document,
                     "message_thread_id": message_thread_id,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
@@ -469,10 +468,11 @@ class Bot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -494,13 +494,14 @@ class Bot:
                     "duration": duration,
                     "width": width,
                     "height": height,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "supports_streaming": supports_streaming,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -523,10 +524,11 @@ class Bot:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -547,13 +549,14 @@ class Bot:
                     "duration": duration,
                     "width": width,
                     "height": height,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode,
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -620,7 +623,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
-        thumb: Union[InputFile, str, None] = None,
+        thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -640,7 +643,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "duration": duration,
                     "length": length,
-                    "thumb": thumb,
+                    "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -979,13 +982,15 @@ class Bot:
         chat_id: Union[int, str],
         action: str,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         return self._send_request(
             method="sendChatAction",
             parameters={
                 "chat_id": chat_id,
-                "action": action
+                "action": action,
+                "message_thread_id": message_thread_id
             },
             timeout_secs=timeout_secs
         )
@@ -1073,6 +1078,7 @@ class Bot:
         permissions: ChatPermissions,
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_independent_chat_permissions: Optional[bool] = None,
         until_date: Optional[datetime] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1081,6 +1087,7 @@ class Bot:
                 "chat_id": chat_id,
                 "user_id": user_id,
                 "permissions": permissions,
+                "use_independent_chat_permissions": use_independent_chat_permissions,
                 "until_date": until_date
             },
             timeout_secs=timeout_secs
@@ -1181,13 +1188,15 @@ class Bot:
         chat_id: Union[int, str],
         permissions: ChatPermissions,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        use_independent_chat_permissions: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
             method="setChatPermissions",
             parameters={
                 "chat_id": chat_id,
-                "permissions": permissions
+                "permissions": permissions,
+                "use_independent_chat_permissions": use_independent_chat_permissions
             },
             timeout_secs=timeout_secs
         )
@@ -1573,10 +1582,10 @@ class Bot:
         self,
         chat_id: Union[int, str],
         message_thread_id: int,
-        name: str,
-        icon_custom_emoji_id: str,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        name: Optional[str] = None,
+        icon_custom_emoji_id: Optional[str] = None
     ) -> Literal[True]:
         return self._send_request(
             method="editForumTopic",
@@ -1649,6 +1658,78 @@ class Bot:
             parameters={
                 "chat_id": chat_id,
                 "message_thread_id": message_thread_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def edit_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="editGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id,
+                "name": name
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def close_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="closeGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def reopen_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="reopenGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def hide_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="hideGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def unhide_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="unhideGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
             },
             timeout_secs=timeout_secs
         )
@@ -1727,6 +1808,72 @@ class Bot:
                 timeout_secs=timeout_secs
             )
         ]
+
+    def set_my_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        description: Optional[str] = None,
+        language_code: Optional[str] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setMyDescription",
+            parameters={
+                "description": description,
+                "language_code": language_code
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def get_my_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        language_code: Optional[str] = None
+    ) -> BotDescription:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getMyDescription",
+                parameters={
+                    "language_code": language_code
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=BotDescription
+        )
+
+    def set_my_short_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        short_description: Optional[str] = None,
+        language_code: Optional[str] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setMyShortDescription",
+            parameters={
+                "short_description": short_description,
+                "language_code": language_code
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def get_my_short_description(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        language_code: Optional[str] = None
+    ) -> BotShortDescription:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getMyShortDescription",
+                parameters={
+                    "language_code": language_code
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=BotShortDescription
+        )
 
     def set_chat_menu_button(
         self,
@@ -1950,6 +2097,7 @@ class Bot:
         sticker: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        emoji: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -1967,6 +2115,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "sticker": sticker,
+                    "emoji": emoji,
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -2016,7 +2165,8 @@ class Bot:
     def upload_sticker_file(
         self,
         user_id: int,
-        png_sticker: InputFile,
+        sticker: InputFile,
+        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> File:
@@ -2025,7 +2175,8 @@ class Bot:
                 method="uploadStickerFile",
                 parameters={
                     "user_id": user_id,
-                    "png_sticker": png_sticker
+                    "sticker": sticker,
+                    "sticker_format": sticker_format
                 },
                 timeout_secs=timeout_secs
             ),
@@ -2037,14 +2188,12 @@ class Bot:
         user_id: int,
         name: str,
         title: str,
-        emojis: str,
+        stickers: list[InputSticker],
+        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        contains_masks: Optional[bool] = None,
-        mask_position: Optional[MaskPosition] = None
+        sticker_type: Optional[str] = None,
+        needs_repainting: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
             method="createNewStickerSet",
@@ -2052,12 +2201,10 @@ class Bot:
                 "user_id": user_id,
                 "name": name,
                 "title": title,
-                "emojis": emojis,
-                "png_sticker": png_sticker,
-                "tgs_sticker": tgs_sticker,
-                "webm_sticker": webm_sticker,
-                "contains_masks": contains_masks,
-                "mask_position": mask_position
+                "stickers": stickers,
+                "sticker_format": sticker_format,
+                "sticker_type": sticker_type,
+                "needs_repainting": needs_repainting
             },
             timeout_secs=timeout_secs
         )
@@ -2066,24 +2213,16 @@ class Bot:
         self,
         user_id: int,
         name: str,
-        emojis: str,
+        sticker: InputSticker,
         *,
-        timeout_secs: Union[int, float, None] = None,
-        png_sticker: Union[InputFile, str, None] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        mask_position: Optional[MaskPosition] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
         return self._send_request(
             method="addStickerToSet",
             parameters={
                 "user_id": user_id,
                 "name": name,
-                "emojis": emojis,
-                "png_sticker": png_sticker,
-                "tgs_sticker": tgs_sticker,
-                "webm_sticker": webm_sticker,
-                "mask_position": mask_position
+                "sticker": sticker
             },
             timeout_secs=timeout_secs
         )
@@ -2118,20 +2257,114 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-    def set_sticker_set_thumb(
+    def set_sticker_emoji_list(
+        self,
+        sticker: str,
+        emoji_list: list[str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerEmojiList",
+            parameters={
+                "sticker": sticker,
+                "emoji_list": emoji_list
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_keywords(
+        self,
+        sticker: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        keywords: Optional[list[str]] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerKeywords",
+            parameters={
+                "sticker": sticker,
+                "keywords": keywords
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_mask_position(
+        self,
+        sticker: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        mask_position: Optional[MaskPosition] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerMaskPosition",
+            parameters={
+                "sticker": sticker,
+                "mask_position": mask_position
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_set_title(
+        self,
+        name: str,
+        title: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setStickerSetTitle",
+            parameters={
+                "name": name,
+                "title": title
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_custom_emoji_sticker_set_thumbnail(
+        self,
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        custom_emoji_id: Optional[str] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setCustomEmojiStickerSetThumbnail",
+            parameters={
+                "name": name,
+                "custom_emoji_id": custom_emoji_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def delete_sticker_set(
+        self,
+        name: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="deleteStickerSet",
+            parameters={
+                "name": name
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_sticker_set_thumbnail(
         self,
         name: str,
         user_id: int,
         *,
         timeout_secs: Union[int, float, None] = None,
-        thumb: Union[InputFile, str, None] = None
+        thumbnail: Union[InputFile, str, None] = None
     ) -> Literal[True]:
         return self._send_request(
-            method="setStickerSetThumb",
+            method="setStickerSetthumbnail",
             parameters={
                 "name": name,
                 "user_id": user_id,
-                "thumb": thumb
+                "thumbnail": thumbnail
             },
             timeout_secs=timeout_secs
         )
@@ -2451,40 +2684,42 @@ class Bot:
         timeout_secs: Union[int, float, None] = None
     ) -> Any:
         parameters = parameters or {}
+        multipart_encoder, files = self._prepare_multipart_encoder(parameters)
         url = self._get_api_url(method)
-        data, files = self._get_prepared_parameters(parameters)
         timeout_secs = timeout_secs or self._timeout_secs
-        chat_id = over_limit_chat_id = parameters.get("chat_id")
-
-        if not isinstance(over_limit_chat_id, int):
-            over_limit_chat_id = None
-
         retries = 0
 
         while True:
             try:
-                response = self._session.post(url, data=data, files=files, timeout=timeout_secs)
+                response = self._session.post(
+                    url,
+                    data=multipart_encoder,  # NOQA
+                    headers={
+                        "Content-Type": multipart_encoder.content_type
+                    },
+                    timeout=timeout_secs
+                )
             except (RequestException, InternalServerError):
                 if retries == self._retries:
                     raise
+
+                for i in files:
+                    i.seek(0)
 
                 retries += 1
                 time.sleep(self._retry_delay_secs)
                 continue
 
-            retries = 0
-
             try:
                 return self._process_response(response, method, parameters)
             except RetryAfterError as error:
-                self._remove_irrelevant_over_limit_delay_secs()
-
-                if over_limit_chat_id is not None:
-                    self._over_limit_times[chat_id] = time.monotonic() + error.retry_after
-
                 if not self._wait_on_rate_limit:
                     raise
 
+                for i in files:
+                    i.seek(0)
+
+                retries = 0
                 time.sleep(error.retry_after)
 
     def _get_api_url(self, method: str) -> str:
@@ -2501,57 +2736,77 @@ class Bot:
         elif self._parse_mode is not NOT_SET and not with_entities:
             return self._parse_mode
 
-    def _get_prepared_parameters(
+    def _prepare_multipart_encoder(
         self,
         parameters: dict[str, Any]
-    ) -> tuple[dict[str, Any], list[tuple[str, tuple[str, bytes]]]]:
-        data = {}
-        files = []
+    ) -> tuple[MultipartEncoder, list[IO]]:
+        fields: dict[str, Any] = {}
+        files: list[IO] = []
 
         for name, parameter in parameters.items():
             if parameter is None:
                 continue
 
-            if isinstance(parameter, InputFile):
-                files.append((
-                    name,
-                    (
-                        parameter.name or secrets.token_urlsafe(16),
-                        parameter.content
-                    )
-                ))
-            else:
-                parameter = self._get_prepared_parameter(parameter)
+            parameter = self._prepare_parameter_value(
+                parameter,
+                multipart_fields=fields,
+                files=files,
+                attach_files=False
+            )
 
-                if isinstance(parameter, (dict, list)):
-                    data[name] = ujson.dumps(parameter)
-                else:
-                    data[name] = parameter
+            if isinstance(parameter, (dict, list)):
+                parameter = ujson.dumps(parameter)
+            elif not isinstance(parameter, (str, tuple)):
+                parameter = str(parameter)
 
-        return data, files
+            fields[name] = parameter
 
-    def _get_prepared_parameter(self, parameter: Any) -> Any:
-        if is_dataclass(parameter):
-            return self._dataclass_converter.get_data(parameter)
-        elif isinstance(parameter, datetime):
-            return get_timestamp(parameter)
-        elif isinstance(parameter, list):
-            return self._get_prepared_list_parameter(parameter)
+        return MultipartEncoder(fields), files
 
-        return parameter
+    def _prepare_parameter_value(
+        self,
+        value: Any,
+        multipart_fields: dict[str, Any],
+        files: list[IO],
+        attach_files: bool = True,
+    ) -> Any:
+        if isinstance(value, InputFile):
+            files.append(value.file)
 
-    def _get_prepared_list_parameter(self, parameter: list[Any]) -> list[Any]:
-        prepared_parameter = []
+            if attach_files:
+                while True:
+                    name = secrets.token_urlsafe(10)
 
-        for i in parameter:
-            if isinstance(i, list):
-                result = self._get_prepared_list_parameter(i)
-            else:
-                result = self._get_prepared_parameter(i)
+                    if name not in multipart_fields:
+                        break
 
-            prepared_parameter.append(result)
+                multipart_fields[name] = (value.name, value.file)
 
-        return prepared_parameter
+                return f"attach://{name}"
+
+            return value.name, value.file
+        elif is_dataclass(value):
+            return {
+                name: self._prepare_parameter_value(
+                    value_,
+                    multipart_fields=multipart_fields,
+                    files=files
+                )
+                for name, value_ in self._dataclass_converter.get_data(value).items()
+            }
+        elif isinstance(value, datetime):
+            return get_timestamp(value)
+        elif isinstance(value, list):
+            return [
+                self._prepare_parameter_value(
+                    i,
+                    multipart_fields=multipart_fields,
+                    files=files
+                )
+                for i in value
+            ]
+
+        return value
 
     def _process_response(
         self,
@@ -2581,13 +2836,6 @@ class Bot:
             )
 
         return data["result"]
-
-    def _remove_irrelevant_over_limit_delay_secs(self) -> None:
-        current_time = time.monotonic()
-
-        for i in set(self._over_limit_times):
-            if current_time > self._over_limit_times[i]:
-                del self._over_limit_times[i]
 
 
 class TelegramBotContext:

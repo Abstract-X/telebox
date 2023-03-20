@@ -9,8 +9,8 @@ from telebox.bot.types.types.message_entity import MessageEntity
 
 @dataclass
 class InputMediaDocument(Type):
-    media: str
-    thumb: Union[InputFile, str, None] = None
+    media: Union[InputFile, str]
+    thumbnail: Union[InputFile, str, None] = None
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
     caption_entities: Optional[list[MessageEntity]] = None

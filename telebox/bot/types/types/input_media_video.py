@@ -9,8 +9,8 @@ from telebox.bot.types.types.message_entity import MessageEntity
 
 @dataclass
 class InputMediaVideo(Type):
-    media: str
-    thumb: Union[InputFile, str, None] = None
+    media: Union[InputFile, str]
+    thumbnail: Union[InputFile, str, None] = None
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
     caption_entities: Optional[list[MessageEntity]] = None
@@ -18,4 +18,5 @@ class InputMediaVideo(Type):
     height: Optional[int] = None
     duration: Optional[int] = None
     supports_streaming: Optional[bool] = None
+    has_spoiler: Optional[bool] = None
     type: str = input_media_types.VIDEO

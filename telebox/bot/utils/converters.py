@@ -53,6 +53,7 @@ from telebox.bot.types.types.inline_query_result_location import InlineQueryResu
 from telebox.bot.types.types.inline_query_result_venue import InlineQueryResultVenue
 from telebox.bot.types.types.inline_query_result_contact import InlineQueryResultContact
 from telebox.bot.types.types.inline_query_result_game import InlineQueryResultGame
+from telebox.bot.types.types.input_file import InputFile
 from telebox.bot.types.types.inline_query_result_cached_photo import (
     InlineQueryResultCachedPhoto
 )
@@ -198,6 +199,9 @@ def _get_dataclass_factory() -> Factory:
         datetime_: Schema(
             serializer=get_timestamp,
             parser=get_datetime
+        ),
+        InputFile: Schema(
+            serializer=lambda file: file
         )
     }
 

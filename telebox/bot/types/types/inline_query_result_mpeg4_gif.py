@@ -12,11 +12,11 @@ from telebox.bot.types.types.input_message_content import InputMessageContent
 class InlineQueryResultMpeg4Gif(Type):
     id: str
     mpeg4_url: str
-    thumb_url: str
+    thumbnail_url: str
     mpeg4_width: Optional[int] = None
     mpeg4_height: Optional[int] = None
     mpeg4_duration: Optional[int] = None
-    thumb_mime_type: Optional[str] = None
+    thumbnail_mime_type: Optional[str] = None
     title: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[str] = None

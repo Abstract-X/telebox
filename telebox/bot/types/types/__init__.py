@@ -23,8 +23,13 @@ from .web_app_data import WebAppData
 from .proximity_alert_triggered import ProximityAlertTriggered
 from .message_auto_delete_timer_changed import MessageAutoDeleteTimerChanged
 from .forum_topic_created import ForumTopicCreated
+from .forum_topic_edited import ForumTopicEdited
 from .forum_topic_closed import ForumTopicClosed
 from .forum_topic_reopened import ForumTopicReopened
+from .general_forum_topic_hidden import GeneralForumTopicHidden
+from .general_forum_topic_unhidden import GeneralForumTopicUnhidden
+from .user_shared import UserShared
+from .chat_shared import ChatShared
 from .video_chat_scheduled import VideoChatScheduled
 from .video_chat_started import VideoChatStarted
 from .video_chat_ended import VideoChatEnded
@@ -34,6 +39,8 @@ from .file import File
 from .web_app_info import WebAppInfo
 from .reply_keyboard_markup import ReplyKeyboardMarkup
 from .keyboard_button import KeyboardButton
+from .keyboard_button_request_user import KeyboardButtonRequestUser
+from .keyboard_button_request_chat import KeyboardButtonRequestChat
 from .keyboard_button_poll_type import KeyboardButtonPollType
 from .reply_keyboard_remove import ReplyKeyboardRemove
 from .inline_keyboard_markup import InlineKeyboardMarkup
@@ -65,6 +72,8 @@ from .bot_command_scope_all_chat_administrators import BotCommandScopeAllChatAdm
 from .bot_command_scope_chat import BotCommandScopeChat
 from .bot_command_scope_chat_administrators import BotCommandScopeChatAdministrators
 from .bot_command_scope_chat_member import BotCommandScopeChatMember
+from .bot_description import BotDescription
+from .bot_short_description import BotShortDescription
 from .menu_button import MenuButton
 from .menu_button_commands import MenuButtonCommands
 from .menu_button_web_app import MenuButtonWebApp
@@ -76,10 +85,11 @@ from .input_media_video import InputMediaVideo
 from .input_media_animation import InputMediaAnimation
 from .input_media_audio import InputMediaAudio
 from .input_media_document import InputMediaDocument
-from .input_file import InputFile, get_input_file_by_path
+from .input_file import InputFile
 from .sticker import Sticker
 from .sticker_set import StickerSet
 from .mask_position import MaskPosition
+from .input_sticker import InputSticker
 from .inline_query import InlineQuery
 from .inline_query_result import InlineQueryResult
 from .inline_query_result_article import InlineQueryResultArticle
@@ -116,6 +126,7 @@ from .shipping_address import ShippingAddress
 from .order_info import OrderInfo
 from .shipping_option import ShippingOption
 from .successful_payment import SuccessfulPayment
+from .write_access_allowed import WriteAccessAllowed
 from .shipping_query import ShippingQuery
 from .pre_checkout_query import PreCheckoutQuery
 from .passport_data import PassportData
@@ -163,8 +174,13 @@ __all__ = [
     "ProximityAlertTriggered",
     "MessageAutoDeleteTimerChanged",
     "ForumTopicCreated",
+    "ForumTopicEdited",
     "ForumTopicClosed",
     "ForumTopicReopened",
+    "GeneralForumTopicHidden",
+    "GeneralForumTopicUnhidden",
+    "UserShared",
+    "ChatShared",
     "VideoChatScheduled",
     "VideoChatStarted",
     "VideoChatEnded",
@@ -174,6 +190,8 @@ __all__ = [
     "WebAppInfo",
     "ReplyKeyboardMarkup",
     "KeyboardButton",
+    "KeyboardButtonRequestUser",
+    "KeyboardButtonRequestChat",
     "KeyboardButtonPollType",
     "ReplyKeyboardRemove",
     "InlineKeyboardMarkup",
@@ -205,6 +223,8 @@ __all__ = [
     "BotCommandScopeChat",
     "BotCommandScopeChatAdministrators",
     "BotCommandScopeChatMember",
+    "BotDescription",
+    "BotShortDescription",
     "MenuButton",
     "MenuButtonCommands",
     "MenuButtonWebApp",
@@ -217,10 +237,10 @@ __all__ = [
     "InputMediaAudio",
     "InputMediaDocument",
     "InputFile",
-    "get_input_file_by_path",
     "Sticker",
     "StickerSet",
     "MaskPosition",
+    "InputSticker",
     "InlineQuery",
     "InlineQueryResult",
     "InlineQueryResultArticle",
@@ -257,6 +277,7 @@ __all__ = [
     "OrderInfo",
     "ShippingOption",
     "SuccessfulPayment",
+    "WriteAccessAllowed",
     "ShippingQuery",
     "PreCheckoutQuery",
     "PassportData",
