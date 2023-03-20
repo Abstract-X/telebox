@@ -2683,8 +2683,21 @@ class Bot:
         parameters: Optional[dict[str, Any]] = None,
         timeout_secs: Union[int, float, None] = None
     ) -> Any:
-        parameters = parameters or {}
-        multipart_encoder, files = self._prepare_multipart_encoder(parameters)
+        parameters = {
+            name: value
+            for name, value in (parameters or {}).items()
+            if value is not None
+        }
+
+        if parameters:
+            data, files = self._prepare_multipart_encoder(parameters)
+            headers = {
+                "Content-Type": data.content_type
+            }
+        else:
+            data = headers = None
+            files = []
+
         url = self._get_api_url(method)
         timeout_secs = timeout_secs or self._timeout_secs
         retries = 0
@@ -2693,10 +2706,8 @@ class Bot:
             try:
                 response = self._session.post(
                     url,
-                    data=multipart_encoder,  # NOQA
-                    headers={
-                        "Content-Type": multipart_encoder.content_type
-                    },
+                    data=data,  # NOQA
+                    headers=headers,
                     timeout=timeout_secs
                 )
             except (RequestException, InternalServerError):
@@ -2743,23 +2754,20 @@ class Bot:
         fields: dict[str, Any] = {}
         files: list[IO] = []
 
-        for name, parameter in parameters.items():
-            if parameter is None:
-                continue
-
-            parameter = self._prepare_parameter_value(
-                parameter,
+        for name, value in parameters.items():
+            value = self._prepare_parameter_value(
+                value,
                 multipart_fields=fields,
                 files=files,
                 attach_files=False
             )
 
-            if isinstance(parameter, (dict, list)):
-                parameter = ujson.dumps(parameter)
-            elif not isinstance(parameter, (str, tuple)):
-                parameter = str(parameter)
+            if isinstance(value, (dict, list)):
+                value = ujson.dumps(value)
+            elif not isinstance(value, (str, tuple)):
+                value = str(value)
 
-            fields[name] = parameter
+            fields[name] = value
 
         return MultipartEncoder(fields), files
 

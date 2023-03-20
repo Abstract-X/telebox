@@ -775,11 +775,7 @@ def get_request_error(
 ) -> RequestError:
     kwargs = {
         "method": method,
-        "parameters": {
-            name: value
-            for name, value in parameters.items()
-            if value is not None
-        },
+        "parameters": parameters,
         "status_code": status_code,
         "description": description
     }
