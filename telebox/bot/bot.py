@@ -1,4 +1,4 @@
-from typing import Union, Optional, Any, Literal
+from typing import Union, Optional, Any, Literal, IO
 import time
 from datetime import datetime
 from dataclasses import is_dataclass
@@ -6,6 +6,7 @@ import secrets
 from http import HTTPStatus
 
 from requests import Session, Response, RequestException
+from requests_toolbelt import MultipartEncoder
 import ujson
 
 from telebox.bot.converters import DataclassConverter, get_timestamp
@@ -2690,8 +2691,8 @@ class Bot:
         timeout_secs: Union[int, float, None] = None
     ) -> Any:
         parameters = parameters or {}
+        multipart_encoder, files = self._prepare_multipart_encoder(parameters)
         url = self._get_api_url(method)
-        data, files = self._get_prepared_parameters(parameters)
         timeout_secs = timeout_secs or self._timeout_secs
         chat_id = over_limit_chat_id = parameters.get("chat_id")
 
@@ -2702,12 +2703,23 @@ class Bot:
 
         while True:
             try:
-                response = self._session.post(url, data=data, files=files, timeout=timeout_secs)
+                response = self._session.post(
+                    url,
+                    data=multipart_encoder,  # NOQA
+                    headers={
+                        "Content-Type": multipart_encoder.content_type
+                    },
+                    timeout=timeout_secs
+                )
             except (RequestException, InternalServerError):
                 if retries == self._retries:
                     raise
 
                 retries += 1
+
+                for i in files:
+                    i.seek(0)
+
                 time.sleep(self._retry_delay_secs)
                 continue
 
@@ -2723,6 +2735,9 @@ class Bot:
 
                 if not self._wait_on_rate_limit:
                     raise
+
+                for i in files:
+                    i.seek(0)
 
                 time.sleep(error.retry_after)
 
@@ -2740,57 +2755,77 @@ class Bot:
         elif self._parse_mode is not NOT_SET and not with_entities:
             return self._parse_mode
 
-    def _get_prepared_parameters(
+    def _prepare_multipart_encoder(
         self,
         parameters: dict[str, Any]
-    ) -> tuple[dict[str, Any], list[tuple[str, tuple[str, bytes]]]]:
-        data = {}
-        files = []
+    ) -> tuple[MultipartEncoder, list[IO]]:
+        fields: dict[str, Any] = {}
+        files: list[IO] = []
 
         for name, parameter in parameters.items():
             if parameter is None:
                 continue
 
-            if isinstance(parameter, InputFile):
-                files.append((
-                    name,
-                    (
-                        parameter.name or secrets.token_urlsafe(16),
-                        parameter.content
-                    )
-                ))
-            else:
-                parameter = self._get_prepared_parameter(parameter)
+            parameter = self._prepare_parameter_value(
+                parameter,
+                multipart_fields=fields,
+                files=files,
+                attach_files=False
+            )
 
-                if isinstance(parameter, (dict, list)):
-                    data[name] = ujson.dumps(parameter)
-                else:
-                    data[name] = parameter
+            if isinstance(parameter, (dict, list)):
+                parameter = ujson.dumps(parameter)
+            elif not isinstance(parameter, (str, tuple)):
+                parameter = str(parameter)
 
-        return data, files
+            fields[name] = parameter
 
-    def _get_prepared_parameter(self, parameter: Any) -> Any:
-        if is_dataclass(parameter):
-            return self._dataclass_converter.get_data(parameter)
-        elif isinstance(parameter, datetime):
-            return get_timestamp(parameter)
-        elif isinstance(parameter, list):
-            return self._get_prepared_list_parameter(parameter)
+        return MultipartEncoder(fields), files
 
-        return parameter
+    def _prepare_parameter_value(
+        self,
+        value: Any,
+        multipart_fields: dict[str, Any],
+        files: list[IO],
+        attach_files: bool = True,
+    ) -> Any:
+        if isinstance(value, InputFile):
+            files.append(value.file)
 
-    def _get_prepared_list_parameter(self, parameter: list[Any]) -> list[Any]:
-        prepared_parameter = []
+            if attach_files:
+                while True:
+                    name = secrets.token_urlsafe(10)
 
-        for i in parameter:
-            if isinstance(i, list):
-                result = self._get_prepared_list_parameter(i)
-            else:
-                result = self._get_prepared_parameter(i)
+                    if name not in multipart_fields:
+                        break
 
-            prepared_parameter.append(result)
+                multipart_fields[name] = (value.name, value.file)
 
-        return prepared_parameter
+                return f"attach://{name}"
+
+            return value.name, value.file
+        elif is_dataclass(value):
+            return {
+                name: self._prepare_parameter_value(
+                    value_,
+                    multipart_fields=multipart_fields,
+                    files=files
+                )
+                for name, value_ in self._dataclass_converter.get_data(value).items()
+            }
+        elif isinstance(value, datetime):
+            return get_timestamp(value)
+        elif isinstance(value, list):
+            return [
+                self._prepare_parameter_value(
+                    i,
+                    multipart_fields=multipart_fields,
+                    files=files
+                )
+                for i in value
+            ]
+
+        return value
 
     def _process_response(
         self,

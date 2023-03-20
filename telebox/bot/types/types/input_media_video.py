@@ -9,7 +9,7 @@ from telebox.bot.types.types.message_entity import MessageEntity
 
 @dataclass
 class InputMediaVideo(Type):
-    media: str
+    media: Union[InputFile, str]
     thumbnail: Union[InputFile, str, None] = None
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
