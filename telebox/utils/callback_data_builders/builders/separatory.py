@@ -15,7 +15,7 @@ class SeparatoryCallbackDataBuilder(AbstractCallbackDataBuilder):
 
         self._separator = separator
 
-    def get_builded_data(self, key: Key, value: Value = None) -> str:
+    def get_string(self, key: Key, value: Value = None) -> str:
         if self._separator in key:
             raise ValueError(f"Key {key!r} contains separator {self._separator!r}!")
 
@@ -33,8 +33,8 @@ class SeparatoryCallbackDataBuilder(AbstractCallbackDataBuilder):
 
         return data
 
-    def get_parsed_data(self, data: str) -> tuple[Key, Value]:
-        key, *value = data.split(self._separator)
+    def get_data(self, string: str) -> tuple[Key, Value]:
+        key, *value = string.split(self._separator)
 
         if not value:
             value = None
