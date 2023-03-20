@@ -9,7 +9,7 @@ from requests import Session, Response, RequestException
 from requests_toolbelt import MultipartEncoder
 import ujson
 
-from telebox.bot.converters import DataclassConverter, get_timestamp
+from telebox.bot.utils.converters import DataclassConverter, get_timestamp
 from telebox.bot.errors import get_request_error, BotError, RetryAfterError, InternalServerError
 from telebox.bot.consts import chat_member_statuses
 from telebox.bot.types.types.response_parameters import ResponseParameters

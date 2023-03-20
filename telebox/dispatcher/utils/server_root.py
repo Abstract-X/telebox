@@ -4,7 +4,7 @@ import cherrypy
 import ujson
 
 from telebox.bot.types.types.update import Update
-from telebox.bot.converters import DataclassConverter
+from telebox.bot.utils.converters import DataclassConverter
 
 
 class ServerRoot:
