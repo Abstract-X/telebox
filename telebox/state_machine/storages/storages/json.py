@@ -25,6 +25,7 @@ class JSONStateStorage(AbstractStateStorage):
 
             with open(self._path, "w", encoding="UTF-8") as stream:
                 ujson.dump(stored_states, stream)
+                stream.write("\n")
 
     def load_states(self, *, chat_id: int, user_id: Optional[int] = None) -> list[str]:
         with self._lock:
