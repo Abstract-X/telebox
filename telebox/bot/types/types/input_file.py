@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, IO
+from typing import Optional, BinaryIO
 import os.path
 
 from telebox.bot.types.type import Type
@@ -7,7 +7,7 @@ from telebox.bot.types.type import Type
 
 @dataclass
 class InputFile(Type):
-    file: IO = field(repr=False)
+    file: BinaryIO = field(repr=False)
     name: Optional[str] = None
 
     def __post_init__(self):
