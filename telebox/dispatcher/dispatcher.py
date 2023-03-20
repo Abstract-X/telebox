@@ -30,7 +30,6 @@ from telebox.dispatcher.utils.router import Router
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet, NOT_SET
-from telebox.dispatcher.utils.events import get_event_chat_id
 from telebox.context.vars import (
     event_context,
     event_handler_context,
@@ -68,11 +67,9 @@ class Dispatcher:
         self,
         bot: Bot,
         *,
-        drop_over_limit_events: bool = False,
         default_rate_limit: Optional[RateLimit] = None
     ):
         self._bot = bot
-        self._drop_over_limit_events = drop_over_limit_events
         self._default_rate_limit = default_rate_limit
         self._polling_is_used = False
         self._server_is_used = False
@@ -637,17 +634,8 @@ class Dispatcher:
 
             return
 
-        if self._check_over_limit_event(event):
-            logger.debug("Event from over limit chat dropped: %r.", event)
-        else:
-            logger.debug("Event added to queue: %r.", event)
-            self._events.add_event(event, event_type)
-
-    def _check_over_limit_event(self, event: Event) -> bool:
-        return (
-            self._drop_over_limit_events
-            and get_event_chat_id(event) in self._bot.over_limit_chat_ids
-        )
+        logger.debug("Event added to queue: %r.", event)
+        self._events.add_event(event, event_type)
 
     def _finish_update_processing(self) -> None:
         logger.info("Finishing update processing...")
@@ -664,20 +652,17 @@ class Dispatcher:
                         container = self._media_group_containers.pop(media_group_id)
                         event = MediaGroup(container.events)
 
-                        if self._check_over_limit_event(event):
-                            logger.debug("Event from over limit chat dropped: %r.", event)
+                        if container.event_type is EventType.MESSAGE:
+                            event_type = EventType.MEDIA_GROUP
+                        elif container.event_type is EventType.CHANNEL_POST:
+                            event_type = EventType.CHANNEL_MEDIA_GROUP
                         else:
-                            if container.event_type is EventType.MESSAGE:
-                                event_type = EventType.MEDIA_GROUP
-                            elif container.event_type is EventType.CHANNEL_POST:
-                                event_type = EventType.CHANNEL_MEDIA_GROUP
-                            else:
-                                raise RuntimeError(
-                                    f"Unknown message type {container.event_type!r}!"
-                                )
+                            raise RuntimeError(
+                                f"Unknown message type {container.event_type!r}!"
+                            )
 
-                            logger.debug("Event added to queue: %r.", event)
-                            self._events.add_event(event, event_type)
+                        logger.debug("Event added to queue: %r.", event)
+                        self._events.add_event(event, event_type)
 
             time.sleep(_MEDIA_GROUP_GATHERING_DELAY_SECS)
 

@@ -98,7 +98,6 @@ class Bot:
         self._retries = retries
         self._retry_delay_secs = retry_delay_secs
         self._wait_on_rate_limit = wait_on_rate_limit
-        self._over_limit_times: dict[int, float] = {}
         self._dataclass_converter = DataclassConverter()
         self._me: Optional[User] = None
 
@@ -111,12 +110,6 @@ class Bot:
             )
 
         return self._me
-
-    @property
-    def over_limit_chat_ids(self) -> set[int]:
-        self._remove_irrelevant_over_limit_delay_secs()
-
-        return set(self._over_limit_times)
 
     def get_updates(
         self,
@@ -2694,11 +2687,6 @@ class Bot:
         multipart_encoder, files = self._prepare_multipart_encoder(parameters)
         url = self._get_api_url(method)
         timeout_secs = timeout_secs or self._timeout_secs
-        chat_id = over_limit_chat_id = parameters.get("chat_id")
-
-        if not isinstance(over_limit_chat_id, int):
-            over_limit_chat_id = None
-
         retries = 0
 
         while True:
@@ -2715,30 +2703,23 @@ class Bot:
                 if retries == self._retries:
                     raise
 
-                retries += 1
-
                 for i in files:
                     i.seek(0)
 
+                retries += 1
                 time.sleep(self._retry_delay_secs)
                 continue
-
-            retries = 0
 
             try:
                 return self._process_response(response, method, parameters)
             except RetryAfterError as error:
-                self._remove_irrelevant_over_limit_delay_secs()
-
-                if over_limit_chat_id is not None:
-                    self._over_limit_times[chat_id] = time.monotonic() + error.retry_after
-
                 if not self._wait_on_rate_limit:
                     raise
 
                 for i in files:
                     i.seek(0)
 
+                retries = 0
                 time.sleep(error.retry_after)
 
     def _get_api_url(self, method: str) -> str:
@@ -2855,13 +2836,6 @@ class Bot:
             )
 
         return data["result"]
-
-    def _remove_irrelevant_over_limit_delay_secs(self) -> None:
-        current_time = time.monotonic()
-
-        for i in set(self._over_limit_times):
-            if current_time > self._over_limit_times[i]:
-                del self._over_limit_times[i]
 
 
 class TelegramBotContext:
