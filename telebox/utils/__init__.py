@@ -5,6 +5,7 @@ from .task_executor import TaskExecutor
 from .thread_pool import ThreadPool
 from .env import Env
 from .text import get_html_text, get_markdown_text
+from .signals import set_signal_handler
 
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     "ThreadPool",
     "Env",
     "get_html_text",
-    "get_markdown_text"
+    "get_markdown_text",
+    "set_signal_handler"
 ]

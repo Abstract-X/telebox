@@ -84,6 +84,14 @@ class Dispatcher:
         self._media_group_message_lock = Lock()
         self._polling_stopping_event = ThreadingEvent()
 
+    @property
+    def polling_is_used(self) -> bool:
+        return self._polling_is_used
+
+    @property
+    def server_is_used(self) -> bool:
+        return self._server_is_used
+
     def add_message_handler(
         self,
         handler: AbstractEventHandler,
