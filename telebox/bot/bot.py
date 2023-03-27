@@ -2704,34 +2704,31 @@ class Bot:
 
         while True:
             try:
-                response = self._session.post(
-                    url,
-                    data=data,  # NOQA
-                    headers=headers,
-                    timeout=timeout_secs
+                return self._process_response(
+                    response=self._session.post(
+                        url,
+                        data=data,  # NOQA
+                        headers=headers,
+                        timeout=timeout_secs
+                    ),
+                    method=method,
+                    parameters=parameters
                 )
             except (RequestException, InternalServerError):
                 if retries == self._retries:
                     raise
 
-                for i in files:
-                    i.seek(0)
-
                 retries += 1
                 time.sleep(self._retry_delay_secs)
-                continue
-
-            try:
-                return self._process_response(response, method, parameters)
             except RetryAfterError as error:
                 if not self._wait_on_rate_limit:
                     raise
 
-                for i in files:
-                    i.seek(0)
-
                 retries = 0
                 time.sleep(error.retry_after)
+
+            for i in files:
+                i.seek(0)
 
     def _get_api_url(self, method: str) -> str:
         return f"{self._api_url}/bot{self.token}/{method}"
