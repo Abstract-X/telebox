@@ -43,12 +43,12 @@ class EventQueue:
 
         with self._chat_event_lock:
             if chat_id in self._chat_events:
-                self._chat_events[chat_id].put(event, block=False)
+                self._chat_events[chat_id].put(event)
             else:
                 if chat_id is not None:
                     self._chat_events[chat_id] = SimpleQueue()
 
-                self._events.put(event, block=False)
+                self._events.put(event)
 
     def get_event(self) -> Event:
         return self._events.get()
@@ -60,8 +60,8 @@ class EventQueue:
                     chat_events = self._chat_events[event.chat_id]
 
                     if not chat_events.empty():
-                        next_event = chat_events.get(block=False)
-                        self._events.put(next_event, block=False)
+                        next_event = chat_events.get()
+                        self._events.put(next_event)
 
                     if chat_events.empty():
                         del self._chat_events[event.chat_id]

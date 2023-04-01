@@ -63,7 +63,7 @@ class TaskExecutor:
                 self._pending_tasks.sort(key=lambda i: i[1], reverse=True)
         else:
             logger.debug("Task added to queue: %r.", task)
-            self._tasks.put(task, block=False)
+            self._tasks.put(task)
 
         return task_id
 
@@ -115,7 +115,7 @@ class TaskExecutor:
             with self._pending_task_lock:
                 if self._pending_tasks and (time.monotonic() > self._pending_tasks[-1][1]):
                     task, _ = self._pending_tasks.pop()
-                    self._tasks.put(task, block=False)
+                    self._tasks.put(task)
                     continue
 
             time.sleep(_PENDING_TASK_PROCESSING_DELAY_SECS)
