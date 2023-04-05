@@ -84,6 +84,14 @@ class Dispatcher:
         self._media_group_message_lock = Lock()
         self._polling_stopping_event = ThreadingEvent()
 
+    @property
+    def polling_is_used(self) -> bool:
+        return self._polling_is_used
+
+    @property
+    def server_is_used(self) -> bool:
+        return self._server_is_used
+
     def add_message_handler(
         self,
         handler: AbstractEventHandler,
@@ -598,7 +606,6 @@ class Dispatcher:
         self._thread_pool = ThreadPool(
             threads=threads,
             target=self._run_event_processing,
-            args=(self._events,),
             with_barrier=True
         )
         self._thread_pool.start()
@@ -666,9 +673,9 @@ class Dispatcher:
 
             time.sleep(_MEDIA_GROUP_GATHERING_DELAY_SECS)
 
-    def _run_event_processing(self, events: EventQueue) -> NoReturn:
+    def _run_event_processing(self) -> NoReturn:
         while True:
-            event = events.get_event()
+            event = self._events.get_event()
 
             try:
                 logger.debug("Event processing started: %r.", event)
@@ -721,7 +728,7 @@ class Dispatcher:
                 except Exception:
                     logger.exception("An error occurred while processing an event!")
             finally:
-                events.set_event_as_processed(event)
+                self._events.set_event_completion(chat_id=event.chat_id)
                 logger.debug("Event processing finished: %r.", event)
 
 

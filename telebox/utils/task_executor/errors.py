@@ -9,5 +9,5 @@ class TaskExecutorError(TeleboxError):
 
 
 @dataclass
-class PendingTaskNotFoundError(TaskExecutorError):
+class TaskNotFoundError(TaskExecutorError):
     id: str

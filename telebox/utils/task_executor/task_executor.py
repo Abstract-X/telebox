@@ -1,18 +1,16 @@
 import logging
 from typing import Callable, Any, Optional, Union, NoReturn
 from dataclasses import dataclass
-from threading import Thread, Lock
-from queue import Queue
+from threading import Thread, Lock, Condition
+from queue import SimpleQueue
 import time
 import uuid
 
 from telebox.utils.thread_pool import ThreadPool
-from telebox.utils.task_executor.errors import PendingTaskNotFoundError
+from telebox.utils.task_executor.errors import TaskNotFoundError
 
 
 logger = logging.getLogger(__name__)
-_PENDING_TASK_PROCESSING_DELAY_SECS = 0.1
-_TASK_WAITING_DELAY_SECS = 0.1
 
 
 @dataclass
@@ -21,16 +19,19 @@ class Task:
     task: Callable
     args: tuple
     kwargs: dict[str, Any]
+    start_time: float
 
 
 class TaskExecutor:
 
     def __init__(self, threads: int):
-        self._thread_pool = ThreadPool(threads, self._run_task_processing, with_barrier=True)
-        self._pending_task_processing_thread: Optional[Thread] = None
-        self._tasks = Queue()
-        self._pending_tasks: list[tuple[Task, float]] = []
-        self._pending_task_lock = Lock()
+        self._tasks = []
+        self._active_tasks = SimpleQueue()
+        self._unfinished_tasks = 0
+        self._lock = Lock()
+        self._all_tasks_done_condition = Condition(self._lock)
+        self._thread_pool = ThreadPool(threads, self._process_tasks, with_barrier=True)
+        self._submission_thread: Optional[Thread] = None
 
     def __enter__(self):
         self.start_tasks()
@@ -41,64 +42,72 @@ class TaskExecutor:
     def add_task(
         self,
         task: Callable,
-        delay_secs: Union[int, float, None] = None,
         args: tuple = (),
-        kwargs: Optional[dict[str, Any]] = None
+        kwargs: Optional[dict[str, Any]] = None,
+        *,
+        delay_secs: Union[int, float] = 0
     ) -> str:
-        task_id = str(uuid.uuid4())
+        if delay_secs < 0:
+            raise ValueError("Delay seconds cannot be negative!")
+
         task = Task(
-            id=task_id,
+            id=str(uuid.uuid4()),
             task=task,
             args=args,
-            kwargs=kwargs or {}
+            kwargs=kwargs or {},
+            start_time=time.monotonic() + delay_secs
         )
 
-        if delay_secs is not None:
-            if delay_secs < 0:
-                raise ValueError("Delay seconds cannot be negative!")
-
-            with self._pending_task_lock:
-                logger.debug("Pending task added to queue: %r, delay_secs=%r.", task, delay_secs)
-                self._pending_tasks.append((task, time.monotonic() + delay_secs))
-                self._pending_tasks.sort(key=lambda i: i[1], reverse=True)
-        else:
-            logger.debug("Task added to queue: %r.", task)
-            self._tasks.put(task, block=False)
-
-        return task_id
-
-    def remove_pending_task(self, id_: str) -> None:
-        with self._pending_task_lock:
-            for index, task_items in enumerate(self._pending_tasks):
-                if task_items[0].id == id_:
-                    self._pending_tasks.pop(index)
+        with self._lock:
+            for index, i in enumerate(self._tasks):
+                if task.start_time > i.start_time:
+                    self._tasks.insert(index, task)
                     break
             else:
-                raise PendingTaskNotFoundError("Pending task with ID {id!r} not found!", id=id_)
+                self._tasks.append(task)
+
+            self._unfinished_tasks += 1
+
+        logger.debug("Task added to queue: %r, delay_secs=%r.", task, delay_secs)
+
+        return task.id
+
+    def remove_task(self, id_: str) -> None:
+        with self._all_tasks_done_condition:
+            for index, i in enumerate(self._tasks):
+                if i.id == id_:
+                    del self._tasks[index]
+                    self._unfinished_tasks -= 1
+                    logger.debug("Task removed from queue: %r.", i)
+
+                    if not self._unfinished_tasks:
+                        self._all_tasks_done_condition.notify_all()
+
+                    break
+            else:
+                raise TaskNotFoundError("Task with ID {id!r} not found!", id=id_)
 
     def start_tasks(self) -> None:
         logger.debug("Tasks is starting...")
-        self._pending_task_processing_thread = Thread(
-            target=self._run_pending_task_processing,
-            daemon=True
-        )
-        self._pending_task_processing_thread.start()
+        self._submission_thread = Thread(target=self._process_task_submission, daemon=True)
+        self._submission_thread.start()
         self._thread_pool.start()
         logger.info("Tasks started.")
 
     def wait_tasks(self) -> None:
         logger.info("Finishing tasks...")
 
-        while self._pending_tasks:
-            time.sleep(_TASK_WAITING_DELAY_SECS)
+        with self._all_tasks_done_condition:
+            while self._unfinished_tasks:
+                self._all_tasks_done_condition.wait()
 
-        self._pending_task_processing_thread = None
-        self._tasks.join()
+            self._submission_thread = None
+
         logger.info("Tasks finished.")
 
-    def _run_task_processing(self) -> NoReturn:
+    def _process_tasks(self) -> NoReturn:
         while True:
-            task = self._tasks.get()
+            task = self._active_tasks.get()
 
             # noinspection PyBroadException
             try:
@@ -107,15 +116,21 @@ class TaskExecutor:
             except Exception:
                 logger.exception("An error occurred while processing a task!")
             finally:
-                self._tasks.task_done()
+                self._set_task_completion()
                 logger.debug("Task processing finished: %r.", task)
 
-    def _run_pending_task_processing(self) -> NoReturn:
+    def _process_task_submission(self) -> None:
         while True:
-            with self._pending_task_lock:
-                if self._pending_tasks and (time.monotonic() > self._pending_tasks[-1][1]):
-                    task, _ = self._pending_tasks.pop()
-                    self._tasks.put(task, block=False)
-                    continue
+            with self._lock:
+                while self._tasks and (time.monotonic() > self._tasks[0].start_time):
+                    task = self._tasks.pop()
+                    self._active_tasks.put(task)
 
-            time.sleep(_PENDING_TASK_PROCESSING_DELAY_SECS)
+            time.sleep(0.1)
+
+    def _set_task_completion(self) -> None:
+        with self._all_tasks_done_condition:
+            self._unfinished_tasks -= 1
+
+            if not self._unfinished_tasks:
+                self._all_tasks_done_condition.notify_all()

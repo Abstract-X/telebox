@@ -39,7 +39,8 @@ from .utils import (
     ThreadPool,
     Env,
     get_html_text,
-    get_markdown_text
+    get_markdown_text,
+    set_signal_handler
 )
 
 
@@ -84,6 +85,7 @@ __all__ = [
     "Env",
     "get_html_text",
     "get_markdown_text",
+    "set_signal_handler",
     "get_event_chat_id",
     "get_event_user_id"
 ]
