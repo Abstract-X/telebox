@@ -387,10 +387,11 @@ class Message(Type):
             self.get_entities(),
             key=lambda entity: entity.offset
         ):
-            if i.offset not in entities:
-                entities[i.offset] = [i]
-            else:
-                entities[i.offset].append(i)
+            if i.type in _FORMATTING_ENTITY_TYPES:
+                if i.offset not in entities:
+                    entities[i.offset] = [i]
+                else:
+                    entities[i.offset].append(i)
 
         for i in entities.values():
             i.sort(key=lambda entity: entity.length)
