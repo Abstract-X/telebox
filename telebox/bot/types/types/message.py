@@ -4,7 +4,11 @@ from typing import Optional, Literal, Union, TYPE_CHECKING
 
 from telebox.bot.consts import chat_types
 from telebox.bot.utils.deep_links import get_message_public_link, get_message_private_link
+from telebox.bot.utils.formatters.formatter import AbstractFormatter
+from telebox.bot.utils.formatters.formatters.html import HTMLFormatter
+from telebox.bot.utils.formatters.formatters.markdown import MarkdownFormatter
 from telebox.bot.enums.message_content_type import MessageContentType
+from telebox.bot.consts import message_entity_types
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.message_entity import MessageEntity
@@ -48,6 +52,21 @@ from telebox.bot.types.types.video_chat_participants_invited import (
 )
 if TYPE_CHECKING:
     from telebox.bot.types.types.chat import Chat
+
+
+_FORMATTING_ENTITY_TYPES = {
+    message_entity_types.BOLD,
+    message_entity_types.ITALIC,
+    message_entity_types.UNDERLINE,
+    message_entity_types.STRIKETHROUGH,
+    message_entity_types.SPOILER,
+    message_entity_types.TEXT_LINK,
+    message_entity_types.CODE,
+    message_entity_types.PRE,
+    message_entity_types.TEXT_MENTION
+}
+_html_formatter = HTMLFormatter()
+_markdown_formatter = MarkdownFormatter()
 
 
 @dataclass
@@ -322,14 +341,20 @@ class Message(Type):
         elif self.caption is not None:
             return self.caption
 
+    def get_html_text(self) -> Optional[str]:
+        return self._get_formatted_text(_html_formatter)
+
+    def get_markdown_text(self) -> Optional[str]:
+        return self._get_formatted_text(_markdown_formatter)
+
     def get_entity_text(self, entity: MessageEntity) -> Optional[str]:
         text = self.get_text()
 
         if text is not None:
-            bytes_ = text.encode("UTF-16-LE")
-            entity_bytes = bytes_[entity.offset * 2:entity.end_offset * 2]
+            data = text.encode("UTF-16-LE")
+            entity_data = data[entity.offset * 2:entity.end_offset * 2]
 
-            return entity_bytes.decode("UTF-16-LE")
+            return entity_data.decode("UTF-16-LE")
 
     def get_entities(self) -> list[MessageEntity]:
         if self.entities is not None:
@@ -343,11 +368,78 @@ class Message(Type):
         text = self.get_text()
         args = []
 
-        for i in text.split(" ")[1:]:
-            if i:
-                args.append(i)
+        if text is not None:
+            for i in text.split(" ")[1:]:
+                if i:
+                    args.append(i)
 
         return args
+
+    def _get_formatted_text(self, formatter: AbstractFormatter) -> Optional[str]:
+        text = self.get_text()
+
+        if text is None:
+            return
+
+        entities = {}
+
+        for i in sorted(
+            self.get_entities(),
+            key=lambda entity: entity.offset
+        ):
+            if i.type in _FORMATTING_ENTITY_TYPES:
+                if i.offset not in entities:
+                    entities[i.offset] = [i]
+                else:
+                    entities[i.offset].append(i)
+
+        for i in entities.values():
+            i.sort(key=lambda entity: entity.length)
+
+        data = text.encode("UTF-16-LE")
+        formatted_text = ""
+        index = 0
+
+        for offset, offset_entities in entities.items():
+            formatted_text += formatter.get_escaped_text(
+                data[index * 2:offset * 2].decode("UTF-16-LE")
+            )
+            entity_text = ""
+            index = offset
+
+            for i in offset_entities:
+                entity_text += formatter.get_escaped_text(
+                    data[index * 2:i.end_offset * 2].decode("UTF-16-LE")
+                )
+
+                if i.type == message_entity_types.BOLD:
+                    entity_text = formatter.get_bold_text(entity_text)
+                elif i.type == message_entity_types.ITALIC:
+                    entity_text = formatter.get_italic_text(entity_text)
+                elif i.type == message_entity_types.UNDERLINE:
+                    entity_text = formatter.get_underline_text(entity_text)
+                elif i.type == message_entity_types.STRIKETHROUGH:
+                    entity_text = formatter.get_strikethrough_text(entity_text)
+                elif i.type == message_entity_types.SPOILER:
+                    entity_text = formatter.get_spoiler_text(entity_text)
+                elif i.type == message_entity_types.TEXT_LINK:
+                    entity_text = formatter.get_text_link_text(entity_text, i.url)
+                elif i.type == message_entity_types.CODE:
+                    entity_text = formatter.get_code_text(entity_text)
+                elif i.type == message_entity_types.PRE:
+                    entity_text = formatter.get_pre_text(entity_text, i.language)
+                elif i.type == message_entity_types.TEXT_MENTION:
+                    entity_text = formatter.get_text_mention_text(entity_text, i.user.id)
+
+                index = i.end_offset
+
+            formatted_text += entity_text
+
+        formatted_text += formatter.get_escaped_text(
+            data[index * 2:].decode("UTF-16-LE")
+        )
+
+        return formatted_text
 
 
 MessageContent = Union[
