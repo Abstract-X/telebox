@@ -1,16 +1,21 @@
 import logging
-from typing import Optional, Union, NoReturn
+from typing import Optional, Union, NoReturn, Callable
 from dataclasses import dataclass
 from threading import Thread, Lock, Event as ThreadingEvent
 import contextlib
 import time
 
 from requests.exceptions import Timeout as RequestTimeoutError
-import cherrypy
+import ujson
+try:
+    import cherrypy
+except ImportError:
+    cherrypy = None
 
 from telebox.bot.bot import Bot
 from telebox.bot.types.types.update import Update
 from telebox.bot.types.types.message import Message
+from telebox.bot.utils.converters import DataclassConverter
 from telebox.dispatcher.typing import Event
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.dispatcher.utils.event_queue import EventQueue
@@ -25,7 +30,6 @@ from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 from telebox.dispatcher.utils.media_group_container import MediaGroupContainer
-from telebox.dispatcher.utils.server_root import ServerRoot
 from telebox.dispatcher.utils.router import Router
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
@@ -470,6 +474,12 @@ class Dispatcher:
         ssl_certificate_path: Optional[str] = None,
         ssl_private_key_path: Optional[str] = None
     ) -> None:
+        if cherrypy is None:
+            raise DispatcherError(
+                "To use the server you need to install cherrypy:"
+                "\npip install cherrypy"
+            )
+
         if self._server_is_used:
             raise DispatcherError("Server cannot be run twice!")
 
@@ -477,11 +487,11 @@ class Dispatcher:
             raise DispatcherError("Server cannot be run while polling is used!")
 
         self._server_is_used = True
+
         cherrypy.config.update({
             "server.socket_host": host,
             "server.socket_port": port,
-            'environment': 'production',
-            "engine.autoreload.on": False
+            'environment': 'production'
         })
 
         if (ssl_certificate_path is not None) and (ssl_private_key_path is not None):
@@ -491,12 +501,13 @@ class Dispatcher:
                 "server.ssl_private_key": ssl_private_key_path,
             })
 
+        server_root = _get_server_root(update_processor=self._process_update)
         self._run_media_group_gathering_thread()
         self._run_thread_pool(threads)
         logger.info("Server started.")
         cherrypy.quickstart(
-            root=ServerRoot(self._process_update),
-            script_name=webhook_path.rstrip("/") if webhook_path else str()
+            root=server_root,
+            script_name=webhook_path.rstrip("/") if webhook_path else ""
         )
         logger.info("Server stopped.")
         self._finish_update_processing()
@@ -742,3 +753,28 @@ def _get_error_filter(
     filter_: Optional[AbstractErrorBaseFilter] = None
 ) -> AbstractErrorBaseFilter:
     return filter_ if filter_ is not None else _none_error_filter
+
+
+def _get_server_root(update_processor: Callable[[Update], None]):
+    dataclass_converter = DataclassConverter()
+
+    class ServerRoot:
+
+        @cherrypy.expose
+        def index(self) -> str:
+            content_length = cherrypy.request.headers.get("Content-Length")
+
+            if content_length is None:
+                raise cherrypy.HTTPError(403)
+
+            data = ujson.loads(
+                cherrypy.request.body.read(
+                    int(content_length)
+                )
+            )
+            update = dataclass_converter.get_object(data=data, class_=Update)
+            update_processor(update)
+
+            return ""
+
+    return ServerRoot()

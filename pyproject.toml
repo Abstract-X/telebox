@@ -22,7 +22,11 @@ dependencies = [
     "requests >= 2.28.2, < 3",
     "requests-toolbelt >= 0.10.1",
     "ujson >= 5.4.0, < 6",
-    "xcept >= 3.1.0, < 4",
+    "xcept >= 3.1.0, < 4"
+]
+
+[project.optional-dependencies]
+server = [
     "cherrypy >= 18.8.0, < 19"
 ]
 
