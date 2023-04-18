@@ -405,11 +405,11 @@ class Message(Type):
                 data[index * 2:offset * 2].decode("UTF-16-LE")
             )
             entity_text = ""
-            sub_offset = offset
+            index = offset
 
             for i in offset_entities:
                 entity_text += formatter.get_escaped_text(
-                    data[sub_offset * 2:i.end_offset * 2].decode("UTF-16-LE")
+                    data[index * 2:i.end_offset * 2].decode("UTF-16-LE")
                 )
 
                 if i.type == message_entity_types.BOLD:
@@ -431,9 +431,8 @@ class Message(Type):
                 elif i.type == message_entity_types.TEXT_MENTION:
                     entity_text = formatter.get_text_mention_text(entity_text, i.user.id)
 
-                sub_offset = i.end_offset
+                index = i.end_offset
 
-            index = offset_entities[-1].end_offset
             formatted_text += entity_text
 
         formatted_text += formatter.get_escaped_text(
