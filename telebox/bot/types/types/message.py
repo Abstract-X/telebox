@@ -368,9 +368,10 @@ class Message(Type):
         text = self.get_text()
         args = []
 
-        for i in text.split(" ")[1:]:
-            if i:
-                args.append(i)
+        if text is not None:
+            for i in text.split(" ")[1:]:
+                if i:
+                    args.append(i)
 
         return args
 
