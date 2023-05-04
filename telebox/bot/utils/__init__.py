@@ -21,6 +21,7 @@ from .deep_links import (
 )
 from .formatting import get_escaped_html_text, get_escaped_markdown_text
 from .users import get_full_name
+from .ids import get_prefixed_chat_id, get_unprefixed_chat_id
 
 
 __all__ = [
@@ -45,5 +46,7 @@ __all__ = [
     "get_user_link",
     "get_escaped_html_text",
     "get_escaped_markdown_text",
-    "get_full_name"
+    "get_full_name",
+    "get_prefixed_chat_id",
+    "get_unprefixed_chat_id"
 ]

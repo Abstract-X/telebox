@@ -6,6 +6,7 @@ from telebox.bot.types.types.message import Message
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.message_entity import MessageEntity
+from telebox.bot.utils.ids import get_unprefixed_chat_id
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
 
@@ -121,6 +122,10 @@ class MediaGroup:
     @property
     def chat_id(self) -> int:
         return self.messages[0].chat_id
+
+    @property
+    def unprefixed_chat_id(self) -> int:
+        return get_unprefixed_chat_id(self.chat_id, self.chat_type)
 
     @property
     def sender_chat_id(self) -> Optional[int]:

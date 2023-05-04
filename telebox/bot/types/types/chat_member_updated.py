@@ -7,6 +7,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.chat_member import ChatMember
 from telebox.bot.types.types.chat_invite_link import ChatInviteLink
+from telebox.bot.utils.ids import get_unprefixed_chat_id
 
 
 @dataclass
@@ -25,6 +26,10 @@ class ChatMemberUpdated(Type):
     @property
     def chat_id(self) -> int:
         return self.chat.id
+
+    @property
+    def unprefixed_chat_id(self) -> int:
+        return get_unprefixed_chat_id(self.chat_id, self.chat_type)
 
     @property
     def user_id(self) -> int:

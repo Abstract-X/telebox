@@ -4,6 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.message import Message
+from telebox.bot.utils.ids import get_unprefixed_chat_id
 
 
 @dataclass
@@ -23,6 +24,11 @@ class CallbackQuery(Type):
     @property
     def chat_id(self) -> Optional[int]:
         return self.message.chat.id if self.message is not None else None
+
+    @property
+    def unprefixed_chat_id(self) -> Optional[int]:
+        if all(i is not None for i in (self.chat_id, self.chat_type)):
+            return get_unprefixed_chat_id(self.chat_id, self.chat_type)
 
     @property
     def user_id(self) -> int:
