@@ -6,6 +6,7 @@ from telebox.bot.types.types.message import Message
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.message_entity import MessageEntity
+from telebox.bot.utils.ids import get_unprefixed_chat_id
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
 
@@ -123,6 +124,10 @@ class MediaGroup:
         return self.messages[0].chat_id
 
     @property
+    def unprefixed_chat_id(self) -> int:
+        return get_unprefixed_chat_id(self.chat_id, self.chat_type)
+
+    @property
     def sender_chat_id(self) -> Optional[int]:
         return self.messages[0].sender_chat_id
 
@@ -137,3 +142,25 @@ class MediaGroup:
     @property
     def is_reply(self) -> bool:
         return self.messages[0].is_reply
+
+    @property
+    def link(self) -> str:
+        return self.messages[0].link
+
+    def get_text(self) -> Optional[str]:
+        return self.messages[0].get_text()
+
+    def get_html_text(self) -> Optional[str]:
+        return self.messages[0].get_html_text()
+
+    def get_markdown_text(self) -> Optional[str]:
+        return self.messages[0].get_markdown_text()
+
+    def get_entity_text(self, entity: MessageEntity) -> Optional[str]:
+        return self.messages[0].get_entity_text(entity)
+
+    def get_entities(self) -> list[MessageEntity]:
+        return self.messages[0].get_entities()
+
+    def get_command_args(self) -> list[str]:
+        return self.messages[0].get_command_args()

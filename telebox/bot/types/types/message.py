@@ -7,6 +7,7 @@ from telebox.bot.utils.deep_links import get_message_public_link, get_message_pr
 from telebox.bot.utils.formatters.formatter import AbstractFormatter
 from telebox.bot.utils.formatters.formatters.html import HTMLFormatter
 from telebox.bot.utils.formatters.formatters.markdown import MarkdownFormatter
+from telebox.bot.utils.ids import get_unprefixed_chat_id
 from telebox.bot.enums.message_content_type import MessageContentType
 from telebox.bot.consts import message_entity_types
 from telebox.bot.types.type import Type
@@ -302,6 +303,10 @@ class Message(Type):
         return self.chat.id
 
     @property
+    def unprefixed_chat_id(self) -> int:
+        return get_unprefixed_chat_id(self.chat_id, self.chat_type)
+
+    @property
     def sender_chat_id(self) -> Optional[int]:
         return self.sender_chat.id if self.sender_chat is not None else None
 
@@ -329,11 +334,11 @@ class Message(Type):
 
     @property
     def link(self) -> Optional[str]:
-        if self.chat.type in {chat_types.CHANNEL, chat_types.SUPERGROUP}:
+        if self.chat.type in frozenset((chat_types.CHANNEL, chat_types.SUPERGROUP)):
             if self.chat.username is not None:
                 return get_message_public_link(self.chat.username, self.message_id)
             else:
-                return get_message_private_link(self.chat.id, self.message_id)
+                return get_message_private_link(self.unprefixed_chat_id, self.message_id)
 
     def get_text(self) -> Optional[str]:
         if self.text is not None:
