@@ -57,11 +57,15 @@ class MediaGroup:
 
     @property
     def caption(self) -> Optional[str]:
-        return self.messages[0].caption
+        for i in self.messages:
+            if i.caption is not None:
+                return i.caption
 
     @property
     def caption_entities(self) -> Optional[list[MessageEntity]]:
-        return self.messages[0].caption_entities
+        for i in self.messages:
+            if i.caption_entities:
+                return i.caption_entities
 
     @property
     def sender_chat(self) -> Optional[Chat]:
@@ -148,19 +152,45 @@ class MediaGroup:
         return self.messages[0].link
 
     def get_text(self) -> Optional[str]:
-        return self.messages[0].get_text()
+        for i in self.messages:
+            text = i.get_text()
+
+            if text:
+                return text
 
     def get_html_text(self) -> Optional[str]:
-        return self.messages[0].get_html_text()
+        for i in self.messages:
+            text = i.get_html_text()
+
+            if text:
+                return text
 
     def get_markdown_text(self) -> Optional[str]:
-        return self.messages[0].get_markdown_text()
+        for i in self.messages:
+            text = i.get_markdown_text()
+
+            if text:
+                return text
 
     def get_entity_text(self, entity: MessageEntity) -> Optional[str]:
-        return self.messages[0].get_entity_text(entity)
+        for i in self.messages:
+            entities = i.get_entities()
+
+            if entities:
+                return i.get_entity_text(entity)
 
     def get_entities(self) -> list[MessageEntity]:
-        return self.messages[0].get_entities()
+        for i in self.messages:
+            entities = i.get_entities()
+
+            if entities:
+                return entities
 
     def get_command_args(self) -> list[str]:
-        return self.messages[0].get_command_args()
+        for i in self.messages:
+            text = i.get_text()
+
+            if text:
+                return i.get_command_args()
+
+        return []
