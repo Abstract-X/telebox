@@ -18,6 +18,7 @@ class ChatMemberUpdated(Type):
     old_chat_member: ChatMember
     new_chat_member: ChatMember
     invite_link: Optional[ChatInviteLink] = None
+    via_chat_folder_invite_link: Optional[bool] = None
 
     @property
     def chat_type(self) -> str:
