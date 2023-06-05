@@ -91,6 +91,7 @@ from .sticker_set import StickerSet
 from .mask_position import MaskPosition
 from .input_sticker import InputSticker
 from .inline_query import InlineQuery
+from .inline_query_results_button import InlineQueryResultsButton
 from .inline_query_result import InlineQueryResult
 from .inline_query_result_article import InlineQueryResultArticle
 from .inline_query_result_photo import InlineQueryResultPhoto
@@ -242,6 +243,7 @@ __all__ = [
     "MaskPosition",
     "InputSticker",
     "InlineQuery",
+    "InlineQueryResultsButton",
     "InlineQueryResult",
     "InlineQueryResultArticle",
     "InlineQueryResultPhoto",

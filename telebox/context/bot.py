@@ -32,6 +32,7 @@ from telebox.bot.types.types.game_high_score import GameHighScore
 from telebox.bot.types.types.chat_member import ChatMember
 from telebox.bot.types.types.chat_member_owner import ChatMemberOwner
 from telebox.bot.types.types.chat_member_administrator import ChatMemberAdministrator
+from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.context.utils import (
     get_event_chat_id,
@@ -1540,8 +1541,7 @@ class ContextBot:
         cache_time: Optional[int] = None,
         is_personal: Optional[bool] = None,
         next_offset: Optional[str] = None,
-        switch_pm_text: Optional[str] = None,
-        switch_pm_parameter: Optional[str] = None
+        button: Optional[InlineQueryResultsButton] = None
     ) -> Literal[True]:
         return self._bot.answer_inline_query(
             inline_query_id=get_event_inline_query_id(),
@@ -1550,8 +1550,7 @@ class ContextBot:
             cache_time=cache_time,
             is_personal=is_personal,
             next_offset=next_offset,
-            switch_pm_text=switch_pm_text,
-            switch_pm_parameter=switch_pm_parameter
+            button=button
         )
 
     def send_invoice(
