@@ -57,10 +57,10 @@ class Dispatcher:
         self,
         bot: Bot,
         *,
-        default_rate_limit: Optional[RateLimit] = None
+        rate_limit: Optional[RateLimit] = None
     ):
         self._bot = bot
-        self._default_rate_limit = default_rate_limit
+        self._rate_limit = rate_limit
         self._polling_is_used = False
         self._server_is_used = False
         self._events: deque[EventInfo] = deque()
@@ -756,7 +756,7 @@ class Dispatcher:
         self,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> Optional[RateLimit]:
-        return rate_limit if rate_limit is not NOT_SET else self._default_rate_limit
+        return rate_limit if rate_limit is not NOT_SET else self._rate_limit
 
     def _run_media_group_gathering_thread(self) -> None:
         self._media_group_gathering_thread = Thread(
