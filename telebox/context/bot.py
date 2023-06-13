@@ -32,6 +32,7 @@ from telebox.bot.types.types.game_high_score import GameHighScore
 from telebox.bot.types.types.chat_member import ChatMember
 from telebox.bot.types.types.chat_member_owner import ChatMemberOwner
 from telebox.bot.types.types.chat_member_administrator import ChatMemberAdministrator
+from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.context.utils import (
     get_event_chat_id,
@@ -552,9 +553,9 @@ class ContextBot:
         self,
         latitude: float,
         longitude: float,
-        message_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None,
         horizontal_accuracy: Optional[float] = None,
         heading: Optional[int] = None,
         proximity_alert_radius: Optional[int] = None,
@@ -574,9 +575,9 @@ class ContextBot:
 
     def stop_message_live_location(
         self,
-        message_id: Optional[int],
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._bot.stop_message_live_location(
@@ -777,14 +778,15 @@ class ContextBot:
 
     def ban_chat_member(
         self,
-        user_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        user_id: Optional[int] = None,
         until_date: Optional[datetime] = None,
         revoke_messages: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.ban_chat_member(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             timeout_secs=timeout_secs,
             until_date=until_date,
@@ -793,13 +795,14 @@ class ContextBot:
 
     def unban_chat_member(
         self,
-        user_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        user_id: Optional[int] = None,
         only_if_banned: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.unban_chat_member(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             timeout_secs=timeout_secs,
             only_if_banned=only_if_banned
@@ -808,14 +811,15 @@ class ContextBot:
     def restrict_chat_member(
         self,
         permissions: ChatPermissions,
-        user_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        user_id: Optional[int] = None,
         use_independent_chat_permissions: Optional[bool] = None,
         until_date: Optional[datetime] = None
     ) -> Literal[True]:
         return self._bot.restrict_chat_member(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             permissions=permissions,
             timeout_secs=timeout_secs,
@@ -825,9 +829,10 @@ class ContextBot:
 
     def promote_chat_member(
         self,
-        user_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        user_id: Optional[int] = None,
         is_anonymous: Optional[bool] = None,
         can_manage_chat: Optional[bool] = None,
         can_post_messages: Optional[bool] = None,
@@ -842,7 +847,7 @@ class ContextBot:
         can_manage_topics: Optional[bool] = None
     ) -> Literal[True]:
         return self._bot.promote_chat_member(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             timeout_secs=timeout_secs,
             is_anonymous=is_anonymous,
@@ -862,12 +867,13 @@ class ContextBot:
     def set_chat_administrator_custom_title(
         self,
         custom_title: str,
-        user_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        user_id: Optional[int] = None
     ) -> Literal[True]:
         return self._bot.set_chat_administrator_custom_title(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             custom_title=custom_title,
             timeout_secs=timeout_secs
@@ -875,24 +881,26 @@ class ContextBot:
 
     def ban_chat_sender_chat(
         self,
-        sender_chat_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        sender_chat_id: Optional[int] = None
     ) -> Literal[True]:
         return self._bot.ban_chat_sender_chat(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             sender_chat_id=get_event_sender_chat_id() if sender_chat_id is None else sender_chat_id,
             timeout_secs=timeout_secs
         )
 
     def unban_chat_sender_chat(
         self,
-        sender_chat_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        sender_chat_id: Optional[int] = None
     ) -> Literal[True]:
         return self._bot.unban_chat_sender_chat(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             sender_chat_id=get_event_sender_chat_id() if sender_chat_id is None else sender_chat_id,
             timeout_secs=timeout_secs
         )
@@ -973,24 +981,26 @@ class ContextBot:
 
     def approve_chat_join_request(
         self,
-        user_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        user_id: Optional[int] = None
     ) -> Literal[True]:
         return self._bot.approve_chat_join_request(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             timeout_secs=timeout_secs
         )
 
     def decline_chat_join_request(
         self,
-        user_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        user_id: Optional[int] = None
     ) -> Literal[True]:
         return self._bot.decline_chat_join_request(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             timeout_secs=timeout_secs
         )
@@ -1120,12 +1130,13 @@ class ContextBot:
 
     def get_chat_member(
         self,
-        user_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        chat_id: Union[int, str, None] = None,
+        user_id: Optional[int] = None
     ) -> ChatMember:
         return self._bot.get_chat_member(
-            chat_id=get_event_chat_id(),
+            chat_id=get_event_chat_id() if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             timeout_secs=timeout_secs
         )
@@ -1170,9 +1181,9 @@ class ContextBot:
 
     def edit_forum_topic(
         self,
-        message_thread_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
         name: Optional[str] = None,
         icon_custom_emoji_id: Optional[str] = None
     ) -> Literal[True]:
@@ -1189,9 +1200,9 @@ class ContextBot:
 
     def close_forum_topic(
         self,
-        message_thread_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         if message_thread_id is None:
             message_thread_id = get_event_message_topic_id()
@@ -1204,9 +1215,9 @@ class ContextBot:
 
     def reopen_forum_topic(
         self,
-        message_thread_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         if message_thread_id is None:
             message_thread_id = get_event_message_topic_id()
@@ -1219,9 +1230,9 @@ class ContextBot:
 
     def delete_forum_topic(
         self,
-        message_thread_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         if message_thread_id is None:
             message_thread_id = get_event_message_topic_id()
@@ -1234,9 +1245,9 @@ class ContextBot:
 
     def unpin_all_forum_topic_messages(
         self,
-        message_thread_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         if message_thread_id is None:
             message_thread_id = get_event_message_topic_id()
@@ -1342,9 +1353,9 @@ class ContextBot:
     def edit_message_text(
         self,
         text: str,
-        message_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
         disable_web_page_preview: Optional[bool] = None,
@@ -1363,9 +1374,9 @@ class ContextBot:
 
     def edit_message_caption(
         self,
-        message_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -1384,9 +1395,9 @@ class ContextBot:
     def edit_message_media(
         self,
         media: InputMedia,
-        message_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._bot.edit_message_media(
@@ -1399,9 +1410,9 @@ class ContextBot:
 
     def edit_message_reply_markup(
         self,
-        message_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._bot.edit_message_reply_markup(
@@ -1413,9 +1424,9 @@ class ContextBot:
 
     def stop_poll(
         self,
-        message_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
         return self._bot.stop_poll(
@@ -1427,9 +1438,9 @@ class ContextBot:
 
     def delete_message(
         self,
-        message_id: Optional[int] = None,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None
     ) -> Literal[True]:
         return self._bot.delete_message(
             chat_id=get_event_chat_id(),
@@ -1441,8 +1452,8 @@ class ContextBot:
         self,
         sticker: Union[InputFile, str],
         *,
-        with_reply: bool = False,
         timeout_secs: Union[int, float, None] = None,
+        with_reply: bool = False,
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -1540,8 +1551,7 @@ class ContextBot:
         cache_time: Optional[int] = None,
         is_personal: Optional[bool] = None,
         next_offset: Optional[str] = None,
-        switch_pm_text: Optional[str] = None,
-        switch_pm_parameter: Optional[str] = None
+        button: Optional[InlineQueryResultsButton] = None
     ) -> Literal[True]:
         return self._bot.answer_inline_query(
             inline_query_id=get_event_inline_query_id(),
@@ -1550,8 +1560,7 @@ class ContextBot:
             cache_time=cache_time,
             is_personal=is_personal,
             next_offset=next_offset,
-            switch_pm_text=switch_pm_text,
-            switch_pm_parameter=switch_pm_parameter
+            button=button
         )
 
     def send_invoice(
@@ -1689,10 +1698,10 @@ class ContextBot:
     def set_game_score(
         self,
         score: int,
-        user_id: Optional[int] = None,
-        message_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        user_id: Optional[int] = None,
+        message_id: Optional[int] = None,
         force: Optional[bool] = None,
         disable_edit_message: Optional[bool] = None
     ) -> Message:
@@ -1708,10 +1717,10 @@ class ContextBot:
 
     def get_game_high_scores(
         self,
-        user_id: Optional[int] = None,
-        message_id: Optional[int] = None,
         *,
         timeout_secs: Union[int, float, None] = None,
+        user_id: Optional[int] = None,
+        message_id: Optional[int] = None
     ) -> list[GameHighScore]:
         return self._bot.get_game_high_scores(
             user_id=get_event_user_id() if user_id is None else user_id,

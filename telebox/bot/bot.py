@@ -37,6 +37,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.bot_command import BotCommand
 from telebox.bot.types.types.bot_command_scope import BotCommandScope
 from telebox.bot.types.types.bot_description import BotDescription
+from telebox.bot.types.types.bot_name import BotName
 from telebox.bot.types.types.bot_short_description import BotShortDescription
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.chat_administrator_rights import ChatAdministratorRights
@@ -59,6 +60,7 @@ from telebox.bot.types.types.chat_member_member import ChatMemberMember
 from telebox.bot.types.types.chat_member_restricted import ChatMemberRestricted
 from telebox.bot.types.types.chat_member_left import ChatMemberLeft
 from telebox.bot.types.types.chat_member_banned import ChatMemberBanned
+from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
 from telebox.utils.not_set import NotSet, NOT_SET
 
 
@@ -1809,6 +1811,39 @@ class Bot:
             )
         ]
 
+    def set_my_name(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        name: Optional[str] = None,
+        language_code: Optional[str] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setMyName",
+            parameters={
+                "name": name,
+                "language_code": language_code
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def get_my_name(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        language_code: Optional[str] = None
+    ) -> BotName:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getMyName",
+                parameters={
+                    "language_code": language_code
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=BotName
+        )
+
     def set_my_description(
         self,
         *,
@@ -2378,8 +2413,7 @@ class Bot:
         cache_time: Optional[int] = None,
         is_personal: Optional[bool] = None,
         next_offset: Optional[str] = None,
-        switch_pm_text: Optional[str] = None,
-        switch_pm_parameter: Optional[str] = None
+        button: Optional[InlineQueryResultsButton] = None
     ) -> Literal[True]:
         return self._send_request(
             method="answerInlineQuery",
@@ -2389,8 +2423,7 @@ class Bot:
                 "cache_time": cache_time,
                 "is_personal": is_personal,
                 "next_offset": next_offset,
-                "switch_pm_text": switch_pm_text,
-                "switch_pm_parameter": switch_pm_parameter
+                "button": button
             },
             timeout_secs=timeout_secs
         )

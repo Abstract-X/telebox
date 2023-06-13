@@ -94,6 +94,7 @@ from .types import (
     InputSticker,
     InlineQuery,
     InlineQueryResult,
+    InlineQueryResultsButton,
     InlineQueryResultArticle,
     InlineQueryResultPhoto,
     InlineQueryResultGif,
