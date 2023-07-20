@@ -24,13 +24,20 @@ class Task:
 
 class TaskExecutor:
 
-    def __init__(self, threads: int):
+    def __init__(self, min_threads: int = 5, max_threads: int = 25):
         self._tasks = []
         self._active_tasks = SimpleQueue()
         self._unfinished_tasks = 0
-        self._lock = Lock()
-        self._all_tasks_done_condition = Condition(self._lock)
-        self._thread_pool = ThreadPool(threads, self._process_tasks, with_barrier=True)
+        self._task_lock = Lock()
+        self._all_tasks_done_condition = Condition(self._task_lock)
+        self._thread_pool = ThreadPool(
+            min_threads,
+            max_threads,
+            target=self._process_tasks,
+            with_barrier=True
+        )
+        self._busy_threads = 0
+        self._busy_thread_lock = Lock()
         self._submission_thread: Optional[Thread] = None
 
     def __enter__(self):
@@ -58,7 +65,7 @@ class TaskExecutor:
             start_time=time.monotonic() + delay_secs
         )
 
-        with self._lock:
+        with self._task_lock:
             for index, i in enumerate(self._tasks):
                 if task.start_time > i.start_time:
                     self._tasks.insert(index, task)
@@ -91,7 +98,7 @@ class TaskExecutor:
         logger.debug("Tasks is starting...")
         self._submission_thread = Thread(target=self._process_task_submission, daemon=True)
         self._submission_thread.start()
-        self._thread_pool.start()
+        self._thread_pool.start_threads()
         logger.info("Tasks started.")
 
     def wait_tasks(self) -> None:
@@ -109,6 +116,16 @@ class TaskExecutor:
         while True:
             task = self._active_tasks.get()
 
+            with self._busy_thread_lock:
+                self._busy_threads += 1
+
+                if (
+                    (self._busy_threads == self._thread_pool.threads)
+                    and (self._thread_pool.threads < self._thread_pool.max_threads)
+                ):
+                    self._thread_pool.create_thread()
+                    logger.debug("Additional task processing thread created.")
+
             # noinspection PyBroadException
             try:
                 logger.debug("Task processing started: %r.", task)
@@ -119,9 +136,12 @@ class TaskExecutor:
                 self._set_task_completion()
                 logger.debug("Task processing finished: %r.", task)
 
+                with self._busy_thread_lock:
+                    self._busy_threads -= 1
+
     def _process_task_submission(self) -> None:
         while True:
-            with self._lock:
+            with self._task_lock:
                 while self._tasks and (time.monotonic() > self._tasks[0].start_time):
                     task = self._tasks.pop()
                     self._active_tasks.put(task)

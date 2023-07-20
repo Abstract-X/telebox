@@ -71,6 +71,8 @@ class Dispatcher:
         self._new_event_condition = Condition(self._event_lock)
         self._all_events_processed_condition = Condition(self._event_lock)
         self._thread_pool: Optional[ThreadPool] = None
+        self._busy_threads = 0
+        self._busy_thread_lock = Lock()
         self._event_handlers: dict[EventType, list[EventHandlerInfo]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandlerInfo] = []
         self._middlewares: list[Middleware] = []
@@ -551,7 +553,8 @@ class Dispatcher:
 
     def run_polling(
         self,
-        threads: int,
+        min_threads: int = 5,
+        max_threads: int = 25,
         *,
         delay_secs: Union[int, float] = 0,
         error_delay_secs: Union[int, float] = 5,
@@ -573,8 +576,8 @@ class Dispatcher:
 
         self._polling_is_used = True
         offset_update_id = None
-        self._run_media_group_gathering_thread()
-        self._run_thread_pool(threads)
+        self._start_media_group_gathering_thread()
+        self._start_thread_pool(min_threads, max_threads)
         logger.info("Polling started.")
 
         with contextlib.suppress(KeyboardInterrupt):
@@ -616,9 +619,10 @@ class Dispatcher:
 
     def run_server(
         self,
-        threads: int,
-        webhook_path: Optional[str] = None,
+        min_threads: int = 5,
+        max_threads: int = 25,
         *,
+        webhook_path: Optional[str] = None,
         host: str = "0.0.0.0",
         port: int = 443,
         ssl_certificate_path: Optional[str] = None,
@@ -651,8 +655,8 @@ class Dispatcher:
             })
 
         server_root = _get_server_root(update_processor=self._process_update)
-        self._run_media_group_gathering_thread()
-        self._run_thread_pool(threads)
+        self._start_media_group_gathering_thread()
+        self._start_thread_pool(min_threads, max_threads)
         logger.info("Server started.")
         cherrypy.quickstart(
             root=server_root,
@@ -759,20 +763,21 @@ class Dispatcher:
     ) -> Optional[RateLimit]:
         return rate_limit if rate_limit is not NOT_SET else self._rate_limit
 
-    def _run_media_group_gathering_thread(self) -> None:
+    def _start_media_group_gathering_thread(self) -> None:
         self._media_group_gathering_thread = Thread(
             target=self._run_media_group_gathering,
             daemon=True
         )
         self._media_group_gathering_thread.start()
 
-    def _run_thread_pool(self, threads: int) -> None:
+    def _start_thread_pool(self, min_threads: int, max_threads: int) -> None:
         self._thread_pool = ThreadPool(
-            threads=threads,
+            min_threads=min_threads,
+            max_threads=max_threads,
             target=self._run_event_processing,
             with_barrier=True
         )
-        self._thread_pool.start()
+        self._thread_pool.start_threads()
 
     def _process_update(self, update: Update) -> None:
         logger.debug("Update received: %r.", update)
@@ -907,58 +912,72 @@ class Dispatcher:
         while True:
             event = self._get_event_from_queue()
 
+            with self._busy_thread_lock:
+                self._busy_threads += 1
+
+                if (
+                    (self._busy_threads == self._thread_pool.threads)
+                    and (self._thread_pool.threads < self._thread_pool.max_threads)
+                ):
+                    self._thread_pool.create_thread()
+                    logger.debug("Additional event processing thread created.")
+
             try:
-                logger.debug("Event processing started: %r.", event)
-                event_context.set(event.event)
+                try:
+                    logger.debug("Event processing started: %r.", event)
+                    event_context.set(event.event)
 
-                for i in self._middlewares:
-                    i.pre_process_event(event.event, event.event_type)
+                    for i in self._middlewares:
+                        i.pre_process_event(event.event, event.event_type)
 
-                event_handler = self._get_event_handler(event.event, event.event_type)
+                    event_handler = self._get_event_handler(event.event, event.event_type)
 
-                if event_handler is None:
-                    logger.debug("No handler found for event: %r.", event)
+                    if event_handler is None:
+                        logger.debug("No handler found for event: %r.", event)
+                        self._set_event_completion()
+                        continue
+
+                    if not event.from_chat_queue:
+                        if event_handler.with_chat_waiting and (event.chat_id is not None):
+                            with self._event_lock:
+                                if self._check_active_chat_event(event.chat_id):
+                                    self._add_event_to_chat_queue(event)
+                                    logger.debug("Event added to chat queue: %r.", event)
+                                    continue
+                                else:
+                                    self._set_chat_queue(event.chat_id)
+                except Exception as error:
+                    self._process_event_error(error, event)
                     self._set_event_completion()
                     continue
 
-                if not event.from_chat_queue:
+                try:
+                    event_handler_context.set(event_handler.handler)
+
+                    if (
+                        (event_handler.rate_limiter is not None)
+                        and event_handler.rate_limiter.process_call(event.chat_id, event.user_id)
+                    ):
+                        continue
+
+                    for i in self._middlewares:
+                        i.process_event(event.event, event.event_type)
+
+                    event_handler.handler.process_event(event.event)
+
+                    for i in self._middlewares:
+                        i.post_process_event(event.event, event.event_type)
+                except Exception as error:
+                    self._process_event_error(error, event)
+                finally:
                     if event_handler.with_chat_waiting and (event.chat_id is not None):
-                        with self._event_lock:
-                            if self._check_active_chat_event(event.chat_id):
-                                self._add_event_to_chat_queue(event)
-                                logger.debug("Event added to chat queue: %r.", event)
-                                continue
-                            else:
-                                self._set_chat_queue(event.chat_id)
-            except Exception as error:
-                self._process_event_error(error, event)
-                self._set_event_completion()
-                continue
+                        self._set_chat_event_completion(event)
 
-            try:
-                event_handler_context.set(event_handler.handler)
-
-                if (
-                    (event_handler.rate_limiter is not None)
-                    and event_handler.rate_limiter.process_call(event.chat_id, event.user_id)
-                ):
-                    continue
-
-                for i in self._middlewares:
-                    i.process_event(event.event, event.event_type)
-
-                event_handler.handler.process_event(event.event)
-
-                for i in self._middlewares:
-                    i.post_process_event(event.event, event.event_type)
-            except Exception as error:
-                self._process_event_error(error, event)
+                    self._set_event_completion()
+                    logger.debug("Event processing finished: %r.", event)
             finally:
-                if event_handler.with_chat_waiting and (event.chat_id is not None):
-                    self._set_chat_event_completion(event)
-
-                self._set_event_completion()
-                logger.debug("Event processing finished: %r.", event)
+                with self._busy_thread_lock:
+                    self._busy_threads -= 1
 
     def _process_event_error(self, error: Exception, event: EventInfo) -> None:
         # noinspection PyBroadException
