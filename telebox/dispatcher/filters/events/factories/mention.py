@@ -62,5 +62,5 @@ class MentionFilterFactory(AbstractEventFilterFactory):
     def __init__(self):
         self._cache = MentionFilterCache()
 
-    def get_filter(self, *mentions: str) -> MentionFilter:
+    def get(self, *mentions: str) -> MentionFilter:
         return MentionFilter(mentions, self._cache)

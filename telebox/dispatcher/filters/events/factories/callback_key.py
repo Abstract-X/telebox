@@ -41,5 +41,5 @@ class CallbackKeyFilterFactory(AbstractEventFilterFactory):
     def __init__(self, builder: AbstractCallbackDataBuilder):
         self._cache = CallbackKeyFilterCache(builder)
 
-    def get_filter(self, *keys: Any) -> CallbackKeyFilter:
+    def get(self, *keys: Any) -> CallbackKeyFilter:
         return CallbackKeyFilter(keys, self._cache)

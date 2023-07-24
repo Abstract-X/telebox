@@ -72,7 +72,7 @@ class TextFilterFactory(AbstractEventFilterFactory):
     def __init__(self):
         self._cache = TextFilterCache()
 
-    def get_filter(
+    def get(
         self,
         *texts: str,
         full_match: bool = True,

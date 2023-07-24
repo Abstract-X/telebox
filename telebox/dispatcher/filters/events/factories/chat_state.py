@@ -50,5 +50,5 @@ class ChatStateFilterFactory(AbstractEventFilterFactory):
     def __init__(self, machine: StateMachine):
         self._cache = ChatStateFilterCache(machine)
 
-    def get_filter(self, *states: State) -> ChatStateFilter:
+    def get(self, *states: State) -> ChatStateFilter:
         return ChatStateFilter(states, self._cache)

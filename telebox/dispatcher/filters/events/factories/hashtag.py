@@ -73,5 +73,5 @@ class HashtagFilterFactory(AbstractEventFilterFactory):
     def __init__(self):
         self._cache = HashtagFilterCache()
 
-    def get_filter(self, *hashtags: str, ignore_case: bool = True) -> HashtagFilter:
+    def get(self, *hashtags: str, ignore_case: bool = True) -> HashtagFilter:
         return HashtagFilter(hashtags, ignore_case, self._cache)
