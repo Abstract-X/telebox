@@ -60,5 +60,5 @@ class RETextFilterFactory(AbstractEventFilterFactory):
     def __init__(self):
         self._cache = RETextFilterCache()
 
-    def get_filter(self, *patterns: Pattern, full_match: bool = False) -> RETextFilter:
+    def get(self, *patterns: Pattern, full_match: bool = False) -> RETextFilter:
         return RETextFilter(patterns, full_match, self._cache)

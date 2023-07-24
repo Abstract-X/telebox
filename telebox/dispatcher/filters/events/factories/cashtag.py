@@ -62,5 +62,5 @@ class CashtagFilterFactory(AbstractEventFilterFactory):
     def __init__(self):
         self._cache = CashtagFilterCache()
 
-    def get_filter(self, *cashtags: str) -> CashtagFilter:
+    def get(self, *cashtags: str) -> CashtagFilter:
         return CashtagFilter(cashtags, self._cache)

@@ -55,5 +55,5 @@ class TextMentionFilterFactory(AbstractEventFilterFactory):
     def __init__(self):
         self._cache = TextMentionFilterCache()
 
-    def get_filter(self, *mentions: str) -> TextMentionFilter:
+    def get(self, *mentions: str) -> TextMentionFilter:
         return TextMentionFilter(mentions, self._cache)

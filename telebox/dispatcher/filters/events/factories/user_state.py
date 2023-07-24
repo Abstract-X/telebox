@@ -47,5 +47,5 @@ class UserStateFilterFactory(AbstractEventFilterFactory):
     def __init__(self, machine: StateMachine):
         self._cache = UserStateFilterCache(machine)
 
-    def get_filter(self, *states: State) -> UserStateFilter:
+    def get(self, *states: State) -> UserStateFilter:
         return UserStateFilter(states, self._cache)

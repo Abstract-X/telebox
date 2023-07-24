@@ -74,5 +74,5 @@ class CommandFilterFactory(AbstractEventFilterFactory):
         self._username = username
         self._cache = CommandFilterCache()
 
-    def get_filter(self, *commands: str, ignore_case: bool = True) -> CommandFilter:
+    def get(self, *commands: str, ignore_case: bool = True) -> CommandFilter:
         return CommandFilter(commands, self._username, ignore_case, self._cache)
