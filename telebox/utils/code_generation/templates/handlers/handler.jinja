@@ -1,0 +1,11 @@
+from abc import ABC
+
+from telebox import AbstractEventHandler
+
+from {{ app_name }}.env import Env
+
+
+class AbstractHandler(AbstractEventHandler, ABC):
+
+    def __init__(self, env: Env):
+        self.env = env

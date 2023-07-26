@@ -1,0 +1,14 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+import telebox
+
+if TYPE_CHECKING:
+    from {{ app_name }}.env import Env
+
+
+class State(telebox.State):
+
+    def __init__(self, env: Env):
+        super().__init__()
+        self.env = env

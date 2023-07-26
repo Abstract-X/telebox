@@ -1,0 +1,15 @@
+from telebox import get_html_text
+from telebox.bot.types import Message
+
+from {{ app_name }}.handlers.handler import AbstractHandler
+
+
+class StartHandler(AbstractHandler):
+
+    def process_event(self, event: Message) -> None:
+        self.env.context_bot.send_message(
+            get_html_text(
+                "👋 Hello, <b>{name}</b>!",
+                name=event.from_.full_name
+            )
+        )

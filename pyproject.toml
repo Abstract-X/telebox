@@ -29,10 +29,21 @@ dependencies = [
 server = [
     "cherrypy >= 18.8.0, < 19"
 ]
+codegen = [
+    "Jinja2 >= 3.1.2, < 4"
+]
+
+[project.scripts]
+telebox = "telebox.utils.console_scripts:process_command"
 
 [project.urls]
 "Homepage" = "https://github.com/Abstract-X/telebox"
 "Bug Tracker" = "https://github.com/Abstract-X/telebox/issues"
+
+[tool.hatch.build]
+include = [
+    "telebox/utils/code_generation/templates"
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["telebox"]

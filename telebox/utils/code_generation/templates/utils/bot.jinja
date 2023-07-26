@@ -1,0 +1,9 @@
+from telebox import Bot
+from telebox.bot.types import BotCommand, BotCommandScopeAllPrivateChats
+
+
+def set_commands(bot: Bot) -> None:
+    bot.set_my_commands(
+        [BotCommand("start", "Start")],
+        scope=BotCommandScopeAllPrivateChats()
+    )
