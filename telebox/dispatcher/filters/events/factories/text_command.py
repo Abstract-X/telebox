@@ -73,5 +73,5 @@ class TextCommandFilterFactory(AbstractEventFilterFactory):
         self._prefix = prefix
         self._cache = TextCommandFilterCache()
 
-    def get_filter(self, *commands: str, ignore_case: bool = True) -> TextCommandFilter:
+    def get(self, *commands: str, ignore_case: bool = True) -> TextCommandFilter:
         return TextCommandFilter(commands, self._prefix, ignore_case, self._cache)

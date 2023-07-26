@@ -1,0 +1,13 @@
+import logging
+from logging import StreamHandler, Formatter
+
+
+def set_logging(level: int = logging.DEBUG) -> None:
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.ERROR)
+    app_logger = logging.getLogger("{{ app_name }}")
+    app_logger.setLevel(level)
+    stream_handler = StreamHandler()
+    formatter = Formatter("[%(levelname)s] %(message)s")
+    stream_handler.setFormatter(formatter)
+    root_logger.addHandler(stream_handler)

@@ -1,0 +1,21 @@
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+from telebox import Group
+
+from {{ app_name }}.states.states.initial import InitialState
+if TYPE_CHECKING:
+    from {{ app_name }}.env import Env
+
+
+@dataclass
+class StateGroup(Group):
+    initial: InitialState
+    # Here you can add additional states
+
+
+def get_states(env: Env) -> StateGroup:
+    return StateGroup(
+        initial=InitialState(env)
+    )

@@ -2876,7 +2876,7 @@ class Bot:
         return data["result"]
 
 
-class TelegramBotContext:
+class BotContext:
 
     def __init__(
         self,
@@ -2932,8 +2932,8 @@ def get_bot(
     retries: int = 0,
     retry_delay_secs: Union[int, float] = 0,
     wait_on_rate_limit: bool = False
-) -> TelegramBotContext:
-    return TelegramBotContext(
+) -> BotContext:
+    return BotContext(
         token,
         get_me=get_me,
         api_url=api_url,

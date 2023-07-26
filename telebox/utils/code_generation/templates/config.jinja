@@ -1,0 +1,11 @@
+from dataclasses import dataclass
+
+
+@dataclass
+class Config:
+    token: str
+
+
+def get_config() -> Config:
+    return Config(token=...)
+    # Here you can implement creating config

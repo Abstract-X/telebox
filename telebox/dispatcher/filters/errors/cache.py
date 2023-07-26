@@ -8,7 +8,7 @@ class AbstractErrorFilterCache(ABC):
         cls.__current_error_event_context = ContextVar(
             f"{cls.__name__}_current_error_event_context"
         )
-        cls.__result_context = ContextVar(f"{cls.__name__}_result_context")
+        cls.__value_context = ContextVar(f"{cls.__name__}_value_context")
 
     @abstractmethod
     def create(self, error, event):
@@ -18,15 +18,16 @@ class AbstractErrorFilterCache(ABC):
         try:
             current_error, current_event = self.__current_error_event_context.get()
         except LookupError:
-            result = self.create(error, event)
-            self.__current_error_event_context.set((error, event))
-            self.__result_context.set(result)
-        else:
-            if (current_error is error) and (current_event is event):
-                result = self.__result_context.get()
-            else:
-                result = self.create(error, event)
-                self.__current_error_event_context.set((error, event))
-                self.__result_context.set(result)
+            return self._set(error, event)
 
-        return result
+        if not ((error is current_error) and (event is current_event)):
+            return self._set(error, event)
+
+        return self.__value_context.get()
+
+    def _set(self, error, event):
+        value = self.create(error, event)
+        self.__current_error_event_context.set((error, event))
+        self.__value_context.set(value)
+
+        return value

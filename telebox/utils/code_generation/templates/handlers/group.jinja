@@ -1,0 +1,18 @@
+from dataclasses import dataclass
+
+from telebox import Group
+
+from {{ app_name }}.handlers.handlers.start import StartHandler
+from {{ app_name }}.env import Env
+
+
+@dataclass
+class HandlerGroup(Group):
+    start: StartHandler
+    # Here you can add additional handlers
+
+
+def get_handlers(env: Env) -> HandlerGroup:
+    return HandlerGroup(
+        start=StartHandler(env)
+    )
