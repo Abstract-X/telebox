@@ -1,0 +1,14 @@
+from enum import Enum
+
+from telebox.bot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebox.utils.callback_data_builders import JSONCallbackDataBuilder
+
+
+builder = JSONCallbackDataBuilder()
+
+
+class Key(Enum):
+    ...  # Here you can add keys for inline keyboard markups
+
+
+# Here you can create inline keyboard markups

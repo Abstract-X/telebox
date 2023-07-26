@@ -7,10 +7,6 @@ import time
 
 from requests.exceptions import Timeout as RequestTimeoutError
 import ujson
-try:
-    import cherrypy
-except ImportError:
-    cherrypy = None
 
 from telebox.bot.bot import Bot
 from telebox.bot.types.types.update import Update
@@ -60,7 +56,7 @@ class Dispatcher:
         *,
         rate_limit: Optional[RateLimit] = None
     ):
-        self._bot = bot
+        self.bot = bot
         self._rate_limit = rate_limit
         self._polling_is_used = False
         self._server_is_used = False
@@ -584,7 +580,7 @@ class Dispatcher:
             while not self._polling_stopping_event.is_set():
                 # noinspection PyBroadException
                 try:
-                    updates = self._bot.get_updates(
+                    updates = self.bot.get_updates(
                         timeout_secs=timeout + 1 if timeout else None,
                         offset=offset_update_id,
                         limit=limit,
@@ -628,11 +624,13 @@ class Dispatcher:
         ssl_certificate_path: Optional[str] = None,
         ssl_private_key_path: Optional[str] = None
     ) -> None:
-        if cherrypy is None:
-            raise DispatcherError(
-                "To use the server you need to install cherrypy:"
-                "\npip install cherrypy"
-            )
+        try:
+            import cherrypy
+        except ImportError:
+            raise ImportError(
+                "To use server you need to install «CherryPy»:"
+                "\npip install CherryPy"
+            ) from None
 
         if self._server_is_used:
             raise DispatcherError("Server cannot be run twice!")
@@ -670,6 +668,8 @@ class Dispatcher:
         if not self._server_is_used:
             raise DispatcherError("Server not running!")
 
+        import cherrypy
+
         logger.info("Server stopping...")
         cherrypy.engine.exit()
 
@@ -682,15 +682,15 @@ class Dispatcher:
         logger.debug("Dropping pending updates...")
 
         if with_delete_webhook:
-            self._bot.delete_webhook(timeout_secs=timeout_secs, drop_pending_updates=True)
+            self.bot.delete_webhook(timeout_secs=timeout_secs, drop_pending_updates=True)
         else:
-            updates = self._bot.get_updates(
+            updates = self.bot.get_updates(
                 timeout_secs=timeout_secs,
                 offset=-1
             )
 
             if updates:
-                self._bot.get_updates(
+                self.bot.get_updates(
                     timeout_secs=timeout_secs,
                     offset=updates[-1].update_id + 1
                 )
@@ -1016,6 +1016,8 @@ def _get_error_filter(
 
 
 def _get_server_root(update_processor: Callable[[Update], None]):
+    import cherrypy
+
     dataclass_converter = DataclassConverter()
 
     class ServerRoot:

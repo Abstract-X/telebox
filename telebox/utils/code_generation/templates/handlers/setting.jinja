@@ -1,0 +1,16 @@
+from telebox import Dispatcher
+from telebox.dispatcher.filters import CommandFilterFactory
+
+from {{ app_name }}.handlers.group import get_handlers
+from {{ app_name }}.env import Env
+
+
+def set_handlers(dispatcher: Dispatcher, env: Env) -> None:
+    handlers = get_handlers(env)
+    command_ff = CommandFilterFactory(username=dispatcher.bot.me.username)
+
+    dispatcher.add_message_handler(
+        handlers.start,
+        command_ff.get("start")
+    )
+    # Here you can add handlers

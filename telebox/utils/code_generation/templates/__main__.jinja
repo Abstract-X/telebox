@@ -1,0 +1,78 @@
+import logging
+
+{% if full %}
+from telebox import (
+    get_bot,
+    set_signal_handler,
+    Dispatcher,
+    ContextBot,
+    StateMachine,
+    ContextStateMachine
+)
+{% else %}
+from telebox import get_bot, set_signal_handler, Dispatcher, ContextBot
+{% endif %}
+from telebox.bot.consts import parse_modes
+
+from {{ app_name }}.config import get_config
+from {{ app_name }}.handlers.setting import set_handlers
+from {{ app_name }}.utils.bot import set_commands
+from {{ app_name }}.utils.logging import set_logging
+{% if full %}
+from {{ app_name }}.middlewares.setting import set_middlewares
+from {{ app_name }}.states.group import get_states
+from {{ app_name }}.states.storage import StateStorage
+{% endif %}
+from {{ app_name }}.env import Env
+
+
+logger = logging.getLogger("{{ app_name }}")
+
+
+def main() -> None:
+    config = get_config()
+    set_logging()
+    env = Env()
+
+    with get_bot(
+        token=config.token,
+        parse_mode=parse_modes.HTML,
+        timeout_secs=60,
+        retries=5,
+        retry_delay_secs=1,
+        wait_on_rate_limit=True
+    ) as bot:
+        dispatcher = Dispatcher(bot)
+{% if full %}
+        states = get_states(env)
+        state_machine = StateMachine(states.initial, storage=StateStorage())
+        state_machine.add_states(states)
+
+        env.initialize(
+            bot=bot,
+            context_bot=ContextBot(bot),
+            state_machine=state_machine,
+            context_state_machine=ContextStateMachine(state_machine),
+            states=states
+        )
+{% else %}
+
+        env.initialize(
+            bot=bot,
+            context_bot=ContextBot(bot)
+        )
+{% endif %}
+
+        set_handlers(dispatcher, env)
+{% if full %}
+        set_middlewares(dispatcher)
+{% endif %}
+        set_commands(bot)
+        set_signal_handler(dispatcher)
+
+        logger.info("App launched.")
+        dispatcher.run_polling()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,20 @@
+from typing import Optional
+
+from telebox.state_machine.storages import AbstractStateStorage
+
+
+class StateStorage(AbstractStateStorage):
+
+    def save_states(
+        self,
+        states: list[str],
+        *,
+        chat_id: int,
+        user_id: Optional[int] = None
+    ) -> None:
+        raise NotImplementedError()
+        # Here you need to implement saving states
+
+    def load_states(self, *, chat_id: int, user_id: Optional[int] = None) -> list[str]:
+        raise NotImplementedError()
+        # Here you need to implement loading states
