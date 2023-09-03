@@ -4,14 +4,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "telebox"
-version = "0.21.0"
+version = "0.22.0"
 authors = [
   { name="Abstract-X", email="abstract-x-mail@protonmail.com" },
 ]
 description = "A Python framework for creating Telegram bots."
 readme = "README.md"
 license = { file="LICENSE" }
-requires-python = ">=3.9"
+requires-python = ">= 3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
