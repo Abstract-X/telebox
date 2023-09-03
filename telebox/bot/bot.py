@@ -84,7 +84,7 @@ class Bot:
         *,
         api_url: str = API_URL,
         parse_mode: Union[str, NotSet] = NOT_SET,
-        timeout_secs: Union[int, float, None] = None,
+        timeout_secs: Union[int, float, None] = 300,
         retries: int = 0,
         retry_delay_secs: Union[int, float] = 0,
         wait_on_rate_limit: bool = False
@@ -2885,7 +2885,7 @@ class BotContext:
         get_me: bool = True,
         api_url: str = API_URL,
         parse_mode: Union[str, NotSet] = NOT_SET,
-        timeout_secs: Union[int, float, None] = None,
+        timeout_secs: Union[int, float, None] = 300,
         retries: int = 0,
         retry_delay_secs: Union[int, float] = 0,
         wait_on_rate_limit: bool = False
@@ -2928,7 +2928,7 @@ def get_bot(
     get_me: bool = True,
     api_url: str = API_URL,
     parse_mode: Union[str, NotSet] = NOT_SET,
-    timeout_secs: Union[int, float, None] = None,
+    timeout_secs: Union[int, float, None] = 300,
     retries: int = 0,
     retry_delay_secs: Union[int, float] = 0,
     wait_on_rate_limit: bool = False
