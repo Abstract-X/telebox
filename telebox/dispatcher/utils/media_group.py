@@ -15,6 +15,7 @@ class MediaGroup:
     messages: list[Message]
 
     def __post_init__(self):
+        self.messages.sort(key=lambda message: message.message_id)
         self._content_types = set()
 
         for i in self.messages:
