@@ -17,6 +17,7 @@ from .events import (
     CallbackDataFilter,
     ChatFilter,
     ChatTypeFilter,
+    DiceFilter,
     ForwardedMessageFilter,
     LeftChatMemberFilter,
     MediaGroupContentTypeFilter,
@@ -24,6 +25,7 @@ from .events import (
     NewChatMemberFilter,
     NoneFilter,
     ReplyMessageFilter,
+    SenderChatFilter,
     SenderContactFilter,
     UserFilter
 )
@@ -58,6 +60,7 @@ __all__ = [
     "CallbackDataFilter",
     "ChatFilter",
     "ChatTypeFilter",
+    "DiceFilter",
     "ForwardedMessageFilter",
     "LeftChatMemberFilter",
     "MediaGroupContentTypeFilter",
@@ -65,6 +68,7 @@ __all__ = [
     "NewChatMemberFilter",
     "NoneFilter",
     "ReplyMessageFilter",
+    "SenderChatFilter",
     "SenderContactFilter",
     "UserFilter",
     "AbstractErrorFilterFactory",

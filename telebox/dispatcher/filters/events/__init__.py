@@ -18,6 +18,7 @@ from .filters import (
     CallbackDataFilter,
     ChatFilter,
     ChatTypeFilter,
+    DiceFilter,
     ForwardedMessageFilter,
     LeftChatMemberFilter,
     MediaGroupContentTypeFilter,
@@ -25,6 +26,7 @@ from .filters import (
     NewChatMemberFilter,
     NoneFilter,
     ReplyMessageFilter,
+    SenderChatFilter,
     SenderContactFilter,
     UserFilter
 )
@@ -49,6 +51,7 @@ __all__ = [
     "CallbackDataFilter",
     "ChatFilter",
     "ChatTypeFilter",
+    "DiceFilter",
     "ForwardedMessageFilter",
     "LeftChatMemberFilter",
     "MediaGroupContentTypeFilter",
@@ -56,6 +59,7 @@ __all__ = [
     "NewChatMemberFilter",
     "NoneFilter",
     "ReplyMessageFilter",
+    "SenderChatFilter",
     "SenderContactFilter",
     "UserFilter"
 ]

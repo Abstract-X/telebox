@@ -73,6 +73,10 @@ class MediaGroup:
         return self.messages[0].sender_chat
 
     @property
+    def sender_chat_id(self) -> Optional[int]:
+        return self.messages[0].sender_chat_id
+
+    @property
     def forward_from(self) -> Optional[User]:
         return self.messages[0].forward_from
 
