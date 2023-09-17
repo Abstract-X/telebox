@@ -840,7 +840,6 @@ def _get_bad_request_error(
         ("message text is empty", MessageTextIsEmptyError),
         ("message can't be edited", MessageCannotBeEditedError),
         ("message can't be deleted", MessageCannotBeDeletedError),
-        ("group chat was upgraded to a supergroup chat", GroupWasUpgradedToSupergroupError),
         ("message is too long", MessageIsTooLongError),
         (
             "query is too old and response timeout expired or query id is invalid",
