@@ -1,6 +1,7 @@
 from .callback_data import CallbackDataFilter
 from .chat import ChatFilter
 from .chat_type import ChatTypeFilter
+from .dice import DiceFilter
 from .forwarded_message import ForwardedMessageFilter
 from .left_chat_member import LeftChatMemberFilter
 from .media_group_content_type import MediaGroupContentTypeFilter
@@ -17,6 +18,7 @@ __all__ = [
     "CallbackDataFilter",
     "ChatFilter",
     "ChatTypeFilter",
+    "DiceFilter",
     "ForwardedMessageFilter",
     "LeftChatMemberFilter",
     "MediaGroupContentTypeFilter",
