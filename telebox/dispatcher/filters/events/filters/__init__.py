@@ -8,6 +8,7 @@ from .message_content_type import MessageContentTypeFilter
 from .new_chat_member import NewChatMemberFilter
 from .none import NoneFilter
 from .reply_message import ReplyMessageFilter
+from .sender_chat import SenderChatFilter
 from .sender_contact import SenderContactFilter
 from .user import UserFilter
 
@@ -23,6 +24,7 @@ __all__ = [
     "NewChatMemberFilter",
     "NoneFilter",
     "ReplyMessageFilter",
+    "SenderChatFilter",
     "SenderContactFilter",
     "UserFilter"
 ]

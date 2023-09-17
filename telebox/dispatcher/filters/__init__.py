@@ -24,6 +24,7 @@ from .events import (
     NewChatMemberFilter,
     NoneFilter,
     ReplyMessageFilter,
+    SenderChatFilter,
     SenderContactFilter,
     UserFilter
 )
@@ -65,6 +66,7 @@ __all__ = [
     "NewChatMemberFilter",
     "NoneFilter",
     "ReplyMessageFilter",
+    "SenderChatFilter",
     "SenderContactFilter",
     "UserFilter",
     "AbstractErrorFilterFactory",
