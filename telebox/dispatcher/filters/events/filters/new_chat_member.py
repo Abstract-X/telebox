@@ -17,7 +17,7 @@ class NewChatMemberFilter(AbstractEventFilter):
                 return True
 
             for i in event.new_chat_members:
-                if i in self._user_ids:
+                if i.id in self._user_ids:
                     return True
 
         return False
