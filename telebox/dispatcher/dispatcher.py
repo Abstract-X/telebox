@@ -43,7 +43,6 @@ from telebox.context.vars import (
 logger = logging.getLogger(__name__)
 _none_filter = NoneFilter()
 _none_error_filter = NoneErrorFilter()
-_MEDIA_GROUP_GATHERING_SECS = 2.5
 _MEDIA_GROUP_GATHERING_DELAY_SECS = 0.1
 _DROPPED_UNKNOWN_UPDATE_MESSAGE = "Update dropped because it contains an unknown content type: %r."
 
@@ -54,10 +53,12 @@ class Dispatcher:
         self,
         bot: Bot,
         *,
-        rate_limit: Optional[RateLimit] = None
+        rate_limit: Optional[RateLimit] = None,
+        media_group_gathering_secs: Union[int, float] = 3
     ):
         self.bot = bot
         self._rate_limit = rate_limit
+        self._media_group_gathering_secs = media_group_gathering_secs
         self._polling_is_used = False
         self._server_is_used = False
         self._events: deque[EventInfo] = deque()
@@ -832,7 +833,7 @@ class Dispatcher:
                 for media_group_id in tuple(self._media_group_containers):
                     secs = time.monotonic() - self._media_group_containers[media_group_id].time
 
-                    if secs > _MEDIA_GROUP_GATHERING_SECS:
+                    if secs > self._media_group_gathering_secs:
                         container = self._media_group_containers.pop(media_group_id)
                         event = MediaGroup(container.events)
 
