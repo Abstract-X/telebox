@@ -300,6 +300,14 @@ class Message(Type):
         return self.sender_chat.id if self.sender_chat is not None else None
 
     @property
+    def unprefixed_sender_chat_id(self) -> Optional[int]:
+        if self.sender_chat_id is not None:
+            return get_unprefixed_chat_id(
+                chat_id=self.sender_chat_id,
+                chat_type=self.sender_chat.type
+            )
+
+    @property
     def user_id(self) -> Optional[int]:
         return self.from_.id if self.from_ is not None else None
 
