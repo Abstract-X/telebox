@@ -84,6 +84,7 @@ class Bot:
         *,
         api_url: str = API_URL,
         parse_mode: Union[str, NotSet] = NOT_SET,
+        disable_web_page_preview: Union[bool, NotSet] = NOT_SET,
         timeout_secs: Union[int, float, None] = 300,
         retries: int = 0,
         retry_delay_secs: Union[int, float] = 0,
@@ -96,6 +97,7 @@ class Bot:
         self.token = token
         self._api_url = api_url
         self._parse_mode = parse_mode
+        self._disable_web_page_preview = disable_web_page_preview
         self._timeout_secs = timeout_secs
         self._retries = retries
         self._retry_delay_secs = retry_delay_secs
@@ -209,7 +211,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
-        disable_web_page_preview: Optional[bool] = None,
+        disable_web_page_preview: Union[bool, None, NotSet] = NOT_SET,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -229,7 +231,9 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "parse_mode": self._get_parse_mode(parse_mode, with_entities=bool(entities)),
                     "entities": entities,
-                    "disable_web_page_preview": disable_web_page_preview,
+                    "disable_web_page_preview": self._get_disable_web_page_preview(
+                        disable_web_page_preview
+                    ),
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_to_message_id": reply_to_message_id,
@@ -1980,7 +1984,7 @@ class Bot:
         inline_message_id: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
-        disable_web_page_preview: Optional[bool] = None,
+        disable_web_page_preview: Union[bool, None, NotSet] = NOT_SET,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Union[Message, Literal[True]]:
         data = self._send_request(
@@ -1992,7 +1996,9 @@ class Bot:
                 "inline_message_id": inline_message_id,
                 "parse_mode": self._get_parse_mode(parse_mode, with_entities=bool(entities)),
                 "entities": entities,
-                "disable_web_page_preview": disable_web_page_preview,
+                "disable_web_page_preview": self._get_disable_web_page_preview(
+                    disable_web_page_preview
+                ),
                 "reply_markup": reply_markup
             },
             timeout_secs=timeout_secs
@@ -2777,6 +2783,15 @@ class Bot:
         elif self._parse_mode is not NOT_SET and not with_entities:
             return self._parse_mode
 
+    def _get_disable_web_page_preview(
+        self,
+        disable_web_page_preview: Union[bool, None, NotSet]
+    ) -> Optional[bool]:
+        if disable_web_page_preview is not NOT_SET:
+            return disable_web_page_preview
+        elif self._disable_web_page_preview is not NOT_SET:
+            return self._disable_web_page_preview
+
     def _prepare_multipart_encoder(
         self,
         parameters: dict[str, Any]
@@ -2885,6 +2900,7 @@ class BotContext:
         get_me: bool = True,
         api_url: str = API_URL,
         parse_mode: Union[str, NotSet] = NOT_SET,
+        disable_web_page_preview: Union[bool, NotSet] = NOT_SET,
         timeout_secs: Union[int, float, None] = 300,
         retries: int = 0,
         retry_delay_secs: Union[int, float] = 0,
@@ -2894,6 +2910,7 @@ class BotContext:
         self._get_me = get_me
         self._api_url = api_url
         self._parse_mode = parse_mode
+        self._disable_web_page_preview = disable_web_page_preview
         self._timeout_secs = timeout_secs
         self._retries = retries
         self._retry_delay_secs = retry_delay_secs
@@ -2907,6 +2924,7 @@ class BotContext:
             token=self._token,
             api_url=self._api_url,
             parse_mode=self._parse_mode,
+            disable_web_page_preview=self._disable_web_page_preview,
             timeout_secs=self._timeout_secs,
             retries=self._retries,
             retry_delay_secs=self._retry_delay_secs,
@@ -2928,6 +2946,7 @@ def get_bot(
     get_me: bool = True,
     api_url: str = API_URL,
     parse_mode: Union[str, NotSet] = NOT_SET,
+    disable_web_page_preview: Union[bool, NotSet] = NOT_SET,
     timeout_secs: Union[int, float, None] = 300,
     retries: int = 0,
     retry_delay_secs: Union[int, float] = 0,
@@ -2938,6 +2957,7 @@ def get_bot(
         get_me=get_me,
         api_url=api_url,
         parse_mode=parse_mode,
+        disable_web_page_preview=disable_web_page_preview,
         timeout_secs=timeout_secs,
         retries=retries,
         retry_delay_secs=retry_delay_secs,
