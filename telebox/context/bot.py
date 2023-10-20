@@ -60,7 +60,7 @@ class ContextBot:
         with_reply: bool = False,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
-        disable_web_page_preview: Optional[bool] = None,
+        disable_web_page_preview: Union[bool, None, NotSet] = NOT_SET,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         allow_sending_without_reply: Optional[bool] = None,
@@ -1358,7 +1358,7 @@ class ContextBot:
         message_id: Optional[int] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
-        disable_web_page_preview: Optional[bool] = None,
+        disable_web_page_preview: Union[bool, None, NotSet] = NOT_SET,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._bot.edit_message_text(
