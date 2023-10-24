@@ -21,6 +21,9 @@ class ChatMemberAdministrator(Type):
     can_post_messages: Optional[bool] = None
     can_edit_messages: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
+    can_post_stories: Optional[bool] = None
+    can_edit_stories: Optional[bool] = None
+    can_delete_stories: Optional[bool] = None
     can_manage_topics: Optional[bool] = None
     custom_title: Optional[str] = None
     status: str = chat_member_statuses.ADMINISTRATOR

@@ -1116,6 +1116,9 @@ class Bot:
         can_change_info: Optional[bool] = None,
         can_invite_users: Optional[bool] = None,
         can_pin_messages: Optional[bool] = None,
+        can_post_stories: Optional[bool] = None,
+        can_edit_stories: Optional[bool] = None,
+        can_delete_stories: Optional[bool] = None,
         can_manage_topics: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1134,6 +1137,9 @@ class Bot:
                 "can_change_info": can_change_info,
                 "can_invite_users": can_invite_users,
                 "can_pin_messages": can_pin_messages,
+                "can_post_stories": can_post_stories,
+                "can_edit_stories": can_edit_stories,
+                "can_delete_stories": can_delete_stories,
                 "can_manage_topics": can_manage_topics
             },
             timeout_secs=timeout_secs
