@@ -15,6 +15,7 @@ from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.bot.types.types.animation import Animation
 from telebox.bot.types.types.audio import Audio
 from telebox.bot.types.types.document import Document
+from telebox.bot.types.types.story import Story
 from telebox.bot.types.types.photo_size import PhotoSize
 from telebox.bot.types.types.sticker import Sticker
 from telebox.bot.types.types.video import Video
@@ -88,6 +89,7 @@ class Message(Type):
     document: Optional[Document] = None
     photo: Optional[list[PhotoSize]] = None
     sticker: Optional[Sticker] = None
+    story: Optional[Story] = None
     video: Optional[Video] = None
     video_note: Optional[VideoNote] = None
     voice: Optional[Voice] = None
@@ -152,6 +154,9 @@ class Message(Type):
         elif self.sticker is not None:
             self._content = self.sticker
             self._content_type = MessageContentType.STICKER
+        elif self.story is not None:
+            self._content = self.story
+            self._content_type = MessageContentType.STORY
         elif self.video is not None:
             self._content = self.video
             self._content_type = MessageContentType.VIDEO
@@ -392,6 +397,7 @@ MessageContent = Union[
     Animation,
     Audio,
     Document,
+    Story,
     list[PhotoSize],
     Sticker,
     Video,

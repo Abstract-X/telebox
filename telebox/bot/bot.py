@@ -1116,6 +1116,9 @@ class Bot:
         can_change_info: Optional[bool] = None,
         can_invite_users: Optional[bool] = None,
         can_pin_messages: Optional[bool] = None,
+        can_post_stories: Optional[bool] = None,
+        can_edit_stories: Optional[bool] = None,
+        can_delete_stories: Optional[bool] = None,
         can_manage_topics: Optional[bool] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1134,6 +1137,9 @@ class Bot:
                 "can_change_info": can_change_info,
                 "can_invite_users": can_invite_users,
                 "can_pin_messages": can_pin_messages,
+                "can_post_stories": can_post_stories,
+                "can_edit_stories": can_edit_stories,
+                "can_delete_stories": can_delete_stories,
                 "can_manage_topics": can_manage_topics
             },
             timeout_secs=timeout_secs
@@ -1734,6 +1740,20 @@ class Bot:
     ) -> Literal[True]:
         return self._send_request(
             method="unhideGeneralForumTopic",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def unpin_all_general_forum_topic_messages(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="unpinAllGeneralForumTopicMessages",
             parameters={
                 "chat_id": chat_id
             },

@@ -9,6 +9,7 @@ from .photo_size import PhotoSize
 from .animation import Animation
 from .audio import Audio
 from .document import Document
+from .story import Story
 from .video import Video
 from .video_note import VideoNote
 from .voice import Voice
@@ -161,6 +162,7 @@ __all__ = [
     "Animation",
     "Audio",
     "Document",
+    "Story",
     "Video",
     "VideoNote",
     "Voice",
