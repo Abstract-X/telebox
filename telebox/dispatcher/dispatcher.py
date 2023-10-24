@@ -553,7 +553,6 @@ class Dispatcher:
         min_threads: int = 5,
         max_threads: int = 25,
         *,
-        delay_secs: Union[int, float] = 0,
         error_delay_secs: Union[int, float] = 5,
         limit: Optional[int] = None,
         timeout: Optional[int] = 10,
@@ -564,9 +563,6 @@ class Dispatcher:
 
         if self._server_is_used:
             raise DispatcherError("Polling cannot be run while the server is used!")
-
-        if delay_secs < 0:
-            raise ValueError("Delay seconds cannot be negative!")
 
         if error_delay_secs < 0:
             raise ValueError("Error delay seconds cannot be negative!")
@@ -599,8 +595,6 @@ class Dispatcher:
 
                     if updates:
                         offset_update_id = updates[-1].update_id + 1
-
-                    time.sleep(delay_secs)
 
         self._polling_stopping_event.clear()
         logger.info("Polling stopped.")
