@@ -1740,6 +1740,20 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
+    def unpin_all_general_forum_topic_messages(
+        self,
+        chat_id: Union[int, str],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="unpinAllGeneralForumTopicMessages",
+            parameters={
+                "chat_id": chat_id
+            },
+            timeout_secs=timeout_secs
+        )
+
     def answer_callback_query(
         self,
         callback_query_id: str,

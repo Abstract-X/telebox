@@ -6,6 +6,7 @@ class MessageContentType(Enum):
     ANIMATION = "animation"
     AUDIO = "audio"
     DOCUMENT = "document"
+    STORY = "story"
     PHOTO = "photo"
     STICKER = "sticker"
     VIDEO = "video"

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Literal, Optional, TYPE_CHECKING
+from datetime import datetime
 
 from telebox.bot.types.type import Type
 from telebox.bot.utils.users import get_full_name
@@ -23,6 +24,7 @@ class Chat(Type):
     photo: Optional[ChatPhoto] = None
     active_usernames: Optional[list[str]] = None
     emoji_status_custom_emoji_id: Optional[str] = None
+    emoji_status_expiration_date: Optional[datetime] = None
     bio: Optional[str] = None
     has_private_forwards: Optional[Literal[True]] = None
     has_restricted_voice_and_video_messages: Optional[Literal[True]] = None
