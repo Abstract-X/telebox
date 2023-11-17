@@ -6,7 +6,6 @@ import contextlib
 import time
 
 from requests.exceptions import Timeout as RequestTimeoutError
-import ujson
 
 from telebox.bot.bot import Bot
 from telebox.bot.types.types.update import Update
@@ -33,6 +32,7 @@ from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet, NOT_SET
+from telebox.utils.serialization import get_deserialized_data
 from telebox.context.vars import (
     event_context,
     event_handler_context,
@@ -1024,7 +1024,7 @@ def _get_server_root(update_processor: Callable[[Update], None]):
             if content_length is None:
                 raise cherrypy.HTTPError(403)
 
-            data = ujson.loads(
+            data = get_deserialized_data(
                 cherrypy.request.body.read(
                     int(content_length)
                 )
