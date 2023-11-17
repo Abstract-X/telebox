@@ -1,9 +1,8 @@
 from typing import Optional
 from threading import Lock
 
-import ujson
-
 from telebox.state_machine.storages.storage import AbstractStateStorage
+from telebox.utils.serialization import get_serialized_data, get_deserialized_data
 
 
 class JSONStateStorage(AbstractStateStorage):
@@ -24,8 +23,9 @@ class JSONStateStorage(AbstractStateStorage):
             stored_states.setdefault(str(chat_id), {})[str(user_id)] = states
 
             with open(self._path, "w", encoding="UTF-8") as stream:
-                ujson.dump(stored_states, stream)
-                stream.write("\n")
+                stream.write(
+                    get_serialized_data(stored_states)
+                )
 
     def load_states(self, *, chat_id: int, user_id: Optional[int] = None) -> list[str]:
         with self._lock:
@@ -36,6 +36,8 @@ class JSONStateStorage(AbstractStateStorage):
     def _load_stored_states(self) -> dict[str, dict[str, list[str]]]:
         try:
             with open(self._path, encoding="UTF-8") as stream:
-                return ujson.load(stream)
+                return get_deserialized_data(
+                    stream.read()
+                )
         except FileNotFoundError:
             return {}

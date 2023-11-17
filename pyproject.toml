@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "telebox"
-version = "0.26.0"
+version = "0.26.1"
 authors = [
   { name="Abstract-X", email="abstract-x-mail@protonmail.com" },
 ]
@@ -21,7 +21,7 @@ dependencies = [
     "dataclass-factory >= 2.16, < 3",
     "requests >= 2.28.2, < 3",
     "requests-toolbelt >= 0.10.1",
-    "ujson >= 5.4.0, < 6",
+    "orjson >= 3.9.10, < 4",
     "xcept >= 3.1.0, < 4"
 ]
 
