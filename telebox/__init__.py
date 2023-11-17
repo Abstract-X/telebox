@@ -110,15 +110,15 @@ def _evaluate_type_annotations() -> None:
 def _patch_requests_serializer() -> None:
     import warnings
 
-    import ujson
+    import orjson
 
     # https://github.com/psf/requests/issues/1595#issuecomment-30993198
     try:
         import requests.compat
     except ModuleNotFoundError:
-        warnings.warn("Failed to set ujson in requests: the structure has changed!", stacklevel=2)
+        warnings.warn("Failed to set orjson in requests: structure has changed!", stacklevel=2)
     else:
-        requests.compat.json = ujson
+        requests.compat.json = orjson
 
 
 _evaluate_type_annotations()

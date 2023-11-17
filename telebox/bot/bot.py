@@ -7,7 +7,6 @@ from http import HTTPStatus
 
 from requests import Session, Response, RequestException
 from requests_toolbelt import MultipartEncoder
-import ujson
 
 from telebox.bot.utils.converters import DataclassConverter, get_timestamp
 from telebox.bot.errors import get_request_error, BotError, RetryAfterError, InternalServerError
@@ -62,6 +61,7 @@ from telebox.bot.types.types.chat_member_left import ChatMemberLeft
 from telebox.bot.types.types.chat_member_banned import ChatMemberBanned
 from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
 from telebox.utils.not_set import NotSet, NOT_SET
+from telebox.utils.serialization import get_serialized_data
 
 
 API_URL = "https://api.telegram.org"
@@ -2828,7 +2828,7 @@ class Bot:
             )
 
             if isinstance(value, (dict, list)):
-                value = ujson.dumps(value)
+                value = get_serialized_data(value)
             elif not isinstance(value, (str, tuple)):
                 value = str(value)
 
