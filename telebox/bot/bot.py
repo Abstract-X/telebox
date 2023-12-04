@@ -1,4 +1,4 @@
-from typing import Union, Optional, Any, Literal, IO
+from typing import Union, Optional, Any, Literal, IO, BinaryIO
 import time
 from datetime import datetime
 from dataclasses import is_dataclass
@@ -93,9 +93,9 @@ class Bot:
         if retries < 0:
             raise ValueError("Number of retries cannot be less than zero!")
 
-        self._session = session
+        self.session = session
         self.token = token
-        self._api_url = api_url
+        self.api_url = api_url.lower().rstrip("/")
         self._parse_mode = parse_mode
         self._disable_web_page_preview = disable_web_page_preview
         self._timeout_secs = timeout_secs
@@ -2735,6 +2735,32 @@ class Bot:
             )
         ]
 
+    def download_file(
+        self,
+        path: str,
+        file: BinaryIO,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        chunk_size: int = 64 * 1024
+    ) -> None:
+        if self.api_url == API_URL:
+            with self.session.get(
+                url=f"{API_URL}/file/bot{self.token}/{path}",
+                stream=True,
+                timeout=timeout_secs or self._timeout_secs
+            ) as response:
+                for chunk in response.iter_content(chunk_size=chunk_size):
+                    file.write(chunk)
+        else:
+            with open(path, "rb") as local_file:
+                while True:
+                    chunk = local_file.read(chunk_size)
+
+                    if not chunk:
+                        break
+
+                    file.write(chunk)
+
     def _send_request(
         self,
         method: str,
@@ -2764,7 +2790,7 @@ class Bot:
         while True:
             try:
                 return self._process_response(
-                    response=self._session.post(
+                    response=self.session.post(
                         url,
                         data=data,  # NOQA
                         headers=headers,
@@ -2790,7 +2816,7 @@ class Bot:
                 i.seek(0)
 
     def _get_api_url(self, method: str) -> str:
-        return f"{self._api_url}/bot{self.token}/{method}"
+        return f"{self.api_url}/bot{self.token}/{method}"
 
     def _get_parse_mode(
         self,
