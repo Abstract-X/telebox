@@ -616,6 +616,7 @@ class Dispatcher:
         *,
         host: str = "0.0.0.0",
         port: int = 443,
+        path: Optional[str] = None,
         secret_token: Optional[str] = None,
         certificate_path: Union[str, Path, None] = None,
         private_key_path: Union[str, Path, None] = None
@@ -638,7 +639,8 @@ class Dispatcher:
         cherrypy.config.update({
             "server.socket_host": host,
             "server.socket_port": port,
-            'environment': 'production'
+            "log.screen": False,
+            "environment": "production"
         })
 
         if (certificate_path is not None) and (private_key_path is not None):
@@ -654,8 +656,13 @@ class Dispatcher:
         )
         self._start_media_group_gathering_thread()
         self._start_thread_pool(min_threads, max_threads)
+        path = (path or "").rstrip()
+
+        if not path.startswith("/"):
+            path = f"/{path}"
+
         logger.info("Server started.")
-        cherrypy.quickstart(server_root)
+        cherrypy.quickstart(server_root, path)
         logger.info("Server stopped.")
         self._finish_update_processing()
         self._server_is_used = False
