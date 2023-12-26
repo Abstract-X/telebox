@@ -639,7 +639,8 @@ class Dispatcher:
         cherrypy.config.update({
             "server.socket_host": host,
             "server.socket_port": port,
-            'environment': 'production'
+            "log.screen": False,
+            "environment": "production"
         })
 
         if (certificate_path is not None) and (private_key_path is not None):
