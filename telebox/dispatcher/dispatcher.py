@@ -624,7 +624,7 @@ class Dispatcher:
         except ImportError:
             raise ImportError(
                 "To use server you need to install «CherryPy»:"
-                "\npip install CherryPy"
+                "\npip install -U telebox[server]"
             ) from None
 
         if self._server_is_used:
