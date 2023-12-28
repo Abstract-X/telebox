@@ -665,7 +665,7 @@ class Dispatcher:
         cherrypy.quickstart(server_root, path)
         logger.info("Server stopped.")
         self._finish_update_processing()
-        self._server_is_used = False
+        self._server_is_used = True
 
     def stop_server(self) -> None:
         if not self._server_is_used:
