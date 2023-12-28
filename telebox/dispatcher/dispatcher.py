@@ -661,11 +661,13 @@ class Dispatcher:
         if not path.startswith("/"):
             path = f"/{path}"
 
+        cherrypy.log.error_log.propagate = False
+        cherrypy.log.access_log.propagate = False
         logger.info("Server started.")
         cherrypy.quickstart(server_root, path)
         logger.info("Server stopped.")
         self._finish_update_processing()
-        self._server_is_used = False
+        self._server_is_used = True
 
     def stop_server(self) -> None:
         if not self._server_is_used:
