@@ -33,6 +33,7 @@ from telebox.bot.types.types.chat_member import ChatMember
 from telebox.bot.types.types.chat_member_owner import ChatMemberOwner
 from telebox.bot.types.types.chat_member_administrator import ChatMemberAdministrator
 from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
+from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.context.utils import (
     get_event_chat_id,
@@ -760,6 +761,22 @@ class ContextBot:
             action=action,
             timeout_secs=timeout_secs,
             message_thread_id=message_thread_id
+        )
+
+    def set_message_reaction(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        message_id: Optional[int] = None,
+        reaction: Optional[list[ReactionType]] = None,
+        is_big: Optional[bool] = None
+    ) -> Literal[True]:
+        return self.bot.set_message_reaction(
+            chat_id=get_event_chat_id(),
+            message_id=get_event_message_id() if message_id is None else message_id,
+            timeout_secs=timeout_secs,
+            reaction=reaction,
+            is_big=is_big
         )
 
     def get_user_profile_photos(

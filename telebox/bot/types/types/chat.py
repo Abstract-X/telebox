@@ -8,6 +8,7 @@ from telebox.bot.utils.deep_links import get_username_link
 from telebox.bot.types.types.chat_photo import ChatPhoto
 from telebox.bot.types.types.chat_permissions import ChatPermissions
 from telebox.bot.types.types.chat_location import ChatLocation
+from telebox.bot.types.types.reaction_type import ReactionType
 if TYPE_CHECKING:
     from telebox.bot.types.types.message import Message
 
@@ -23,6 +24,7 @@ class Chat(Type):
     is_forum: Optional[Literal[True]] = None
     photo: Optional[ChatPhoto] = None
     active_usernames: Optional[list[str]] = None
+    available_reactions: Optional[list[ReactionType]] = None
     emoji_status_custom_emoji_id: Optional[str] = None
     emoji_status_expiration_date: Optional[datetime] = None
     bio: Optional[str] = None

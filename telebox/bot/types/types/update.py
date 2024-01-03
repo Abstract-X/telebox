@@ -4,6 +4,8 @@ from typing import Optional, Union
 from telebox.bot.enums.update_content_type import UpdateContentType
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.message import Message
+from telebox.bot.types.types.message_reaction_updated import MessageReactionUpdated
+from telebox.bot.types.types.message_reaction_count_updated import MessageReactionCountUpdated
 from telebox.bot.types.types.inline_query import InlineQuery
 from telebox.bot.types.types.chosen_inline_result import ChosenInlineResult
 from telebox.bot.types.types.callback_query import CallbackQuery
@@ -17,6 +19,8 @@ from telebox.bot.types.types.chat_join_request import ChatJoinRequest
 
 UpdateContent = Union[
     Message,
+    MessageReactionUpdated,
+    MessageReactionCountUpdated,
     InlineQuery,
     ChosenInlineResult,
     CallbackQuery,
@@ -36,6 +40,8 @@ class Update(Type):
     edited_message: Optional[Message] = None
     channel_post: Optional[Message] = None
     edited_channel_post: Optional[Message] = None
+    message_reaction: Optional[MessageReactionUpdated] = None
+    message_reaction_count: Optional[MessageReactionCountUpdated] = None
     inline_query: Optional[InlineQuery] = None
     chosen_inline_result: Optional[ChosenInlineResult] = None
     callback_query: Optional[CallbackQuery] = None
@@ -60,6 +66,12 @@ class Update(Type):
         elif self.edited_channel_post is not None:
             self._content = self.edited_channel_post
             self._content_type = UpdateContentType.EDITED_CHANNEL_POST
+        elif self.message_reaction is not None:
+            self._content = self.message_reaction
+            self._content_type = UpdateContentType.MESSAGE_REACTION
+        elif self.message_reaction_count is not None:
+            self._content = self.message_reaction_count
+            self._content_type = UpdateContentType.MESSAGE_REACTION_COUNT
         elif self.inline_query is not None:
             self._content = self.inline_query
             self._content_type = UpdateContentType.INLINE_QUERY

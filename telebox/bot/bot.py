@@ -60,6 +60,7 @@ from telebox.bot.types.types.chat_member_restricted import ChatMemberRestricted
 from telebox.bot.types.types.chat_member_left import ChatMemberLeft
 from telebox.bot.types.types.chat_member_banned import ChatMemberBanned
 from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
+from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -997,6 +998,26 @@ class Bot:
                 "chat_id": chat_id,
                 "action": action,
                 "message_thread_id": message_thread_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def set_message_reaction(
+        self,
+        chat_id: Union[int, str],
+        message_id: int,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        reaction: Optional[list[ReactionType]] = None,
+        is_big: Optional[bool] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="setMessageReaction",
+            parameters={
+                "chat_id": chat_id,
+                "message_id": message_id,
+                "reaction": reaction,
+                "is_big": is_big
             },
             timeout_secs=timeout_secs
         )

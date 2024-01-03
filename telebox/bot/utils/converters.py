@@ -105,6 +105,8 @@ from telebox.bot.types.types.passport_element_error_translation_files import (
 from telebox.bot.types.types.passport_element_error_unspecified import (
     PassportElementErrorUnspecified
 )
+from telebox.bot.types.types.reaction_type_emoji import ReactionTypeEmoji
+from telebox.bot.types.types.reaction_type_custom_emoji import ReactionTypeCustomEmoji
 
 
 DataclassObject = TypeVar("DataclassObject")
@@ -167,7 +169,10 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
     PassportElementErrorFiles,
     PassportElementErrorTranslationFile,
     PassportElementErrorTranslationFiles,
-    PassportElementErrorUnspecified
+    PassportElementErrorUnspecified,
+
+    ReactionTypeEmoji,
+    ReactionTypeCustomEmoji
 )
 
 
