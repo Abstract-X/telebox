@@ -61,6 +61,7 @@ from telebox.bot.types.types.chat_member_left import ChatMemberLeft
 from telebox.bot.types.types.chat_member_banned import ChatMemberBanned
 from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
 from telebox.bot.types.types.reaction_type import ReactionType
+from telebox.bot.types.types.reply_parameters import ReplyParameters
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -215,8 +216,7 @@ class Bot:
         disable_web_page_preview: Union[bool, None, NotSet] = NOT_SET,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -237,8 +237,7 @@ class Bot:
                     ),
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -286,8 +285,7 @@ class Bot:
         caption_entities: Optional[list[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -310,8 +308,7 @@ class Bot:
                     "caption_entities": caption_entities,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -332,8 +329,7 @@ class Bot:
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -356,8 +352,7 @@ class Bot:
                     "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -381,8 +376,7 @@ class Bot:
         thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -408,8 +402,7 @@ class Bot:
                     "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -431,8 +424,7 @@ class Bot:
         disable_content_type_detection: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -456,8 +448,7 @@ class Bot:
                     "disable_content_type_detection": disable_content_type_detection,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -483,8 +474,7 @@ class Bot:
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -512,8 +502,7 @@ class Bot:
                     "supports_streaming": supports_streaming,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -538,8 +527,7 @@ class Bot:
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -566,8 +554,7 @@ class Bot:
                     "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -588,8 +575,7 @@ class Bot:
         duration: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -612,8 +598,7 @@ class Bot:
                     "duration": duration,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -633,8 +618,7 @@ class Bot:
         thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -653,8 +637,7 @@ class Bot:
                     "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -674,8 +657,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None
+        reply_parameters: Optional[ReplyParameters] = None
     ) -> list[Message]:
         return [
             self._dataclass_converter.get_object(data=i, class_=Message)
@@ -687,8 +669,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply
+                    "reply_parameters": reply_parameters
                 },
                 timeout_secs=timeout_secs
             )
@@ -708,8 +689,7 @@ class Bot:
         proximity_alert_radius: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -730,8 +710,7 @@ class Bot:
                     "proximity_alert_radius": proximity_alert_radius,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -815,8 +794,7 @@ class Bot:
         google_place_type: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -839,8 +817,7 @@ class Bot:
                     "google_place_type": google_place_type,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -860,8 +837,7 @@ class Bot:
         vcard: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -880,8 +856,7 @@ class Bot:
                     "vcard": vcard,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -909,8 +884,7 @@ class Bot:
         is_closed: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -940,8 +914,7 @@ class Bot:
                     "is_closed": is_closed,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -958,8 +931,7 @@ class Bot:
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -975,8 +947,7 @@ class Bot:
                     "emoji": emoji,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -2183,8 +2154,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
@@ -2201,8 +2171,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -2523,8 +2492,7 @@ class Bot:
         is_flexible: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._dataclass_converter.get_object(
@@ -2556,8 +2524,7 @@ class Bot:
                     "is_flexible": is_flexible,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
@@ -2680,8 +2647,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._dataclass_converter.get_object(
@@ -2693,8 +2659,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
-                    "reply_to_message_id": reply_to_message_id,
-                    "allow_sending_without_reply": allow_sending_without_reply,
+                    "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs

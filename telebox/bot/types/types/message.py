@@ -51,6 +51,8 @@ from telebox.bot.types.types.message_auto_delete_timer_changed import (
 from telebox.bot.types.types.video_chat_participants_invited import (
     VideoChatParticipantsInvited
 )
+from telebox.bot.types.types.external_reply_info import ExternalReplyInfo
+from telebox.bot.types.types.text_quote import TextQuote
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
     from telebox.bot.types.types.chat import Chat
@@ -77,6 +79,8 @@ class Message(Type):
     is_topic_message: Optional[Literal[True]] = None
     is_automatic_forward: Optional[Literal[True]] = None
     reply_to_message: Optional["Message"] = None
+    external_reply: Optional[ExternalReplyInfo] = None
+    quote: Optional[TextQuote] = None
     via_bot: Optional[User] = None
     edit_date: Optional[datetime] = None
     has_protected_content: Optional[Literal[True]] = None
