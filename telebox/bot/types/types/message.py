@@ -53,6 +53,7 @@ from telebox.bot.types.types.video_chat_participants_invited import (
 )
 from telebox.bot.types.types.external_reply_info import ExternalReplyInfo
 from telebox.bot.types.types.text_quote import TextQuote
+from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
     from telebox.bot.types.types.chat import Chat
@@ -88,6 +89,7 @@ class Message(Type):
     author_signature: Optional[str] = None
     text: Optional[str] = None
     entities: Optional[list[MessageEntity]] = None
+    link_preview_options: Optional[LinkPreviewOptions] = None
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None

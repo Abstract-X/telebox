@@ -35,6 +35,7 @@ from telebox.bot.types.types.chat_member_administrator import ChatMemberAdminist
 from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
 from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.bot.types.types.reply_parameters import ReplyParameters
+from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.context.utils import (
     get_event_chat_id,
@@ -61,7 +62,7 @@ class ContextBot:
         timeout_secs: Union[int, float, None] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
-        disable_web_page_preview: Union[bool, None, NotSet] = NOT_SET,
+        link_preview_options: Optional[LinkPreviewOptions] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
@@ -80,7 +81,7 @@ class ContextBot:
             ),
             parse_mode=parse_mode,
             entities=entities,
-            disable_web_page_preview=disable_web_page_preview,
+            link_preview_options=link_preview_options,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_parameters=reply_parameters,
@@ -1350,7 +1351,7 @@ class ContextBot:
         message_id: Optional[int] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
-        disable_web_page_preview: Union[bool, None, NotSet] = NOT_SET,
+        link_preview_options: Optional[LinkPreviewOptions] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self.bot.edit_message_text(
@@ -1360,7 +1361,7 @@ class ContextBot:
             message_id=get_event_message_id() if message_id is None else message_id,
             parse_mode=parse_mode,
             entities=entities,
-            disable_web_page_preview=disable_web_page_preview,
+            link_preview_options=link_preview_options,
             reply_markup=reply_markup
         )
 
