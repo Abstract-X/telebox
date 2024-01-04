@@ -4,6 +4,6 @@ from telebox.bot.types.type import Type
 
 
 @dataclass
-class UserShared(Type):
+class UsersShared(Type):
     request_id: int
-    user_id: int
+    user_ids: list[int]

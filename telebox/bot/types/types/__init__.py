@@ -29,7 +29,7 @@ from .forum_topic_closed import ForumTopicClosed
 from .forum_topic_reopened import ForumTopicReopened
 from .general_forum_topic_hidden import GeneralForumTopicHidden
 from .general_forum_topic_unhidden import GeneralForumTopicUnhidden
-from .user_shared import UserShared
+from .users_shared import UsersShared
 from .chat_shared import ChatShared
 from .video_chat_scheduled import VideoChatScheduled
 from .video_chat_started import VideoChatStarted
@@ -40,7 +40,7 @@ from .file import File
 from .web_app_info import WebAppInfo
 from .reply_keyboard_markup import ReplyKeyboardMarkup
 from .keyboard_button import KeyboardButton
-from .keyboard_button_request_user import KeyboardButtonRequestUser
+from .keyboard_button_request_users import KeyboardButtonRequestUsers
 from .keyboard_button_request_chat import KeyboardButtonRequestChat
 from .keyboard_button_poll_type import KeyboardButtonPollType
 from .reply_keyboard_remove import ReplyKeyboardRemove
@@ -182,7 +182,7 @@ __all__ = [
     "ForumTopicReopened",
     "GeneralForumTopicHidden",
     "GeneralForumTopicUnhidden",
-    "UserShared",
+    "UsersShared",
     "ChatShared",
     "VideoChatScheduled",
     "VideoChatStarted",
@@ -193,7 +193,7 @@ __all__ = [
     "WebAppInfo",
     "ReplyKeyboardMarkup",
     "KeyboardButton",
-    "KeyboardButtonRequestUser",
+    "KeyboardButtonRequestUsers",
     "KeyboardButtonRequestChat",
     "KeyboardButtonPollType",
     "ReplyKeyboardRemove",

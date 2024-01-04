@@ -29,7 +29,7 @@ from telebox.bot.types.types.venue import Venue
 from telebox.bot.types.types.location import Location
 from telebox.bot.types.types.invoice import Invoice
 from telebox.bot.types.types.successful_payment import SuccessfulPayment
-from telebox.bot.types.types.user_shared import UserShared
+from telebox.bot.types.types.users_shared import UsersShared
 from telebox.bot.types.types.chat_shared import ChatShared
 from telebox.bot.types.types.write_access_allowed import WriteAccessAllowed
 from telebox.bot.types.types.passport_data import PassportData
@@ -122,7 +122,7 @@ class Message(Type):
     pinned_message: Optional["Message"] = None
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
-    user_shared: Optional[UserShared] = None
+    users_shared: Optional[UsersShared] = None
     chat_shared: Optional[ChatShared] = None
     connected_website: Optional[str] = None
     write_access_allowed: Optional[WriteAccessAllowed] = None
@@ -232,9 +232,9 @@ class Message(Type):
         elif self.successful_payment is not None:
             self._content = self.successful_payment
             self._content_type = MessageContentType.SUCCESSFUL_PAYMENT
-        elif self.user_shared is not None:
-            self._content = self.user_shared
-            self._content_type = MessageContentType.USER_SHARED
+        elif self.users_shared is not None:
+            self._content = self.users_shared
+            self._content_type = MessageContentType.USERS_SHARED
         elif self.chat_shared is not None:
             self._content = self.chat_shared
             self._content_type = MessageContentType.CHAT_SHARED
