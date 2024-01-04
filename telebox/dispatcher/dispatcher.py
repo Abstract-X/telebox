@@ -1,5 +1,6 @@
 import logging
 from typing import Optional, Union, NoReturn, Callable
+from pathlib import Path
 from collections import deque
 from threading import Thread, Lock, Condition, Event as ThreadingEvent
 import contextlib
@@ -613,18 +614,19 @@ class Dispatcher:
         min_threads: int = 5,
         max_threads: int = 25,
         *,
-        webhook_path: Optional[str] = None,
         host: str = "0.0.0.0",
         port: int = 443,
-        ssl_certificate_path: Optional[str] = None,
-        ssl_private_key_path: Optional[str] = None
+        path: Optional[str] = None,
+        secret_token: Optional[str] = None,
+        certificate_path: Union[str, Path, None] = None,
+        private_key_path: Union[str, Path, None] = None
     ) -> None:
         try:
             import cherrypy
         except ImportError:
             raise ImportError(
                 "To use server you need to install «CherryPy»:"
-                "\npip install CherryPy"
+                "\npip install -U telebox[server]"
             ) from None
 
         if self._server_is_used:
@@ -637,27 +639,35 @@ class Dispatcher:
         cherrypy.config.update({
             "server.socket_host": host,
             "server.socket_port": port,
-            'environment': 'production'
+            "log.screen": False,
+            "environment": "production"
         })
 
-        if (ssl_certificate_path is not None) and (ssl_private_key_path is not None):
+        if (certificate_path is not None) and (private_key_path is not None):
             cherrypy.config.update({
                 "server.ssl_module": "builtin",
-                "server.ssl_certificate": ssl_certificate_path,
-                "server.ssl_private_key": ssl_private_key_path,
+                "server.ssl_certificate": str(certificate_path),
+                "server.ssl_private_key": str(private_key_path),
             })
 
-        server_root = _get_server_root(update_processor=self._process_update)
+        server_root = _get_server_root(
+            update_processor=self._process_update,
+            secret_token=secret_token
+        )
         self._start_media_group_gathering_thread()
         self._start_thread_pool(min_threads, max_threads)
+        path = (path or "").rstrip()
+
+        if not path.startswith("/"):
+            path = f"/{path}"
+
+        cherrypy.log.error_log.propagate = False
+        cherrypy.log.access_log.propagate = False
         logger.info("Server started.")
-        cherrypy.quickstart(
-            root=server_root,
-            script_name=webhook_path.rstrip("/") if webhook_path else ""
-        )
+        cherrypy.quickstart(server_root, path)
         logger.info("Server stopped.")
         self._finish_update_processing()
-        self._server_is_used = False
+        self._server_is_used = True
 
     def stop_server(self) -> None:
         if not self._server_is_used:
@@ -1010,27 +1020,41 @@ def _get_error_filter(
     return filter_ if filter_ is not None else _none_error_filter
 
 
-def _get_server_root(update_processor: Callable[[Update], None]):
+def _get_server_root(
+    update_processor: Callable[[Update], None],
+    secret_token: Optional[str] = None
+):
     import cherrypy
-
-    dataclass_converter = DataclassConverter()
 
     class ServerRoot:
 
+        def __init__(self):
+            self._update_processor = update_processor
+            self._secret_token = secret_token
+            self._dataclass_converter = DataclassConverter()
+
         @cherrypy.expose
         def index(self) -> str:
+            if self._secret_token is not None:
+                secret_token_ = cherrypy.request.headers.get("X-Telegram-Bot-Api-Secret-Token")
+
+                if secret_token_ != self._secret_token:
+                    raise cherrypy.HTTPError(403)
+
             content_length = cherrypy.request.headers.get("Content-Length")
 
             if content_length is None:
                 raise cherrypy.HTTPError(403)
 
-            data = get_deserialized_data(
-                cherrypy.request.body.read(
-                    int(content_length)
-                )
+            update = self._dataclass_converter.get_object(
+                data=get_deserialized_data(
+                    cherrypy.request.body.read(
+                        int(content_length)
+                    )
+                ),
+                class_=Update
             )
-            update = dataclass_converter.get_object(data=data, class_=Update)
-            update_processor(update)
+            self._update_processor(update)
 
             return ""
 
