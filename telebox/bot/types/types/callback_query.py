@@ -3,7 +3,7 @@ from typing import Optional
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
-from telebox.bot.types.types.message import Message
+from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
 from telebox.bot.utils.ids import get_unprefixed_chat_id
 
 
@@ -12,7 +12,7 @@ class CallbackQuery(Type):
     id: str
     from_: User
     chat_instance: str
-    message: Optional[Message] = None
+    message: Optional[MaybeInaccessibleMessage] = None
     inline_message_id: Optional[str] = None
     data: Optional[str] = None
     game_short_name: Optional[str] = None

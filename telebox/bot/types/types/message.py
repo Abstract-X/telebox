@@ -58,6 +58,8 @@ from telebox.bot.types.types.giveaway_created import GiveawayCreated
 from telebox.bot.types.types.giveaway import Giveaway
 from telebox.bot.types.types.giveaway_winners import GiveawayWinners
 from telebox.bot.types.types.giveaway_completed import GiveawayCompleted
+from telebox.bot.types.types.message_origin import MessageOrigin
+from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
     from telebox.bot.types.types.chat import Chat
@@ -72,15 +74,10 @@ class Message(Type):
     message_id: int
     date: datetime
     chat: "Chat"
+    forward_origin: Optional[MessageOrigin] = None
     message_thread_id: Optional[int] = None
     from_: Optional[User] = None
     sender_chat: Optional["Chat"] = None
-    forward_from: Optional[User] = None
-    forward_from_chat: Optional["Chat"] = None
-    forward_from_message_id: Optional[int] = None
-    forward_signature: Optional[str] = None
-    forward_sender_name: Optional[str] = None
-    forward_date: Optional[datetime] = None
     is_topic_message: Optional[Literal[True]] = None
     is_automatic_forward: Optional[Literal[True]] = None
     reply_to_message: Optional["Message"] = None
@@ -123,7 +120,7 @@ class Message(Type):
     message_auto_delete_timer_changed: Optional[MessageAutoDeleteTimerChanged] = None
     migrate_to_chat_id: Optional[int] = None
     migrate_from_chat_id: Optional[int] = None
-    pinned_message: Optional["Message"] = None
+    pinned_message: Optional[MaybeInaccessibleMessage] = None
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
     users_shared: Optional[UsersShared] = None
@@ -354,7 +351,7 @@ class Message(Type):
 
     @property
     def is_forwarded(self) -> bool:
-        return self.forward_date is not None
+        return self.forward_origin is not None
 
     @property
     def is_reply(self) -> bool:
