@@ -36,6 +36,7 @@ from telebox.bot.types.types.inline_query_results_button import InlineQueryResul
 from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.bot.types.types.reply_parameters import ReplyParameters
 from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
+from telebox.bot.types.types.user_chat_boosts import UserChatBoosts
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.context.utils import (
     get_event_chat_id,
@@ -1407,6 +1408,18 @@ class ContextBot:
             show_alert=show_alert,
             url=url,
             cache_time=cache_time
+        )
+
+    def get_user_chat_boosts(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        user_id: Optional[int] = None
+    ) -> UserChatBoosts:
+        return self.bot.get_user_chat_boosts(
+            chat_id=get_event_chat_id(),
+            user_id=get_event_user_id() if user_id is None else user_id,
+            timeout_secs=timeout_secs
         )
 
     def set_chat_menu_button(

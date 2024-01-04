@@ -111,6 +111,9 @@ from telebox.bot.types.types.message_origin_user import MessageOriginUser
 from telebox.bot.types.types.message_origin_hidden_user import MessageOriginHiddenUser
 from telebox.bot.types.types.message_origin_chat import MessageOriginChat
 from telebox.bot.types.types.message_origin_channel import MessageOriginChannel
+from telebox.bot.types.types.chat_boost_source_premium import ChatBoostSourcePremium
+from telebox.bot.types.types.chat_boost_source_gift_code import ChatBoostSourceGiftCode
+from telebox.bot.types.types.chat_boost_source_giveaway import ChatBoostSourceGiveaway
 
 
 DataclassObject = TypeVar("DataclassObject")
@@ -181,7 +184,11 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
     MessageOriginUser,
     MessageOriginHiddenUser,
     MessageOriginChat,
-    MessageOriginChannel
+    MessageOriginChannel,
+
+    ChatBoostSourcePremium,
+    ChatBoostSourceGiftCode,
+    ChatBoostSourceGiveaway
 )
 
 

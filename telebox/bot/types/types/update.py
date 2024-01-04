@@ -15,6 +15,8 @@ from telebox.bot.types.types.poll import Poll
 from telebox.bot.types.types.poll_answer import PollAnswer
 from telebox.bot.types.types.chat_member_updated import ChatMemberUpdated
 from telebox.bot.types.types.chat_join_request import ChatJoinRequest
+from telebox.bot.types.types.chat_boost_updated import ChatBoostUpdated
+from telebox.bot.types.types.chat_boost_removed import ChatBoostRemoved
 
 
 UpdateContent = Union[
@@ -52,6 +54,8 @@ class Update(Type):
     my_chat_member: Optional[ChatMemberUpdated] = None
     chat_member: Optional[ChatMemberUpdated] = None
     chat_join_request: Optional[ChatJoinRequest] = None
+    chat_boost: Optional[ChatBoostUpdated] = None
+    removed_chat_boost: Optional[ChatBoostRemoved] = None
 
     def __post_init__(self) -> None:
         if self.message is not None:
@@ -102,6 +106,12 @@ class Update(Type):
         elif self.chat_join_request is not None:
             self._content = self.chat_join_request
             self._content_type = UpdateContentType.CHAT_JOIN_REQUEST
+        elif self.chat_boost is not None:
+            self._content = self.chat_boost
+            self._content_type = UpdateContentType.CHAT_BOOST
+        elif self.removed_chat_boost is not None:
+            self._content = self.removed_chat_boost
+            self._content_type = UpdateContentType.REMOVED_CHAT_BOOST
         else:
             self._content = self._content_type = None
 

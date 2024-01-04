@@ -18,3 +18,5 @@ class UpdateContentType(Enum):
     MY_CHAT_MEMBER = "my_chat_member"
     CHAT_MEMBER = "chat_member"
     CHAT_JOIN_REQUEST = "chat_join_request"
+    CHAT_BOOST = "chat_boost"
+    REMOVED_CHAT_BOOST = "removed_chat_boost"

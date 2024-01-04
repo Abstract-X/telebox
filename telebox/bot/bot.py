@@ -63,6 +63,7 @@ from telebox.bot.types.types.inline_query_results_button import InlineQueryResul
 from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.bot.types.types.reply_parameters import ReplyParameters
 from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
+from telebox.bot.types.types.user_chat_boosts import UserChatBoosts
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -1825,6 +1826,25 @@ class Bot:
                 "cache_time": cache_time
             },
             timeout_secs=timeout_secs
+        )
+
+    def get_user_chat_boosts(
+        self,
+        chat_id: int,
+        user_id: int,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> UserChatBoosts:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getUserChatBoosts",
+                parameters={
+                    "chat_id": chat_id,
+                    "user_id": user_id
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=UserChatBoosts
         )
 
     def set_my_commands(
