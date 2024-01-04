@@ -54,6 +54,10 @@ from telebox.bot.types.types.video_chat_participants_invited import (
 from telebox.bot.types.types.external_reply_info import ExternalReplyInfo
 from telebox.bot.types.types.text_quote import TextQuote
 from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
+from telebox.bot.types.types.giveaway_created import GiveawayCreated
+from telebox.bot.types.types.giveaway import Giveaway
+from telebox.bot.types.types.giveaway_winners import GiveawayWinners
+from telebox.bot.types.types.giveaway_completed import GiveawayCompleted
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
     from telebox.bot.types.types.chat import Chat
@@ -134,6 +138,10 @@ class Message(Type):
     forum_topic_reopened: Optional[ForumTopicReopened] = None
     general_forum_topic_hidden: Optional[GeneralForumTopicHidden] = None
     general_forum_topic_unhidden: Optional[GeneralForumTopicUnhidden] = None
+    giveaway_created: Optional[GiveawayCreated] = None
+    giveaway: Optional[Giveaway] = None
+    giveaway_winners: Optional[GiveawayWinners] = None
+    giveaway_completed: Optional[GiveawayCompleted] = None
     video_chat_scheduled: Optional[VideoChatScheduled] = None
     video_chat_started: Optional[VideoChatStarted] = None
     video_chat_ended: Optional[VideoChatEnded] = None
@@ -268,6 +276,18 @@ class Message(Type):
         elif self.general_forum_topic_unhidden is not None:
             self._content = self.general_forum_topic_unhidden
             self._content_type = MessageContentType.GENERAL_FORUM_TOPIC_UNHIDDEN
+        elif self.giveaway_created is not None:
+            self._content = self.giveaway_created
+            self._content_type = MessageContentType.GIVEAWAY_CREATED
+        elif self.giveaway is not None:
+            self._content = self.giveaway
+            self._content_type = MessageContentType.GIVEAWAY
+        elif self.giveaway_winners is not None:
+            self._content = self.giveaway_winners
+            self._content_type = MessageContentType.GIVEAWAY_WINNERS
+        elif self.giveaway_completed is not None:
+            self._content = self.giveaway_completed
+            self._content_type = MessageContentType.GIVEAWAY_COMPLETED
         elif self.video_chat_scheduled is not None:
             self._content = self.video_chat_scheduled
             self._content_type = MessageContentType.VIDEO_CHAT_SCHEDULED
