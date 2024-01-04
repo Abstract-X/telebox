@@ -269,6 +269,33 @@ class Bot:
             class_=Message
         )
 
+    def forward_messages(
+        self,
+        chat_id: Union[int, str],
+        from_chat_id: Union[int, str],
+        message_ids: list[int],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None
+    ) -> list[MessageId]:
+        return [
+            self._dataclass_converter.get_object(data=i, class_=MessageId)
+            for i in self._send_request(
+                method="forwardMessages",
+                parameters={
+                    "chat_id": chat_id,
+                    "from_chat_id": from_chat_id,
+                    "message_ids": message_ids,
+                    "message_thread_id": message_thread_id,
+                    "disable_notification": disable_notification,
+                    "protect_content": protect_content
+                },
+                timeout_secs=timeout_secs
+            )
+        ]
+
     def copy_message(
         self,
         chat_id: Union[int, str],
@@ -312,6 +339,35 @@ class Bot:
             ),
             class_=MessageId
         )
+
+    def copy_messages(
+        self,
+        chat_id: Union[int, str],
+        from_chat_id: Union[int, str],
+        message_ids: list[int],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        message_thread_id: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        remove_caption: Optional[bool] = None
+    ) -> list[MessageId]:
+        return [
+            self._dataclass_converter.get_object(data=i, class_=MessageId)
+            for i in self._send_request(
+                method="copyMessages",
+                parameters={
+                    "chat_id": chat_id,
+                    "from_chat_id": from_chat_id,
+                    "message_ids": message_ids,
+                    "message_thread_id": message_thread_id,
+                    "disable_notification": disable_notification,
+                    "protect_content": protect_content,
+                    "remove_caption": remove_caption
+                },
+                timeout_secs=timeout_secs
+            )
+        ]
 
     def send_photo(
         self,
@@ -2135,6 +2191,22 @@ class Bot:
             parameters={
                 "chat_id": chat_id,
                 "message_id": message_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def delete_messages(
+        self,
+        chat_id: Union[int, str],
+        message_ids: list[int],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self._send_request(
+            method="deleteMessages",
+            parameters={
+                "chat_id": chat_id,
+                "message_ids": message_ids
             },
             timeout_secs=timeout_secs
         )

@@ -108,6 +108,27 @@ class ContextBot:
             protect_content=protect_content
         )
 
+    def forward_messages_from_chat(
+        self,
+        chat_id: Union[int, str],
+        message_ids: list[int],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None
+    ) -> list[MessageId]:
+        return self.bot.forward_messages(
+            chat_id=chat_id,
+            from_chat_id=get_event_chat_id(),
+            message_ids=message_ids,
+            timeout_secs=timeout_secs,
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
+            disable_notification=disable_notification,
+            protect_content=protect_content
+        )
+
     def forward_message_to_chat(
         self,
         from_chat_id: Union[int, str],
@@ -116,11 +137,32 @@ class ContextBot:
         timeout_secs: Union[int, float, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None
-    ):
+    ) -> Message:
         return self.bot.forward_message(
             chat_id=get_event_chat_id(),
             from_chat_id=from_chat_id,
             message_id=message_id,
+            timeout_secs=timeout_secs,
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
+            disable_notification=disable_notification,
+            protect_content=protect_content
+        )
+
+    def forward_messages_to_chat(
+        self,
+        from_chat_id: Union[int, str],
+        message_ids: list[int],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None
+    ) -> list[MessageId]:
+        return self.bot.forward_messages(
+            chat_id=get_event_chat_id(),
+            from_chat_id=from_chat_id,
+            message_ids=message_ids,
             timeout_secs=timeout_secs,
             message_thread_id=get_event_message_topic_id(
                 strictly=False
@@ -163,6 +205,29 @@ class ContextBot:
             reply_markup=reply_markup
         )
 
+    def copy_messages_from_chat(
+        self,
+        chat_id: Union[int, str],
+        message_ids: list[int],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        remove_caption: Optional[bool] = None
+    ) -> list[MessageId]:
+        return self.bot.copy_messages(
+            chat_id=chat_id,
+            from_chat_id=get_event_chat_id(),
+            message_ids=message_ids,
+            timeout_secs=timeout_secs,
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
+            disable_notification=disable_notification,
+            protect_content=protect_content,
+            remove_caption=remove_caption
+        )
+
     def copy_message_to_chat(
         self,
         from_chat_id: Union[int, str],
@@ -196,6 +261,29 @@ class ContextBot:
             protect_content=protect_content,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
+        )
+
+    def copy_messages_to_chat(
+        self,
+        from_chat_id: Union[int, str],
+        message_ids: list[int],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        remove_caption: Optional[bool] = None
+    ) -> list[MessageId]:
+        return self.bot.copy_messages(
+            chat_id=get_event_chat_id(),
+            from_chat_id=from_chat_id,
+            message_ids=message_ids,
+            timeout_secs=timeout_secs,
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            ),
+            disable_notification=disable_notification,
+            protect_content=protect_content,
+            remove_caption=remove_caption
         )
 
     def send_photo(
@@ -1438,6 +1526,18 @@ class ContextBot:
         return self.bot.delete_message(
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
+            timeout_secs=timeout_secs
+        )
+
+    def delete_messages(
+        self,
+        message_ids: list[int],
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> Literal[True]:
+        return self.bot.delete_messages(
+            chat_id=get_event_chat_id(),
+            message_ids=message_ids,
             timeout_secs=timeout_secs
         )
 
