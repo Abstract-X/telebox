@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Literal, Union, TYPE_CHECKING
+from typing import Optional, Literal, Any, TYPE_CHECKING
 
 from telebox.bot.consts import chat_types
 from telebox.bot.utils.deep_links import get_message_public_link, get_message_private_link
@@ -57,12 +57,12 @@ from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.types.types.giveaway_created import GiveawayCreated
 from telebox.bot.types.types.giveaway import Giveaway
 from telebox.bot.types.types.giveaway_winners import GiveawayWinners
-from telebox.bot.types.types.giveaway_completed import GiveawayCompleted
 from telebox.bot.types.types.message_origin import MessageOrigin
-from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
     from telebox.bot.types.types.chat import Chat
+    from telebox.bot.types.types.giveaway_completed import GiveawayCompleted
+    from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
 
 
 _html_formatter = HTMLFormatter()
@@ -120,7 +120,7 @@ class Message(Type):
     message_auto_delete_timer_changed: Optional[MessageAutoDeleteTimerChanged] = None
     migrate_to_chat_id: Optional[int] = None
     migrate_from_chat_id: Optional[int] = None
-    pinned_message: Optional[MaybeInaccessibleMessage] = None
+    pinned_message: Optional["MaybeInaccessibleMessage"] = None
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
     users_shared: Optional[UsersShared] = None
@@ -138,7 +138,7 @@ class Message(Type):
     giveaway_created: Optional[GiveawayCreated] = None
     giveaway: Optional[Giveaway] = None
     giveaway_winners: Optional[GiveawayWinners] = None
-    giveaway_completed: Optional[GiveawayCompleted] = None
+    giveaway_completed: Optional["GiveawayCompleted"] = None
     video_chat_scheduled: Optional[VideoChatScheduled] = None
     video_chat_started: Optional[VideoChatStarted] = None
     video_chat_ended: Optional[VideoChatEnded] = None
@@ -304,7 +304,7 @@ class Message(Type):
             self._content = self._content_type = None
 
     @property
-    def content(self) -> Optional["MessageContent"]:
+    def content(self) -> Any:
         return self._content
 
     @property
@@ -413,52 +413,3 @@ class Message(Type):
         entities = self.get_entities()
 
         return formatter.get_formatted_text(text, entities)
-
-
-MessageContent = Union[
-    str,
-    Animation,
-    Audio,
-    Document,
-    Story,
-    list[PhotoSize],
-    Sticker,
-    Story,
-    Video,
-    VideoNote,
-    Voice,
-    Contact,
-    Dice,
-    Game,
-    Poll,
-    Venue,
-    Location,
-    list[User],
-    User,
-    Literal[True],
-    MessageAutoDeleteTimerChanged,
-    int,
-    MaybeInaccessibleMessage,
-    Invoice,
-    SuccessfulPayment,
-    UsersShared,
-    ChatShared,
-    WriteAccessAllowed,
-    PassportData,
-    ProximityAlertTriggered,
-    ForumTopicCreated,
-    ForumTopicEdited,
-    ForumTopicClosed,
-    ForumTopicReopened,
-    GeneralForumTopicHidden,
-    GeneralForumTopicUnhidden,
-    GiveawayCreated,
-    Giveaway,
-    GiveawayWinners,
-    GiveawayCompleted,
-    VideoChatScheduled,
-    VideoChatStarted,
-    VideoChatEnded,
-    VideoChatParticipantsInvited,
-    WebAppData
-]
