@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 from telebox.dispatcher.errors import InvalidEventError
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.bot.types.types.message import Message
+from telebox.bot.types.types.message_reaction_updated import MessageReactionUpdated
+from telebox.bot.types.types.message_reaction_count_updated import MessageReactionCountUpdated
 from telebox.bot.types.types.inline_query import InlineQuery
 from telebox.bot.types.types.chosen_inline_result import ChosenInlineResult
 from telebox.bot.types.types.callback_query import CallbackQuery
@@ -38,6 +40,8 @@ def get_event_chat_id(event: Event, *, strictly: bool = False) -> Optional[int]:
         event=event,
         types=frozenset((
             Message,
+            MessageReactionUpdated,
+            MessageReactionCountUpdated,
             MediaGroup,
             CallbackQuery,
             ChatMemberUpdated,
@@ -54,6 +58,7 @@ def get_event_user_id(event: Event, *, strictly: bool = False) -> Optional[int]:
         event=event,
         types=frozenset((
             Message,
+            MessageReactionUpdated,
             MediaGroup,
             InlineQuery,
             ChosenInlineResult,
@@ -94,7 +99,13 @@ def get_event_message_id(event: Event, *, strictly: bool = False) -> Optional[in
         attribute="message_id",
         name="message identifier",
         event=event,
-        types=frozenset((Message, MediaGroup, CallbackQuery)),
+        types=frozenset((
+            Message,
+            MessageReactionUpdated,
+            MessageReactionCountUpdated,
+            MediaGroup,
+            CallbackQuery
+        )),
         strictly=strictly
     )
 

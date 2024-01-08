@@ -114,6 +114,34 @@ class Router:
             with_chat_waiting=with_chat_waiting
         )
 
+    def add_message_reaction_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        with_chat_waiting: bool = False
+    ) -> None:
+        self._dispatcher.add_message_reaction_handler(
+            handler=handler,
+            filter_=self._get_filter(filter_),
+            rate_limit=rate_limit,
+            with_chat_waiting=with_chat_waiting
+        )
+
+    def add_message_reaction_count_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        with_chat_waiting: bool = False
+    ) -> None:
+        self._dispatcher.add_message_reaction_count_handler(
+            handler=handler,
+            filter_=self._get_filter(filter_),
+            rate_limit=rate_limit,
+            with_chat_waiting=with_chat_waiting
+        )
+
     def add_inline_query_handler(
         self,
         handler: AbstractEventHandler,
@@ -226,6 +254,26 @@ class Router:
         filter_: Optional[AbstractEventBaseFilter] = None
     ) -> None:
         self._dispatcher.add_chat_join_request_handler(
+            handler=handler,
+            filter_=self._get_filter(filter_)
+        )
+
+    def add_chat_boost_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> None:
+        self._dispatcher.add_chat_boost_handler(
+            handler=handler,
+            filter_=self._get_filter(filter_)
+        )
+
+    def add_removed_chat_boost_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> None:
+        self._dispatcher.add_removed_chat_boost_handler(
             handler=handler,
             filter_=self._get_filter(filter_)
         )

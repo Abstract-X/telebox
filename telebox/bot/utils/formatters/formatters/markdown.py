@@ -32,3 +32,6 @@ class MarkdownFormatter(AbstractFormatter):
 
     def get_pre_text(self, text: str, language: Optional[str] = None) -> str:
         return f"```{language or ''}\n{text}\n```"
+
+    def get_blockquote_text(self, text: str) -> str:
+        return "\n".join(f">{i}" for i in text.splitlines())

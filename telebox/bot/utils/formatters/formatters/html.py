@@ -35,3 +35,6 @@ class HTMLFormatter(AbstractFormatter):
             text = f'<code class="language-{language}">{text}</code>'
 
         return f"<pre>{text}</pre>"
+
+    def get_blockquote_text(self, text: str) -> str:
+        return f"<blockquote>{text}</blockquote>"
