@@ -178,6 +178,36 @@ class Dispatcher:
             with_chat_waiting=with_chat_waiting
         )
 
+    def add_message_reaction_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        with_chat_waiting: bool = False
+    ) -> None:
+        self._add_event_handler(
+            handler=handler,
+            event_type=EventType.MESSAGE_REACTION,
+            filter_=filter_,
+            rate_limit=rate_limit,
+            with_chat_waiting=with_chat_waiting
+        )
+
+    def add_message_reaction_count_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        with_chat_waiting: bool = False
+    ) -> None:
+        self._add_event_handler(
+            handler=handler,
+            event_type=EventType.MESSAGE_REACTION_COUNT,
+            filter_=filter_,
+            rate_limit=rate_limit,
+            with_chat_waiting=with_chat_waiting
+        )
+
     def add_inline_query_handler(
         self,
         handler: AbstractEventHandler,
@@ -301,6 +331,28 @@ class Dispatcher:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.CHAT_JOIN_REQUEST,
+            filter_=filter_
+        )
+
+    def add_chat_boost_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> None:
+        self._add_event_handler(
+            handler=handler,
+            event_type=EventType.CHAT_BOOST,
+            filter_=filter_
+        )
+
+    def add_removed_chat_boost_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> None:
+        self._add_event_handler(
+            handler=handler,
+            event_type=EventType.REMOVED_CHAT_BOOST,
             filter_=filter_
         )
 
@@ -663,6 +715,7 @@ class Dispatcher:
 
         cherrypy.log.error_log.propagate = False
         cherrypy.log.access_log.propagate = False
+        cherrypy.engine.signals.subscribe = lambda: None
         logger.info("Server started.")
         cherrypy.quickstart(server_root, path)
         logger.info("Server stopped.")

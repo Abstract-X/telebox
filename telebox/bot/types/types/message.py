@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Literal, Union, TYPE_CHECKING
+from typing import Optional, Literal, Any, TYPE_CHECKING
 
 from telebox.bot.consts import chat_types
 from telebox.bot.utils.deep_links import get_message_public_link, get_message_private_link
@@ -29,7 +29,7 @@ from telebox.bot.types.types.venue import Venue
 from telebox.bot.types.types.location import Location
 from telebox.bot.types.types.invoice import Invoice
 from telebox.bot.types.types.successful_payment import SuccessfulPayment
-from telebox.bot.types.types.user_shared import UserShared
+from telebox.bot.types.types.users_shared import UsersShared
 from telebox.bot.types.types.chat_shared import ChatShared
 from telebox.bot.types.types.write_access_allowed import WriteAccessAllowed
 from telebox.bot.types.types.passport_data import PassportData
@@ -51,9 +51,18 @@ from telebox.bot.types.types.message_auto_delete_timer_changed import (
 from telebox.bot.types.types.video_chat_participants_invited import (
     VideoChatParticipantsInvited
 )
+from telebox.bot.types.types.external_reply_info import ExternalReplyInfo
+from telebox.bot.types.types.text_quote import TextQuote
+from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
+from telebox.bot.types.types.giveaway_created import GiveawayCreated
+from telebox.bot.types.types.giveaway import Giveaway
+from telebox.bot.types.types.giveaway_winners import GiveawayWinners
+from telebox.bot.types.types.message_origin import MessageOrigin
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
     from telebox.bot.types.types.chat import Chat
+    from telebox.bot.types.types.giveaway_completed import GiveawayCompleted
+    from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
 
 
 _html_formatter = HTMLFormatter()
@@ -65,18 +74,15 @@ class Message(Type):
     message_id: int
     date: datetime
     chat: "Chat"
+    forward_origin: Optional[MessageOrigin] = None
     message_thread_id: Optional[int] = None
     from_: Optional[User] = None
     sender_chat: Optional["Chat"] = None
-    forward_from: Optional[User] = None
-    forward_from_chat: Optional["Chat"] = None
-    forward_from_message_id: Optional[int] = None
-    forward_signature: Optional[str] = None
-    forward_sender_name: Optional[str] = None
-    forward_date: Optional[datetime] = None
     is_topic_message: Optional[Literal[True]] = None
     is_automatic_forward: Optional[Literal[True]] = None
     reply_to_message: Optional["Message"] = None
+    external_reply: Optional[ExternalReplyInfo] = None
+    quote: Optional[TextQuote] = None
     via_bot: Optional[User] = None
     edit_date: Optional[datetime] = None
     has_protected_content: Optional[Literal[True]] = None
@@ -84,6 +90,7 @@ class Message(Type):
     author_signature: Optional[str] = None
     text: Optional[str] = None
     entities: Optional[list[MessageEntity]] = None
+    link_preview_options: Optional[LinkPreviewOptions] = None
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
@@ -113,10 +120,10 @@ class Message(Type):
     message_auto_delete_timer_changed: Optional[MessageAutoDeleteTimerChanged] = None
     migrate_to_chat_id: Optional[int] = None
     migrate_from_chat_id: Optional[int] = None
-    pinned_message: Optional["Message"] = None
+    pinned_message: Optional["MaybeInaccessibleMessage"] = None
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
-    user_shared: Optional[UserShared] = None
+    users_shared: Optional[UsersShared] = None
     chat_shared: Optional[ChatShared] = None
     connected_website: Optional[str] = None
     write_access_allowed: Optional[WriteAccessAllowed] = None
@@ -128,6 +135,10 @@ class Message(Type):
     forum_topic_reopened: Optional[ForumTopicReopened] = None
     general_forum_topic_hidden: Optional[GeneralForumTopicHidden] = None
     general_forum_topic_unhidden: Optional[GeneralForumTopicUnhidden] = None
+    giveaway_created: Optional[GiveawayCreated] = None
+    giveaway: Optional[Giveaway] = None
+    giveaway_winners: Optional[GiveawayWinners] = None
+    giveaway_completed: Optional["GiveawayCompleted"] = None
     video_chat_scheduled: Optional[VideoChatScheduled] = None
     video_chat_started: Optional[VideoChatStarted] = None
     video_chat_ended: Optional[VideoChatEnded] = None
@@ -226,9 +237,9 @@ class Message(Type):
         elif self.successful_payment is not None:
             self._content = self.successful_payment
             self._content_type = MessageContentType.SUCCESSFUL_PAYMENT
-        elif self.user_shared is not None:
-            self._content = self.user_shared
-            self._content_type = MessageContentType.USER_SHARED
+        elif self.users_shared is not None:
+            self._content = self.users_shared
+            self._content_type = MessageContentType.USERS_SHARED
         elif self.chat_shared is not None:
             self._content = self.chat_shared
             self._content_type = MessageContentType.CHAT_SHARED
@@ -262,6 +273,18 @@ class Message(Type):
         elif self.general_forum_topic_unhidden is not None:
             self._content = self.general_forum_topic_unhidden
             self._content_type = MessageContentType.GENERAL_FORUM_TOPIC_UNHIDDEN
+        elif self.giveaway_created is not None:
+            self._content = self.giveaway_created
+            self._content_type = MessageContentType.GIVEAWAY_CREATED
+        elif self.giveaway is not None:
+            self._content = self.giveaway
+            self._content_type = MessageContentType.GIVEAWAY
+        elif self.giveaway_winners is not None:
+            self._content = self.giveaway_winners
+            self._content_type = MessageContentType.GIVEAWAY_WINNERS
+        elif self.giveaway_completed is not None:
+            self._content = self.giveaway_completed
+            self._content_type = MessageContentType.GIVEAWAY_COMPLETED
         elif self.video_chat_scheduled is not None:
             self._content = self.video_chat_scheduled
             self._content_type = MessageContentType.VIDEO_CHAT_SCHEDULED
@@ -281,7 +304,7 @@ class Message(Type):
             self._content = self._content_type = None
 
     @property
-    def content(self) -> Optional["MessageContent"]:
+    def content(self) -> Any:
         return self._content
 
     @property
@@ -328,7 +351,7 @@ class Message(Type):
 
     @property
     def is_forwarded(self) -> bool:
-        return self.forward_date is not None
+        return self.forward_origin is not None
 
     @property
     def is_reply(self) -> bool:
@@ -390,41 +413,3 @@ class Message(Type):
         entities = self.get_entities()
 
         return formatter.get_formatted_text(text, entities)
-
-
-MessageContent = Union[
-    str,
-    Animation,
-    Audio,
-    Document,
-    Story,
-    list[PhotoSize],
-    Sticker,
-    Video,
-    VideoNote,
-    Voice,
-    Contact,
-    Dice,
-    Game,
-    Poll,
-    Venue,
-    Location,
-    list[User],
-    User,
-    Literal[True],
-    MessageAutoDeleteTimerChanged,
-    int,
-    Message,
-    Invoice,
-    SuccessfulPayment,
-    PassportData,
-    ProximityAlertTriggered,
-    ForumTopicCreated,
-    ForumTopicClosed,
-    ForumTopicReopened,
-    VideoChatScheduled,
-    VideoChatStarted,
-    VideoChatEnded,
-    VideoChatParticipantsInvited,
-    WebAppData
-]

@@ -16,7 +16,8 @@ _FORMATTING_ENTITY_TYPES = {
     message_entity_types.TEXT_LINK,
     message_entity_types.CODE,
     message_entity_types.PRE,
-    message_entity_types.TEXT_MENTION
+    message_entity_types.TEXT_MENTION,
+    message_entity_types.BLOCKQUOTE
 }
 
 
@@ -56,6 +57,10 @@ class AbstractFormatter(ABC):
 
     @abstractmethod
     def get_pre_text(self, text: str, language: Optional[str] = None) -> str:
+        pass
+
+    @abstractmethod
+    def get_blockquote_text(self, text: str) -> str:
         pass
 
     def get_text_mention_text(self, text: str, user_id: int) -> str:
@@ -122,6 +127,8 @@ class AbstractFormatter(ABC):
                 formatted_text += self.get_pre_text(entity_text, entity.language)
             elif entity.type == message_entity_types.TEXT_MENTION:
                 formatted_text += self.get_text_mention_text(entity_text, entity.user.id)
+            elif entity.type == message_entity_types.BLOCKQUOTE:
+                formatted_text += self.get_blockquote_text(entity_text)
 
         if offset < length:
             formatted_text += self.get_escaped_text(

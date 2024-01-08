@@ -29,7 +29,7 @@ from .forum_topic_closed import ForumTopicClosed
 from .forum_topic_reopened import ForumTopicReopened
 from .general_forum_topic_hidden import GeneralForumTopicHidden
 from .general_forum_topic_unhidden import GeneralForumTopicUnhidden
-from .user_shared import UserShared
+from .users_shared import UsersShared
 from .chat_shared import ChatShared
 from .video_chat_scheduled import VideoChatScheduled
 from .video_chat_started import VideoChatStarted
@@ -40,7 +40,7 @@ from .file import File
 from .web_app_info import WebAppInfo
 from .reply_keyboard_markup import ReplyKeyboardMarkup
 from .keyboard_button import KeyboardButton
-from .keyboard_button_request_user import KeyboardButtonRequestUser
+from .keyboard_button_request_users import KeyboardButtonRequestUsers
 from .keyboard_button_request_chat import KeyboardButtonRequestChat
 from .keyboard_button_poll_type import KeyboardButtonPollType
 from .reply_keyboard_remove import ReplyKeyboardRemove
@@ -148,6 +148,33 @@ from .passport_element_error_unspecified import PassportElementErrorUnspecified
 from .game import Game
 from .callback_game import CallbackGame
 from .game_high_score import GameHighScore
+from .reaction_type import ReactionType
+from .reaction_type_emoji import ReactionTypeEmoji
+from .reaction_type_custom_emoji import ReactionTypeCustomEmoji
+from .message_reaction_updated import MessageReactionUpdated
+from .message_reaction_count_updated import MessageReactionCountUpdated
+from .external_reply_info import ExternalReplyInfo
+from .text_quote import TextQuote
+from .reply_parameters import ReplyParameters
+from .link_preview_options import LinkPreviewOptions
+from .input_text_message_content import InputTextMessageContent
+from .chat_boost_updated import ChatBoostUpdated
+from .chat_boost_removed import ChatBoostRemoved
+from .chat_boost_source import ChatBoostSource
+from .chat_boost_source_premium import ChatBoostSourcePremium
+from .chat_boost_source_gift_code import ChatBoostSourceGiftCode
+from .chat_boost_source_giveaway import ChatBoostSourceGiveaway
+from .giveaway import Giveaway
+from .giveaway_created import GiveawayCreated
+from .giveaway_winners import GiveawayWinners
+from .giveaway_completed import GiveawayCompleted
+from .message_origin import MessageOrigin
+from .message_origin_user import MessageOriginUser
+from .message_origin_hidden_user import MessageOriginHiddenUser
+from .message_origin_chat import MessageOriginChat
+from .message_origin_channel import MessageOriginChannel
+from .maybe_inaccessible_message import MaybeInaccessibleMessage
+from .inaccessible_message import InaccessibleMessage
 
 
 __all__ = [
@@ -182,7 +209,7 @@ __all__ = [
     "ForumTopicReopened",
     "GeneralForumTopicHidden",
     "GeneralForumTopicUnhidden",
-    "UserShared",
+    "UsersShared",
     "ChatShared",
     "VideoChatScheduled",
     "VideoChatStarted",
@@ -193,7 +220,7 @@ __all__ = [
     "WebAppInfo",
     "ReplyKeyboardMarkup",
     "KeyboardButton",
-    "KeyboardButtonRequestUser",
+    "KeyboardButtonRequestUsers",
     "KeyboardButtonRequestChat",
     "KeyboardButtonPollType",
     "ReplyKeyboardRemove",
@@ -300,5 +327,32 @@ __all__ = [
     "PassportElementErrorUnspecified",
     "Game",
     "CallbackGame",
-    "GameHighScore"
+    "GameHighScore",
+    "ReactionType",
+    "ReactionTypeEmoji",
+    "ReactionTypeCustomEmoji",
+    "MessageReactionUpdated",
+    "MessageReactionCountUpdated",
+    "ExternalReplyInfo",
+    "TextQuote",
+    "ReplyParameters",
+    "LinkPreviewOptions",
+    "InputTextMessageContent",
+    "ChatBoostUpdated",
+    "ChatBoostRemoved",
+    "ChatBoostSource",
+    "ChatBoostSourcePremium",
+    "ChatBoostSourceGiftCode",
+    "ChatBoostSourceGiveaway",
+    "Giveaway",
+    "GiveawayCreated",
+    "GiveawayWinners",
+    "GiveawayCompleted",
+    "MessageOrigin",
+    "MessageOriginUser",
+    "MessageOriginHiddenUser",
+    "MessageOriginChat",
+    "MessageOriginChannel",
+    "MaybeInaccessibleMessage",
+    "InaccessibleMessage"
 ]
