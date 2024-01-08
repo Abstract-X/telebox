@@ -715,6 +715,7 @@ class Dispatcher:
 
         cherrypy.log.error_log.propagate = False
         cherrypy.log.access_log.propagate = False
+        cherrypy.engine.signals.subscribe = lambda: None
         logger.info("Server started.")
         cherrypy.quickstart(server_root, path)
         logger.info("Server stopped.")
