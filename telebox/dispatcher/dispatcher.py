@@ -691,6 +691,7 @@ class Dispatcher:
         cherrypy.config.update({
             "server.socket_host": host,
             "server.socket_port": port,
+            "server.shutdown_timeout": 1,
             "log.screen": False,
             "environment": "production"
         })
