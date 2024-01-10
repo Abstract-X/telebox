@@ -2,13 +2,14 @@ from dataclasses import dataclass
 
 from telebox import Group
 
+from {{ app_name }}.handlers.handler import AbstractHandler
 from {{ app_name }}.handlers.handlers.start import StartHandler
 from {{ app_name }}.env import Env
 
 
 @dataclass
 class HandlerGroup(Group):
-    start: StartHandler
+    start: Handler
     # Here you can add additional handlers
 
 

@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from telebox import Group
 
+from {{ app_name }}.states.state import State
 from {{ app_name }}.states.states.initial import InitialState
 if TYPE_CHECKING:
     from {{ app_name }}.env import Env
@@ -11,7 +12,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class StateGroup(Group):
-    initial: InitialState
+    initial: State
     # Here you can add additional states
 
 
