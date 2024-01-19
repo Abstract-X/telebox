@@ -128,6 +128,11 @@ def _create_middlewares_package(path: Path, environment) -> None:
     middlewares_path = _create_package("middlewares", path)
     _create_package("middlewares", middlewares_path)
     _create_module(
+        "middleware",
+        middlewares_path,
+        content=_get_code("middlewares/middleware.jinja", environment)
+    )
+    _create_module(
         "setting",
         middlewares_path,
         content=_get_code("middlewares/setting.jinja", environment)
