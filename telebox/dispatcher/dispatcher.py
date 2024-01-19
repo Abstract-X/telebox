@@ -22,6 +22,7 @@ from telebox.dispatcher.filters.errors.filter import AbstractErrorBaseFilter
 from telebox.dispatcher.filters.events.filters.none import NoneFilter
 from telebox.dispatcher.filters.errors.filters.none import NoneErrorFilter
 from telebox.dispatcher.middlewares.middleware import Middleware
+from telebox.dispatcher.middlewares.exceptions import AbortingException
 from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 from telebox.dispatcher.utils.media_group_container import MediaGroupContainer
@@ -969,6 +970,8 @@ class Dispatcher:
     def _run_event_processing(self) -> NoReturn:
         while True:
             event = self._get_event_from_queue()
+            logger.debug("Event processing started: %r.", event)
+            event_context.set(event.event)
 
             with self._busy_thread_lock:
                 self._busy_threads += 1
@@ -982,11 +985,16 @@ class Dispatcher:
 
             try:
                 try:
-                    logger.debug("Event processing started: %r.", event)
-                    event_context.set(event.event)
-
-                    for i in self._middlewares:
-                        i.pre_process_event(event.event, event.event_type)
+                    try:
+                        for i in self._middlewares:
+                            i.pre_process_event(
+                                event=event.event,
+                                event_type=event.event_type
+                            )
+                    except AbortingException:
+                        logger.debug("Event processing finished: %r.", event)
+                        self._set_event_completion()
+                        continue
 
                     event_handler = self._get_event_handler(event.event, event.event_type)
 
@@ -994,37 +1002,51 @@ class Dispatcher:
                         logger.debug("No handler found for event: %r.", event)
                         self._set_event_completion()
                         continue
-
-                    if not event.from_chat_queue:
-                        if event_handler.with_chat_waiting and (event.chat_id is not None):
-                            with self._event_lock:
-                                if self._check_active_chat_event(event.chat_id):
-                                    self._add_event_to_chat_queue(event)
-                                    logger.debug("Event added to chat queue: %r.", event)
-                                    continue
-                                else:
-                                    self._set_chat_queue(event.chat_id)
                 except Exception as error:
                     self._process_event_error(error, event)
                     self._set_event_completion()
                     continue
 
-                try:
-                    event_handler_context.set(event_handler.handler)
+                if not event.from_chat_queue:
+                    if event_handler.with_chat_waiting and (event.chat_id is not None):
+                        with self._event_lock:
+                            if self._check_active_chat_event(event.chat_id):
+                                self._add_event_to_chat_queue(event)
+                                logger.debug("Event added to chat queue: %r.", event)
+                                continue
+                            else:
+                                self._set_chat_queue(event.chat_id)
 
+                event_handler_context.set(event_handler.handler)
+
+                try:
                     if (
                         (event_handler.rate_limiter is not None)
                         and event_handler.rate_limiter.process_call(event.chat_id, event.user_id)
                     ):
                         continue
 
-                    for i in self._middlewares:
-                        i.process_event(event.event, event.event_type)
+                    try:
+                        for i in self._middlewares:
+                            i.process_event(
+                                event=event.event,
+                                event_type=event.event_type,
+                                handler=event_handler.handler
+                            )
+                    except AbortingException:
+                        continue
 
                     event_handler.handler.process_event(event.event)
 
-                    for i in self._middlewares:
-                        i.post_process_event(event.event, event.event_type)
+                    try:
+                        for i in self._middlewares:
+                            i.post_process_event(
+                                event=event.event,
+                                event_type=event.event_type,
+                                handler=event_handler.handler
+                            )
+                    except AbortingException:
+                        continue
                 except Exception as error:
                     self._process_event_error(error, event)
                 finally:
