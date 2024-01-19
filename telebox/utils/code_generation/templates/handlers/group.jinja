@@ -9,7 +9,7 @@ from {{ app_name }}.env import Env
 
 @dataclass
 class HandlerGroup(Group):
-    start: Handler
+    start: AbstractHandler
     # Here you can add additional handlers
 
 
