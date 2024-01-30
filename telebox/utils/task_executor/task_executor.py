@@ -1,7 +1,7 @@
 import logging
 from typing import Callable, Any, Optional, Union, NoReturn
 from dataclasses import dataclass
-from threading import Thread, Lock, Condition
+from threading import Thread, RLock, Condition
 from queue import SimpleQueue
 import time
 import uuid
@@ -28,7 +28,7 @@ class TaskExecutor:
         self._tasks = []
         self._active_tasks = SimpleQueue()
         self._unfinished_tasks = 0
-        self._task_lock = Lock()
+        self._task_lock = RLock()
         self._all_tasks_done_condition = Condition(self._task_lock)
         self._thread_pool = ThreadPool(
             min_threads,
@@ -37,7 +37,7 @@ class TaskExecutor:
             with_barrier=True
         )
         self._busy_threads = 0
-        self._busy_thread_lock = Lock()
+        self._busy_thread_lock = RLock()
         self._submission_thread: Optional[Thread] = None
 
     def __enter__(self):

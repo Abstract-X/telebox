@@ -1,4 +1,4 @@
-from threading import Thread, Barrier, Lock
+from threading import Thread, Barrier, RLock
 from typing import Callable, Optional, Union, Any
 
 
@@ -29,7 +29,7 @@ class ThreadPool:
             for _ in range(min_threads)
         ]
         self._barrier = Barrier(min_threads) if with_barrier else None
-        self._lock = Lock()
+        self._lock = RLock()
 
     @property
     def threads(self) -> int:

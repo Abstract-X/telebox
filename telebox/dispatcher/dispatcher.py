@@ -2,7 +2,7 @@ import logging
 from typing import Optional, Union, NoReturn, Callable
 from pathlib import Path
 from collections import deque
-from threading import Thread, Lock, Condition, Event as ThreadingEvent
+from threading import Thread, RLock, Condition, Event as ThreadingEvent
 import contextlib
 import time
 
@@ -66,19 +66,19 @@ class Dispatcher:
         self._events: deque[EventInfo] = deque()
         self._chat_events: dict[int, deque[EventInfo]] = {}
         self._unprocessed_events = 0
-        self._event_lock = Lock()
+        self._event_lock = RLock()
         self._new_event_condition = Condition(self._event_lock)
         self._all_events_processed_condition = Condition(self._event_lock)
         self._thread_pool: Optional[ThreadPool] = None
         self._busy_threads = 0
-        self._busy_thread_lock = Lock()
+        self._busy_thread_lock = RLock()
         self._event_handlers: dict[EventType, list[EventHandlerInfo]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandlerInfo] = []
         self._middlewares: list[Middleware] = []
         self.router = Router(self)
         self._media_group_gathering_thread: Optional[Thread] = None
         self._media_group_containers: dict[str, MediaGroupContainer] = {}
-        self._media_group_message_lock = Lock()
+        self._media_group_message_lock = RLock()
         self._polling_stopping_event = ThreadingEvent()
 
     @property
