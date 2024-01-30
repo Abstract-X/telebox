@@ -5,6 +5,7 @@ from typing import Optional, Literal
 from telebox.bot.types.types.message import Message
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.chat import Chat
+from telebox.bot.types.types.message_origin import MessageOrigin
 from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
@@ -76,24 +77,8 @@ class MediaGroup:
         return self.messages[0].sender_chat_id
 
     @property
-    def forward_from(self) -> Optional[User]:
-        return self.messages[0].forward_from
-
-    @property
-    def forward_from_chat(self) -> Optional[Chat]:
-        return self.messages[0].forward_from_chat
-
-    @property
-    def forward_signature(self) -> Optional[str]:
-        return self.messages[0].forward_signature
-
-    @property
-    def forward_sender_name(self) -> Optional[str]:
-        return self.messages[0].forward_sender_name
-
-    @property
-    def forward_date(self) -> Optional[datetime]:
-        return self.messages[0].forward_date
+    def forward_origin(self) -> Optional[MessageOrigin]:
+        return self.messages[0].forward_origin
 
     @property
     def is_topic_messages(self) -> Optional[Literal[True]]:

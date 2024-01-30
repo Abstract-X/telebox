@@ -1,6 +1,6 @@
 from typing import Union
 from collections import deque
-from threading import Lock
+from threading import RLock
 import time
 
 
@@ -19,9 +19,9 @@ class CallTracker:
         self._chat_call_times: dict[int, deque[float]] = {}
         self._user_call_times: dict[int, deque[float]] = {}
         self._chat_user_call_times: dict[int, dict[int, deque[float]]] = {}
-        self._chat_call_time_lock = Lock()
-        self._user_call_time_lock = Lock()
-        self._chat_user_call_time_lock = Lock()
+        self._chat_call_time_lock = RLock()
+        self._user_call_time_lock = RLock()
+        self._chat_user_call_time_lock = RLock()
 
     def add_chat_call(self, chat_id: int) -> None:
         with self._chat_call_time_lock:
