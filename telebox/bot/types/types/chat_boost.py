@@ -7,7 +7,7 @@ from telebox.bot.types.types.chat_boost_source import ChatBoostSource
 
 @dataclass
 class ChatBoost(Type):
-    boost_id: int
+    boost_id: str
     add_date: datetime
     expiration_date: datetime
     source: ChatBoostSource
