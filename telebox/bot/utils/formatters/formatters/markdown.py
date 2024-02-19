@@ -4,6 +4,17 @@ from telebox.bot.utils.formatters.formatter import AbstractFormatter
 from telebox.bot.utils.formatting import get_escaped_markdown_text
 
 
+_TAG_PATTERNS = [
+    "\*",
+    "_\\\r",
+    "__\\\r",
+    "\~",
+    "\|\|",
+    "`",
+    "```"
+]
+
+
 class MarkdownFormatter(AbstractFormatter):
 
     def get_escaped_text(self, text: str) -> str:
@@ -35,3 +46,9 @@ class MarkdownFormatter(AbstractFormatter):
 
     def get_blockquote_text(self, text: str) -> str:
         return "\n".join(f">{i}" for i in text.splitlines())
+
+    def get_blank_line_opening_tag_patterns(self) -> list[str]:
+        return _TAG_PATTERNS
+
+    def get_blank_line_closing_tag_patterns(self) -> list[str]:
+        return _TAG_PATTERNS
