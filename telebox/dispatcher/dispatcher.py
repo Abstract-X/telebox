@@ -718,7 +718,9 @@ class Dispatcher:
         cherrypy.log.error_log.propagate = False
         cherrypy.log.access_log.propagate = False
         logger.info("Server started.")
-        cherrypy.quickstart(server_root, path)
+        cherrypy.tree.mount(server_root, path)
+        cherrypy.engine.start()
+        cherrypy.engine.block()
         logger.info("Server stopped.")
         self._finish_update_processing()
         self._server_is_used = False
