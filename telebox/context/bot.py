@@ -1069,7 +1069,10 @@ class ContextBot:
         user_id: Optional[int] = None
     ) -> Literal[True]:
         return self.bot.approve_chat_join_request(
-            chat_id=get_event_chat_id() if chat_id is None else chat_id,
+            chat_id=get_event_chat_id(
+                for_approve_chat_join_request=True
+            )
+            if chat_id is None else chat_id,
             user_id=get_event_user_id() if user_id is None else user_id,
             timeout_secs=timeout_secs
         )
