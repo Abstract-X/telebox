@@ -39,15 +39,28 @@ class HTMLFormatter(AbstractFormatter):
     def get_blockquote_text(self, text: str) -> str:
         return f"<blockquote>{text}</blockquote>"
 
-    def get_blank_line_tags(self) -> list[tuple[str, str]]:
+    def get_blank_line_opening_tag_patterns(self) -> list[str]:
         return [
-            ("<b>", "</b>"),
-            ("<i>", "</i>"),
-            ("<u>", "</u>"),
-            ("<s>", "</s>"),
-            ("<tg-spoiler>", "</tg-spoiler>"),
-            ("<a href=", "</a>"),
-            ("<code>", "</code>"),
-            ("<pre>", "</pre>"),
-            ("<blockquote>", "</blockquote>")
+            "<b>",
+            "<i>",
+            "<u>",
+            "<s>",
+            "<tg\-spoiler>",
+            """<a href=('|").*('|")>""",
+            "<code>",
+            "<pre>",
+            "<blockquote>"
+        ]
+
+    def get_blank_line_closing_tag_patterns(self) -> list[str]:
+        return [
+            "</b>",
+            "</i>",
+            "</u>",
+            "</s>",
+            "</tg\-spoiler>",
+            "</a>",
+            "</code>",
+            "</pre>",
+            "</blockquote>"
         ]

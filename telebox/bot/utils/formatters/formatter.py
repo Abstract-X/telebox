@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
+import re
 
 from telebox.bot.utils.deep_links import get_user_link
 from telebox.bot.types.types.message_entity import MessageEntity
@@ -64,7 +65,11 @@ class AbstractFormatter(ABC):
         pass
 
     @abstractmethod
-    def get_blank_line_tags(self) -> list[tuple[str, str]]:
+    def get_blank_line_opening_tag_patterns(self) -> list[str]:
+        pass
+
+    @abstractmethod
+    def get_blank_line_closing_tag_patterns(self) -> list[str]:
         pass
 
     def get_text_mention_text(self, text: str, user_id: int) -> str:
@@ -77,13 +82,54 @@ class AbstractFormatter(ABC):
         text = get_text_with_surrogates(text)
         entities = [i for i in entities if i.type in _FORMATTING_ENTITY_TYPES]
         entities.sort(key=lambda entity: entity.offset)
-
-        return self._get_formatted_text(
+        formatted_text = self._get_formatted_text(
             text=text,
             entities=entities,
             offset=0,
             length=len(text)
         )
+        lines = formatted_text.split("\n")
+        line_index = 0
+        opening_tag_patterns = self.get_blank_line_opening_tag_patterns()
+        closing_tag_patterns = self.get_blank_line_closing_tag_patterns()
+
+        while line_index < len(lines):
+            line = lines[line_index]
+            line_opening_tags = _get_blank_line_tags(line, patterns=opening_tag_patterns)
+
+            if line_opening_tags:
+                next_line_index = line_index + 1
+
+                while True:
+                    if lines[next_line_index]:
+                        break
+                    else:
+                        next_line_index += 1
+
+                lines[next_line_index] = "".join(line_opening_tags) + lines[next_line_index]
+                lines[line_index] = ""
+                line_index = next_line_index
+            else:
+                line_closing_tags = _get_blank_line_tags(line, patterns=closing_tag_patterns)
+
+                if line_closing_tags:
+                    previous_line_index = line_index - 1
+
+                    while True:
+                        if lines[previous_line_index]:
+                            break
+                        else:
+                            previous_line_index -= 1
+
+                    lines[previous_line_index] = (
+                        lines[previous_line_index]
+                        + "".join(line_closing_tags)
+                    )
+                    lines[line_index] = ""
+
+            line_index += 1
+
+        return "\n".join(lines)
 
     def _get_formatted_text(
         self,
@@ -141,12 +187,25 @@ class AbstractFormatter(ABC):
                 )
             )
 
-        # TODO: Extend
-        # lines = formatted_text.splitlines()
-        # blank_line_tags = self.get_blank_line_tags()
-        #
-        # for line in lines:
-        #     for opening_tag, closing_tag in blank_line_tags:
-        #         if line.startswith(closing_tag)
-
         return formatted_text
+
+
+def _get_blank_line_tags(line: str, patterns: list[str]) -> list[str]:
+    tags = []
+
+    while True:
+        for i in patterns:
+            match = re.match(i, line)
+
+            if match is not None:
+                tag = match.group()
+                tags.append(tag)
+                line = line.replace(tag, "", 1)
+                break
+        else:
+            break
+
+    if line:
+        tags.clear()
+
+    return tags
