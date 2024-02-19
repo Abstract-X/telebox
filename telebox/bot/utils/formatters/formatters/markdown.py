@@ -35,3 +35,14 @@ class MarkdownFormatter(AbstractFormatter):
 
     def get_blockquote_text(self, text: str) -> str:
         return "\n".join(f">{i}" for i in text.splitlines())
+
+    def get_blank_line_tags(self) -> list[tuple[str, str]]:
+        return [
+            ("*",) * 2,
+            ("_\r",) * 2,
+            ("__\r",) * 2,
+            ("~",) * 2,
+            ("||",) * 2,
+            ("`",) * 2,
+            ("```",) * 2
+        ]

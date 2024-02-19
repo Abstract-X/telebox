@@ -63,6 +63,10 @@ class AbstractFormatter(ABC):
     def get_blockquote_text(self, text: str) -> str:
         pass
 
+    @abstractmethod
+    def get_blank_line_tags(self) -> list[tuple[str, str]]:
+        pass
+
     def get_text_mention_text(self, text: str, user_id: int) -> str:
         return self.get_text_link_text(
             text=text,
@@ -136,5 +140,13 @@ class AbstractFormatter(ABC):
                     text[offset:length]
                 )
             )
+
+        # TODO: Extend
+        # lines = formatted_text.splitlines()
+        # blank_line_tags = self.get_blank_line_tags()
+        #
+        # for line in lines:
+        #     for opening_tag, closing_tag in blank_line_tags:
+        #         if line.startswith(closing_tag)
 
         return formatted_text
