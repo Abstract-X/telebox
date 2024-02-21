@@ -45,8 +45,8 @@ class HTMLFormatter(AbstractFormatter):
             "<i>",
             "<u>",
             "<s>",
-            "<tg\-spoiler>",
-            """<a href=('|").*('|")>""",
+            r"<tg\-spoiler>",
+            r"""<a href=(\'|\")\S*(\'|\")>"""
             "<code>",
             "<pre>",
             "<blockquote>"
@@ -58,7 +58,7 @@ class HTMLFormatter(AbstractFormatter):
             "</i>",
             "</u>",
             "</s>",
-            "</tg\-spoiler>",
+            r"</tg\-spoiler>",
             "</a>",
             "</code>",
             "</pre>",
