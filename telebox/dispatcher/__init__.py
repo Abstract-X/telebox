@@ -1,5 +1,6 @@
 from .dispatcher import Dispatcher, Event
 from .enums import EventType, MediaGroupContentType
+from .types import Aborting, ABORTING
 from .handlers import AbstractEventHandler, AbstractErrorHandler
 from .filters import (
     AbstractEventFilterFactory,
@@ -20,6 +21,8 @@ __all__ = [
     "Event",
     "EventType",
     "MediaGroupContentType",
+    "Aborting",
+    "ABORTING",
     "AbstractEventHandler",
     "AbstractErrorHandler",
     "AbstractEventFilterFactory",
