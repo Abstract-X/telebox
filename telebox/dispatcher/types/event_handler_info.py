@@ -11,7 +11,7 @@ from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 class EventHandlerInfo:
     handler: AbstractEventHandler
     filter: AbstractEventBaseFilter
-    with_chat_waiting: bool
+    with_chat_queue: bool
     rate_limiter: Optional[RateLimiter] = None
 
     @property

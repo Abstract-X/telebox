@@ -2,6 +2,7 @@ import logging
 from typing import Optional, Union, NoReturn, Callable
 from pathlib import Path
 from collections import deque
+from queue import SimpleQueue as Queue
 from threading import Thread, RLock, Condition, Event as ThreadingEvent
 import contextlib
 import time
@@ -15,6 +16,7 @@ from telebox.bot.utils.converters import DataclassConverter
 from telebox.dispatcher.typing import Event
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.dispatcher.enums.event_type import EventType
+from telebox.dispatcher.enums.processing_status import ProcessingStatus
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.error import AbstractErrorHandler
 from telebox.dispatcher.filters.events.filter import AbstractEventBaseFilter
@@ -22,7 +24,6 @@ from telebox.dispatcher.filters.errors.filter import AbstractErrorBaseFilter
 from telebox.dispatcher.filters.events.filters.none import NoneFilter
 from telebox.dispatcher.filters.errors.filters.none import NoneErrorFilter
 from telebox.dispatcher.middlewares.middleware import Middleware
-from telebox.dispatcher.middlewares.exceptions import AbortingException
 from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 from telebox.dispatcher.utils.media_group_container import MediaGroupContainer
@@ -31,6 +32,7 @@ from telebox.dispatcher.utils.events import get_event_chat_id, get_event_user_id
 from telebox.dispatcher.types.event_info import EventInfo
 from telebox.dispatcher.types.event_handler_info import EventHandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
+from telebox.dispatcher.types.aborting import ABORTING
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet, NOT_SET
@@ -47,6 +49,13 @@ _none_filter = NoneFilter()
 _none_error_filter = NoneErrorFilter()
 _MEDIA_GROUP_GATHERING_DELAY_SECS = 0.1
 _DROPPED_UNKNOWN_UPDATE_MESSAGE = "Update dropped because it contains an unknown content type: %r."
+_EVENT_PROCESSING_LOG_TEMPLATES = {
+    ProcessingStatus.PROCESSING: "Event processing finished: %r.",
+    ProcessingStatus.ABORTED: "Event processing aborted: %r.",
+    ProcessingStatus.HANDLER_NOT_FOUND: "No handler found for event: %r.",
+    ProcessingStatus.RATE_LIMIT_EXCEEDED: "Rate limit exceeded for event: %r.",
+    ProcessingStatus.ADDED_TO_CHAT_QUEUE: "Event added to chat queue: %r."
+}
 
 
 class Dispatcher:
@@ -64,7 +73,8 @@ class Dispatcher:
         self._polling_is_used = False
         self._server_is_used = False
         self._events: deque[EventInfo] = deque()
-        self._chat_events: dict[int, deque[EventInfo]] = {}
+        self._processing_chat_ids: set[int] = set()
+        self._chat_queues: dict[int, Queue[EventInfo]] = {}
         self._unprocessed_events = 0
         self._event_lock = RLock()
         self._new_event_condition = Condition(self._event_lock)
@@ -94,14 +104,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.MESSAGE,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_edited_message_handler(
@@ -109,14 +119,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.EDITED_MESSAGE,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_channel_post_handler(
@@ -124,14 +134,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.CHANNEL_POST,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_edited_channel_post_handler(
@@ -139,14 +149,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.EDITED_CHANNEL_POST,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_media_group_handler(
@@ -154,14 +164,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.MEDIA_GROUP,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_channel_media_group_handler(
@@ -169,14 +179,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.CHANNEL_MEDIA_GROUP,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_message_reaction_handler(
@@ -184,14 +194,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.MESSAGE_REACTION,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_message_reaction_count_handler(
@@ -199,14 +209,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.MESSAGE_REACTION_COUNT,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_inline_query_handler(
@@ -240,14 +250,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.CALLBACK_QUERY,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_shipping_query_handler(
@@ -302,26 +312,26 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.MY_CHAT_MEMBER,
             filter_=filter_,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_chat_member_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
             handler=handler,
             event_type=EventType.CHAT_MEMBER,
             filter_=filter_,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_chat_join_request_handler(
@@ -379,14 +389,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
             event_type=EventType.MESSAGE,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def check_edited_message_handler(
@@ -394,14 +404,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
             event_type=EventType.EDITED_MESSAGE,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def check_channel_post_handler(
@@ -409,14 +419,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
             event_type=EventType.CHANNEL_POST,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def check_edited_channel_post_handler(
@@ -424,14 +434,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
             event_type=EventType.EDITED_CHANNEL_POST,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def check_media_group_handler(
@@ -439,14 +449,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
             event_type=EventType.MEDIA_GROUP,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def check_channel_media_group_handler(
@@ -454,14 +464,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
             event_type=EventType.CHANNEL_MEDIA_GROUP,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def check_inline_query_handler(
@@ -495,14 +505,14 @@ class Dispatcher:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
             event_type=EventType.CALLBACK_QUERY,
             filter_=filter_,
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def check_shipping_query_handler(
@@ -764,7 +774,7 @@ class Dispatcher:
         event_type: EventType,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         filter_ = _get_event_filter(filter_)
 
@@ -777,7 +787,7 @@ class Dispatcher:
             EventHandlerInfo(
                 handler=handler,
                 filter=filter_,
-                with_chat_waiting=with_chat_waiting,
+                with_chat_queue=with_chat_queue,
                 rate_limiter=rate_limiter
             )
         )
@@ -788,7 +798,7 @@ class Dispatcher:
         event_type: EventType,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> bool:
         filter_ = _get_event_filter(filter_)
         rate_limit = self._get_rate_limit(rate_limit)
@@ -797,7 +807,7 @@ class Dispatcher:
             if (
                 (i.handler is handler)
                 and (i.filter is filter_)
-                and (i.with_chat_waiting is with_chat_waiting)
+                and (i.with_chat_queue is with_chat_queue)
                 and (i.rate_limit is rate_limit)
             ):
                 return True
@@ -924,9 +934,6 @@ class Dispatcher:
             logger.debug("Event added to queue: %r.", event)
             self._new_event_condition.notify()
 
-    def _add_event_to_chat_queue(self, event: EventInfo) -> None:
-        self._chat_events[event.chat_id].append(event)
-
     def _get_event_from_queue(self) -> EventInfo:
         with self._new_event_condition:
             while not self._events:
@@ -946,120 +953,145 @@ class Dispatcher:
             if not self._unprocessed_events:
                 self._all_events_processed_condition.notify_all()
 
-    def _set_chat_event_completion(self, event: EventInfo) -> None:
+    def _set_chat_event_completion(self, chat_id: int) -> None:
         with self._new_event_condition:
-            if event.chat_id in self._chat_events:
-                chat_events = self._chat_events[event.chat_id]
+            chat_events = self._chat_queues.get(chat_id)
 
-                if chat_events:
-                    next_event = chat_events.popleft()
+            if chat_events is None:
+                self._processing_chat_ids.remove(chat_id)
 
-                    if not chat_events:
-                        del self._chat_events[event.chat_id]
+                return
 
-                    next_event.from_chat_queue = True
-                    self._events.append(next_event)
-                    self._new_event_condition.notify()
-                else:
-                    del self._chat_events[event.chat_id]
+            next_event = chat_events.get_nowait()
+            next_event.from_chat_queue = True
 
-    def _check_active_chat_event(self, chat_id: int) -> bool:
-        return self._chat_events.get(chat_id) is not None
+            if chat_events.empty():
+                del self._chat_queues[chat_id]
 
-    def _set_chat_queue(self, chat_id: int) -> None:
-        self._chat_events[chat_id] = deque()
+            self._events.append(next_event)
+            self._new_event_condition.notify()
+
+    def _process_busy_threads(self) -> None:
+        with self._busy_thread_lock:
+            self._busy_threads += 1
+
+            if (
+                (self._busy_threads == self._thread_pool.threads)
+                and (self._thread_pool.threads < self._thread_pool.max_threads)
+            ):
+                self._thread_pool.create_thread()
+                logger.debug("Additional event processing thread created.")
 
     def _run_event_processing(self) -> NoReturn:
         while True:
             event = self._get_event_from_queue()
             logger.debug("Event processing started: %r.", event)
-            event_context.set(event.event)
-
-            with self._busy_thread_lock:
-                self._busy_threads += 1
-
-                if (
-                    (self._busy_threads == self._thread_pool.threads)
-                    and (self._thread_pool.threads < self._thread_pool.max_threads)
-                ):
-                    self._thread_pool.create_thread()
-                    logger.debug("Additional event processing thread created.")
 
             try:
-                try:
-                    try:
-                        for i in self._middlewares:
-                            i.pre_process_event(
-                                event=event.event,
-                                event_type=event.event_type
-                            )
-                    except AbortingException:
-                        logger.debug("Event processing finished: %r.", event)
-                        self._set_event_completion()
+                event_context.set(event.event)
+                self._process_busy_threads()
+                event.busy_threads_processed = True
+
+                if not event.middleware_pre_processed:
+                    for i in self._middlewares:
+                        result = i.pre_process_event(
+                            event=event.event,
+                            event_type=event.event_type
+                        )
+
+                        if result is ABORTING:
+                            event.processing_status = ProcessingStatus.ABORTED
+                            break
+
+                    if event.processing_status is ProcessingStatus.ABORTED:
                         continue
 
-                    event_handler = self._get_event_handler(event.event, event.event_type)
+                    event.middleware_pre_processed = True
 
-                    if event_handler is None:
-                        logger.debug("No handler found for event: %r.", event)
-                        self._set_event_completion()
-                        continue
-                except Exception as error:
-                    self._process_event_error(error, event)
-                    self._set_event_completion()
+                event_handler = self._get_event_handler(event.event, event.event_type)
+
+                if event_handler is None:
+                    event.processing_status = ProcessingStatus.HANDLER_NOT_FOUND
                     continue
 
-                if not event.from_chat_queue:
-                    if event_handler.with_chat_waiting and (event.chat_id is not None):
+                if event_handler.with_chat_queue and (event.chat_id is not None):
+                    event.with_chat_queue = True
+
+                    if not event.from_chat_queue:
                         with self._event_lock:
-                            if self._check_active_chat_event(event.chat_id):
-                                self._add_event_to_chat_queue(event)
-                                logger.debug("Event added to chat queue: %r.", event)
+                            if event.chat_id in self._processing_chat_ids:
+                                chat_events = self._chat_queues.get(event.chat_id)
+
+                                if chat_events is None:
+                                    chat_events = self._chat_queues[event.chat_id] = Queue()
+
+                                chat_events.put_nowait(event)
+                                event.processing_status = ProcessingStatus.ADDED_TO_CHAT_QUEUE
                                 continue
                             else:
-                                self._set_chat_queue(event.chat_id)
+                                self._processing_chat_ids.add(event.chat_id)
 
                 event_handler_context.set(event_handler.handler)
 
-                try:
-                    if (
-                        (event_handler.rate_limiter is not None)
-                        and event_handler.rate_limiter.process_call(event.chat_id, event.user_id)
-                    ):
-                        continue
+                if (
+                    (event_handler.rate_limiter is not None)
+                    and event_handler.rate_limiter.process_call(event.chat_id, event.user_id)
+                ):
+                    event.processing_status = ProcessingStatus.RATE_LIMIT_EXCEEDED
+                    continue
 
-                    try:
-                        for i in self._middlewares:
-                            i.process_event(
-                                event=event.event,
-                                event_type=event.event_type,
-                                handler=event_handler.handler
-                            )
-                    except AbortingException:
-                        continue
+                for i in self._middlewares:
+                    result = i.process_event(
+                        event=event.event,
+                        event_type=event.event_type,
+                        handler=event_handler.handler
+                    )
 
-                    event_handler.handler.process_event(event.event)
+                    if result is ABORTING:
+                        event.processing_status = ProcessingStatus.ABORTED
+                        break
 
-                    try:
-                        for i in self._middlewares:
-                            i.post_process_event(
-                                event=event.event,
-                                event_type=event.event_type,
-                                handler=event_handler.handler
-                            )
-                    except AbortingException:
-                        continue
-                except Exception as error:
-                    self._process_event_error(error, event)
-                finally:
-                    if event_handler.with_chat_waiting and (event.chat_id is not None):
-                        self._set_chat_event_completion(event)
+                if event.processing_status is ProcessingStatus.ABORTED:
+                    continue
 
-                    self._set_event_completion()
-                    logger.debug("Event processing finished: %r.", event)
+                result = event_handler.handler.process_event(event.event)
+
+                if result is ABORTING:
+                    event.processing_status = ProcessingStatus.ABORTED
+                    continue
+
+                for i in self._middlewares:
+                    result = i.post_process_event(
+                        event=event.event,
+                        event_type=event.event_type,
+                        handler=event_handler.handler
+                    )
+
+                    if result is ABORTING:
+                        event.processing_status = ProcessingStatus.ABORTED
+                        break
+
+                if event.processing_status is ProcessingStatus.ABORTED:
+                    continue
+            except Exception as error:
+                event.processing_status = ProcessingStatus.ERROR_OCCURRED
+                self._process_event_error(error, event)
             finally:
-                with self._busy_thread_lock:
-                    self._busy_threads -= 1
+                if event.busy_threads_processed:
+                    with self._busy_thread_lock:
+                        self._busy_threads -= 1
+
+                if event.processing_status is not ProcessingStatus.ERROR_OCCURRED:
+                    logger.debug(_EVENT_PROCESSING_LOG_TEMPLATES[event.processing_status], event)
+
+                if event.processing_status is ProcessingStatus.ADDED_TO_CHAT_QUEUE:
+                    event.processing_status = ProcessingStatus.PROCESSING
+                    continue
+
+                if event.with_chat_queue:
+                    self._set_chat_event_completion(chat_id=event.chat_id)
+
+                self._set_event_completion()
 
     def _process_event_error(self, error: Exception, event: EventInfo) -> None:
         # noinspection PyBroadException
