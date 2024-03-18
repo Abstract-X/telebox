@@ -7,7 +7,7 @@ from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.bot.types.types.animation import Animation
 
 
-@dataclass
+@dataclass(repr=False)
 class Game(Type):
     title: str
     description: str

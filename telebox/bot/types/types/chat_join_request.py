@@ -9,7 +9,7 @@ from telebox.bot.types.types.chat_invite_link import ChatInviteLink
 from telebox.bot.utils.ids import get_unprefixed_chat_id
 
 
-@dataclass
+@dataclass(repr=False)
 class ChatJoinRequest(Type):
     chat: Chat
     from_: User

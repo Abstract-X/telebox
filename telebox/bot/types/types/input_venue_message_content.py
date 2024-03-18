@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class InputVenueMessageContent(Type):
     latitude: float
     longitude: float

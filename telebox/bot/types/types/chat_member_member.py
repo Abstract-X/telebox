@@ -5,7 +5,7 @@ from telebox.bot.consts import chat_member_statuses
 from telebox.bot.types.types.user import User
 
 
-@dataclass
+@dataclass(repr=False)
 class ChatMemberMember(Type):
     user: User
     status: str = chat_member_statuses.MEMBER

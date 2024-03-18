@@ -9,7 +9,7 @@ from telebox.bot.types.types.user import User
 from telebox.bot.types.types.reaction_type import ReactionType
 
 
-@dataclass
+@dataclass(repr=False)
 class MessageReactionUpdated(Type):
     chat: Chat
     message_id: int

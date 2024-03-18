@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.message_entity import MessageEntity
 
 
-@dataclass
+@dataclass(repr=False)
 class TextQuote(Type):
     text: str
     position: int

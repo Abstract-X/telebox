@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class ForumTopicCreated(Type):
     name: str
     icon_color: int

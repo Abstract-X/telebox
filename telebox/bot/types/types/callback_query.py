@@ -7,7 +7,7 @@ from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessible
 from telebox.bot.utils.ids import get_unprefixed_chat_id
 
 
-@dataclass
+@dataclass(repr=False)
 class CallbackQuery(Type):
     id: str
     from_: User

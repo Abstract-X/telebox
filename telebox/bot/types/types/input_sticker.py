@@ -6,7 +6,7 @@ from telebox.bot.types.types.input_file import InputFile
 from telebox.bot.types.types.mask_position import MaskPosition
 
 
-@dataclass
+@dataclass(repr=False)
 class InputSticker(Type):
     sticker: Union[InputFile, str]
     emoji_list: list[str]

@@ -35,7 +35,7 @@ UpdateContent = Union[
 ]
 
 
-@dataclass
+@dataclass(repr=False)
 class Update(Type):
     update_id: int
     message: Optional[Message] = None

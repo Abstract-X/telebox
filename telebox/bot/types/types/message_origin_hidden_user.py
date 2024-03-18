@@ -4,7 +4,7 @@ from datetime import datetime
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class MessageOriginHiddenUser(Type):
     date: datetime
     sender_user_name: str

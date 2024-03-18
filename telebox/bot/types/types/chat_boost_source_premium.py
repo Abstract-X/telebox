@@ -4,7 +4,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 
 
-@dataclass
+@dataclass(repr=False)
 class ChatBoostSourcePremium(Type):
     user: User
     source: str = "premium"

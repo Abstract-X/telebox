@@ -931,7 +931,7 @@ class Dispatcher:
         with self._new_event_condition:
             self._events.append(event)
             self._unprocessed_events += 1
-            logger.debug("Event added to queue: %r.", event)
+            logger.debug("Event added to queue: %r.", event.event)
             self._new_event_condition.notify()
 
     def _get_event_from_queue(self) -> EventInfo:
@@ -985,7 +985,7 @@ class Dispatcher:
     def _run_event_processing(self) -> NoReturn:
         while True:
             event = self._get_event_from_queue()
-            logger.debug("Event processing started: %r.", event)
+            logger.debug("Event processing started: %r.", event.event)
 
             try:
                 event_context.set(event.event)
@@ -1082,7 +1082,10 @@ class Dispatcher:
                         self._busy_threads -= 1
 
                 if event.processing_status is not ProcessingStatus.ERROR_OCCURRED:
-                    logger.debug(_EVENT_PROCESSING_LOG_TEMPLATES[event.processing_status], event)
+                    logger.debug(
+                        _EVENT_PROCESSING_LOG_TEMPLATES[event.processing_status],
+                        event.event
+                    )
 
                 if event.processing_status is ProcessingStatus.ADDED_TO_CHAT_QUEUE:
                     event.processing_status = ProcessingStatus.PROCESSING
@@ -1114,7 +1117,7 @@ class Dispatcher:
             for i in self._middlewares:
                 i.post_process_error(error, event.event, event.event_type)
         except Exception:
-            logger.exception("An error occurred while processing an event!")
+            logger.exception("An error occurred while processing an event %r!", event.event)
 
 
 def _get_event_filter(

@@ -6,7 +6,7 @@ from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 
 
-@dataclass
+@dataclass(repr=False)
 class InputTextMessageContent(Type):
     message_text: str
     parse_mode: Optional[str] = None

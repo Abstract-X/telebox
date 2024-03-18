@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class ResponseParameters(Type):
     migrate_to_chat_id: Optional[int] = None
     retry_after: Optional[int] = None

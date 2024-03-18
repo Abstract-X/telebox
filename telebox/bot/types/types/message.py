@@ -69,7 +69,7 @@ _html_formatter = HTMLFormatter()
 _markdown_formatter = MarkdownFormatter()
 
 
-@dataclass
+@dataclass(repr=False)
 class Message(Type):
     message_id: int
     date: datetime
