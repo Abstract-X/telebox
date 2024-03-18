@@ -6,7 +6,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.chat import Chat
 
 
-@dataclass
+@dataclass(repr=False)
 class Giveaway(Type):
     chats: list[Chat]
     winners_selection_date: datetime

@@ -6,7 +6,7 @@ from telebox.bot.types.types.user import User
 from telebox.bot.types.types.location import Location
 
 
-@dataclass
+@dataclass(repr=False)
 class ChosenInlineResult(Type):
     result_id: str
     from_: User

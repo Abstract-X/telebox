@@ -4,7 +4,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.inline_keyboard_button import InlineKeyboardButton
 
 
-@dataclass
+@dataclass(repr=False)
 class InlineKeyboardMarkup(Type):
     inline_keyboard: list[list[InlineKeyboardButton]] = field(default_factory=list)
 

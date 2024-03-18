@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.location import Location
 
 
-@dataclass
+@dataclass(repr=False)
 class Venue(Type):
     location: Location
     title: str

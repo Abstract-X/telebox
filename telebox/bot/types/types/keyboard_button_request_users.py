@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class KeyboardButtonRequestUsers(Type):
     request_id: int
     user_is_bot: Optional[bool] = None

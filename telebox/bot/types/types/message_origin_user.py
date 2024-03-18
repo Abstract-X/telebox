@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 
 
-@dataclass
+@dataclass(repr=False)
 class MessageOriginUser(Type):
     date: datetime
     sender_user: User

@@ -3,6 +3,6 @@ from dataclasses import dataclass
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class BotShortDescription(Type):
     short_description: str
