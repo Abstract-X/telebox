@@ -42,7 +42,8 @@ from .utils import (
     Env,
     get_html_text,
     get_markdown_text,
-    set_signal_handler
+    set_signal_handler,
+    get_group
 )
 
 
@@ -90,6 +91,7 @@ __all__ = [
     "get_html_text",
     "get_markdown_text",
     "set_signal_handler",
+    "get_group",
     "get_event_chat_id",
     "get_event_user_id"
 ]
