@@ -4,6 +4,6 @@ from telebox.bot.types.type import Type
 from telebox.bot.consts import menu_button_types
 
 
-@dataclass
+@dataclass(repr=False)
 class MenuButtonDefault(Type):
     type: str = menu_button_types.DEFAULT

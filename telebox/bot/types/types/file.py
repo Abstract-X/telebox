@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class File(Type):
     file_id: str
     file_unique_id: str

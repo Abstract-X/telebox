@@ -5,7 +5,7 @@ import os.path
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class InputFile(Type):
     file: BinaryIO = field(repr=False)
     name: Optional[str] = None

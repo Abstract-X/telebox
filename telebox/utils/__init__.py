@@ -6,6 +6,7 @@ from .thread_pool import ThreadPool
 from .env import Env
 from .text import get_html_text, get_markdown_text
 from .signals import set_signal_handler
+from .discovering import get_group
 
 
 __all__ = [
@@ -18,5 +19,6 @@ __all__ = [
     "Env",
     "get_html_text",
     "get_markdown_text",
-    "set_signal_handler"
+    "set_signal_handler",
+    "get_group"
 ]

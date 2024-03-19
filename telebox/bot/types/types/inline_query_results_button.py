@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.web_app_info import WebAppInfo
 
 
-@dataclass
+@dataclass(repr=False)
 class InlineQueryResultsButton(Type):
     text: str
     web_app: Optional[WebAppInfo] = None

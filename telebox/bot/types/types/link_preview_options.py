@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class LinkPreviewOptions(Type):
     is_disabled: Optional[bool] = None
     url: Optional[str] = None

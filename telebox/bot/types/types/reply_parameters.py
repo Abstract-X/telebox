@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.message_entity import MessageEntity
 
 
-@dataclass
+@dataclass(repr=False)
 class ReplyParameters(Type):
     message_id: int
     chat_id: Union[int, str, None] = None

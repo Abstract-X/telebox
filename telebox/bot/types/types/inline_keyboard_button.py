@@ -8,7 +8,7 @@ from telebox.bot.types.types.callback_game import CallbackGame
 from telebox.bot.types.types.switch_inline_query_chosen_chat import SwitchInlineQueryChosenChat
 
 
-@dataclass
+@dataclass(repr=False)
 class InlineKeyboardButton(Type):
     text: str
     url: Optional[str] = None

@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class SwitchInlineQueryChosenChat(Type):
     query: Optional[str] = None
     allow_user_chats: Optional[bool] = None

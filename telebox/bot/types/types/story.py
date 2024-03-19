@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 
 from telebox.bot.types.type import Type
+from telebox.bot.types.types.chat import Chat
 
 
-@dataclass
+@dataclass(repr=False)
 class Story(Type):
-    pass
+    chat: Chat
+    id: int

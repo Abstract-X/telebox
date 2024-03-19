@@ -7,7 +7,7 @@ from telebox.bot.types.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.types.input_message_content import InputMessageContent
 
 
-@dataclass
+@dataclass(repr=False)
 class InlineQueryResultCachedSticker(Type):
     id: str
     sticker_file_id: str

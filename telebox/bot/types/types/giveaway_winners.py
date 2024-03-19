@@ -7,7 +7,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.user import User
 
 
-@dataclass
+@dataclass(repr=False)
 class GiveawayWinners(Type):
     chat: Chat
     giveaway_message_id: int

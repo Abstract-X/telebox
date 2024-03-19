@@ -1,4 +1,0 @@
-
-
-class AbortingException(Exception):
-    pass

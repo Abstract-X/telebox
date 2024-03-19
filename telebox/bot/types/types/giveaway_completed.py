@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.message import Message
 
 
-@dataclass
+@dataclass(repr=False)
 class GiveawayCompleted(Type):
     winner_count: int
     unclaimed_prize_count: Optional[int] = None

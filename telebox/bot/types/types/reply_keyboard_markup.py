@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.keyboard_button import KeyboardButton
 
 
-@dataclass
+@dataclass(repr=False)
 class ReplyKeyboardMarkup(Type):
     keyboard: list[list[KeyboardButton]] = field(default_factory=list)
     is_persistent: Optional[bool] = None

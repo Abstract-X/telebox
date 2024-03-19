@@ -34,6 +34,7 @@ from telebox.bot.types.types.chat_shared import ChatShared
 from telebox.bot.types.types.write_access_allowed import WriteAccessAllowed
 from telebox.bot.types.types.passport_data import PassportData
 from telebox.bot.types.types.proximity_alert_triggered import ProximityAlertTriggered
+from telebox.bot.types.types.chat_boost_added import ChatBoostAdded
 from telebox.bot.types.types.forum_topic_created import ForumTopicCreated
 from telebox.bot.types.types.forum_topic_edited import ForumTopicEdited
 from telebox.bot.types.types.forum_topic_closed import ForumTopicClosed
@@ -69,7 +70,7 @@ _html_formatter = HTMLFormatter()
 _markdown_formatter = MarkdownFormatter()
 
 
-@dataclass
+@dataclass(repr=False)
 class Message(Type):
     message_id: int
     date: datetime
@@ -78,11 +79,13 @@ class Message(Type):
     message_thread_id: Optional[int] = None
     from_: Optional[User] = None
     sender_chat: Optional["Chat"] = None
+    sender_boost_count: Optional[int] = None
     is_topic_message: Optional[Literal[True]] = None
     is_automatic_forward: Optional[Literal[True]] = None
     reply_to_message: Optional["Message"] = None
     external_reply: Optional[ExternalReplyInfo] = None
     quote: Optional[TextQuote] = None
+    reply_to_story: Optional[Story] = None
     via_bot: Optional[User] = None
     edit_date: Optional[datetime] = None
     has_protected_content: Optional[Literal[True]] = None
@@ -129,6 +132,7 @@ class Message(Type):
     write_access_allowed: Optional[WriteAccessAllowed] = None
     passport_data: Optional[PassportData] = None
     proximity_alert_triggered: Optional[ProximityAlertTriggered] = None
+    boost_added: Optional[ChatBoostAdded] = None
     forum_topic_created: Optional[ForumTopicCreated] = None
     forum_topic_edited: Optional[ForumTopicEdited] = None
     forum_topic_closed: Optional[ForumTopicClosed] = None
@@ -255,6 +259,9 @@ class Message(Type):
         elif self.proximity_alert_triggered is not None:
             self._content = self.proximity_alert_triggered
             self._content_type = MessageContentType.PROXIMITY_ALERT_TRIGGERED
+        elif self.boost_added is not None:
+            self._content = self.boost_added
+            self._content_type = MessageContentType.BOOST_ADDED
         elif self.forum_topic_created is not None:
             self._content = self.forum_topic_created
             self._content_type = MessageContentType.FORUM_TOPIC_CREATED

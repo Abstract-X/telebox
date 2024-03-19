@@ -7,7 +7,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.reaction_count import ReactionCount
 
 
-@dataclass
+@dataclass(repr=False)
 class MessageReactionCountUpdated(Type):
     chat: Chat
     message_id: int

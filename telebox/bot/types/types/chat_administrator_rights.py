@@ -4,7 +4,7 @@ from typing import Optional
 from telebox.bot.types.type import Type
 
 
-@dataclass
+@dataclass(repr=False)
 class ChatAdministratorRights(Type):
     is_anonymous: bool
     can_manage_chat: bool

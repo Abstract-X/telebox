@@ -35,13 +35,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_message_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_edited_message_handler(
@@ -49,13 +49,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_edited_message_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_channel_post_handler(
@@ -63,13 +63,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_channel_post_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_edited_channel_post_handler(
@@ -77,13 +77,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_edited_channel_post_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_media_group_handler(
@@ -91,13 +91,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_media_group_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_channel_media_group_handler(
@@ -105,13 +105,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_channel_media_group_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_message_reaction_handler(
@@ -119,13 +119,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_message_reaction_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_message_reaction_count_handler(
@@ -133,13 +133,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_message_reaction_count_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_inline_query_handler(
@@ -171,13 +171,13 @@ class Router:
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
-        with_chat_waiting: bool = True
+        with_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_callback_query_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
             rate_limit=rate_limit,
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_shipping_query_handler(
@@ -228,24 +228,24 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_my_chat_member_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_chat_member_handler(
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractEventBaseFilter] = None,
-        with_chat_waiting: bool = False
+        with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_chat_member_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_waiting=with_chat_waiting
+            with_chat_queue=with_chat_queue
         )
 
     def add_chat_join_request_handler(

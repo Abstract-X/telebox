@@ -6,7 +6,7 @@ from telebox.bot.consts import chat_member_statuses
 from telebox.bot.types.types.user import User
 
 
-@dataclass
+@dataclass(repr=False)
 class ChatMemberAdministrator(Type):
     user: User
     can_be_edited: bool

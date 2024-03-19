@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.chat_administrator_rights import ChatAdministratorRights
 
 
-@dataclass
+@dataclass(repr=False)
 class KeyboardButtonRequestChat(Type):
     request_id: int
     chat_is_channel: bool

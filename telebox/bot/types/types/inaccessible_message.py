@@ -6,7 +6,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.chat import Chat
 
 
-@dataclass
+@dataclass(repr=False)
 class InaccessibleMessage(Type):
     chat: Chat
     message_id: int

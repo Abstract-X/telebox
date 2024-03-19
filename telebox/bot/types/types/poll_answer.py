@@ -6,7 +6,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.user import User
 
 
-@dataclass
+@dataclass(repr=False)
 class PollAnswer(Type):
     poll_id: str
     option_ids: list[int]

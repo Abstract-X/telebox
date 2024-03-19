@@ -6,7 +6,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.chat_boost_source import ChatBoostSource
 
 
-@dataclass
+@dataclass(repr=False)
 class ChatBoostRemoved(Type):
     chat: Chat
     boost_id: str

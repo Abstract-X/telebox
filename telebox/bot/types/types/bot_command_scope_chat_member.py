@@ -5,7 +5,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.consts import bot_command_scope_types
 
 
-@dataclass
+@dataclass(repr=False)
 class BotCommandScopeChatMember(Type):
     chat_id: Union[int, str]
     user_id: int

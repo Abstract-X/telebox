@@ -25,7 +25,7 @@ from telebox.bot.types.types.poll import Poll
 from telebox.bot.types.types.venue import Venue
 
 
-@dataclass
+@dataclass(repr=False)
 class ExternalReplyInfo(Type):
     origin: MessageOrigin
     chat: Optional[Chat] = None
