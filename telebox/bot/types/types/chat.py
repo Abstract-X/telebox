@@ -41,6 +41,7 @@ class Chat(Type):
     pinned_message: Optional["Message"] = None
     permissions: Optional[ChatPermissions] = None
     slow_mode_delay: Optional[int] = None
+    unrestrict_boost_count: Optional[int] = None
     message_auto_delete_time: Optional[int] = None
     has_aggressive_anti_spam_enabled: Optional[Literal[True]] = None
     has_hidden_members: Optional[Literal[True]] = None
@@ -48,6 +49,7 @@ class Chat(Type):
     has_visible_history: Optional[Literal[True]] = None
     sticker_set_name: Optional[str] = None
     can_set_sticker_set: Optional[Literal[True]] = None
+    custom_emoji_sticker_set_name: Optional[str] = None
     linked_chat_id: Optional[int] = None
     location: Optional[ChatLocation] = None
 
