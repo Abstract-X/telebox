@@ -17,6 +17,8 @@ from telebox.bot.types.types.chat_member_updated import ChatMemberUpdated
 from telebox.bot.types.types.chat_join_request import ChatJoinRequest
 from telebox.bot.types.types.chat_boost_updated import ChatBoostUpdated
 from telebox.bot.types.types.chat_boost_removed import ChatBoostRemoved
+from telebox.bot.types.types.business_connection import BusinessConnection
+from telebox.bot.types.types.business_messages_deleted import BusinessMessagesDeleted
 
 
 UpdateContent = Union[
@@ -31,7 +33,9 @@ UpdateContent = Union[
     Poll,
     PollAnswer,
     ChatMemberUpdated,
-    ChatJoinRequest
+    ChatJoinRequest,
+    BusinessConnection,
+    BusinessMessagesDeleted
 ]
 
 
@@ -42,6 +46,10 @@ class Update(Type):
     edited_message: Optional[Message] = None
     channel_post: Optional[Message] = None
     edited_channel_post: Optional[Message] = None
+    business_connection: Optional[BusinessConnection] = None
+    business_message: Optional[Message] = None
+    edited_business_message: Optional[Message] = None
+    deleted_business_messages: Optional[BusinessMessagesDeleted] = None
     message_reaction: Optional[MessageReactionUpdated] = None
     message_reaction_count: Optional[MessageReactionCountUpdated] = None
     inline_query: Optional[InlineQuery] = None
@@ -70,6 +78,18 @@ class Update(Type):
         elif self.edited_channel_post is not None:
             self._content = self.edited_channel_post
             self._content_type = UpdateContentType.EDITED_CHANNEL_POST
+        elif self.business_connection is not None:
+            self._content = self.business_connection
+            self._content_type = UpdateContentType.BUSINESS_CONNECTION
+        elif self.business_message is not None:
+            self._content = self.business_message
+            self._content_type = UpdateContentType.BUSINESS_MESSAGE
+        elif self.edited_business_message is not None:
+            self._content = self.edited_business_message
+            self._content_type = UpdateContentType.EDITED_BUSINESS_MESSAGE
+        elif self.deleted_business_messages is not None:
+            self._content = self.deleted_business_messages
+            self._content_type = UpdateContentType.DELETED_BUSINESS_MESSAGES
         elif self.message_reaction is not None:
             self._content = self.message_reaction
             self._content_type = UpdateContentType.MESSAGE_REACTION

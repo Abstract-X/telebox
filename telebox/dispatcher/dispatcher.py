@@ -129,6 +129,58 @@ class Dispatcher:
             with_chat_queue=with_chat_queue
         )
 
+    def add_business_connection_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> None:
+        self._add_event_handler(
+            handler=handler,
+            event_type=EventType.BUSINESS_CONNECTION,
+            filter_=filter_
+        )
+
+    def add_business_message_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        with_chat_queue: bool = False
+    ) -> None:
+        self._add_event_handler(
+            handler=handler,
+            event_type=EventType.BUSINESS_MESSAGE,
+            filter_=filter_,
+            rate_limit=rate_limit,
+            with_chat_queue=with_chat_queue
+        )
+
+    def add_edited_business_message_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        with_chat_queue: bool = False
+    ) -> None:
+        self._add_event_handler(
+            handler=handler,
+            event_type=EventType.EDITED_BUSINESS_MESSAGE,
+            filter_=filter_,
+            rate_limit=rate_limit,
+            with_chat_queue=with_chat_queue
+        )
+
+    def add_deleted_business_messages_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> None:
+        self._add_event_handler(
+            handler=handler,
+            event_type=EventType.DELETED_BUSINESS_MESSAGES,
+            filter_=filter_
+        )
+
     def add_channel_post_handler(
         self,
         handler: AbstractEventHandler,

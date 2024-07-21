@@ -64,6 +64,7 @@ from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.bot.types.types.reply_parameters import ReplyParameters
 from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.types.types.user_chat_boosts import UserChatBoosts
+from telebox.bot.types.types.business_connection import BusinessConnection
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -2807,6 +2808,23 @@ class Bot:
                 timeout_secs=timeout_secs
             )
         ]
+
+    def get_business_connection(
+        self,
+        business_connection_id: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> BusinessConnection:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getBusinessConnection",
+                parameters={
+                    "business_connection_id": business_connection_id
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=BusinessConnection
+        )
 
     def download_file(
         self,

@@ -175,6 +175,8 @@ from .message_origin_chat import MessageOriginChat
 from .message_origin_channel import MessageOriginChannel
 from .maybe_inaccessible_message import MaybeInaccessibleMessage
 from .inaccessible_message import InaccessibleMessage
+from .business_connection import BusinessConnection
+from .business_messages_deleted import BusinessMessagesDeleted
 
 
 __all__ = [
@@ -354,5 +356,7 @@ __all__ = [
     "MessageOriginChat",
     "MessageOriginChannel",
     "MaybeInaccessibleMessage",
-    "InaccessibleMessage"
+    "InaccessibleMessage",
+    "BusinessConnection",
+    "BusinessMessagesDeleted"
 ]
