@@ -59,9 +59,10 @@ from telebox.bot.types.types.giveaway_created import GiveawayCreated
 from telebox.bot.types.types.giveaway import Giveaway
 from telebox.bot.types.types.giveaway_winners import GiveawayWinners
 from telebox.bot.types.types.message_origin import MessageOrigin
+from telebox.bot.types.types.chat_background import ChatBackground
+from telebox.bot.types.types.chat import Chat
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
-    from telebox.bot.types.types.chat import Chat
     from telebox.bot.types.types.giveaway_completed import GiveawayCompleted
     from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
 
@@ -74,13 +75,13 @@ _markdown_formatter = MarkdownFormatter()
 class Message(Type):
     message_id: int
     date: datetime
-    chat: "Chat"
+    chat: Chat
     sender_business_bot: Optional[User] = None
     business_connection_id: Optional[str] = None
     forward_origin: Optional[MessageOrigin] = None
     message_thread_id: Optional[int] = None
     from_: Optional[User] = None
-    sender_chat: Optional["Chat"] = None
+    sender_chat: Optional[Chat] = None
     sender_boost_count: Optional[int] = None
     is_topic_message: Optional[Literal[True]] = None
     is_automatic_forward: Optional[Literal[True]] = None
@@ -136,6 +137,7 @@ class Message(Type):
     passport_data: Optional[PassportData] = None
     proximity_alert_triggered: Optional[ProximityAlertTriggered] = None
     boost_added: Optional[ChatBoostAdded] = None
+    chat_background_set: Optional[ChatBackground] = None
     forum_topic_created: Optional[ForumTopicCreated] = None
     forum_topic_edited: Optional[ForumTopicEdited] = None
     forum_topic_closed: Optional[ForumTopicClosed] = None
@@ -265,6 +267,9 @@ class Message(Type):
         elif self.boost_added is not None:
             self._content = self.boost_added
             self._content_type = MessageContentType.BOOST_ADDED
+        elif self.chat_background_set is not None:
+            self._content = self.chat_background_set
+            self._content_type = MessageContentType.CHAT_BACKGROUND_SET
         elif self.forum_topic_created is not None:
             self._content = self.forum_topic_created
             self._content_type = MessageContentType.FORUM_TOPIC_CREATED

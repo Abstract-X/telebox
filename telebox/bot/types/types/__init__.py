@@ -183,6 +183,18 @@ from .business_opening_hours import BusinessOpeningHours
 from .business_opening_hours_interval import BusinessOpeningHoursInterval
 from .shared_user import SharedUser
 from .birthdate import Birthdate
+from .input_poll_option import InputPollOption
+from .background_fill import BackgroundFill
+from .background_fill_solid import BackgroundFillSolid
+from .background_fill_gradient import BackgroundFillGradient
+from .background_fill_freeform_gradient import BackgroundFillFreeformGradient
+from .background_type import BackgroundType
+from .background_type_fill import BackgroundTypeFill
+from .background_type_wallpaper import BackgroundTypeWallpaper
+from .background_type_pattern import BackgroundTypePattern
+from .background_type_chat_theme import BackgroundTypeChatTheme
+from .chat_background import ChatBackground
+from .chat_full_info import ChatFullInfo
 
 
 __all__ = [
@@ -370,5 +382,17 @@ __all__ = [
     "BusinessOpeningHours",
     "BusinessOpeningHoursInterval",
     "SharedUser",
-    "Birthdate"
+    "Birthdate",
+    "InputPollOption",
+    "BackgroundFill",
+    "BackgroundFillSolid",
+    "BackgroundFillGradient",
+    "BackgroundFillFreeformGradient",
+    "BackgroundType",
+    "BackgroundTypeFill",
+    "BackgroundTypeWallpaper",
+    "BackgroundTypePattern",
+    "BackgroundTypeChatTheme",
+    "ChatBackground",
+    "ChatFullInfo"
 ]

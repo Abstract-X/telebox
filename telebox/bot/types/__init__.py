@@ -184,7 +184,19 @@ from .types import (
     BusinessOpeningHours,
     BusinessOpeningHoursInterval,
     SharedUser,
-    Birthdate
+    Birthdate,
+    InputPollOption,
+    BackgroundFill,
+    BackgroundFillSolid,
+    BackgroundFillGradient,
+    BackgroundFillFreeformGradient,
+    BackgroundType,
+    BackgroundTypeFill,
+    BackgroundTypeWallpaper,
+    BackgroundTypePattern,
+    BackgroundTypeChatTheme,
+    ChatBackground,
+    ChatFullInfo
 )
 
 
@@ -373,5 +385,17 @@ __all__ = [
     "BusinessOpeningHours",
     "BusinessOpeningHoursInterval",
     "SharedUser",
-    "Birthdate"
+    "Birthdate",
+    "InputPollOption",
+    "BackgroundFill",
+    "BackgroundFillSolid",
+    "BackgroundFillGradient",
+    "BackgroundFillFreeformGradient",
+    "BackgroundType",
+    "BackgroundTypeFill",
+    "BackgroundTypeWallpaper",
+    "BackgroundTypePattern",
+    "BackgroundTypeChatTheme",
+    "ChatBackground",
+    "ChatFullInfo"
 ]

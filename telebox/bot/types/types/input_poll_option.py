@@ -6,7 +6,7 @@ from telebox.bot.types.types.message_entity import MessageEntity
 
 
 @dataclass(repr=False)
-class PollOption(Type):
+class InputPollOption(Type):
     text: str
-    voter_count: int
-    text_entities: Optional[MessageEntity] = None
+    text_parse_mode: Optional[str] = None
+    text_entities: Optional[list[MessageEntity]] = None
