@@ -39,6 +39,7 @@ class MessageContentType(Enum):
     PASSPORT_DATA = "passport_data"
     PROXIMITY_ALERT_TRIGGERED = "proximity_alert_triggered"
     BOOST_ADDED = "boost_added"
+    CHAT_BACKGROUND_SET = "chat_background_set"
     FORUM_TOPIC_CREATED = "forum_topic_created"
     FORUM_TOPIC_EDITED = "forum_topic_edited"
     FORUM_TOPIC_CLOSED = "forum_topic_closed"

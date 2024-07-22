@@ -17,6 +17,7 @@ class Poll(Type):
     is_anonymous: bool
     type: str
     allows_multiple_answers: bool
+    question_entities: Optional[list[MessageEntity]] = None
     correct_option_id: Optional[int] = None
     explanation: Optional[str] = None
     explanation_entities: Optional[list[MessageEntity]] = None

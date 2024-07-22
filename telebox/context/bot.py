@@ -19,7 +19,6 @@ from telebox.bot.types.types.user_profile_photos import UserProfilePhotos
 from telebox.bot.types.types.chat_permissions import ChatPermissions
 from telebox.bot.types.types.file import File
 from telebox.bot.types.types.chat_invite_link import ChatInviteLink
-from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.forum_topic import ForumTopic
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.poll import Poll
@@ -37,6 +36,8 @@ from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.bot.types.types.reply_parameters import ReplyParameters
 from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.types.types.user_chat_boosts import UserChatBoosts
+from telebox.bot.types.types.input_poll_option import InputPollOption
+from telebox.bot.types.types.chat_full_info import ChatFullInfo
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.context.utils import (
     get_event_chat_id,
@@ -654,6 +655,7 @@ class ContextBot:
         longitude: float,
         *,
         timeout_secs: Union[int, float, None] = None,
+        live_period: Optional[int] = None,
         message_id: Optional[int] = None,
         horizontal_accuracy: Optional[float] = None,
         heading: Optional[int] = None,
@@ -664,6 +666,7 @@ class ContextBot:
             latitude=latitude,
             longitude=longitude,
             timeout_secs=timeout_secs,
+            live_period=live_period,
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             horizontal_accuracy=horizontal_accuracy,
@@ -769,9 +772,11 @@ class ContextBot:
     def send_poll(
         self,
         question: str,
-        options: list[str],
+        options: list[InputPollOption],
         *,
         timeout_secs: Union[int, float, None] = None,
+        question_parse_mode: Optional[str] = None,
+        question_entities: Optional[list[MessageEntity]] = None,
         is_anonymous: Optional[bool] = None,
         type_: Optional[str] = None,
         allows_multiple_answers: Optional[bool] = None,
@@ -802,6 +807,8 @@ class ContextBot:
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
+            question_parse_mode=question_parse_mode,
+            question_entities=question_entities,
             is_anonymous=is_anonymous,
             type_=type_,
             allows_multiple_answers=allows_multiple_answers,
@@ -1230,7 +1237,7 @@ class ContextBot:
         self,
         *,
         timeout_secs: Union[int, float, None] = None
-    ) -> Chat:
+    ) -> ChatFullInfo:
         return self.bot.get_chat(
             chat_id=get_event_chat_id(),
             timeout_secs=timeout_secs
