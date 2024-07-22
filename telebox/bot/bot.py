@@ -2360,7 +2360,6 @@ class Bot:
         name: str,
         title: str,
         stickers: list[InputSticker],
-        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         sticker_type: Optional[str] = None,
@@ -2373,7 +2372,6 @@ class Bot:
                 "name": name,
                 "title": title,
                 "stickers": stickers,
-                "sticker_format": sticker_format,
                 "sticker_type": sticker_type,
                 "needs_repainting": needs_repainting
             },
@@ -2526,6 +2524,7 @@ class Bot:
         self,
         name: str,
         user_id: int,
+        format_: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         thumbnail: Union[InputFile, str, None] = None
@@ -2535,6 +2534,7 @@ class Bot:
             parameters={
                 "name": name,
                 "user_id": user_id,
+                "format": format_,
                 "thumbnail": thumbnail
             },
             timeout_secs=timeout_secs

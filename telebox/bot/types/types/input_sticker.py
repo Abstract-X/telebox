@@ -9,6 +9,7 @@ from telebox.bot.types.types.mask_position import MaskPosition
 @dataclass(repr=False)
 class InputSticker(Type):
     sticker: Union[InputFile, str]
+    format: str
     emoji_list: list[str]
     mask_position: Optional[MaskPosition] = None
     keywords: Optional[list[str]] = None

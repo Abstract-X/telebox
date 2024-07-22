@@ -1652,7 +1652,6 @@ class ContextBot:
         name: str,
         title: str,
         stickers: list[InputSticker],
-        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         sticker_type: Optional[str] = None,
@@ -1663,7 +1662,6 @@ class ContextBot:
             name=name,
             title=title,
             stickers=stickers,
-            sticker_format=sticker_format,
             timeout_secs=timeout_secs,
             sticker_type=sticker_type,
             needs_repainting=needs_repainting
@@ -1686,6 +1684,7 @@ class ContextBot:
     def set_sticker_set_thumbnail(
         self,
         name: str,
+        format_: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         thumbnail: Union[InputFile, str, None] = None
@@ -1693,6 +1692,7 @@ class ContextBot:
         return self.bot.set_sticker_set_thumbnail(
             name=name,
             user_id=get_event_user_id(),
+            format_=format_,
             timeout_secs=timeout_secs,
             thumbnail=thumbnail
         )
