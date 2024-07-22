@@ -182,7 +182,8 @@ from .types import (
     BusinessIntro,
     BusinessLocation,
     BusinessOpeningHours,
-    BusinessOpeningHoursInterval
+    BusinessOpeningHoursInterval,
+    SharedUser
 )
 
 
@@ -369,5 +370,6 @@ __all__ = [
     "BusinessIntro",
     "BusinessLocation",
     "BusinessOpeningHours",
-    "BusinessOpeningHoursInterval"
+    "BusinessOpeningHoursInterval",
+    "SharedUser"
 ]
