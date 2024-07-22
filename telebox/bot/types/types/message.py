@@ -91,6 +91,7 @@ class Message(Type):
     via_bot: Optional[User] = None
     edit_date: Optional[datetime] = None
     has_protected_content: Optional[Literal[True]] = None
+    is_from_offline: Optional[Literal[True]] = None
     media_group_id: Optional[str] = None
     author_signature: Optional[str] = None
     text: Optional[str] = None

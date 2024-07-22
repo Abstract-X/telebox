@@ -1697,6 +1697,22 @@ class ContextBot:
             thumbnail=thumbnail
         )
 
+    def replace_sticker_in_set(
+        self,
+        name: str,
+        old_sticker: str,
+        sticker: InputSticker,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> True:
+        return self.bot.replace_sticker_in_set(
+            user_id=get_event_user_id(),
+            name=name,
+            old_sticker=old_sticker,
+            sticker=sticker,
+            timeout_secs=timeout_secs
+        )
+
     def answer_inline_query(
         self,
         results: list[InlineQueryResult],

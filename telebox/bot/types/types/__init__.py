@@ -182,6 +182,7 @@ from .business_location import BusinessLocation
 from .business_opening_hours import BusinessOpeningHours
 from .business_opening_hours_interval import BusinessOpeningHoursInterval
 from .shared_user import SharedUser
+from .birthdate import Birthdate
 
 
 __all__ = [
@@ -368,5 +369,6 @@ __all__ = [
     "BusinessLocation",
     "BusinessOpeningHours",
     "BusinessOpeningHoursInterval",
-    "SharedUser"
+    "SharedUser",
+    "Birthdate"
 ]

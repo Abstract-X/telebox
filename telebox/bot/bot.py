@@ -2540,6 +2540,26 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
+    def replace_sticker_in_set(
+        self,
+        user_id: int,
+        name: str,
+        old_sticker: str,
+        sticker: InputSticker,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> True:
+        return self._send_request(
+            method="replaceStickerInSet",
+            parameters={
+                "user_id": user_id,
+                "name": name,
+                "old_sticker": old_sticker,
+                "sticker": sticker
+            },
+            timeout_secs=timeout_secs
+        )
+
     def answer_inline_query(
         self,
         inline_query_id: str,
