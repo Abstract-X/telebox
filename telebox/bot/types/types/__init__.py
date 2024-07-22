@@ -175,6 +175,14 @@ from .message_origin_chat import MessageOriginChat
 from .message_origin_channel import MessageOriginChannel
 from .maybe_inaccessible_message import MaybeInaccessibleMessage
 from .inaccessible_message import InaccessibleMessage
+from .business_connection import BusinessConnection
+from .business_messages_deleted import BusinessMessagesDeleted
+from .business_intro import BusinessIntro
+from .business_location import BusinessLocation
+from .business_opening_hours import BusinessOpeningHours
+from .business_opening_hours_interval import BusinessOpeningHoursInterval
+from .shared_user import SharedUser
+from .birthdate import Birthdate
 
 
 __all__ = [
@@ -354,5 +362,13 @@ __all__ = [
     "MessageOriginChat",
     "MessageOriginChannel",
     "MaybeInaccessibleMessage",
-    "InaccessibleMessage"
+    "InaccessibleMessage",
+    "BusinessConnection",
+    "BusinessMessagesDeleted",
+    "BusinessIntro",
+    "BusinessLocation",
+    "BusinessOpeningHours",
+    "BusinessOpeningHoursInterval",
+    "SharedUser",
+    "Birthdate"
 ]

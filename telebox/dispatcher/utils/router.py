@@ -58,6 +58,54 @@ class Router:
             with_chat_queue=with_chat_queue
         )
 
+    def add_business_connection_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> None:
+        self._dispatcher.add_business_connection_handler(
+            handler=handler,
+            filter_=self._get_filter(filter_)
+        )
+
+    def add_business_message_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        with_chat_queue: bool = False
+    ) -> None:
+        self._dispatcher.add_business_message_handler(
+            handler=handler,
+            filter_=filter_,
+            rate_limit=rate_limit,
+            with_chat_queue=with_chat_queue
+        )
+
+    def add_edited_business_message_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None,
+        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        with_chat_queue: bool = False
+    ) -> None:
+        self._dispatcher.add_edited_business_message_handler(
+            handler=handler,
+            filter_=filter_,
+            rate_limit=rate_limit,
+            with_chat_queue=with_chat_queue
+        )
+
+    def add_deleted_business_messages_handler(
+        self,
+        handler: AbstractEventHandler,
+        filter_: Optional[AbstractEventBaseFilter] = None
+    ) -> None:
+        self._dispatcher.add_deleted_business_messages_handler(
+            handler=handler,
+            filter_=filter_
+        )
+
     def add_channel_post_handler(
         self,
         handler: AbstractEventHandler,

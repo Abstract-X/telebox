@@ -11,7 +11,5 @@ class StickerSet(Type):
     name: str
     title: str
     sticker_type: str
-    is_animated: bool
-    is_video: bool
     stickers: list[Sticker]
     thumbnail: Optional[PhotoSize] = None

@@ -176,7 +176,15 @@ from .types import (
     MessageOriginChat,
     MessageOriginChannel,
     MaybeInaccessibleMessage,
-    InaccessibleMessage
+    InaccessibleMessage,
+    BusinessConnection,
+    BusinessMessagesDeleted,
+    BusinessIntro,
+    BusinessLocation,
+    BusinessOpeningHours,
+    BusinessOpeningHoursInterval,
+    SharedUser,
+    Birthdate
 )
 
 
@@ -357,5 +365,13 @@ __all__ = [
     "MessageOriginChat",
     "MessageOriginChannel",
     "MaybeInaccessibleMessage",
-    "InaccessibleMessage"
+    "InaccessibleMessage",
+    "BusinessConnection",
+    "BusinessMessagesDeleted",
+    "BusinessIntro",
+    "BusinessLocation",
+    "BusinessOpeningHours",
+    "BusinessOpeningHoursInterval",
+    "SharedUser",
+    "Birthdate"
 ]

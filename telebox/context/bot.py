@@ -42,6 +42,7 @@ from telebox.context.utils import (
     get_event_chat_id,
     get_event_user_id,
     get_event_message_topic_id,
+    get_event_business_connection_id,
     get_event_sender_chat_id,
     get_event_message_id,
     get_event_callback_query_id,
@@ -77,6 +78,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             text=text,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -309,6 +313,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             photo=photo,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -347,6 +354,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             audio=audio,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -386,6 +396,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             document=document,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -427,6 +440,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             video=video,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -471,6 +487,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             animation=animation,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -510,6 +529,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             voice=voice,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -544,6 +566,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             video_note=video_note,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -572,6 +597,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             media=media,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -604,6 +632,9 @@ class ContextBot:
             latitude=latitude,
             longitude=longitude,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -683,6 +714,9 @@ class ContextBot:
             title=title,
             address=address,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -718,6 +752,9 @@ class ContextBot:
             phone_number=phone_number,
             first_name=first_name,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -759,6 +796,9 @@ class ContextBot:
             question=question,
             options=options,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -795,6 +835,9 @@ class ContextBot:
         return self.bot.send_dice(
             chat_id=get_event_chat_id(),
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -809,17 +852,18 @@ class ContextBot:
         self,
         action: str,
         *,
-        timeout_secs: Union[int, float, None] = None,
-        message_thread_id: Optional[int] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
-        if message_thread_id is None:
-            message_thread_id = get_event_message_topic_id(strictly=False)
-
         return self.bot.send_chat_action(
             chat_id=get_event_chat_id(),
             action=action,
             timeout_secs=timeout_secs,
-            message_thread_id=message_thread_id
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            )
         )
 
     def set_message_reaction(
@@ -1577,6 +1621,9 @@ class ContextBot:
             sticker=sticker,
             timeout_secs=timeout_secs,
             emoji=emoji,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -1605,7 +1652,6 @@ class ContextBot:
         name: str,
         title: str,
         stickers: list[InputSticker],
-        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         sticker_type: Optional[str] = None,
@@ -1616,7 +1662,6 @@ class ContextBot:
             name=name,
             title=title,
             stickers=stickers,
-            sticker_format=sticker_format,
             timeout_secs=timeout_secs,
             sticker_type=sticker_type,
             needs_repainting=needs_repainting
@@ -1639,6 +1684,7 @@ class ContextBot:
     def set_sticker_set_thumbnail(
         self,
         name: str,
+        format_: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         thumbnail: Union[InputFile, str, None] = None
@@ -1646,8 +1692,25 @@ class ContextBot:
         return self.bot.set_sticker_set_thumbnail(
             name=name,
             user_id=get_event_user_id(),
+            format_=format_,
             timeout_secs=timeout_secs,
             thumbnail=thumbnail
+        )
+
+    def replace_sticker_in_set(
+        self,
+        name: str,
+        old_sticker: str,
+        sticker: InputSticker,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> True:
+        return self.bot.replace_sticker_in_set(
+            user_id=get_event_user_id(),
+            name=name,
+            old_sticker=old_sticker,
+            sticker=sticker,
+            timeout_secs=timeout_secs
         )
 
     def answer_inline_query(
@@ -1789,6 +1852,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             game_short_name=game_short_name,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),

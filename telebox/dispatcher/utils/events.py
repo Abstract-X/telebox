@@ -84,6 +84,16 @@ def get_event_message_topic_id(event: Event, *, strictly: bool = False) -> Optio
     )
 
 
+def get_business_connection_id(event: Event, strictly: bool = False) -> Optional[str]:
+    return _get_event_attribute(
+        attribute="business_connection_id",
+        name="business connection identifier",
+        event=event,
+        types=frozenset((Message, MediaGroup)),
+        strictly=strictly
+    )
+
+
 def get_event_sender_chat_id(event: Event, *, strictly: bool = False) -> Optional[int]:
     return _get_event_attribute(
         attribute="sender_chat_id",

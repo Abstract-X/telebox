@@ -6,9 +6,9 @@ from telebox.bot.types.types.photo_size import PhotoSize
 
 
 @dataclass(repr=False)
-class ChatShared(Type):
-    request_id: int
-    chat_id: int
-    title: Optional[str] = None
+class SharedUser(Type):
+    user_id: int
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     username: Optional[str] = None
     photo: Optional[list[PhotoSize]] = None

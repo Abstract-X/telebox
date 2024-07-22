@@ -64,6 +64,7 @@ from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.bot.types.types.reply_parameters import ReplyParameters
 from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.types.types.user_chat_boosts import UserChatBoosts
+from telebox.bot.types.types.business_connection import BusinessConnection
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -210,6 +211,7 @@ class Bot:
         text: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         entities: Optional[list[MessageEntity]] = None,
@@ -230,6 +232,7 @@ class Bot:
                     "chat_id": chat_id,
                     "text": text,
                     "message_thread_id": message_thread_id,
+                    "business_connection_id": business_connection_id,
                     "parse_mode": self._get_parse_mode(parse_mode, with_entities=bool(entities)),
                     "entities": entities,
                     "link_preview_options": link_preview_options,
@@ -376,6 +379,7 @@ class Bot:
         photo: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
@@ -396,6 +400,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "photo": photo,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
@@ -420,6 +425,7 @@ class Bot:
         audio: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
@@ -443,6 +449,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "audio": audio,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
@@ -470,6 +477,7 @@ class Bot:
         document: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
@@ -491,6 +499,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "document": document,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "thumbnail": thumbnail,
                     "caption": caption,
@@ -516,6 +525,7 @@ class Bot:
         video: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
@@ -541,6 +551,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "video": video,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "duration": duration,
                     "width": width,
@@ -570,6 +581,7 @@ class Bot:
         animation: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
@@ -594,6 +606,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "animation": animation,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "duration": duration,
                     "width": width,
@@ -622,6 +635,7 @@ class Bot:
         voice: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
@@ -642,6 +656,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "voice": voice,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
@@ -666,6 +681,7 @@ class Bot:
         video_note: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
@@ -685,6 +701,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "video_note": video_note,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "duration": duration,
                     "length": length,
@@ -708,6 +725,7 @@ class Bot:
                           InputMediaVideo]],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -720,6 +738,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "media": media,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -736,6 +755,7 @@ class Bot:
         longitude: float,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         horizontal_accuracy: Optional[float] = None,
         live_period: Optional[int] = None,
@@ -757,6 +777,7 @@ class Bot:
                     "chat_id": chat_id,
                     "latitude": latitude,
                     "longitude": longitude,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "horizontal_accuracy": horizontal_accuracy,
                     "live_period": live_period,
@@ -841,6 +862,7 @@ class Bot:
         address: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         foursquare_id: Optional[str] = None,
         foursquare_type: Optional[str] = None,
@@ -864,6 +886,7 @@ class Bot:
                     "longitude": longitude,
                     "title": title,
                     "address": address,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "foursquare_id": foursquare_id,
                     "foursquare_type": foursquare_type,
@@ -886,6 +909,7 @@ class Bot:
         first_name: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         last_name: Optional[str] = None,
         vcard: Optional[str] = None,
@@ -905,6 +929,7 @@ class Bot:
                     "chat_id": chat_id,
                     "phone_number": phone_number,
                     "first_name": first_name,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "last_name": last_name,
                     "vcard": vcard,
@@ -925,6 +950,7 @@ class Bot:
         options: list[str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         is_anonymous: Optional[bool] = None,
         type_: Optional[str] = None,
@@ -952,6 +978,7 @@ class Bot:
                     "chat_id": chat_id,
                     "question": question,
                     "options": options,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "is_anonymous": is_anonymous,
                     "type": type_,
@@ -981,6 +1008,7 @@ class Bot:
         chat_id: Union[int, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
@@ -997,6 +1025,7 @@ class Bot:
                 method="sendDice",
                 parameters={
                     "chat_id": chat_id,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "emoji": emoji,
                     "disable_notification": disable_notification,
@@ -1015,6 +1044,7 @@ class Bot:
         action: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None
     ) -> Literal[True]:
         return self._send_request(
@@ -1022,6 +1052,7 @@ class Bot:
             parameters={
                 "chat_id": chat_id,
                 "action": action,
+                "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id
             },
             timeout_secs=timeout_secs
@@ -2238,6 +2269,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None,
         emoji: Optional[str] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -2255,6 +2287,7 @@ class Bot:
                     "chat_id": chat_id,
                     "sticker": sticker,
                     "emoji": emoji,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -2327,7 +2360,6 @@ class Bot:
         name: str,
         title: str,
         stickers: list[InputSticker],
-        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         sticker_type: Optional[str] = None,
@@ -2340,7 +2372,6 @@ class Bot:
                 "name": name,
                 "title": title,
                 "stickers": stickers,
-                "sticker_format": sticker_format,
                 "sticker_type": sticker_type,
                 "needs_repainting": needs_repainting
             },
@@ -2493,6 +2524,7 @@ class Bot:
         self,
         name: str,
         user_id: int,
+        format_: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         thumbnail: Union[InputFile, str, None] = None
@@ -2502,7 +2534,28 @@ class Bot:
             parameters={
                 "name": name,
                 "user_id": user_id,
+                "format": format_,
                 "thumbnail": thumbnail
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def replace_sticker_in_set(
+        self,
+        user_id: int,
+        name: str,
+        old_sticker: str,
+        sticker: InputSticker,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> True:
+        return self._send_request(
+            method="replaceStickerInSet",
+            parameters={
+                "user_id": user_id,
+                "name": name,
+                "old_sticker": old_sticker,
+                "sticker": sticker
             },
             timeout_secs=timeout_secs
         )
@@ -2731,6 +2784,7 @@ class Bot:
         game_short_name: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -2743,6 +2797,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "game_short_name": game_short_name,
+                    "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
@@ -2807,6 +2862,23 @@ class Bot:
                 timeout_secs=timeout_secs
             )
         ]
+
+    def get_business_connection(
+        self,
+        business_connection_id: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> BusinessConnection:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getBusinessConnection",
+                parameters={
+                    "business_connection_id": business_connection_id
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=BusinessConnection
+        )
 
     def download_file(
         self,
