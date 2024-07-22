@@ -32,6 +32,13 @@ def get_event_message_topic_id(*, strictly: bool = True) -> Optional[int]:
     )
 
 
+def get_event_business_connection_id(*, strictly: bool = True) -> Optional[str]:
+    return event_utils.get_business_connection_id(
+        event_context.get(),
+        strictly=strictly
+    )
+
+
 def get_event_sender_chat_id(*, strictly: bool = True) -> Optional[int]:
     return event_utils.get_event_sender_chat_id(
         event_context.get(),

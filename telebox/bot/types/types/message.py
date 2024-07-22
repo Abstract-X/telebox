@@ -75,6 +75,8 @@ class Message(Type):
     message_id: int
     date: datetime
     chat: "Chat"
+    sender_business_bot: Optional[User] = None
+    business_connection_id: Optional[str] = None
     forward_origin: Optional[MessageOrigin] = None
     message_thread_id: Optional[int] = None
     from_: Optional[User] = None
