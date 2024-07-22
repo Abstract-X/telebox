@@ -178,7 +178,11 @@ from .types import (
     MaybeInaccessibleMessage,
     InaccessibleMessage,
     BusinessConnection,
-    BusinessMessagesDeleted
+    BusinessMessagesDeleted,
+    BusinessIntro,
+    BusinessLocation,
+    BusinessOpeningHours,
+    BusinessOpeningHoursInterval
 )
 
 
@@ -361,5 +365,9 @@ __all__ = [
     "MaybeInaccessibleMessage",
     "InaccessibleMessage",
     "BusinessConnection",
-    "BusinessMessagesDeleted"
+    "BusinessMessagesDeleted",
+    "BusinessIntro",
+    "BusinessLocation",
+    "BusinessOpeningHours",
+    "BusinessOpeningHoursInterval"
 ]

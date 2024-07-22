@@ -177,6 +177,10 @@ from .maybe_inaccessible_message import MaybeInaccessibleMessage
 from .inaccessible_message import InaccessibleMessage
 from .business_connection import BusinessConnection
 from .business_messages_deleted import BusinessMessagesDeleted
+from .business_intro import BusinessIntro
+from .business_location import BusinessLocation
+from .business_opening_hours import BusinessOpeningHours
+from .business_opening_hours_interval import BusinessOpeningHoursInterval
 
 
 __all__ = [
@@ -358,5 +362,9 @@ __all__ = [
     "MaybeInaccessibleMessage",
     "InaccessibleMessage",
     "BusinessConnection",
-    "BusinessMessagesDeleted"
+    "BusinessMessagesDeleted",
+    "BusinessIntro",
+    "BusinessLocation",
+    "BusinessOpeningHours",
+    "BusinessOpeningHoursInterval"
 ]
