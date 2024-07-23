@@ -206,6 +206,7 @@ from .transaction_partner_user import TransactionPartnerUser
 from .transaction_partner_fragment import TransactionPartnerFragment
 from .transaction_partner_telegram_ads import TransactionPartnerTelegramAds
 from .transaction_partner_other import TransactionPartnerOther
+from .paid_media_info import PaidMediaInfo
 
 
 __all__ = [
@@ -416,5 +417,6 @@ __all__ = [
     "TransactionPartnerUser",
     "TransactionPartnerFragment",
     "TransactionPartnerTelegramAds",
-    "TransactionPartnerOther"
+    "TransactionPartnerOther",
+    "PaidMediaInfo"
 ]

@@ -67,6 +67,7 @@ from telebox.bot.types.types.business_connection import BusinessConnection
 from telebox.bot.types.types.input_poll_option import InputPollOption
 from telebox.bot.types.types.chat_full_info import ChatFullInfo
 from telebox.bot.types.types.star_transactions import StarTransactions
+from telebox.bot.types.types.input_paid_media import InputPaidMedia
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -2310,6 +2311,50 @@ class Bot:
                 timeout_secs=timeout_secs
             ),
             class_=Poll
+        )
+
+    def send_paid_media(
+        self,
+        chat_id: Union[int, str],
+        star_count: int,
+        media: list[InputPaidMedia],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[str] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
+        reply_markup: Union[InlineKeyboardMarkup,
+                            ReplyKeyboardMarkup,
+                            ReplyKeyboardRemove,
+                            ForceReply,
+                            None] = None
+    ) -> Message:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="sendPaidMedia",
+                parameters={
+                    "chat_id": chat_id,
+                    "star_count": star_count,
+                    "media": media,
+                    "caption": caption,
+                    "parse_mode": self._get_parse_mode(
+                        parse_mode=parse_mode,
+                        with_entities=bool(caption_entities)
+                    ),
+                    "caption_entities": caption_entities,
+                    "show_caption_above_media": show_caption_above_media,
+                    "disable_notification": disable_notification,
+                    "protect_content": protect_content,
+                    "reply_parameters": reply_parameters,
+                    "reply_markup": reply_markup
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=Message
         )
 
     def delete_message(

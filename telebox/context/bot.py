@@ -38,6 +38,7 @@ from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.types.types.user_chat_boosts import UserChatBoosts
 from telebox.bot.types.types.input_poll_option import InputPollOption
 from telebox.bot.types.types.chat_full_info import ChatFullInfo
+from telebox.bot.types.types.input_paid_media import InputPaidMedia
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.context.utils import (
     get_event_chat_id,
@@ -1625,6 +1626,40 @@ class ContextBot:
             ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
+            reply_markup=reply_markup
+        )
+
+    def send_paid_media(
+        self,
+        star_count: int,
+        media: list[InputPaidMedia],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[str] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
+        reply_markup: Union[InlineKeyboardMarkup,
+                            ReplyKeyboardMarkup,
+                            ReplyKeyboardRemove,
+                            ForceReply,
+                            None] = None
+    ) -> Message:
+        return self.bot.send_paid_media(
+            chat_id=get_event_chat_id(),
+            star_count=star_count,
+            media=media,
+            timeout_secs=timeout_secs,
+            caption=caption,
+            parse_mode=parse_mode,
+            caption_entities=caption_entities,
+            show_caption_above_media=show_caption_above_media,
+            disable_notification=disable_notification,
+            protect_content=protect_content,
+            reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
 
