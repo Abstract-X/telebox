@@ -33,6 +33,7 @@ class MessageContentType(Enum):
     PINNED_MESSAGE = "pinned_message"
     INVOICE = "invoice"
     SUCCESSFUL_PAYMENT = "successful_payment"
+    REFUNDED_PAYMENT = "refunded_payment"
     USERS_SHARED = "users_shared"
     CHAT_SHARED = "chat_shared"
     CONNECTED_WEBSITE = "connected_website"

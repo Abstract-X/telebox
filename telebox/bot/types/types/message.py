@@ -62,6 +62,7 @@ from telebox.bot.types.types.message_origin import MessageOrigin
 from telebox.bot.types.types.chat_background import ChatBackground
 from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.paid_media_info import PaidMediaInfo
+from telebox.bot.types.types.refunded_payment import RefundedPayment
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
     from telebox.bot.types.types.giveaway_completed import GiveawayCompleted
@@ -134,6 +135,7 @@ class Message(Type):
     pinned_message: Optional["MaybeInaccessibleMessage"] = None
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
+    refunded_payment: Optional[RefundedPayment] = None
     users_shared: Optional[UsersShared] = None
     chat_shared: Optional[ChatShared] = None
     connected_website: Optional[str] = None
@@ -253,6 +255,9 @@ class Message(Type):
         elif self.successful_payment is not None:
             self._content = self.successful_payment
             self._content_type = MessageContentType.SUCCESSFUL_PAYMENT
+        elif self.refunded_payment is not None:
+            self._content = self.refunded_payment
+            self._content_type = MessageContentType.REFUNDED_PAYMENT
         elif self.users_shared is not None:
             self._content = self.users_shared
             self._content_type = MessageContentType.USERS_SHARED
