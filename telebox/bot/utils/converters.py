@@ -130,6 +130,11 @@ from telebox.bot.types.types.transaction_partner_user import TransactionPartnerU
 from telebox.bot.types.types.transaction_partner_fragment import TransactionPartnerFragment
 from telebox.bot.types.types.transaction_partner_telegram_ads import TransactionPartnerTelegramAds
 from telebox.bot.types.types.transaction_partner_other import TransactionPartnerOther
+from telebox.bot.types.types.input_paid_media_photo import InputPaidMediaPhoto
+from telebox.bot.types.types.input_paid_media_video import InputPaidMediaVideo
+from telebox.bot.types.types.paid_media_preview import PaidMediaPreview
+from telebox.bot.types.types.paid_media_photo import PaidMediaPhoto
+from telebox.bot.types.types.paid_media_video import PaidMediaVideo
 
 
 DataclassObject = TypeVar("DataclassObject")
@@ -222,7 +227,14 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
     TransactionPartnerUser,
     TransactionPartnerFragment,
     TransactionPartnerTelegramAds,
-    TransactionPartnerOther
+    TransactionPartnerOther,
+
+    InputPaidMediaPhoto,
+    InputPaidMediaVideo,
+
+    PaidMediaPreview,
+    PaidMediaPhoto,
+    PaidMediaVideo
 )
 
 

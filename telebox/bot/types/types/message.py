@@ -61,6 +61,7 @@ from telebox.bot.types.types.giveaway_winners import GiveawayWinners
 from telebox.bot.types.types.message_origin import MessageOrigin
 from telebox.bot.types.types.chat_background import ChatBackground
 from telebox.bot.types.types.chat import Chat
+from telebox.bot.types.types.paid_media_info import PaidMediaInfo
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 if TYPE_CHECKING:
     from telebox.bot.types.types.giveaway_completed import GiveawayCompleted
@@ -102,6 +103,7 @@ class Message(Type):
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
+    paid_media: Optional[PaidMediaInfo] = None
     photo: Optional[list[PhotoSize]] = None
     sticker: Optional[Sticker] = None
     story: Optional[Story] = None
@@ -170,6 +172,9 @@ class Message(Type):
         elif self.document is not None:
             self._content = self.document
             self._content_type = MessageContentType.DOCUMENT
+        elif self.paid_media is not None:
+            self._content = self.paid_media
+            self._content_type = MessageContentType.PAID_MEDIA
         elif self.photo is not None:
             self._content = self.photo
             self._content_type = MessageContentType.PHOTO
