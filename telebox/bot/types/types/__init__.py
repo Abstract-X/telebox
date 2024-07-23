@@ -195,6 +195,17 @@ from .background_type_pattern import BackgroundTypePattern
 from .background_type_chat_theme import BackgroundTypeChatTheme
 from .chat_background import ChatBackground
 from .chat_full_info import ChatFullInfo
+from .revenue_withdrawal_state import RevenueWithdrawalState
+from .revenue_withdrawal_state_pending import RevenueWithdrawalStatePending
+from .revenue_withdrawal_state_succeeded import RevenueWithdrawalStateSucceeded
+from .revenue_withdrawal_state_failed import RevenueWithdrawalStateFailed
+from .star_transaction import StarTransaction
+from .star_transactions import StarTransactions
+from .transaction_partner import TransactionPartner
+from .transaction_partner_user import TransactionPartnerUser
+from .transaction_partner_fragment import TransactionPartnerFragment
+from .transaction_partner_telegram_ads import TransactionPartnerTelegramAds
+from .transaction_partner_other import TransactionPartnerOther
 
 
 __all__ = [
@@ -394,5 +405,16 @@ __all__ = [
     "BackgroundTypePattern",
     "BackgroundTypeChatTheme",
     "ChatBackground",
-    "ChatFullInfo"
+    "ChatFullInfo",
+    "RevenueWithdrawalState",
+    "RevenueWithdrawalStatePending",
+    "RevenueWithdrawalStateSucceeded",
+    "RevenueWithdrawalStateFailed",
+    "StarTransaction",
+    "StarTransactions",
+    "TransactionPartner",
+    "TransactionPartnerUser",
+    "TransactionPartnerFragment",
+    "TransactionPartnerTelegramAds",
+    "TransactionPartnerOther"
 ]

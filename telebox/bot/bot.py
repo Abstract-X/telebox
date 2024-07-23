@@ -66,6 +66,7 @@ from telebox.bot.types.types.user_chat_boosts import UserChatBoosts
 from telebox.bot.types.types.business_connection import BusinessConnection
 from telebox.bot.types.types.input_poll_option import InputPollOption
 from telebox.bot.types.types.chat_full_info import ChatFullInfo
+from telebox.bot.types.types.star_transactions import StarTransactions
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -828,6 +829,7 @@ class Bot:
         longitude: float,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         live_period: Optional[int] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
@@ -843,6 +845,7 @@ class Bot:
                 "latitude": latitude,
                 "longitude": longitude,
                 "live_period": live_period,
+                "business_connection_id": business_connection_id,
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
@@ -863,6 +866,7 @@ class Bot:
         self,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -871,6 +875,7 @@ class Bot:
         data = self._send_request(
             method="stopMessageLiveLocation",
             parameters={
+                "business_connection_id": business_connection_id,
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
@@ -2136,11 +2141,31 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
+    def get_star_transactions(
+        self,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        offset: Optional[int] = None,
+        limit: Optional[int] = None
+    ) -> StarTransactions:
+        return self._dataclass_converter.get_object(
+            data=self._send_request(
+                method="getStarTransactions",
+                parameters={
+                    "offset": offset,
+                    "limit": limit
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=StarTransactions
+        )
+
     def edit_message_text(
         self,
         text: str,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -2153,6 +2178,7 @@ class Bot:
             method="editMessageText",
             parameters={
                 "text": text,
+                "business_connection_id": business_connection_id,
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
@@ -2173,6 +2199,7 @@ class Bot:
         self,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -2185,6 +2212,7 @@ class Bot:
         data = self._send_request(
             method="editMessageCaption",
             parameters={
+                "business_connection_id": business_connection_id,
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
@@ -2210,6 +2238,7 @@ class Bot:
         media: InputMedia,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -2219,6 +2248,7 @@ class Bot:
             method="editMessageMedia",
             parameters={
                 "media": media,
+                "business_connection_id": business_connection_id,
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
@@ -2236,6 +2266,7 @@ class Bot:
         self,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -2244,6 +2275,7 @@ class Bot:
         data = self._send_request(
             method="editMessageReplyMarkup",
             parameters={
+                "business_connection_id": business_connection_id,
                 "chat_id": chat_id,
                 "message_id": message_id,
                 "inline_message_id": inline_message_id,
@@ -2263,6 +2295,7 @@ class Bot:
         message_id: int,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
         return self._dataclass_converter.get_object(
@@ -2271,6 +2304,7 @@ class Bot:
                 parameters={
                     "chat_id": chat_id,
                     "message_id": message_id,
+                    "business_connection_id": business_connection_id,
                     "reply_markup": reply_markup
                 },
                 timeout_secs=timeout_secs
