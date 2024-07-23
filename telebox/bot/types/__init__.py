@@ -208,7 +208,8 @@ from .types import (
     TransactionPartnerFragment,
     TransactionPartnerTelegramAds,
     TransactionPartnerOther,
-    PaidMediaInfo
+    PaidMediaInfo,
+    RefundedPayment
 )
 
 
@@ -421,5 +422,6 @@ __all__ = [
     "TransactionPartnerFragment",
     "TransactionPartnerTelegramAds",
     "TransactionPartnerOther",
-    "PaidMediaInfo"
+    "PaidMediaInfo",
+    "RefundedPayment"
 ]
