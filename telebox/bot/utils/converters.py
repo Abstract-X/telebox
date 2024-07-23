@@ -121,6 +121,15 @@ from telebox.bot.types.types.background_type_fill import BackgroundTypeFill
 from telebox.bot.types.types.background_type_wallpaper import BackgroundTypeWallpaper
 from telebox.bot.types.types.background_type_pattern import BackgroundTypePattern
 from telebox.bot.types.types.background_type_chat_theme import BackgroundTypeChatTheme
+from telebox.bot.types.types.revenue_withdrawal_state_pending import RevenueWithdrawalStatePending
+from telebox.bot.types.types.revenue_withdrawal_state_succeeded import (
+    RevenueWithdrawalStateSucceeded
+)
+from telebox.bot.types.types.revenue_withdrawal_state_failed import RevenueWithdrawalStateFailed
+from telebox.bot.types.types.transaction_partner_user import TransactionPartnerUser
+from telebox.bot.types.types.transaction_partner_fragment import TransactionPartnerFragment
+from telebox.bot.types.types.transaction_partner_telegram_ads import TransactionPartnerTelegramAds
+from telebox.bot.types.types.transaction_partner_other import TransactionPartnerOther
 
 
 DataclassObject = TypeVar("DataclassObject")
@@ -204,7 +213,16 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
     BackgroundTypeFill,
     BackgroundTypeWallpaper,
     BackgroundTypePattern,
-    BackgroundTypeChatTheme
+    BackgroundTypeChatTheme,
+
+    RevenueWithdrawalStatePending,
+    RevenueWithdrawalStateSucceeded,
+    RevenueWithdrawalStateFailed,
+
+    TransactionPartnerUser,
+    TransactionPartnerFragment,
+    TransactionPartnerTelegramAds,
+    TransactionPartnerOther
 )
 
 

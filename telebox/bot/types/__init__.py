@@ -196,7 +196,18 @@ from .types import (
     BackgroundTypePattern,
     BackgroundTypeChatTheme,
     ChatBackground,
-    ChatFullInfo
+    ChatFullInfo,
+    RevenueWithdrawalState,
+    RevenueWithdrawalStatePending,
+    RevenueWithdrawalStateSucceeded,
+    RevenueWithdrawalStateFailed,
+    StarTransaction,
+    StarTransactions,
+    TransactionPartner,
+    TransactionPartnerUser,
+    TransactionPartnerFragment,
+    TransactionPartnerTelegramAds,
+    TransactionPartnerOther
 )
 
 
@@ -397,5 +408,16 @@ __all__ = [
     "BackgroundTypePattern",
     "BackgroundTypeChatTheme",
     "ChatBackground",
-    "ChatFullInfo"
+    "ChatFullInfo",
+    "RevenueWithdrawalState",
+    "RevenueWithdrawalStatePending",
+    "RevenueWithdrawalStateSucceeded",
+    "RevenueWithdrawalStateFailed",
+    "StarTransaction",
+    "StarTransactions",
+    "TransactionPartner",
+    "TransactionPartnerUser",
+    "TransactionPartnerFragment",
+    "TransactionPartnerTelegramAds",
+    "TransactionPartnerOther"
 ]

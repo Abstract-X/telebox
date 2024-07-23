@@ -697,6 +697,9 @@ class ContextBot:
             longitude=longitude,
             timeout_secs=timeout_secs,
             live_period=live_period,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             horizontal_accuracy=horizontal_accuracy,
@@ -714,6 +717,9 @@ class ContextBot:
     ) -> Message:
         return self.bot.stop_message_live_location(
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             reply_markup=reply_markup
@@ -1550,6 +1556,9 @@ class ContextBot:
         return self.bot.edit_message_text(
             text=text,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             parse_mode=parse_mode,
@@ -1571,6 +1580,9 @@ class ContextBot:
     ) -> Message:
         return self.bot.edit_message_caption(
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             caption=caption,
@@ -1591,6 +1603,9 @@ class ContextBot:
         return self.bot.edit_message_media(
             media=media,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             reply_markup=reply_markup
@@ -1605,6 +1620,9 @@ class ContextBot:
     ) -> Message:
         return self.bot.edit_message_reply_markup(
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             reply_markup=reply_markup
@@ -1614,6 +1632,7 @@ class ContextBot:
         self,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_id: Optional[int] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
@@ -1621,6 +1640,7 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             timeout_secs=timeout_secs,
+            business_connection_id=business_connection_id,
             reply_markup=reply_markup
         )
 
