@@ -219,6 +219,7 @@ class Bot:
         link_preview_options: Optional[LinkPreviewOptions] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -239,6 +240,7 @@ class Bot:
                     "link_preview_options": link_preview_options,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -312,6 +314,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
@@ -335,6 +338,7 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "show_caption_above_media": show_caption_above_media,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_parameters": reply_parameters,
@@ -385,9 +389,11 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -409,9 +415,11 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "show_caption_above_media": show_caption_above_media,
                     "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -437,6 +445,7 @@ class Bot:
         thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -464,6 +473,7 @@ class Bot:
                     "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -487,6 +497,7 @@ class Bot:
         disable_content_type_detection: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -512,6 +523,7 @@ class Bot:
                     "disable_content_type_detection": disable_content_type_detection,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -535,10 +547,12 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         has_spoiler: Optional[bool] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -564,10 +578,12 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "show_caption_above_media": show_caption_above_media,
                     "has_spoiler": has_spoiler,
                     "supports_streaming": supports_streaming,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -591,9 +607,11 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -619,9 +637,11 @@ class Bot:
                         with_entities=bool(caption_entities)
                     ),
                     "caption_entities": caption_entities,
+                    "show_caption_above_media": show_caption_above_media,
                     "has_spoiler": has_spoiler,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -644,6 +664,7 @@ class Bot:
         duration: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -668,6 +689,7 @@ class Bot:
                     "duration": duration,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -689,6 +711,7 @@ class Bot:
         thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -709,6 +732,7 @@ class Bot:
                     "thumbnail": thumbnail,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -730,6 +754,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None
     ) -> list[Message]:
         return [
@@ -743,6 +768,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters
                 },
                 timeout_secs=timeout_secs
@@ -764,6 +790,7 @@ class Bot:
         proximity_alert_radius: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -786,6 +813,7 @@ class Bot:
                     "proximity_alert_radius": proximity_alert_radius,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -873,6 +901,7 @@ class Bot:
         google_place_type: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -897,6 +926,7 @@ class Bot:
                     "google_place_type": google_place_type,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -918,6 +948,7 @@ class Bot:
         vcard: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -938,6 +969,7 @@ class Bot:
                     "vcard": vcard,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -969,6 +1001,7 @@ class Bot:
         is_closed: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -1005,6 +1038,7 @@ class Bot:
                     "is_closed": is_closed,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -1023,6 +1057,7 @@ class Bot:
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -1040,6 +1075,7 @@ class Bot:
                     "emoji": emoji,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -2143,6 +2179,7 @@ class Bot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Union[Message, Literal[True]]:
         data = self._send_request(
@@ -2157,6 +2194,7 @@ class Bot:
                     with_entities=bool(caption_entities)
                 ),
                 "caption_entities": caption_entities,
+                "show_caption_above_media": show_caption_above_media,
                 "reply_markup": reply_markup
             },
             timeout_secs=timeout_secs
@@ -2283,6 +2321,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -2301,6 +2340,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -2619,12 +2659,12 @@ class Bot:
         title: str,
         description: str,
         payload: str,
-        provider_token: str,
         currency: str,
         prices: list[LabeledPrice],
         *,
         timeout_secs: Union[int, float, None] = None,
         message_thread_id: Optional[int] = None,
+        provider_token: Optional[str] = None,
         max_tip_amount: Optional[int] = None,
         suggested_tip_amounts: Optional[list[int]] = None,
         start_parameter: Optional[str] = None,
@@ -2642,6 +2682,7 @@ class Bot:
         is_flexible: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
@@ -2653,10 +2694,10 @@ class Bot:
                     "title": title,
                     "description": description,
                     "payload": payload,
-                    "provider_token": provider_token,
                     "currency": currency,
                     "prices": prices,
                     "message_thread_id": message_thread_id,
+                    "provider_token": provider_token,
                     "max_tip_amount": max_tip_amount,
                     "suggested_tip_amounts": suggested_tip_amounts,
                     "start_parameter": start_parameter,
@@ -2674,6 +2715,7 @@ class Bot:
                     "is_flexible": is_flexible,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },
@@ -2687,11 +2729,11 @@ class Bot:
         title: str,
         description: str,
         payload: str,
-        provider_token: str,
         currency: str,
         prices: list[LabeledPrice],
         *,
         timeout_secs: Union[int, float, None] = None,
+        provider_token: Optional[str] = None,
         max_tip_amount: Optional[int] = None,
         suggested_tip_amounts: Optional[list[int]] = None,
         provider_data: Optional[str] = None,
@@ -2713,9 +2755,9 @@ class Bot:
                 "title": title,
                 "description": description,
                 "payload": payload,
-                "provider_token": provider_token,
                 "currency": currency,
                 "prices": prices,
+                "provider_token": provider_token,
                 "max_tip_amount": max_tip_amount,
                 "suggested_tip_amounts": suggested_tip_amounts,
                 "provider_data": provider_data,
@@ -2730,6 +2772,22 @@ class Bot:
                 "send_phone_number_to_provider": send_phone_number_to_provider,
                 "send_email_to_provider": send_email_to_provider,
                 "is_flexible": is_flexible
+            },
+            timeout_secs=timeout_secs
+        )
+
+    def refund_star_payment(
+        self,
+        user_id: int,
+        telegram_payment_charge_id: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> True:
+        return self._send_request(
+            method="refundStarPayment",
+            parameters={
+                "user_id": user_id,
+                "telegram_payment_charge_id": telegram_payment_charge_id
             },
             timeout_secs=timeout_secs
         )
@@ -2798,6 +2856,7 @@ class Bot:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
@@ -2811,6 +2870,7 @@ class Bot:
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
+                    "message_effect_id": message_effect_id,
                     "reply_parameters": reply_parameters,
                     "reply_markup": reply_markup
                 },

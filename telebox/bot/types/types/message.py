@@ -98,6 +98,7 @@ class Message(Type):
     text: Optional[str] = None
     entities: Optional[list[MessageEntity]] = None
     link_preview_options: Optional[LinkPreviewOptions] = None
+    effect_id: Optional[str] = None
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
@@ -109,6 +110,7 @@ class Message(Type):
     voice: Optional[Voice] = None
     caption: Optional[str] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[Literal[True]] = None
     has_media_spoiler: Optional[Literal[True]] = None
     contact: Optional[Contact] = None
     dice: Optional[Dice] = None

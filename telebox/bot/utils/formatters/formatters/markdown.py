@@ -47,6 +47,9 @@ class MarkdownFormatter(AbstractFormatter):
     def get_blockquote_text(self, text: str) -> str:
         return "\n".join(f">{i}" for i in text.split("\n"))
 
+    def get_expandable_blockquote_text(self, text: str) -> str:
+        return "\n".join(f">{i}" for i in text.split("\n")) + "||"
+
     def get_blank_line_opening_tag_patterns(self) -> list[str]:
         return _TAG_PATTERNS
 

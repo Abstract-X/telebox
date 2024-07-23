@@ -17,6 +17,7 @@ class InlineQueryResultCachedPhoto(Type):
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
     type: str = inline_query_result_types.PHOTO
