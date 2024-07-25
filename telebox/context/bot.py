@@ -19,7 +19,6 @@ from telebox.bot.types.types.user_profile_photos import UserProfilePhotos
 from telebox.bot.types.types.chat_permissions import ChatPermissions
 from telebox.bot.types.types.file import File
 from telebox.bot.types.types.chat_invite_link import ChatInviteLink
-from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.forum_topic import ForumTopic
 from telebox.bot.types.types.menu_button import MenuButton
 from telebox.bot.types.types.poll import Poll
@@ -37,11 +36,15 @@ from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.bot.types.types.reply_parameters import ReplyParameters
 from telebox.bot.types.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.types.types.user_chat_boosts import UserChatBoosts
+from telebox.bot.types.types.input_poll_option import InputPollOption
+from telebox.bot.types.types.chat_full_info import ChatFullInfo
+from telebox.bot.types.types.input_paid_media import InputPaidMedia
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.context.utils import (
     get_event_chat_id,
     get_event_user_id,
     get_event_message_topic_id,
+    get_event_business_connection_id,
     get_event_sender_chat_id,
     get_event_message_id,
     get_event_callback_query_id,
@@ -66,6 +69,7 @@ class ContextBot:
         link_preview_options: Optional[LinkPreviewOptions] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -77,6 +81,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             text=text,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -85,6 +92,7 @@ class ContextBot:
             link_preview_options=link_preview_options,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -180,6 +188,7 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
@@ -200,6 +209,7 @@ class ContextBot:
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            show_caption_above_media=show_caption_above_media,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_parameters=reply_parameters,
@@ -238,6 +248,7 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
@@ -258,6 +269,7 @@ class ContextBot:
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            show_caption_above_media=show_caption_above_media,
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_parameters=reply_parameters,
@@ -295,9 +307,11 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -309,15 +323,20 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             photo=photo,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            show_caption_above_media=show_caption_above_media,
             has_spoiler=has_spoiler,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -336,6 +355,7 @@ class ContextBot:
         thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -347,6 +367,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             audio=audio,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -359,6 +382,7 @@ class ContextBot:
             thumbnail=thumbnail,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -375,6 +399,7 @@ class ContextBot:
         disable_content_type_detection: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -386,6 +411,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             document=document,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -396,6 +424,7 @@ class ContextBot:
             disable_content_type_detection=disable_content_type_detection,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -412,10 +441,12 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         has_spoiler: Optional[bool] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -427,6 +458,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             video=video,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -437,10 +471,12 @@ class ContextBot:
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            show_caption_above_media=show_caption_above_media,
             has_spoiler=has_spoiler,
             supports_streaming=supports_streaming,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -457,9 +493,11 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -471,6 +509,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             animation=animation,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -481,9 +522,11 @@ class ContextBot:
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            show_caption_above_media=show_caption_above_media,
             has_spoiler=has_spoiler,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -499,6 +542,7 @@ class ContextBot:
         duration: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -510,6 +554,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             voice=voice,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -519,6 +566,7 @@ class ContextBot:
             duration=duration,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -533,6 +581,7 @@ class ContextBot:
         thumbnail: Union[InputFile, str, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -544,6 +593,9 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             video_note=video_note,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -552,6 +604,7 @@ class ContextBot:
             thumbnail=thumbnail,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -566,17 +619,22 @@ class ContextBot:
         timeout_secs: Union[int, float, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
     ) -> list[Message]:
         return self.bot.send_media_group(
             chat_id=get_event_chat_id(),
             media=media,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters
         )
 
@@ -592,6 +650,7 @@ class ContextBot:
         proximity_alert_radius: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -604,6 +663,9 @@ class ContextBot:
             latitude=latitude,
             longitude=longitude,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -613,6 +675,7 @@ class ContextBot:
             proximity_alert_radius=proximity_alert_radius,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -623,6 +686,7 @@ class ContextBot:
         longitude: float,
         *,
         timeout_secs: Union[int, float, None] = None,
+        live_period: Optional[int] = None,
         message_id: Optional[int] = None,
         horizontal_accuracy: Optional[float] = None,
         heading: Optional[int] = None,
@@ -633,6 +697,10 @@ class ContextBot:
             latitude=latitude,
             longitude=longitude,
             timeout_secs=timeout_secs,
+            live_period=live_period,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             horizontal_accuracy=horizontal_accuracy,
@@ -650,6 +718,9 @@ class ContextBot:
     ) -> Message:
         return self.bot.stop_message_live_location(
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             reply_markup=reply_markup
@@ -669,6 +740,7 @@ class ContextBot:
         google_place_type: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -683,6 +755,9 @@ class ContextBot:
             title=title,
             address=address,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -692,6 +767,7 @@ class ContextBot:
             google_place_type=google_place_type,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -706,6 +782,7 @@ class ContextBot:
         vcard: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -718,6 +795,9 @@ class ContextBot:
             phone_number=phone_number,
             first_name=first_name,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
@@ -725,6 +805,7 @@ class ContextBot:
             vcard=vcard,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -732,9 +813,11 @@ class ContextBot:
     def send_poll(
         self,
         question: str,
-        options: list[str],
+        options: list[InputPollOption],
         *,
         timeout_secs: Union[int, float, None] = None,
+        question_parse_mode: Optional[str] = None,
+        question_entities: Optional[list[MessageEntity]] = None,
         is_anonymous: Optional[bool] = None,
         type_: Optional[str] = None,
         allows_multiple_answers: Optional[bool] = None,
@@ -747,6 +830,7 @@ class ContextBot:
         is_closed: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -759,9 +843,14 @@ class ContextBot:
             question=question,
             options=options,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
+            question_parse_mode=question_parse_mode,
+            question_entities=question_entities,
             is_anonymous=is_anonymous,
             type_=type_,
             allows_multiple_answers=allows_multiple_answers,
@@ -774,6 +863,7 @@ class ContextBot:
             is_closed=is_closed,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -785,6 +875,7 @@ class ContextBot:
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -795,12 +886,16 @@ class ContextBot:
         return self.bot.send_dice(
             chat_id=get_event_chat_id(),
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
             emoji=emoji,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -809,17 +904,18 @@ class ContextBot:
         self,
         action: str,
         *,
-        timeout_secs: Union[int, float, None] = None,
-        message_thread_id: Optional[int] = None
+        timeout_secs: Union[int, float, None] = None
     ) -> Literal[True]:
-        if message_thread_id is None:
-            message_thread_id = get_event_message_topic_id(strictly=False)
-
         return self.bot.send_chat_action(
             chat_id=get_event_chat_id(),
             action=action,
             timeout_secs=timeout_secs,
-            message_thread_id=message_thread_id
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
+            message_thread_id=get_event_message_topic_id(
+                strictly=False
+            )
         )
 
     def set_message_reaction(
@@ -1186,7 +1282,7 @@ class ContextBot:
         self,
         *,
         timeout_secs: Union[int, float, None] = None
-    ) -> Chat:
+    ) -> ChatFullInfo:
         return self.bot.get_chat(
             chat_id=get_event_chat_id(),
             timeout_secs=timeout_secs
@@ -1461,6 +1557,9 @@ class ContextBot:
         return self.bot.edit_message_text(
             text=text,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             parse_mode=parse_mode,
@@ -1477,15 +1576,20 @@ class ContextBot:
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self.bot.edit_message_caption(
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
+            show_caption_above_media=show_caption_above_media,
             reply_markup=reply_markup
         )
 
@@ -1500,6 +1604,9 @@ class ContextBot:
         return self.bot.edit_message_media(
             media=media,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             reply_markup=reply_markup
@@ -1514,8 +1621,45 @@ class ContextBot:
     ) -> Message:
         return self.bot.edit_message_reply_markup(
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
+            reply_markup=reply_markup
+        )
+
+    def send_paid_media(
+        self,
+        star_count: int,
+        media: list[InputPaidMedia],
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[str] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
+        show_caption_above_media: Optional[bool] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
+        reply_markup: Union[InlineKeyboardMarkup,
+                            ReplyKeyboardMarkup,
+                            ReplyKeyboardRemove,
+                            ForceReply,
+                            None] = None
+    ) -> Message:
+        return self.bot.send_paid_media(
+            chat_id=get_event_chat_id(),
+            star_count=star_count,
+            media=media,
+            timeout_secs=timeout_secs,
+            caption=caption,
+            parse_mode=parse_mode,
+            caption_entities=caption_entities,
+            show_caption_above_media=show_caption_above_media,
+            disable_notification=disable_notification,
+            protect_content=protect_content,
+            reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
 
@@ -1523,6 +1667,7 @@ class ContextBot:
         self,
         *,
         timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None,
         message_id: Optional[int] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
@@ -1530,6 +1675,7 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             message_id=get_event_message_id() if message_id is None else message_id,
             timeout_secs=timeout_secs,
+            business_connection_id=business_connection_id,
             reply_markup=reply_markup
         )
 
@@ -1565,6 +1711,7 @@ class ContextBot:
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Union[InlineKeyboardMarkup,
                             ReplyKeyboardMarkup,
@@ -1577,11 +1724,15 @@ class ContextBot:
             sticker=sticker,
             timeout_secs=timeout_secs,
             emoji=emoji,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )
@@ -1605,7 +1756,6 @@ class ContextBot:
         name: str,
         title: str,
         stickers: list[InputSticker],
-        sticker_format: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         sticker_type: Optional[str] = None,
@@ -1616,7 +1766,6 @@ class ContextBot:
             name=name,
             title=title,
             stickers=stickers,
-            sticker_format=sticker_format,
             timeout_secs=timeout_secs,
             sticker_type=sticker_type,
             needs_repainting=needs_repainting
@@ -1639,6 +1788,7 @@ class ContextBot:
     def set_sticker_set_thumbnail(
         self,
         name: str,
+        format_: str,
         *,
         timeout_secs: Union[int, float, None] = None,
         thumbnail: Union[InputFile, str, None] = None
@@ -1646,8 +1796,25 @@ class ContextBot:
         return self.bot.set_sticker_set_thumbnail(
             name=name,
             user_id=get_event_user_id(),
+            format_=format_,
             timeout_secs=timeout_secs,
             thumbnail=thumbnail
+        )
+
+    def replace_sticker_in_set(
+        self,
+        name: str,
+        old_sticker: str,
+        sticker: InputSticker,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> True:
+        return self.bot.replace_sticker_in_set(
+            user_id=get_event_user_id(),
+            name=name,
+            old_sticker=old_sticker,
+            sticker=sticker,
+            timeout_secs=timeout_secs
         )
 
     def answer_inline_query(
@@ -1675,11 +1842,11 @@ class ContextBot:
         title: str,
         description: str,
         payload: str,
-        provider_token: str,
         currency: str,
         prices: list[LabeledPrice],
         *,
         timeout_secs: Union[int, float, None] = None,
+        provider_token: Optional[str] = None,
         max_tip_amount: Optional[int] = None,
         suggested_tip_amounts: Optional[list[int]] = None,
         start_parameter: Optional[str] = None,
@@ -1697,6 +1864,7 @@ class ContextBot:
         is_flexible: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
@@ -1705,13 +1873,13 @@ class ContextBot:
             title=title,
             description=description,
             payload=payload,
-            provider_token=provider_token,
             currency=currency,
             prices=prices,
             timeout_secs=timeout_secs,
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
+            provider_token=provider_token,
             max_tip_amount=max_tip_amount,
             suggested_tip_amounts=suggested_tip_amounts,
             start_parameter=start_parameter,
@@ -1729,8 +1897,21 @@ class ContextBot:
             is_flexible=is_flexible,
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
+        )
+
+    def refund_star_payment(
+        self,
+        telegram_payment_charge_id: str,
+        *,
+        timeout_secs: Union[int, float, None] = None
+    ) -> True:
+        return self.bot.refund_star_payment(
+            user_id=get_event_user_id(),
+            telegram_payment_charge_id=telegram_payment_charge_id,
+            timeout_secs=timeout_secs
         )
 
     def answer_shipping_query(
@@ -1782,6 +1963,7 @@ class ContextBot:
         timeout_secs: Union[int, float, None] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
@@ -1789,11 +1971,15 @@ class ContextBot:
             chat_id=get_event_chat_id(),
             game_short_name=game_short_name,
             timeout_secs=timeout_secs,
+            business_connection_id=get_event_business_connection_id(
+                strictly=False
+            ),
             message_thread_id=get_event_message_topic_id(
                 strictly=False
             ),
             disable_notification=disable_notification,
             protect_content=protect_content,
+            message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup
         )

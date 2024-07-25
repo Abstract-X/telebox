@@ -175,6 +175,42 @@ from .message_origin_chat import MessageOriginChat
 from .message_origin_channel import MessageOriginChannel
 from .maybe_inaccessible_message import MaybeInaccessibleMessage
 from .inaccessible_message import InaccessibleMessage
+from .business_connection import BusinessConnection
+from .business_messages_deleted import BusinessMessagesDeleted
+from .business_intro import BusinessIntro
+from .business_location import BusinessLocation
+from .business_opening_hours import BusinessOpeningHours
+from .business_opening_hours_interval import BusinessOpeningHoursInterval
+from .shared_user import SharedUser
+from .birthdate import Birthdate
+from .input_poll_option import InputPollOption
+from .background_fill import BackgroundFill
+from .background_fill_solid import BackgroundFillSolid
+from .background_fill_gradient import BackgroundFillGradient
+from .background_fill_freeform_gradient import BackgroundFillFreeformGradient
+from .background_type import BackgroundType
+from .background_type_fill import BackgroundTypeFill
+from .background_type_wallpaper import BackgroundTypeWallpaper
+from .background_type_pattern import BackgroundTypePattern
+from .background_type_chat_theme import BackgroundTypeChatTheme
+from .chat_background import ChatBackground
+from .chat_full_info import ChatFullInfo
+from .revenue_withdrawal_state import RevenueWithdrawalState
+from .revenue_withdrawal_state_pending import RevenueWithdrawalStatePending
+from .revenue_withdrawal_state_succeeded import RevenueWithdrawalStateSucceeded
+from .revenue_withdrawal_state_failed import RevenueWithdrawalStateFailed
+from .star_transaction import StarTransaction
+from .star_transactions import StarTransactions
+from .transaction_partner import TransactionPartner
+from .transaction_partner_user import TransactionPartnerUser
+from .transaction_partner_fragment import TransactionPartnerFragment
+from .transaction_partner_telegram_ads import TransactionPartnerTelegramAds
+from .transaction_partner_other import TransactionPartnerOther
+from .paid_media_info import PaidMediaInfo
+from .refunded_payment import RefundedPayment
+from .web_app_init_data import WebAppInitData
+from .web_app_user import WebAppUser
+from .web_app_chat import WebAppChat
 
 
 __all__ = [
@@ -354,5 +390,41 @@ __all__ = [
     "MessageOriginChat",
     "MessageOriginChannel",
     "MaybeInaccessibleMessage",
-    "InaccessibleMessage"
+    "InaccessibleMessage",
+    "BusinessConnection",
+    "BusinessMessagesDeleted",
+    "BusinessIntro",
+    "BusinessLocation",
+    "BusinessOpeningHours",
+    "BusinessOpeningHoursInterval",
+    "SharedUser",
+    "Birthdate",
+    "InputPollOption",
+    "BackgroundFill",
+    "BackgroundFillSolid",
+    "BackgroundFillGradient",
+    "BackgroundFillFreeformGradient",
+    "BackgroundType",
+    "BackgroundTypeFill",
+    "BackgroundTypeWallpaper",
+    "BackgroundTypePattern",
+    "BackgroundTypeChatTheme",
+    "ChatBackground",
+    "ChatFullInfo",
+    "RevenueWithdrawalState",
+    "RevenueWithdrawalStatePending",
+    "RevenueWithdrawalStateSucceeded",
+    "RevenueWithdrawalStateFailed",
+    "StarTransaction",
+    "StarTransactions",
+    "TransactionPartner",
+    "TransactionPartnerUser",
+    "TransactionPartnerFragment",
+    "TransactionPartnerTelegramAds",
+    "TransactionPartnerOther",
+    "PaidMediaInfo",
+    "RefundedPayment",
+    "WebAppInitData",
+    "WebAppUser",
+    "WebAppChat"
 ]

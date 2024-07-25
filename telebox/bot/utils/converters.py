@@ -114,6 +114,27 @@ from telebox.bot.types.types.message_origin_channel import MessageOriginChannel
 from telebox.bot.types.types.chat_boost_source_premium import ChatBoostSourcePremium
 from telebox.bot.types.types.chat_boost_source_gift_code import ChatBoostSourceGiftCode
 from telebox.bot.types.types.chat_boost_source_giveaway import ChatBoostSourceGiveaway
+from telebox.bot.types.types.background_fill_solid import BackgroundFillSolid
+from telebox.bot.types.types.background_fill_gradient import BackgroundFillGradient
+from telebox.bot.types.types.background_fill_freeform_gradient import BackgroundFillFreeformGradient
+from telebox.bot.types.types.background_type_fill import BackgroundTypeFill
+from telebox.bot.types.types.background_type_wallpaper import BackgroundTypeWallpaper
+from telebox.bot.types.types.background_type_pattern import BackgroundTypePattern
+from telebox.bot.types.types.background_type_chat_theme import BackgroundTypeChatTheme
+from telebox.bot.types.types.revenue_withdrawal_state_pending import RevenueWithdrawalStatePending
+from telebox.bot.types.types.revenue_withdrawal_state_succeeded import (
+    RevenueWithdrawalStateSucceeded
+)
+from telebox.bot.types.types.revenue_withdrawal_state_failed import RevenueWithdrawalStateFailed
+from telebox.bot.types.types.transaction_partner_user import TransactionPartnerUser
+from telebox.bot.types.types.transaction_partner_fragment import TransactionPartnerFragment
+from telebox.bot.types.types.transaction_partner_telegram_ads import TransactionPartnerTelegramAds
+from telebox.bot.types.types.transaction_partner_other import TransactionPartnerOther
+from telebox.bot.types.types.input_paid_media_photo import InputPaidMediaPhoto
+from telebox.bot.types.types.input_paid_media_video import InputPaidMediaVideo
+from telebox.bot.types.types.paid_media_preview import PaidMediaPreview
+from telebox.bot.types.types.paid_media_photo import PaidMediaPhoto
+from telebox.bot.types.types.paid_media_video import PaidMediaVideo
 
 
 DataclassObject = TypeVar("DataclassObject")
@@ -188,7 +209,32 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
 
     ChatBoostSourcePremium,
     ChatBoostSourceGiftCode,
-    ChatBoostSourceGiveaway
+    ChatBoostSourceGiveaway,
+
+    BackgroundFillSolid,
+    BackgroundFillGradient,
+    BackgroundFillFreeformGradient,
+
+    BackgroundTypeFill,
+    BackgroundTypeWallpaper,
+    BackgroundTypePattern,
+    BackgroundTypeChatTheme,
+
+    RevenueWithdrawalStatePending,
+    RevenueWithdrawalStateSucceeded,
+    RevenueWithdrawalStateFailed,
+
+    TransactionPartnerUser,
+    TransactionPartnerFragment,
+    TransactionPartnerTelegramAds,
+    TransactionPartnerOther,
+
+    InputPaidMediaPhoto,
+    InputPaidMediaVideo,
+
+    PaidMediaPreview,
+    PaidMediaPhoto,
+    PaidMediaVideo
 )
 
 

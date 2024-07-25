@@ -39,6 +39,9 @@ class HTMLFormatter(AbstractFormatter):
     def get_blockquote_text(self, text: str) -> str:
         return f"<blockquote>{text}</blockquote>"
 
+    def get_expandable_blockquote_text(self, text: str) -> str:
+        return f"<blockquote expandable>{text}</blockquote>"
+
     def get_blank_line_opening_tag_patterns(self) -> list[str]:
         return [
             "<b>",
@@ -49,7 +52,8 @@ class HTMLFormatter(AbstractFormatter):
             r"""<a href=(\'|\").*?(\'|\")>"""
             "<code>",
             "<pre>",
-            "<blockquote>"
+            "<blockquote>",
+            "<blockquote expandable>"
         ]
 
     def get_blank_line_closing_tag_patterns(self) -> list[str]:

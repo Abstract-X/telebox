@@ -23,6 +23,7 @@ from telebox.bot.types.types.invoice import Invoice
 from telebox.bot.types.types.location import Location
 from telebox.bot.types.types.poll import Poll
 from telebox.bot.types.types.venue import Venue
+from telebox.bot.types.types.paid_media_info import PaidMediaInfo
 
 
 @dataclass(repr=False)
@@ -34,6 +35,7 @@ class ExternalReplyInfo(Type):
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
+    paid_media: Optional[PaidMediaInfo] = None
     photo: Optional[list[PhotoSize]] = None
     sticker: Optional[Sticker] = None
     story: Optional[Story] = None

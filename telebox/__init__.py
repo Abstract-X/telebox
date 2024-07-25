@@ -100,12 +100,11 @@ __all__ = [
 def _evaluate_type_annotations() -> None:
     from typing import get_type_hints
 
-    from .bot.types.types.chat import Chat
     from .bot.types.types.giveaway_completed import GiveawayCompleted
     from .bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
     from .bot.types.types.message import Message
 
-    classes = (Chat, GiveawayCompleted, Message)
+    classes = (GiveawayCompleted, Message)
     mapping = {i.__name__: i for i in classes}
     mapping["MaybeInaccessibleMessage"] = MaybeInaccessibleMessage
 
