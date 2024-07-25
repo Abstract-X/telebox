@@ -22,6 +22,7 @@ from .deep_links import (
 from .formatting import get_escaped_html_text, get_escaped_markdown_text
 from .users import get_full_name
 from .ids import get_prefixed_chat_id, get_unprefixed_chat_id
+from .web_apps import check_web_app_init_data, get_web_app_init_data
 
 
 __all__ = [
@@ -48,5 +49,7 @@ __all__ = [
     "get_escaped_markdown_text",
     "get_full_name",
     "get_prefixed_chat_id",
-    "get_unprefixed_chat_id"
+    "get_unprefixed_chat_id",
+    "check_web_app_init_data",
+    "get_web_app_init_data"
 ]

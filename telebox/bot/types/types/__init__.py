@@ -208,6 +208,9 @@ from .transaction_partner_telegram_ads import TransactionPartnerTelegramAds
 from .transaction_partner_other import TransactionPartnerOther
 from .paid_media_info import PaidMediaInfo
 from .refunded_payment import RefundedPayment
+from .web_app_init_data import WebAppInitData
+from .web_app_user import WebAppUser
+from .web_app_chat import WebAppChat
 
 
 __all__ = [
@@ -420,5 +423,8 @@ __all__ = [
     "TransactionPartnerTelegramAds",
     "TransactionPartnerOther",
     "PaidMediaInfo",
-    "RefundedPayment"
+    "RefundedPayment",
+    "WebAppInitData",
+    "WebAppUser",
+    "WebAppChat"
 ]
