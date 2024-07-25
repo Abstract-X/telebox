@@ -209,7 +209,10 @@ from .types import (
     TransactionPartnerTelegramAds,
     TransactionPartnerOther,
     PaidMediaInfo,
-    RefundedPayment
+    RefundedPayment,
+    WebAppInitData,
+    WebAppUser,
+    WebAppChat
 )
 
 
@@ -423,5 +426,8 @@ __all__ = [
     "TransactionPartnerTelegramAds",
     "TransactionPartnerOther",
     "PaidMediaInfo",
-    "RefundedPayment"
+    "RefundedPayment",
+    "WebAppInitData",
+    "WebAppUser",
+    "WebAppChat"
 ]
