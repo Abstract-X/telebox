@@ -107,6 +107,7 @@ from telebox.bot.types.types.passport_element_error_unspecified import (
 )
 from telebox.bot.types.types.reaction_type_emoji import ReactionTypeEmoji
 from telebox.bot.types.types.reaction_type_custom_emoji import ReactionTypeCustomEmoji
+from telebox.bot.types.types.reaction_type_paid import ReactionTypePaid
 from telebox.bot.types.types.message_origin_user import MessageOriginUser
 from telebox.bot.types.types.message_origin_hidden_user import MessageOriginHiddenUser
 from telebox.bot.types.types.message_origin_chat import MessageOriginChat
@@ -201,6 +202,7 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
 
     ReactionTypeEmoji,
     ReactionTypeCustomEmoji,
+    ReactionTypePaid,
 
     MessageOriginUser,
     MessageOriginHiddenUser,
