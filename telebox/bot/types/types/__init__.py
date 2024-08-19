@@ -211,6 +211,7 @@ from .refunded_payment import RefundedPayment
 from .web_app_init_data import WebAppInitData
 from .web_app_user import WebAppUser
 from .web_app_chat import WebAppChat
+from .reaction_type_paid import ReactionTypePaid
 
 
 __all__ = [
@@ -426,5 +427,6 @@ __all__ = [
     "RefundedPayment",
     "WebAppInitData",
     "WebAppUser",
-    "WebAppChat"
+    "WebAppChat",
+    "ReactionTypePaid"
 ]

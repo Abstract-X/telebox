@@ -212,7 +212,8 @@ from .types import (
     RefundedPayment,
     WebAppInitData,
     WebAppUser,
-    WebAppChat
+    WebAppChat,
+    ReactionTypePaid
 )
 
 
@@ -429,5 +430,6 @@ __all__ = [
     "RefundedPayment",
     "WebAppInitData",
     "WebAppUser",
-    "WebAppChat"
+    "WebAppChat",
+    "ReactionTypePaid"
 ]
