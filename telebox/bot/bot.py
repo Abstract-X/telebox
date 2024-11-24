@@ -3069,45 +3069,46 @@ class Bot:
         }
 
         if parameters:
-            data, files = self._prepare_multipart_encoder(parameters)
+            data, opened_files = self._prepare_multipart_encoder(parameters)
             headers = {
                 "Content-Type": data.content_type
             }
         else:
             data = headers = None
-            files = []
+            opened_files = []
 
         url = self._get_api_url(method)
         timeout_secs = timeout_secs or self._timeout_secs
         retries = 0
 
-        while True:
-            try:
-                return self._process_response(
-                    response=self.session.post(
-                        url,
-                        data=data,  # NOQA
-                        headers=headers,
-                        timeout=timeout_secs
-                    ),
-                    method=method,
-                    parameters=parameters
-                )
-            except (RequestException, InternalServerError):
-                if retries == self._retries:
-                    raise
+        try:
+            while True:
+                try:
+                    return self._process_response(
+                        response=self.session.post(
+                            url,
+                            data=data,  # NOQA
+                            headers=headers,
+                            timeout=timeout_secs
+                        ),
+                        method=method,
+                        parameters=parameters
+                    )
+                except (RequestException, InternalServerError):
+                    if retries == self._retries:
+                        raise
 
-                retries += 1
-                time.sleep(self._retry_delay_secs)
-            except RetryAfterError as error:
-                if not self._wait_on_rate_limit:
-                    raise
+                    retries += 1
+                    time.sleep(self._retry_delay_secs)
+                except RetryAfterError as error:
+                    if not self._wait_on_rate_limit:
+                        raise
 
-                retries = 0
-                time.sleep(error.retry_after)
-
-            for i in files:
-                i.seek(0)
+                    retries = 0
+                    time.sleep(error.retry_after)
+        finally:
+            for i in opened_files:
+                i.close()
 
     def _get_api_url(self, method: str) -> str:
         return f"{self.api_url}/bot{self.token}/{method}"
@@ -3128,13 +3129,13 @@ class Bot:
         parameters: dict[str, Any]
     ) -> tuple[MultipartEncoder, list[IO]]:
         fields: dict[str, Any] = {}
-        files: list[IO] = []
+        opened_files: list[IO] = []
 
         for name, value in parameters.items():
             value = self._prepare_parameter_value(
                 value,
                 multipart_fields=fields,
-                files=files,
+                opened_files=opened_files,
                 attach_files=False
             )
 
@@ -3145,36 +3146,42 @@ class Bot:
 
             fields[name] = value
 
-        return MultipartEncoder(fields), files
+        return MultipartEncoder(fields), opened_files
 
     def _prepare_parameter_value(
         self,
         value: Any,
         multipart_fields: dict[str, Any],
-        files: list[IO],
-        attach_files: bool = True,
+        opened_files: list[IO],
+        attach_files: bool = True
     ) -> Any:
         if isinstance(value, InputFile):
-            files.append(value.file)
+            if value.file is not None:
+                file = value.file
+            elif value.file_path is not None:
+                file = value.file_path.open("rb")
+                opened_files.append(file)
+            else:
+                raise ValueError("Incorrect file!")
 
             if attach_files:
                 while True:
-                    name = secrets.token_urlsafe(10)
+                    name = secrets.token_urlsafe(8)
 
                     if name not in multipart_fields:
                         break
 
-                multipart_fields[name] = (value.name, value.file)
+                multipart_fields[name] = (value.name, file)
 
                 return f"attach://{name}"
 
-            return value.name, value.file
+            return value.name, file
         elif is_dataclass(value):
             return {
                 name: self._prepare_parameter_value(
                     value_,
                     multipart_fields=multipart_fields,
-                    files=files
+                    opened_files=opened_files
                 )
                 for name, value_ in self._dataclass_converter.get_data(value).items()
             }
@@ -3185,7 +3192,7 @@ class Bot:
                 self._prepare_parameter_value(
                     i,
                     multipart_fields=multipart_fields,
-                    files=files
+                    opened_files=opened_files
                 )
                 for i in value
             ]
