@@ -69,6 +69,32 @@ from telebox.bot.types.types.input_poll_option import InputPollOption
 from telebox.bot.types.types.chat_full_info import ChatFullInfo
 from telebox.bot.types.types.star_transactions import StarTransactions
 from telebox.bot.types.types.input_paid_media import InputPaidMedia
+from telebox.bot.types.types.inline_query_result_article import InlineQueryResultArticle
+from telebox.bot.types.types.inline_query_result_photo import InlineQueryResultPhoto
+from telebox.bot.types.types.inline_query_result_gif import InlineQueryResultGif
+from telebox.bot.types.types.inline_query_result_mpeg4_gif import InlineQueryResultMpeg4Gif
+from telebox.bot.types.types.inline_query_result_video import InlineQueryResultVideo
+from telebox.bot.types.types.inline_query_result_audio import InlineQueryResultAudio
+from telebox.bot.types.types.inline_query_result_voice import InlineQueryResultVoice
+from telebox.bot.types.types.inline_query_result_document import InlineQueryResultDocument
+from telebox.bot.types.types.inline_query_result_location import InlineQueryResultLocation
+from telebox.bot.types.types.inline_query_result_venue import InlineQueryResultVenue
+from telebox.bot.types.types.inline_query_result_contact import InlineQueryResultContact
+from telebox.bot.types.types.inline_query_result_cached_photo import InlineQueryResultCachedPhoto
+from telebox.bot.types.types.inline_query_result_cached_gif import InlineQueryResultCachedGif
+from telebox.bot.types.types.inline_query_result_cached_mpeg4_gif import (
+    InlineQueryResultCachedMpeg4Gif
+)
+from telebox.bot.types.types.inline_query_result_cached_sticker import (
+    InlineQueryResultCachedSticker
+)
+from telebox.bot.types.types.inline_query_result_cached_document import (
+    InlineQueryResultCachedDocument
+)
+from telebox.bot.types.types.inline_query_result_cached_video import InlineQueryResultCachedVideo
+from telebox.bot.types.types.inline_query_result_cached_voice import InlineQueryResultCachedVoice
+from telebox.bot.types.types.inline_query_result_cached_audio import InlineQueryResultCachedAudio
+from telebox.bot.types.types.input_text_message_content import InputTextMessageContent
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -819,21 +845,24 @@ class Bot:
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None
     ) -> list[Message]:
-        if self._use_cache:
-            media_ = []
+        media_ = []
 
-            for i in media:
-                class_ = type(i)
-                data = self._dataclass_converter.get_data(i)
-                data["media"] = self._get_file(data["media"])
-                media_.append(
-                    self._dataclass_converter.get_object(
-                        data=data,
-                        class_=class_
-                    )
+        for i in media:
+            class_ = type(i)
+            data = self._dataclass_converter.get_data(i)
+            data["media"] = self._get_file(data["media"])
+            data["parse_mode"] = self._get_parse_mode(
+                parse_mode=data.get("parse_mode", NOT_SET),
+                with_entities=bool(
+                    data.get("caption_entities")
                 )
-        else:
-            media_ = media
+            )
+            media_.append(
+                self._dataclass_converter.get_object(
+                    data=data,
+                    class_=class_
+                )
+            )
 
         messages = [
             self._dataclass_converter.get_object(data=i, class_=Message)
@@ -1116,13 +1145,30 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
+        options_ = []
+
+        for i in options:
+            data = self._dataclass_converter.get_data(i)
+            data["text_parse_mode"] = self._get_parse_mode(
+                parse_mode=data.get("text_parse_mode", NOT_SET),
+                with_entities=bool(
+                    data.get("text_entities")
+                )
+            )
+            options_.append(
+                self._dataclass_converter.get_object(
+                    data=data,
+                    class_=InputPollOption
+                )
+            )
+
         return self._dataclass_converter.get_object(
             data=self._send_request(
                 method="sendPoll",
                 parameters={
                     "chat_id": chat_id,
                     "question": question,
-                    "options": options,
+                    "options": options_,
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "question_parse_mode": self._get_parse_mode(
@@ -2346,6 +2392,18 @@ class Bot:
         inline_message_id: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Union[Message, Literal[True]]:
+        media_class = type(media)
+        media_data = self._dataclass_converter.get_data(media)
+        media_data["parse_mode"] = self._get_parse_mode(
+            parse_mode=media_data.get("parse_mode", NOT_SET),
+            with_entities=bool(
+                media_data.get("caption_entities")
+            )
+        )
+        media = self._dataclass_converter.get_object(
+            data=media_data,
+            class_=media_class
+        )
         data = self._send_request(
             method="editMessageMedia",
             parameters={
@@ -2813,7 +2871,10 @@ class Bot:
             method="answerInlineQuery",
             parameters={
                 "inline_query_id": inline_query_id,
-                "results": results,
+                "results": [
+                    self._get_prepared_inline_query_result(i)
+                    for i in results
+                ],
                 "cache_time": cache_time,
                 "is_personal": is_personal,
                 "next_offset": next_offset,
@@ -2834,7 +2895,7 @@ class Bot:
                 method="answerWebAppQuery",
                 parameters={
                     "web_app_query_id": web_app_query_id,
-                    "result": result
+                    "result": self._get_prepared_inline_query_result(result)
                 },
                 timeout_secs=timeout_secs
             ),
@@ -3314,6 +3375,7 @@ class Bot:
                     opened_files=opened_files
                 )
                 for name, value_ in self._dataclass_converter.get_data(value).items()
+                if value_ is not None
             }
         elif isinstance(value, datetime):
             return get_timestamp(value)
@@ -3357,6 +3419,78 @@ class Bot:
             )
 
         return data["result"]
+
+    def _get_prepared_inline_query_result(
+        self,
+        result: InlineQueryResult
+    ) -> InlineQueryResult:
+        if isinstance(
+            result,
+            (
+                InlineQueryResultArticle,
+                InlineQueryResultPhoto,
+                InlineQueryResultGif,
+                InlineQueryResultMpeg4Gif,
+                InlineQueryResultVideo,
+                InlineQueryResultAudio,
+                InlineQueryResultVoice,
+                InlineQueryResultDocument,
+                InlineQueryResultLocation,
+                InlineQueryResultVenue,
+                InlineQueryResultContact,
+                InlineQueryResultCachedPhoto,
+                InlineQueryResultCachedGif,
+                InlineQueryResultCachedMpeg4Gif,
+                InlineQueryResultCachedSticker,
+                InlineQueryResultCachedDocument,
+                InlineQueryResultCachedVideo,
+                InlineQueryResultCachedVoice,
+                InlineQueryResultCachedAudio
+            )
+        ):
+            class_ = type(result)
+            data = self._dataclass_converter.get_data(result)
+
+            if (
+                (data.get("input_message_content") is not None)
+                and isinstance(result.input_message_content, InputTextMessageContent)
+            ):
+                data["input_message_content"]["parse_mode"] = self._get_parse_mode(
+                    parse_mode=data["input_message_content"].get("parse_mode", NOT_SET),
+                    with_entities=bool(
+                        data["input_message_content"].get("entities")
+                    )
+                )
+
+            if isinstance(
+                result,
+                (
+                    InlineQueryResultPhoto,
+                    InlineQueryResultGif,
+                    InlineQueryResultMpeg4Gif,
+                    InlineQueryResultVideo,
+                    InlineQueryResultAudio,
+                    InlineQueryResultVoice,
+                    InlineQueryResultDocument,
+                    InlineQueryResultCachedPhoto,
+                    InlineQueryResultCachedGif,
+                    InlineQueryResultCachedMpeg4Gif,
+                    InlineQueryResultCachedDocument,
+                    InlineQueryResultCachedVideo,
+                    InlineQueryResultCachedVoice,
+                    InlineQueryResultCachedAudio
+                )
+            ):
+                data["parse_mode"] = self._get_parse_mode(
+                    parse_mode=data.get("parse_mode", NOT_SET),
+                    with_entities=bool(
+                        data.get("caption_entities")
+                    )
+                )
+
+            return self._dataclass_converter.get_object(data=data, class_=class_)
+
+        return result
 
 
 class BotContext:
