@@ -146,7 +146,6 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
 
     ChatMemberOwner,
     ChatMemberAdministrator,
-    ChatMemberAdministrator,
     ChatMemberMember,
     ChatMemberRestricted,
     ChatMemberLeft,

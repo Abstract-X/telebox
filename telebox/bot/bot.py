@@ -2262,13 +2262,16 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None,
         chat_id: Optional[int] = None
-    ) -> Literal[True]:
-        return self._send_request(
-            method="getChatMenuButton",
-            parameters={
-                "chat_id": chat_id
-            },
-            timeout_secs=timeout_secs
+    ) -> MenuButton:
+        return self._converter.get_object(
+            data=self._send_request(
+                method="getChatMenuButton",
+                parameters={
+                    "chat_id": chat_id
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=MenuButton
         )
 
     def set_my_default_administrator_rights(

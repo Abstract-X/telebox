@@ -1543,7 +1543,7 @@ class ContextBot:
         self,
         *,
         timeout_secs: Union[int, float, None] = None,
-    ) -> Literal[True]:
+    ) -> MenuButton:
         return self.bot.get_chat_menu_button(
             timeout_secs=timeout_secs,
             chat_id=get_event_chat_id()
