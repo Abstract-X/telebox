@@ -840,6 +840,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None,
         caption: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Union[list[MessageEntity], None, NotSet] = NOT_SET,
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
@@ -852,6 +853,9 @@ class Bot:
 
         if caption_entities is not NOT_SET:
             media[0].caption_entities = caption_entities
+
+        if parse_mode is not NOT_SET:
+            media[0].parse_mode = parse_mode
 
         media_ = []
 
