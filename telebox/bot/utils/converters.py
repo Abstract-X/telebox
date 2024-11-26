@@ -270,7 +270,8 @@ def _get_dataclass_factory() -> Factory:
             parser=get_datetime
         ),
         InputFile: Schema(
-            serializer=lambda file: file
+            serializer=lambda file: file,
+            parser=lambda file: file
         )
     }
 
