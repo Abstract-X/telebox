@@ -617,6 +617,9 @@ class ContextBot:
                           InputMediaVideo]],
         *,
         timeout_secs: Union[int, float, None] = None,
+        caption: Union[str, None, NotSet] = NOT_SET,
+        caption_entities: Union[list[MessageEntity], None, NotSet] = NOT_SET,
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
@@ -633,6 +636,9 @@ class ContextBot:
                 strictly=False
             ),
             disable_notification=disable_notification,
+            caption=caption,
+            caption_entities=caption_entities,
+            parse_mode=parse_mode,
             protect_content=protect_content,
             message_effect_id=message_effect_id,
             reply_parameters=reply_parameters
