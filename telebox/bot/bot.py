@@ -138,18 +138,18 @@ class Bot:
         self._wait_on_rate_limit = wait_on_rate_limit
         self._use_cache = use_cache
         self._converter = DataclassConverter()
-        self._me: Optional[User] = None
+        self._user: Optional[User] = None
         self._cached_file_ids: dict[tuple[str, str], str] = {}
 
     @property
-    def me(self) -> User:
-        if self._me is None:
+    def user(self) -> User:
+        if self._user is None:
             raise BotError(
                 "Bot user was not loaded! To use this property, you need to call "
                 "bot.get_me method at least once!"
             )
 
-        return self._me
+        return self._user
 
     def get_updates(
         self,
@@ -225,12 +225,12 @@ class Bot:
         )
 
     def get_me(self, *, timeout_secs: Union[int, float, None] = None) -> User:
-        self._me = self._converter.get_object(
+        self._user = self._converter.get_object(
             data=self._send_request(method="getMe", timeout_secs=timeout_secs),
             class_=User
         )
 
-        return self._me
+        return self._user
 
     def log_out(self, *, timeout_secs: Union[int, float, None] = None) -> Literal[True]:
         return self._send_request(method="logOut", timeout_secs=timeout_secs)
