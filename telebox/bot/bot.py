@@ -11,6 +11,7 @@ from requests_toolbelt import MultipartEncoder
 from telebox.bot.utils.converters import DataclassConverter, get_timestamp
 from telebox.bot.errors import get_request_error, BotError, RetryAfterError, InternalServerError
 from telebox.bot.consts import chat_member_statuses
+from telebox.bot.enums.input_file_type import InputFileType
 from telebox.bot.types.types.response_parameters import ResponseParameters
 from telebox.bot.types.types.update import Update
 from telebox.bot.types.types.webhook_info import WebhookInfo
@@ -68,6 +69,32 @@ from telebox.bot.types.types.input_poll_option import InputPollOption
 from telebox.bot.types.types.chat_full_info import ChatFullInfo
 from telebox.bot.types.types.star_transactions import StarTransactions
 from telebox.bot.types.types.input_paid_media import InputPaidMedia
+from telebox.bot.types.types.inline_query_result_article import InlineQueryResultArticle
+from telebox.bot.types.types.inline_query_result_photo import InlineQueryResultPhoto
+from telebox.bot.types.types.inline_query_result_gif import InlineQueryResultGif
+from telebox.bot.types.types.inline_query_result_mpeg4_gif import InlineQueryResultMpeg4Gif
+from telebox.bot.types.types.inline_query_result_video import InlineQueryResultVideo
+from telebox.bot.types.types.inline_query_result_audio import InlineQueryResultAudio
+from telebox.bot.types.types.inline_query_result_voice import InlineQueryResultVoice
+from telebox.bot.types.types.inline_query_result_document import InlineQueryResultDocument
+from telebox.bot.types.types.inline_query_result_location import InlineQueryResultLocation
+from telebox.bot.types.types.inline_query_result_venue import InlineQueryResultVenue
+from telebox.bot.types.types.inline_query_result_contact import InlineQueryResultContact
+from telebox.bot.types.types.inline_query_result_cached_photo import InlineQueryResultCachedPhoto
+from telebox.bot.types.types.inline_query_result_cached_gif import InlineQueryResultCachedGif
+from telebox.bot.types.types.inline_query_result_cached_mpeg4_gif import (
+    InlineQueryResultCachedMpeg4Gif
+)
+from telebox.bot.types.types.inline_query_result_cached_sticker import (
+    InlineQueryResultCachedSticker
+)
+from telebox.bot.types.types.inline_query_result_cached_document import (
+    InlineQueryResultCachedDocument
+)
+from telebox.bot.types.types.inline_query_result_cached_video import InlineQueryResultCachedVideo
+from telebox.bot.types.types.inline_query_result_cached_voice import InlineQueryResultCachedVoice
+from telebox.bot.types.types.inline_query_result_cached_audio import InlineQueryResultCachedAudio
+from telebox.bot.types.types.input_text_message_content import InputTextMessageContent
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -95,7 +122,8 @@ class Bot:
         timeout_secs: Union[int, float, None] = 300,
         retries: int = 0,
         retry_delay_secs: Union[int, float] = 0,
-        wait_on_rate_limit: bool = False
+        wait_on_rate_limit: bool = False,
+        use_cache: bool = True
     ):
         if retries < 0:
             raise ValueError("Number of retries cannot be less than zero!")
@@ -108,18 +136,20 @@ class Bot:
         self._retries = retries
         self._retry_delay_secs = retry_delay_secs
         self._wait_on_rate_limit = wait_on_rate_limit
-        self._dataclass_converter = DataclassConverter()
-        self._me: Optional[User] = None
+        self._use_cache = use_cache
+        self._converter = DataclassConverter()
+        self._user: Optional[User] = None
+        self._cached_file_ids: dict[tuple[str, str], str] = {}
 
     @property
-    def me(self) -> User:
-        if self._me is None:
+    def user(self) -> User:
+        if self._user is None:
             raise BotError(
                 "Bot user was not loaded! To use this property, you need to call "
                 "bot.get_me method at least once!"
             )
 
-        return self._me
+        return self._user
 
     def get_updates(
         self,
@@ -131,7 +161,7 @@ class Bot:
         allowed_updates: Optional[list[str]] = None
     ) -> list[Update]:
         return [
-            self._dataclass_converter.get_object(data=i, class_=Update)
+            self._converter.get_object(data=i, class_=Update)
             for i in self._send_request(
                 method="getUpdates",
                 parameters={
@@ -189,18 +219,18 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> WebhookInfo:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(method="getWebhookInfo", timeout_secs=timeout_secs),
             class_=WebhookInfo
         )
 
     def get_me(self, *, timeout_secs: Union[int, float, None] = None) -> User:
-        self._me = self._dataclass_converter.get_object(
+        self._user = self._converter.get_object(
             data=self._send_request(method="getMe", timeout_secs=timeout_secs),
             class_=User
         )
 
-        return self._me
+        return self._user
 
     def log_out(self, *, timeout_secs: Union[int, float, None] = None) -> Literal[True]:
         return self._send_request(method="logOut", timeout_secs=timeout_secs)
@@ -229,7 +259,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendMessage",
                 parameters={
@@ -262,7 +292,7 @@ class Bot:
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="forwardMessage",
                 parameters={
@@ -290,7 +320,7 @@ class Bot:
         protect_content: Optional[bool] = None
     ) -> list[MessageId]:
         return [
-            self._dataclass_converter.get_object(data=i, class_=MessageId)
+            self._converter.get_object(data=i, class_=MessageId)
             for i in self._send_request(
                 method="forwardMessages",
                 parameters={
@@ -326,7 +356,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> MessageId:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="copyMessage",
                 parameters={
@@ -364,7 +394,7 @@ class Bot:
         remove_caption: Optional[bool] = None
     ) -> list[MessageId]:
         return [
-            self._dataclass_converter.get_object(data=i, class_=MessageId)
+            self._converter.get_object(data=i, class_=MessageId)
             for i in self._send_request(
                 method="copyMessages",
                 parameters={
@@ -403,12 +433,12 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        message = self._converter.get_object(
             data=self._send_request(
                 method="sendPhoto",
                 parameters={
                     "chat_id": chat_id,
-                    "photo": photo,
+                    "photo": self._get_file(photo),
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
@@ -429,6 +459,14 @@ class Bot:
             ),
             class_=Message
         )
+
+        if self._use_cache:
+            self._set_cached_file_id(
+                file=photo,
+                file_id=message.best_photo.file_id
+            )
+
+        return message
 
     def send_audio(
         self,
@@ -455,12 +493,12 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        message = self._converter.get_object(
             data=self._send_request(
                 method="sendAudio",
                 parameters={
                     "chat_id": chat_id,
-                    "audio": audio,
+                    "audio": self._get_file(audio),
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
@@ -483,6 +521,14 @@ class Bot:
             ),
             class_=Message
         )
+
+        if self._use_cache:
+            self._set_cached_file_id(
+                file=audio,
+                file_id=message.audio.file_id
+            )
+
+        return message
 
     def send_document(
         self,
@@ -507,12 +553,12 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        message = self._converter.get_object(
             data=self._send_request(
                 method="sendDocument",
                 parameters={
                     "chat_id": chat_id,
-                    "document": document,
+                    "document": self._get_file(document),
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "thumbnail": thumbnail,
@@ -533,6 +579,14 @@ class Bot:
             ),
             class_=Message
         )
+
+        if self._use_cache:
+            self._set_cached_file_id(
+                file=document,
+                file_id=message.document.file_id
+            )
+
+        return message
 
     def send_video(
         self,
@@ -562,12 +616,12 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        message = self._converter.get_object(
             data=self._send_request(
                 method="sendVideo",
                 parameters={
                     "chat_id": chat_id,
-                    "video": video,
+                    "video": self._get_file(video),
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "duration": duration,
@@ -593,6 +647,14 @@ class Bot:
             ),
             class_=Message
         )
+
+        if self._use_cache:
+            self._set_cached_file_id(
+                file=video,
+                file_id=message.video.file_id
+            )
+
+        return message
 
     def send_animation(
         self,
@@ -621,12 +683,12 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        message = self._converter.get_object(
             data=self._send_request(
                 method="sendAnimation",
                 parameters={
                     "chat_id": chat_id,
-                    "animation": animation,
+                    "animation": self._get_file(animation),
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "duration": duration,
@@ -652,6 +714,14 @@ class Bot:
             class_=Message
         )
 
+        if self._use_cache:
+            self._set_cached_file_id(
+                file=animation,
+                file_id=message.animation.file_id
+            )
+
+        return message
+
     def send_voice(
         self,
         chat_id: Union[int, str],
@@ -674,12 +744,12 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        message = self._converter.get_object(
             data=self._send_request(
                 method="sendVoice",
                 parameters={
                     "chat_id": chat_id,
-                    "voice": voice,
+                    "voice": self._get_file(voice),
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "caption": caption,
@@ -699,6 +769,14 @@ class Bot:
             ),
             class_=Message
         )
+
+        if self._use_cache:
+            self._set_cached_file_id(
+                file=voice,
+                file_id=message.voice.file_id
+            )
+
+        return message
 
     def send_video_note(
         self,
@@ -721,12 +799,12 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        message = self._converter.get_object(
             data=self._send_request(
                 method="sendVideoNote",
                 parameters={
                     "chat_id": chat_id,
-                    "video_note": video_note,
+                    "video_note": self._get_file(video_note),
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "duration": duration,
@@ -743,6 +821,14 @@ class Bot:
             class_=Message
         )
 
+        if self._use_cache:
+            self._set_cached_file_id(
+                file=video_note,
+                file_id=message.video_note.file_id
+            )
+
+        return message
+
     def send_media_group(
         self,
         chat_id: Union[int, str],
@@ -752,6 +838,9 @@ class Bot:
                           InputMediaVideo]],
         *,
         timeout_secs: Union[int, float, None] = None,
+        caption: Union[str, None, NotSet] = NOT_SET,
+        caption_entities: Union[list[MessageEntity], None, NotSet] = NOT_SET,
+        parse_mode: Union[str, None, NotSet] = NOT_SET,
         business_connection_id: Optional[str] = None,
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
@@ -759,13 +848,41 @@ class Bot:
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None
     ) -> list[Message]:
-        return [
-            self._dataclass_converter.get_object(data=i, class_=Message)
+        if caption is not NOT_SET:
+            media[0].caption = caption
+
+        if caption_entities is not NOT_SET:
+            media[0].caption_entities = caption_entities
+
+        if parse_mode is not NOT_SET:
+            media[0].parse_mode = parse_mode
+
+        media_ = []
+
+        for i in media:
+            class_ = type(i)
+            data = self._converter.get_data(i)
+            data["media"] = self._get_file(data["media"])
+            data["parse_mode"] = self._get_parse_mode(
+                parse_mode=data.get("parse_mode", NOT_SET),
+                with_entities=bool(
+                    data.get("caption_entities")
+                )
+            )
+            media_.append(
+                self._converter.get_object(
+                    data=data,
+                    class_=class_
+                )
+            )
+
+        messages = [
+            self._converter.get_object(data=i, class_=Message)
             for i in self._send_request(
                 method="sendMediaGroup",
                 parameters={
                     "chat_id": chat_id,
-                    "media": media,
+                    "media": media_,
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "disable_notification": disable_notification,
@@ -776,6 +893,31 @@ class Bot:
                 timeout_secs=timeout_secs
             )
         ]
+
+        if self._use_cache:
+            for single_media, message in zip(media, messages):
+                if isinstance(single_media, InputMediaPhoto):
+                    self._set_cached_file_id(
+                        file=single_media.media,
+                        file_id=message.best_photo.file_id
+                    )
+                elif isinstance(single_media, InputMediaVideo):
+                    self._set_cached_file_id(
+                        file=single_media.media,
+                        file_id=message.video.file_id
+                    )
+                elif isinstance(single_media, InputMediaAudio):
+                    self._set_cached_file_id(
+                        file=single_media.media,
+                        file_id=message.audio.file_id
+                    )
+                elif isinstance(single_media, InputMediaDocument):
+                    self._set_cached_file_id(
+                        file=single_media.media,
+                        file_id=message.document.file_id
+                    )
+
+        return messages
 
     def send_location(
         self,
@@ -800,7 +942,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendLocation",
                 parameters={
@@ -858,7 +1000,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._dataclass_converter.get_object(
+        return data if data is True else self._converter.get_object(
             data=data,
             class_=Message
         )
@@ -885,7 +1027,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._dataclass_converter.get_object(
+        return data if data is True else self._converter.get_object(
             data=data,
             class_=Message
         )
@@ -915,7 +1057,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendVenue",
                 parameters={
@@ -962,7 +1104,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendContact",
                 parameters={
@@ -1015,13 +1157,30 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        options_ = []
+
+        for i in options:
+            data = self._converter.get_data(i)
+            data["text_parse_mode"] = self._get_parse_mode(
+                parse_mode=data.get("text_parse_mode", NOT_SET),
+                with_entities=bool(
+                    data.get("text_entities")
+                )
+            )
+            options_.append(
+                self._converter.get_object(
+                    data=data,
+                    class_=InputPollOption
+                )
+            )
+
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendPoll",
                 parameters={
                     "chat_id": chat_id,
                     "question": question,
-                    "options": options,
+                    "options": options_,
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
                     "question_parse_mode": self._get_parse_mode(
@@ -1071,7 +1230,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendDice",
                 parameters={
@@ -1138,7 +1297,7 @@ class Bot:
         offset: Optional[int] = None,
         limit: Optional[int] = None
     ) -> UserProfilePhotos:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getUserProfilePhotos",
                 parameters={
@@ -1157,7 +1316,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> File:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getFile",
                 parameters={
@@ -1366,7 +1525,7 @@ class Bot:
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="createChatInviteLink",
                 parameters={
@@ -1392,7 +1551,7 @@ class Bot:
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None
     ) -> ChatInviteLink:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="editChatInviteLink",
                 parameters={
@@ -1415,7 +1574,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> ChatInviteLink:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="revokeChatInviteLink",
                 parameters={
@@ -1589,7 +1748,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> ChatFullInfo:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getChat",
                 parameters={
@@ -1608,7 +1767,7 @@ class Bot:
     ) -> list[Union[ChatMemberOwner,
                     ChatMemberAdministrator]]:
         return [
-            self._dataclass_converter.get_object(data=i, class_=_CHAT_MEMBER_TYPES[i["status"]])
+            self._converter.get_object(data=i, class_=_CHAT_MEMBER_TYPES[i["status"]])
             for i in self._send_request(
                 method="getChatAdministrators",
                 parameters={
@@ -1648,7 +1807,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=data,
             class_=_CHAT_MEMBER_TYPES[data["status"]]
         )
@@ -1689,7 +1848,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None
     ) -> list[Sticker]:
         return [
-            self._dataclass_converter.get_object(data=i, class_=Sticker)
+            self._converter.get_object(data=i, class_=Sticker)
             for i in self._send_request(
                 method="getForumTopicIconStickers",
                 timeout_secs=timeout_secs
@@ -1705,7 +1864,7 @@ class Bot:
         icon_color: Optional[int] = None,
         icon_custom_emoji_id: Optional[str] = None
     ) -> ForumTopic:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="createForumTopic",
                 parameters={
@@ -1918,7 +2077,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> UserChatBoosts:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getUserChatBoosts",
                 parameters={
@@ -1972,7 +2131,7 @@ class Bot:
         language_code: Optional[str] = None
     ) -> list[BotCommand]:
         return [
-            self._dataclass_converter.get_object(data=i, class_=BotCommand)
+            self._converter.get_object(data=i, class_=BotCommand)
             for i in self._send_request(
                 method="getMyCommands",
                 parameters={
@@ -2005,7 +2164,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None,
         language_code: Optional[str] = None
     ) -> BotName:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getMyName",
                 parameters={
@@ -2038,7 +2197,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None,
         language_code: Optional[str] = None
     ) -> BotDescription:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getMyDescription",
                 parameters={
@@ -2071,7 +2230,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None,
         language_code: Optional[str] = None
     ) -> BotShortDescription:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getMyShortDescription",
                 parameters={
@@ -2103,13 +2262,16 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None,
         chat_id: Optional[int] = None
-    ) -> Literal[True]:
-        return self._send_request(
-            method="getChatMenuButton",
-            parameters={
-                "chat_id": chat_id
-            },
-            timeout_secs=timeout_secs
+    ) -> MenuButton:
+        return self._converter.get_object(
+            data=self._send_request(
+                method="getChatMenuButton",
+                parameters={
+                    "chat_id": chat_id
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=MenuButton
         )
 
     def set_my_default_administrator_rights(
@@ -2149,7 +2311,7 @@ class Bot:
         offset: Optional[int] = None,
         limit: Optional[int] = None
     ) -> StarTransactions:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getStarTransactions",
                 parameters={
@@ -2191,7 +2353,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._dataclass_converter.get_object(
+        return data if data is True else self._converter.get_object(
             data=data,
             class_=Message
         )
@@ -2229,7 +2391,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._dataclass_converter.get_object(
+        return data if data is True else self._converter.get_object(
             data=data,
             class_=Message
         )
@@ -2245,6 +2407,18 @@ class Bot:
         inline_message_id: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Union[Message, Literal[True]]:
+        media_class = type(media)
+        media_data = self._converter.get_data(media)
+        media_data["parse_mode"] = self._get_parse_mode(
+            parse_mode=media_data.get("parse_mode", NOT_SET),
+            with_entities=bool(
+                media_data.get("caption_entities")
+            )
+        )
+        media = self._converter.get_object(
+            data=media_data,
+            class_=media_class
+        )
         data = self._send_request(
             method="editMessageMedia",
             parameters={
@@ -2258,7 +2432,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._dataclass_converter.get_object(
+        return data if data is True else self._converter.get_object(
             data=data,
             class_=Message
         )
@@ -2285,7 +2459,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._dataclass_converter.get_object(
+        return data if data is True else self._converter.get_object(
             data=data,
             class_=Message
         )
@@ -2299,7 +2473,7 @@ class Bot:
         business_connection_id: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Poll:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="stopPoll",
                 parameters={
@@ -2333,7 +2507,7 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendPaidMedia",
                 parameters={
@@ -2408,12 +2582,12 @@ class Bot:
                             ForceReply,
                             None] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        message = self._converter.get_object(
             data=self._send_request(
                 method="sendSticker",
                 parameters={
                     "chat_id": chat_id,
-                    "sticker": sticker,
+                    "sticker": self._get_file(sticker),
                     "emoji": emoji,
                     "business_connection_id": business_connection_id,
                     "message_thread_id": message_thread_id,
@@ -2428,13 +2602,21 @@ class Bot:
             class_=Message
         )
 
+        if self._use_cache:
+            self._set_cached_file_id(
+                file=sticker,
+                file_id=message.sticker.file_id
+            )
+
+        return message
+
     def get_sticker_set(
         self,
         name: str,
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> StickerSet:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getStickerSet",
                 parameters={
@@ -2452,7 +2634,7 @@ class Bot:
         timeout_secs: Union[int, float, None] = None
     ) -> list[Sticker]:
         return [
-            self._dataclass_converter.get_object(data=i, class_=Sticker)
+            self._converter.get_object(data=i, class_=Sticker)
             for i in self._send_request(
                 method="getCustomEmojiStickers",
                 parameters={
@@ -2470,7 +2652,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> File:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="uploadStickerFile",
                 parameters={
@@ -2704,7 +2886,10 @@ class Bot:
             method="answerInlineQuery",
             parameters={
                 "inline_query_id": inline_query_id,
-                "results": results,
+                "results": [
+                    self._get_prepared_inline_query_result(i)
+                    for i in results
+                ],
                 "cache_time": cache_time,
                 "is_personal": is_personal,
                 "next_offset": next_offset,
@@ -2720,12 +2905,12 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> SentWebAppMessage:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="answerWebAppQuery",
                 parameters={
                     "web_app_query_id": web_app_query_id,
-                    "result": result
+                    "result": self._get_prepared_inline_query_result(result)
                 },
                 timeout_secs=timeout_secs
             ),
@@ -2765,7 +2950,7 @@ class Bot:
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendInvoice",
                 parameters={
@@ -2939,7 +3124,7 @@ class Bot:
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="sendGame",
                 parameters={
@@ -2984,7 +3169,7 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._dataclass_converter.get_object(
+        return data if data is True else self._converter.get_object(
             data=data,
             class_=Message
         )
@@ -2999,7 +3184,7 @@ class Bot:
         inline_message_id: Optional[str] = None
     ) -> list[GameHighScore]:
         return [
-            self._dataclass_converter.get_object(data=i, class_=GameHighScore)
+            self._converter.get_object(data=i, class_=GameHighScore)
             for i in self._send_request(
                 method="getGameHighScores",
                 parameters={
@@ -3018,7 +3203,7 @@ class Bot:
         *,
         timeout_secs: Union[int, float, None] = None
     ) -> BusinessConnection:
-        return self._dataclass_converter.get_object(
+        return self._converter.get_object(
             data=self._send_request(
                 method="getBusinessConnection",
                 parameters={
@@ -3055,6 +3240,14 @@ class Bot:
 
                     file.write(chunk)
 
+    def _set_cached_file_id(self, file: Union[InputFile, str], file_id: str) -> None:
+        if (
+            isinstance(file, InputFile)
+            and (file.type is InputFileType.PATH)
+            and ((file.file, file.name) not in self._cached_file_ids)
+        ):
+            self._cached_file_ids[(file.file, file.name)] = file_id
+
     def _send_request(
         self,
         method: str,
@@ -3069,45 +3262,46 @@ class Bot:
         }
 
         if parameters:
-            data, files = self._prepare_multipart_encoder(parameters)
+            data, opened_files = self._prepare_multipart_encoder(parameters)
             headers = {
                 "Content-Type": data.content_type
             }
         else:
             data = headers = None
-            files = []
+            opened_files = []
 
         url = self._get_api_url(method)
         timeout_secs = timeout_secs or self._timeout_secs
         retries = 0
 
-        while True:
-            try:
-                return self._process_response(
-                    response=self.session.post(
-                        url,
-                        data=data,  # NOQA
-                        headers=headers,
-                        timeout=timeout_secs
-                    ),
-                    method=method,
-                    parameters=parameters
-                )
-            except (RequestException, InternalServerError):
-                if retries == self._retries:
-                    raise
+        try:
+            while True:
+                try:
+                    return self._process_response(
+                        response=self.session.post(
+                            url,
+                            data=data,  # NOQA
+                            headers=headers,
+                            timeout=timeout_secs
+                        ),
+                        method=method,
+                        parameters=parameters
+                    )
+                except (RequestException, InternalServerError):
+                    if retries == self._retries:
+                        raise
 
-                retries += 1
-                time.sleep(self._retry_delay_secs)
-            except RetryAfterError as error:
-                if not self._wait_on_rate_limit:
-                    raise
+                    retries += 1
+                    time.sleep(self._retry_delay_secs)
+                except RetryAfterError as error:
+                    if not self._wait_on_rate_limit:
+                        raise
 
-                retries = 0
-                time.sleep(error.retry_after)
-
-            for i in files:
-                i.seek(0)
+                    retries = 0
+                    time.sleep(error.retry_after)
+        finally:
+            for i in opened_files:
+                i.close()
 
     def _get_api_url(self, method: str) -> str:
         return f"{self.api_url}/bot{self.token}/{method}"
@@ -3123,18 +3317,31 @@ class Bot:
         elif self._parse_mode is not NOT_SET and not with_entities:
             return self._parse_mode
 
+    def _get_file(
+        self,
+        file: Union[InputFile, str]
+    ) -> Union[InputFile, str]:
+        if (
+            self._use_cache
+            and isinstance(file, InputFile)
+            and (file.type is InputFileType.PATH)
+        ):
+            return self._cached_file_ids.get((file.file, file.name), file)
+
+        return file
+
     def _prepare_multipart_encoder(
         self,
         parameters: dict[str, Any]
     ) -> tuple[MultipartEncoder, list[IO]]:
         fields: dict[str, Any] = {}
-        files: list[IO] = []
+        opened_files: list[IO] = []
 
         for name, value in parameters.items():
             value = self._prepare_parameter_value(
                 value,
                 multipart_fields=fields,
-                files=files,
+                opened_files=opened_files,
                 attach_files=False
             )
 
@@ -3145,38 +3352,45 @@ class Bot:
 
             fields[name] = value
 
-        return MultipartEncoder(fields), files
+        return MultipartEncoder(fields), opened_files
 
     def _prepare_parameter_value(
         self,
         value: Any,
         multipart_fields: dict[str, Any],
-        files: list[IO],
-        attach_files: bool = True,
+        opened_files: list[IO],
+        attach_files: bool = True
     ) -> Any:
         if isinstance(value, InputFile):
-            files.append(value.file)
+            if value.type is InputFileType.FILE:
+                file = value.file
+            elif value.type is InputFileType.PATH:
+                file = value.file.open("rb")
+                opened_files.append(file)
+            else:
+                raise ValueError("Incorrect file!")
 
             if attach_files:
                 while True:
-                    name = secrets.token_urlsafe(10)
+                    name = secrets.token_urlsafe(8)
 
                     if name not in multipart_fields:
                         break
 
-                multipart_fields[name] = (value.name, value.file)
+                multipart_fields[name] = (value.name, file)
 
                 return f"attach://{name}"
 
-            return value.name, value.file
+            return value.name, file
         elif is_dataclass(value):
             return {
                 name: self._prepare_parameter_value(
                     value_,
                     multipart_fields=multipart_fields,
-                    files=files
+                    opened_files=opened_files
                 )
-                for name, value_ in self._dataclass_converter.get_data(value).items()
+                for name, value_ in self._converter.get_data(value).items()
+                if value_ is not None
             }
         elif isinstance(value, datetime):
             return get_timestamp(value)
@@ -3185,7 +3399,7 @@ class Bot:
                 self._prepare_parameter_value(
                     i,
                     multipart_fields=multipart_fields,
-                    files=files
+                    opened_files=opened_files
                 )
                 for i in value
             ]
@@ -3206,7 +3420,7 @@ class Bot:
             except KeyError:
                 response_parameters = None
             else:
-                response_parameters = self._dataclass_converter.get_object(
+                response_parameters = self._converter.get_object(
                     data=response_parameter_data,
                     class_=ResponseParameters
                 )
@@ -3221,6 +3435,78 @@ class Bot:
 
         return data["result"]
 
+    def _get_prepared_inline_query_result(
+        self,
+        result: InlineQueryResult
+    ) -> InlineQueryResult:
+        if isinstance(
+            result,
+            (
+                InlineQueryResultArticle,
+                InlineQueryResultPhoto,
+                InlineQueryResultGif,
+                InlineQueryResultMpeg4Gif,
+                InlineQueryResultVideo,
+                InlineQueryResultAudio,
+                InlineQueryResultVoice,
+                InlineQueryResultDocument,
+                InlineQueryResultLocation,
+                InlineQueryResultVenue,
+                InlineQueryResultContact,
+                InlineQueryResultCachedPhoto,
+                InlineQueryResultCachedGif,
+                InlineQueryResultCachedMpeg4Gif,
+                InlineQueryResultCachedSticker,
+                InlineQueryResultCachedDocument,
+                InlineQueryResultCachedVideo,
+                InlineQueryResultCachedVoice,
+                InlineQueryResultCachedAudio
+            )
+        ):
+            class_ = type(result)
+            data = self._converter.get_data(result)
+
+            if (
+                (data.get("input_message_content") is not None)
+                and isinstance(result.input_message_content, InputTextMessageContent)
+            ):
+                data["input_message_content"]["parse_mode"] = self._get_parse_mode(
+                    parse_mode=data["input_message_content"].get("parse_mode", NOT_SET),
+                    with_entities=bool(
+                        data["input_message_content"].get("entities")
+                    )
+                )
+
+            if isinstance(
+                result,
+                (
+                    InlineQueryResultPhoto,
+                    InlineQueryResultGif,
+                    InlineQueryResultMpeg4Gif,
+                    InlineQueryResultVideo,
+                    InlineQueryResultAudio,
+                    InlineQueryResultVoice,
+                    InlineQueryResultDocument,
+                    InlineQueryResultCachedPhoto,
+                    InlineQueryResultCachedGif,
+                    InlineQueryResultCachedMpeg4Gif,
+                    InlineQueryResultCachedDocument,
+                    InlineQueryResultCachedVideo,
+                    InlineQueryResultCachedVoice,
+                    InlineQueryResultCachedAudio
+                )
+            ):
+                data["parse_mode"] = self._get_parse_mode(
+                    parse_mode=data.get("parse_mode", NOT_SET),
+                    with_entities=bool(
+                        data.get("caption_entities")
+                    )
+                )
+
+            return self._converter.get_object(data=data, class_=class_)
+
+        return result
+
 
 class BotContext:
 
@@ -3234,7 +3520,8 @@ class BotContext:
         timeout_secs: Union[int, float, None] = 300,
         retries: int = 0,
         retry_delay_secs: Union[int, float] = 0,
-        wait_on_rate_limit: bool = False
+        wait_on_rate_limit: bool = False,
+        use_cache: bool = True
     ):
         self._token = token
         self._get_me = get_me
@@ -3244,6 +3531,7 @@ class BotContext:
         self._retries = retries
         self._retry_delay_secs = retry_delay_secs
         self._wait_on_rate_limit = wait_on_rate_limit
+        self._use_cache = use_cache
         self._session: Optional[Session] = None
 
     def __enter__(self) -> Bot:
@@ -3256,7 +3544,8 @@ class BotContext:
             timeout_secs=self._timeout_secs,
             retries=self._retries,
             retry_delay_secs=self._retry_delay_secs,
-            wait_on_rate_limit=self._wait_on_rate_limit
+            wait_on_rate_limit=self._wait_on_rate_limit,
+            use_cache=self._use_cache
         )
 
         if self._get_me:
@@ -3277,7 +3566,8 @@ def get_bot(
     timeout_secs: Union[int, float, None] = 300,
     retries: int = 0,
     retry_delay_secs: Union[int, float] = 0,
-    wait_on_rate_limit: bool = False
+    wait_on_rate_limit: bool = False,
+    use_cache: bool = True
 ) -> BotContext:
     return BotContext(
         token,
@@ -3287,5 +3577,6 @@ def get_bot(
         timeout_secs=timeout_secs,
         retries=retries,
         retry_delay_secs=retry_delay_secs,
-        wait_on_rate_limit=wait_on_rate_limit
+        wait_on_rate_limit=wait_on_rate_limit,
+        use_cache=use_cache
     )

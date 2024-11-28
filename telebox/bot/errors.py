@@ -587,6 +587,11 @@ class ForbiddenError(RequestError):
 
 
 @dataclass
+class NotFoundError(RequestError):
+    """Error class for 404 status code."""
+
+
+@dataclass
 class BotWasBlockedByUserError(ForbiddenError):
     """Error class for this response:
     {
@@ -786,6 +791,8 @@ def get_request_error(
         return _get_unauthorized_error(kwargs)
     elif status_code == HTTPStatus.FORBIDDEN:
         return _get_forbidden_error(kwargs)
+    elif status_code == HTTPStatus.NOT_FOUND:
+        return _get_not_found_error(kwargs)
     elif status_code == HTTPStatus.CONFLICT:
         return _get_conflict_error(kwargs)
     elif status_code == HTTPStatus.REQUEST_ENTITY_TOO_LARGE:
@@ -901,6 +908,10 @@ def _get_forbidden_error(kwargs: dict[str, Any]) -> ForbiddenError:
             return error_type(None, **kwargs)
 
     return ForbiddenError(None, **kwargs)
+
+
+def _get_not_found_error(kwargs: dict[str, Any]) -> NotFoundError:
+    return NotFoundError(None, **kwargs)
 
 
 def _get_conflict_error(kwargs: dict[str, Any]) -> ConflictError:

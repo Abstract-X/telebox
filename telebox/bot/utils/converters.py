@@ -136,6 +136,7 @@ from telebox.bot.types.types.input_paid_media_video import InputPaidMediaVideo
 from telebox.bot.types.types.paid_media_preview import PaidMediaPreview
 from telebox.bot.types.types.paid_media_photo import PaidMediaPhoto
 from telebox.bot.types.types.paid_media_video import PaidMediaVideo
+from telebox.utils.not_set import NotSet, NOT_SET
 
 
 DataclassObject = TypeVar("DataclassObject")
@@ -144,7 +145,6 @@ _DEFAULT_POST_SERIALIZATION_CLASSES = (
     ReplyKeyboardRemove,
 
     ChatMemberOwner,
-    ChatMemberAdministrator,
     ChatMemberAdministrator,
     ChatMemberMember,
     ChatMemberRestricted,
@@ -270,7 +270,12 @@ def _get_dataclass_factory() -> Factory:
             parser=get_datetime
         ),
         InputFile: Schema(
-            serializer=lambda file: file
+            serializer=lambda file: file,
+            parser=lambda file: file
+        ),
+        NotSet: Schema(
+            serializer=lambda not_set: NOT_SET,
+            parser=lambda not_set: NOT_SET
         )
     }
 
