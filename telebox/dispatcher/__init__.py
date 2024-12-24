@@ -13,7 +13,17 @@ from .filters import (
     AbstractErrorFilterCache
 )
 from .middlewares import Middleware
-from .utils import MediaGroup, RateLimit, Limit, Router, get_event_chat_id, get_event_user_id
+from .utils import (
+    MediaGroup,
+    RateLimit,
+    Limit,
+    Router,
+    event_context,
+    event_handler_context,
+    error_handler_context,
+    get_event_chat_id,
+    get_event_user_id
+)
 
 
 __all__ = [
@@ -38,6 +48,9 @@ __all__ = [
     "RateLimit",
     "Limit",
     "Router",
+    "event_context",
+    "event_handler_context",
+    "error_handler_context",
     "get_event_chat_id",
     "get_event_user_id"
 ]

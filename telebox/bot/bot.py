@@ -95,6 +95,7 @@ from telebox.bot.types.types.inline_query_result_cached_video import InlineQuery
 from telebox.bot.types.types.inline_query_result_cached_voice import InlineQueryResultCachedVoice
 from telebox.bot.types.types.inline_query_result_cached_audio import InlineQueryResultCachedAudio
 from telebox.bot.types.types.input_text_message_content import InputTextMessageContent
+from telebox.bot.context import Context
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_serialized_data
 
@@ -137,6 +138,7 @@ class Bot:
         self._retry_delay_secs = retry_delay_secs
         self._wait_on_rate_limit = wait_on_rate_limit
         self._use_cache = use_cache
+        self.context = Context(self)
         self._converter = DataclassConverter()
         self._user: Optional[User] = None
         self._cached_file_ids: dict[tuple[str, str], str] = {}

@@ -21,17 +21,13 @@ from .dispatcher import (
     RateLimit,
     Limit,
     Router,
+    event_context,
+    event_handler_context,
+    error_handler_context,
     get_event_chat_id,
     get_event_user_id
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
-from .context import (
-    ContextBot,
-    ContextStateMachine,
-    event_context,
-    event_handler_context,
-    error_handler_context
-)
 from .utils import (
     NotSet,
     NOT_SET,
@@ -78,8 +74,6 @@ __all__ = [
     "StateMachine",
     "State",
     "AbstractStateStorage",
-    "ContextBot",
-    "ContextStateMachine",
     "event_context",
     "event_handler_context",
     "error_handler_context",

@@ -6,6 +6,7 @@ from telebox.state_machine.storages.storage import AbstractStateStorage
 from telebox.state_machine.manager import StateManager
 from telebox.state_machine.transition_scheme import TransitionScheme
 from telebox.state_machine.magazine import StateMagazine
+from telebox.state_machine.context import Context
 from telebox.state_machine.errors import (
     DestinationStateNotFoundError,
     NextStateNotFoundError,
@@ -24,6 +25,7 @@ class StateMachine:
     def __init__(self, initial_state: State, storage: AbstractStateStorage):
         self._state_manager = StateManager(initial_state, storage)
         self._transition_scheme = TransitionScheme()
+        self.context = Context(self)
 
     @property
     def initial_state(self) -> State:
