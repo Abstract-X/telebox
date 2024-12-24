@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Union, NoReturn, Callable
+from typing import Optional, Union, NoReturn, Callable, TYPE_CHECKING
 from pathlib import Path
 from collections import deque
 from queue import SimpleQueue as Queue
@@ -9,7 +9,8 @@ import time
 
 from requests.exceptions import Timeout as RequestTimeoutError
 
-from telebox.bot.bot import Bot
+if TYPE_CHECKING:
+    from telebox.bot.bot import Bot
 from telebox.bot.types.types.update import Update
 from telebox.bot.types.types.message import Message
 from telebox.bot.utils.converters import DataclassConverter
@@ -28,7 +29,13 @@ from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 from telebox.dispatcher.utils.media_group_container import MediaGroupContainer
 from telebox.dispatcher.utils.router import Router
-from telebox.dispatcher.utils.events import get_event_chat_id, get_event_user_id
+from telebox.dispatcher.utils.events import (
+    event_context,
+    event_handler_context,
+    error_handler_context,
+    get_event_chat_id,
+    get_event_user_id
+)
 from telebox.dispatcher.types.event_info import EventInfo
 from telebox.dispatcher.types.event_handler_info import EventHandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
@@ -37,11 +44,6 @@ from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_deserialized_data
-from telebox.context.vars import (
-    event_context,
-    event_handler_context,
-    error_handler_context
-)
 
 
 logger = logging.getLogger(__name__)
@@ -62,7 +64,7 @@ class Dispatcher:
 
     def __init__(
         self,
-        bot: Bot,
+        bot: "Bot",
         *,
         rate_limit: Optional[RateLimit] = None,
         media_group_gathering_secs: Union[int, float] = 3

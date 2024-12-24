@@ -6,6 +6,7 @@ from telebox.state_machine.storages.storage import AbstractStateStorage
 from telebox.state_machine.manager import StateManager
 from telebox.state_machine.transition_scheme import TransitionScheme
 from telebox.state_machine.magazine import StateMagazine
+from telebox.state_machine.context import Context
 from telebox.state_machine.errors import (
     DestinationStateNotFoundError,
     NextStateNotFoundError,
@@ -21,9 +22,16 @@ TransitionDict = dict[State, dict[AbstractEventHandler, Union[State, dict[str, S
 
 class StateMachine:
 
-    def __init__(self, initial_state: State, storage: AbstractStateStorage):
+    def __init__(
+        self,
+        initial_state: State,
+        states: Iterable[State],
+        storage: AbstractStateStorage
+    ):
         self._state_manager = StateManager(initial_state, storage)
+        self.add_states(states)
         self._transition_scheme = TransitionScheme()
+        self.context = Context(self)
 
     @property
     def initial_state(self) -> State:
