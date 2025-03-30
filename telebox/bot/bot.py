@@ -1688,14 +1688,16 @@ class Bot:
         message_id: int,
         *,
         timeout_secs: Union[int, float, None] = None,
-        disable_notification: Optional[bool] = None
+        disable_notification: Optional[bool] = None,
+        business_connection_id: Optional[str] = None
     ) -> Literal[True]:
         return self._send_request(
             method="pinChatMessage",
             parameters={
                 "chat_id": chat_id,
                 "message_id": message_id,
-                "disable_notification": disable_notification
+                "disable_notification": disable_notification,
+                "business_connection_id": business_connection_id
             },
             timeout_secs=timeout_secs
         )
@@ -1705,13 +1707,15 @@ class Bot:
         chat_id: Union[int, str],
         message_id: int,
         *,
-        timeout_secs: Union[int, float, None] = None
+        timeout_secs: Union[int, float, None] = None,
+        business_connection_id: Optional[str] = None
     ) -> Literal[True]:
         return self._send_request(
             method="unpinChatMessage",
             parameters={
                 "chat_id": chat_id,
-                "message_id": message_id
+                "message_id": message_id,
+                "business_connection_id": business_connection_id
             },
             timeout_secs=timeout_secs
         )

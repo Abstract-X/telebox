@@ -1250,7 +1250,10 @@ class Context:
             chat_id=get_context_event_chat_id(),
             message_id=get_context_event_message_id() if message_id is None else message_id,
             timeout_secs=timeout_secs,
-            disable_notification=disable_notification
+            disable_notification=disable_notification,
+            business_connection_id=get_context_event_business_connection_id(
+                strictly=False
+            )
         )
 
     def unpin_chat_message(
@@ -1262,7 +1265,10 @@ class Context:
         return self._bot.unpin_chat_message(
             chat_id=get_context_event_chat_id(),
             message_id=get_context_event_message_id() if message_id is None else message_id,
-            timeout_secs=timeout_secs
+            timeout_secs=timeout_secs,
+            business_connection_id=get_context_event_business_connection_id(
+                strictly=False
+            )
         )
 
     def unpin_all_chat_messages(
