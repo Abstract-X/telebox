@@ -20,6 +20,7 @@ class User(Type):
     can_read_all_group_messages: Optional[bool] = None
     supports_inline_queries: Optional[bool] = None
     can_connect_to_business: Optional[bool] = None
+    has_main_web_app: Optional[bool] = None
 
     @property
     def full_name(self) -> str:
