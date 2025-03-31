@@ -17,3 +17,5 @@ class ChatInviteLink(Type):
     expire_date: Optional[datetime] = None
     member_limit: Optional[int] = None
     pending_join_request_count: Optional[int] = None
+    subscription_period: Optional[int] = None
+    subscription_price: Optional[int] = None

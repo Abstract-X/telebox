@@ -2511,7 +2511,8 @@ class Bot:
                             ReplyKeyboardMarkup,
                             ReplyKeyboardRemove,
                             ForceReply,
-                            None] = None
+                            None] = None,
+        business_connection_id: Optional[str] = None
     ) -> Message:
         return self._converter.get_object(
             data=self._send_request(
@@ -2530,11 +2531,59 @@ class Bot:
                     "disable_notification": disable_notification,
                     "protect_content": protect_content,
                     "reply_parameters": reply_parameters,
-                    "reply_markup": reply_markup
+                    "reply_markup": reply_markup,
+                    "business_connection_id": business_connection_id
                 },
                 timeout_secs=timeout_secs
             ),
             class_=Message
+        )
+
+
+    # TODO: Add to context
+    def create_chat_subscription_invite_link(
+        self,
+        chat_id: Union[int, str],
+        subscription_period: int,
+        subscription_price: int,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        name: Optional[str] = None
+    ) -> ChatInviteLink:
+        return self._converter.get_object(
+            data=self._send_request(
+                method="createChatSubscriptionInviteLink",
+                parameters={
+                    "chat_id": chat_id,
+                    "subscription_period": subscription_period,
+                    "subscription_price": subscription_price,
+                    "name": name
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=ChatInviteLink
+        )
+
+    # TODO: Add to context
+    def edit_chat_subscription_invite_link(
+        self,
+        chat_id: Union[int, str],
+        invite_link: str,
+        *,
+        timeout_secs: Union[int, float, None] = None,
+        name: Optional[str] = None
+    ) -> ChatInviteLink:
+        return self._converter.get_object(
+            data=self._send_request(
+                method="editChatSubscriptionInviteLink",
+                parameters={
+                    "chat_id": chat_id,
+                    "invite_link": invite_link,
+                    "name": name
+                },
+                timeout_secs=timeout_secs
+            ),
+            class_=ChatInviteLink
         )
 
     def delete_message(
