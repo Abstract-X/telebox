@@ -1673,7 +1673,10 @@ class Context:
             disable_notification=disable_notification,
             protect_content=protect_content,
             reply_parameters=reply_parameters,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            business_connection_id=get_context_event_business_connection_id(
+                strictly=False
+            )
         )
 
     def stop_poll(

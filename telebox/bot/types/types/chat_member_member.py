@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
 
 from telebox.bot.types.type import Type
 from telebox.bot.consts import chat_member_statuses
@@ -9,3 +11,4 @@ from telebox.bot.types.types.user import User
 class ChatMemberMember(Type):
     user: User
     status: str = chat_member_statuses.MEMBER
+    until_date: Optional[datetime] = None
