@@ -3,6 +3,7 @@ from typing import Optional, Union, NoReturn, Callable, TYPE_CHECKING
 from pathlib import Path
 from collections import deque
 from queue import SimpleQueue as Queue
+import threading
 from threading import Thread, RLock, Condition, Event as ThreadingEvent
 import contextlib
 import time
@@ -41,7 +42,6 @@ from telebox.dispatcher.types.event_handler_info import EventHandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.types.aborting import ABORTING
 from telebox.dispatcher.errors import DispatcherError
-from telebox.utils.thread_pool import ThreadPool
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_deserialized_data
 
@@ -49,7 +49,7 @@ from telebox.utils.serialization import get_deserialized_data
 logger = logging.getLogger(__name__)
 _none_filter = NoneFilter()
 _none_error_filter = NoneErrorFilter()
-_MEDIA_GROUP_GATHERING_DELAY_SECS = 0.1
+_WORKER_WAITING_SECS = 60
 _DROPPED_UNKNOWN_UPDATE_MESSAGE = "Update dropped because it contains an unknown content type: %r."
 _EVENT_PROCESSING_LOG_TEMPLATES = {
     ProcessingStatus.PROCESSING: "Event processing finished: %r.",
@@ -61,17 +61,20 @@ _EVENT_PROCESSING_LOG_TEMPLATES = {
 
 
 class Dispatcher:
-
     def __init__(
         self,
         bot: "Bot",
         *,
+        min_workers: int = 10,
+        max_workers: int = 100,
         rate_limit: Optional[RateLimit] = None,
-        media_group_gathering_secs: Union[int, float] = 3
+        media_group_collecting_secs: Union[int, float] = 3
     ):
         self.bot = bot
+        self._min_workers = min_workers
+        self._max_workers = max_workers
         self._rate_limit = rate_limit
-        self._media_group_gathering_secs = media_group_gathering_secs
+        self._media_group_collecting_secs = media_group_collecting_secs
         self._polling_is_used = False
         self._server_is_used = False
         self._events: deque[EventInfo] = deque()
@@ -81,14 +84,14 @@ class Dispatcher:
         self._event_lock = RLock()
         self._new_event_condition = Condition(self._event_lock)
         self._all_events_processed_condition = Condition(self._event_lock)
-        self._thread_pool: Optional[ThreadPool] = None
-        self._busy_threads = 0
-        self._busy_thread_lock = RLock()
+        self._workers: dict[str, Thread] = {}
+        self._worker_lock = RLock()
+        self._worker_count = 0
         self._event_handlers: dict[EventType, list[EventHandlerInfo]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandlerInfo] = []
         self._middlewares: list[Middleware] = []
         self.router = Router(self)
-        self._media_group_gathering_thread: Optional[Thread] = None
+        self._media_group_collector: Optional[Thread] = None
         self._media_group_containers: dict[str, MediaGroupContainer] = {}
         self._media_group_message_lock = RLock()
         self._polling_stopping_event = ThreadingEvent()
@@ -668,8 +671,6 @@ class Dispatcher:
 
     def run_polling(
         self,
-        min_threads: int = 5,
-        max_threads: int = 25,
         *,
         error_delay_secs: Union[int, float] = 5,
         limit: Optional[int] = None,
@@ -687,8 +688,7 @@ class Dispatcher:
 
         self._polling_is_used = True
         offset_update_id = None
-        self._start_media_group_gathering_thread()
-        self._start_thread_pool(min_threads, max_threads)
+        self._initialize_event_listening()
         logger.info("Polling started.")
 
         with contextlib.suppress(KeyboardInterrupt):
@@ -728,8 +728,6 @@ class Dispatcher:
 
     def run_server(
         self,
-        min_threads: int = 5,
-        max_threads: int = 25,
         *,
         host: str = "0.0.0.0",
         port: int = 443,
@@ -739,7 +737,7 @@ class Dispatcher:
         private_key_path: Union[str, Path, None] = None
     ) -> None:
         try:
-            import cherrypy
+            import cherrypy  # noqa
         except ImportError:
             raise ImportError(
                 "To use server you need to install «CherryPy»:"
@@ -772,8 +770,7 @@ class Dispatcher:
             update_processor=self._process_update,
             secret_token=secret_token
         )
-        self._start_media_group_gathering_thread()
-        self._start_thread_pool(min_threads, max_threads)
+        self._initialize_event_listening()
         path = (path or "").rstrip()
 
         if not path.startswith("/"):
@@ -793,7 +790,7 @@ class Dispatcher:
         if not self._server_is_used:
             raise DispatcherError("Server not running!")
 
-        import cherrypy
+        import cherrypy  # noqa
 
         logger.info("Server stopping...")
         cherrypy.engine.exit()
@@ -821,6 +818,13 @@ class Dispatcher:
                 )
 
         logger.info("Pending updates dropped.")
+
+    def _initialize_event_listening(self) -> None:
+        self._create_media_group_collector()
+
+        with self._worker_lock:
+            for _ in range(self._min_workers):
+                self._create_worker()
 
     def _add_event_handler(
         self,
@@ -888,21 +892,27 @@ class Dispatcher:
     ) -> Optional[RateLimit]:
         return rate_limit if rate_limit is not NOT_SET else self._rate_limit
 
-    def _start_media_group_gathering_thread(self) -> None:
-        self._media_group_gathering_thread = Thread(
-            target=self._run_media_group_gathering,
+    def _create_media_group_collector(self) -> None:
+        self._media_group_collector = Thread(
+            target=self._run_media_group_collecting,
             daemon=True
         )
-        self._media_group_gathering_thread.start()
+        self._media_group_collector.start()
 
-    def _start_thread_pool(self, min_threads: int, max_threads: int) -> None:
-        self._thread_pool = ThreadPool(
-            min_threads=min_threads,
-            max_threads=max_threads,
+    def _create_worker(self) -> None:
+        self._worker_count += 1
+        worker = Thread(
             target=self._run_event_processing,
-            with_barrier=True
+            name=f"DispatcherWorker-{self._worker_count}",
+            daemon=True
         )
-        self._thread_pool.start_threads()
+        self._workers[worker.name] = worker
+        logger.debug(
+            "Worker %r started (workers: %r).",
+            worker.name,
+            len(self._workers)
+        )
+        worker.start()
 
     def _process_update(self, update: Update) -> None:
         logger.debug("Update received: %r.", update)
@@ -951,13 +961,13 @@ class Dispatcher:
         self._thread_pool = None
         logger.info("Update processing finished.")
 
-    def _run_media_group_gathering(self) -> NoReturn:
+    def _run_media_group_collecting(self) -> NoReturn:
         while True:
             with self._media_group_message_lock:
                 for media_group_id in tuple(self._media_group_containers):
                     secs = time.monotonic() - self._media_group_containers[media_group_id].time
 
-                    if secs > self._media_group_gathering_secs:
+                    if secs > self._media_group_collecting_secs:
                         container = self._media_group_containers.pop(media_group_id)
                         event = MediaGroup(container.events)
 
@@ -979,21 +989,25 @@ class Dispatcher:
                             )
                         )
 
-            time.sleep(_MEDIA_GROUP_GATHERING_DELAY_SECS)
+            time.sleep(0.1)
 
     def _add_event_to_queue(self, event: EventInfo) -> None:
         with self._new_event_condition:
             self._events.append(event)
             self._unprocessed_events += 1
-            logger.debug("Event added to queue: %r.", event.event)
+            logger.debug(
+                "Event added to queue: %r (events: %r).",
+                event.event,
+                len(self._events)
+            )
             self._new_event_condition.notify()
 
-    def _get_event_from_queue(self) -> EventInfo:
-        with self._new_event_condition:
-            while not self._events:
-                self._new_event_condition.wait()
-
-            return self._events.popleft()
+            with self._worker_lock:
+                if (
+                    (self._unprocessed_events > len(self._workers))
+                    and (len(self._workers) < self._max_workers)
+                ):
+                    self._create_worker()
 
     def _wait_events(self) -> None:
         with self._all_events_processed_condition:
@@ -1025,80 +1039,17 @@ class Dispatcher:
             self._events.append(next_event)
             self._new_event_condition.notify()
 
-    def _process_busy_threads(self) -> None:
-        with self._busy_thread_lock:
-            self._busy_threads += 1
+    def _process_event(self, event: EventInfo) -> None:
+        logger.debug("Event processing started: %r.", event.event)
 
-            if (
-                (self._busy_threads == self._thread_pool.threads)
-                and (self._thread_pool.threads < self._thread_pool.max_threads)
-            ):
-                self._thread_pool.create_thread()
-                logger.debug("Additional event processing thread created.")
+        try:
+            event_context.set(event.event)
 
-    def _run_event_processing(self) -> NoReturn:
-        while True:
-            event = self._get_event_from_queue()
-            logger.debug("Event processing started: %r.", event.event)
-
-            try:
-                event_context.set(event.event)
-                self._process_busy_threads()
-                event.busy_threads_processed = True
-
-                if not event.middleware_pre_processed:
-                    for i in self._middlewares:
-                        result = i.pre_process_event(
-                            event=event.event,
-                            event_type=event.event_type
-                        )
-
-                        if result is ABORTING:
-                            event.processing_status = ProcessingStatus.ABORTED
-                            break
-
-                    if event.processing_status is ProcessingStatus.ABORTED:
-                        continue
-
-                    event.middleware_pre_processed = True
-
-                event_handler = self._get_event_handler(event.event, event.event_type)
-
-                if event_handler is None:
-                    event.processing_status = ProcessingStatus.HANDLER_NOT_FOUND
-                    continue
-
-                if event_handler.with_chat_queue and (event.chat_id is not None):
-                    event.with_chat_queue = True
-
-                    if not event.from_chat_queue:
-                        with self._event_lock:
-                            if event.chat_id in self._processing_chat_ids:
-                                chat_events = self._chat_queues.get(event.chat_id)
-
-                                if chat_events is None:
-                                    chat_events = self._chat_queues[event.chat_id] = Queue()
-
-                                chat_events.put_nowait(event)
-                                event.processing_status = ProcessingStatus.ADDED_TO_CHAT_QUEUE
-                                continue
-                            else:
-                                self._processing_chat_ids.add(event.chat_id)
-
-                event_handler_context.set(event_handler.handler)
-
-                if (
-                    (event_handler.rate_limiter is not None)
-                    and event_handler.rate_limiter.process_call(event.chat_id, event.user_id)
-                ):
-                    event.processing_status = ProcessingStatus.RATE_LIMIT_EXCEEDED
-                    continue
-
+            if not event.middleware_pre_processed:
                 for i in self._middlewares:
-                    result = i.process_event(
+                    result = i.pre_process_event(
                         event=event.event,
-                        event_type=event.event_type,
-                        handler=event_handler.handler
+                        event_type=event.event_type
                     )
 
                     if result is ABORTING:
@@ -1106,49 +1057,131 @@ class Dispatcher:
                         break
 
                 if event.processing_status is ProcessingStatus.ABORTED:
-                    continue
+                    return
 
-                result = event_handler.handler.process_event(event.event)
+                event.middleware_pre_processed = True
+
+            event_handler = self._get_event_handler(event.event, event.event_type)
+
+            if event_handler is None:
+                event.processing_status = ProcessingStatus.HANDLER_NOT_FOUND
+
+                return
+
+            if event_handler.with_chat_queue and (event.chat_id is not None):
+                event.with_chat_queue = True
+
+                if not event.from_chat_queue:
+                    with self._event_lock:
+                        if event.chat_id in self._processing_chat_ids:
+                            chat_events = self._chat_queues.get(event.chat_id)
+
+                            if chat_events is None:
+                                chat_events = self._chat_queues[event.chat_id] = Queue()
+
+                            chat_events.put_nowait(event)
+                            event.processing_status = ProcessingStatus.ADDED_TO_CHAT_QUEUE
+
+                            return
+                        else:
+                            self._processing_chat_ids.add(event.chat_id)
+
+            event_handler_context.set(event_handler.handler)
+
+            if (
+                (event_handler.rate_limiter is not None)
+                and event_handler.rate_limiter.process_call(event.chat_id, event.user_id)
+            ):
+                event.processing_status = ProcessingStatus.RATE_LIMIT_EXCEEDED
+
+                return
+
+            for i in self._middlewares:
+                result = i.process_event(
+                    event=event.event,
+                    event_type=event.event_type,
+                    handler=event_handler.handler
+                )
 
                 if result is ABORTING:
                     event.processing_status = ProcessingStatus.ABORTED
-                    continue
+                    break
 
-                for i in self._middlewares:
-                    result = i.post_process_event(
-                        event=event.event,
-                        event_type=event.event_type,
-                        handler=event_handler.handler
+            if event.processing_status is ProcessingStatus.ABORTED:
+                return
+
+            result = event_handler.handler.process_event(event.event)
+
+            if result is ABORTING:
+                event.processing_status = ProcessingStatus.ABORTED
+
+                return
+
+            for i in self._middlewares:
+                result = i.post_process_event(
+                    event=event.event,
+                    event_type=event.event_type,
+                    handler=event_handler.handler
+                )
+
+                if result is ABORTING:
+                    event.processing_status = ProcessingStatus.ABORTED
+                    break
+
+            if event.processing_status is ProcessingStatus.ABORTED:
+                return
+        except Exception as error:
+            event.processing_status = ProcessingStatus.ERROR_OCCURRED
+            self._process_event_error(error, event)
+        finally:
+            if event.processing_status is not ProcessingStatus.ERROR_OCCURRED:
+                logger.debug(
+                    _EVENT_PROCESSING_LOG_TEMPLATES[event.processing_status],
+                    event.event
+                )
+
+            if event.processing_status is ProcessingStatus.ADDED_TO_CHAT_QUEUE:
+                event.processing_status = ProcessingStatus.PROCESSING
+
+                return
+
+            if event.with_chat_queue:
+                self._set_chat_event_completion(chat_id=event.chat_id)
+
+            self._set_event_completion()
+
+    def _run_event_processing(self) -> None:
+        worker_name = threading.current_thread().name
+        last_processing_time = time.monotonic()
+
+        while True:
+            with self._new_event_condition:
+                while not self._events:
+                    remaining_secs = (
+                        _WORKER_WAITING_SECS
+                        - (time.monotonic() - last_processing_time)
                     )
 
-                    if result is ABORTING:
-                        event.processing_status = ProcessingStatus.ABORTED
-                        break
+                    if remaining_secs <= 0:
+                        with self._worker_lock:
+                            if len(self._workers) > self._min_workers:
+                                del self._workers[worker_name]
+                                logger.debug(
+                                    "Worker %r stopped (workers: %r).",
+                                    worker_name,
+                                    len(self._workers)
+                                )
 
-                if event.processing_status is ProcessingStatus.ABORTED:
-                    continue
-            except Exception as error:
-                event.processing_status = ProcessingStatus.ERROR_OCCURRED
-                self._process_event_error(error, event)
-            finally:
-                if event.busy_threads_processed:
-                    with self._busy_thread_lock:
-                        self._busy_threads -= 1
+                                return
+                            else:
+                                remaining_secs = _WORKER_WAITING_SECS
 
-                if event.processing_status is not ProcessingStatus.ERROR_OCCURRED:
-                    logger.debug(
-                        _EVENT_PROCESSING_LOG_TEMPLATES[event.processing_status],
-                        event.event
-                    )
+                    self._new_event_condition.wait(timeout=remaining_secs)
 
-                if event.processing_status is ProcessingStatus.ADDED_TO_CHAT_QUEUE:
-                    event.processing_status = ProcessingStatus.PROCESSING
-                    continue
+                event = self._events.popleft()
 
-                if event.with_chat_queue:
-                    self._set_chat_event_completion(chat_id=event.chat_id)
-
-                self._set_event_completion()
+            self._process_event(event)
+            last_processing_time = time.monotonic()
 
     def _process_event_error(self, error: Exception, event: EventInfo) -> None:
         # noinspection PyBroadException
@@ -1190,7 +1223,7 @@ def _get_server_root(
     update_processor: Callable[[Update], None],
     secret_token: Optional[str] = None
 ):
-    import cherrypy
+    import cherrypy  # noqa
 
     class ServerRoot:
 
