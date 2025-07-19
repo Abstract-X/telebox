@@ -14,6 +14,5 @@ class EventInfo:
     user_id: Optional[int] = None
     from_chat_queue: bool = False
     with_chat_queue: bool = False
-    busy_threads_processed: bool = False
     middleware_pre_processed: bool = False
     processing_status: ProcessingStatus = ProcessingStatus.PROCESSING
