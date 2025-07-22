@@ -32,13 +32,13 @@ from .utils import (
     NotSet,
     NOT_SET,
     Group,
-    AbstractCallbackDataBuilder,
     TaskExecutor,
     Env,
     get_html_text,
     get_markdown_text,
     set_signal_handler,
-    get_group
+    get_group,
+    get_callback_data
 )
 
 
@@ -79,13 +79,13 @@ __all__ = [
     "NotSet",
     "NOT_SET",
     "Group",
-    "AbstractCallbackDataBuilder",
     "TaskExecutor",
     "Env",
     "get_html_text",
     "get_markdown_text",
     "set_signal_handler",
     "get_group",
+    "get_callback_data",
     "get_event_chat_id",
     "get_event_user_id"
 ]
