@@ -1,9 +1,10 @@
-from dataclasses import dataclass
 from datetime import datetime
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class VideoChatScheduled(Type):
     start_date: datetime

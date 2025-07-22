@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ChatPermissions(Type):
     can_send_messages: Optional[bool] = None
     can_send_audios: Optional[bool] = None

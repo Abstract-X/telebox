@@ -1,6 +1,7 @@
-from dataclasses import dataclass
 from typing import Literal, Optional
 from datetime import datetime
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.utils.users import get_full_name
@@ -17,7 +18,7 @@ from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.message import Message
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ChatFullInfo(Type):
     id: int
     type: str

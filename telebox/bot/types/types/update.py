@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional, Union
+
+from attrs import define, field
 
 from telebox.bot.enums.update_content_type import UpdateContentType
 from telebox.bot.types.type import Type
@@ -35,11 +36,13 @@ UpdateContent = Union[
     ChatMemberUpdated,
     ChatJoinRequest,
     BusinessConnection,
-    BusinessMessagesDeleted
+    BusinessMessagesDeleted,
+    ChatBoostUpdated,
+    ChatBoostRemoved
 ]
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class Update(Type):
     update_id: int
     message: Optional[Message] = None
@@ -64,81 +67,75 @@ class Update(Type):
     chat_join_request: Optional[ChatJoinRequest] = None
     chat_boost: Optional[ChatBoostUpdated] = None
     removed_chat_boost: Optional[ChatBoostRemoved] = None
+    content: Optional[UpdateContent] = field(init=False)
+    content_type: Optional[UpdateContentType] = field(init=False)
 
-    def __post_init__(self) -> None:
+    def __attrs_post_init__(self) -> None:
         if self.message is not None:
-            self._content = self.message
-            self._content_type = UpdateContentType.MESSAGE
+            self.content = self.message
+            self.content_type = UpdateContentType.MESSAGE
         elif self.edited_message is not None:
-            self._content = self.edited_message
-            self._content_type = UpdateContentType.EDITED_MESSAGE
+            self.content = self.edited_message
+            self.content_type = UpdateContentType.EDITED_MESSAGE
         elif self.channel_post is not None:
-            self._content = self.channel_post
-            self._content_type = UpdateContentType.CHANNEL_POST
+            self.content = self.channel_post
+            self.content_type = UpdateContentType.CHANNEL_POST
         elif self.edited_channel_post is not None:
-            self._content = self.edited_channel_post
-            self._content_type = UpdateContentType.EDITED_CHANNEL_POST
+            self.content = self.edited_channel_post
+            self.content_type = UpdateContentType.EDITED_CHANNEL_POST
         elif self.business_connection is not None:
-            self._content = self.business_connection
-            self._content_type = UpdateContentType.BUSINESS_CONNECTION
+            self.content = self.business_connection
+            self.content_type = UpdateContentType.BUSINESS_CONNECTION
         elif self.business_message is not None:
-            self._content = self.business_message
-            self._content_type = UpdateContentType.BUSINESS_MESSAGE
+            self.content = self.business_message
+            self.content_type = UpdateContentType.BUSINESS_MESSAGE
         elif self.edited_business_message is not None:
-            self._content = self.edited_business_message
-            self._content_type = UpdateContentType.EDITED_BUSINESS_MESSAGE
+            self.content = self.edited_business_message
+            self.content_type = UpdateContentType.EDITED_BUSINESS_MESSAGE
         elif self.deleted_business_messages is not None:
-            self._content = self.deleted_business_messages
-            self._content_type = UpdateContentType.DELETED_BUSINESS_MESSAGES
+            self.content = self.deleted_business_messages
+            self.content_type = UpdateContentType.DELETED_BUSINESS_MESSAGES
         elif self.message_reaction is not None:
-            self._content = self.message_reaction
-            self._content_type = UpdateContentType.MESSAGE_REACTION
+            self.content = self.message_reaction
+            self.content_type = UpdateContentType.MESSAGE_REACTION
         elif self.message_reaction_count is not None:
-            self._content = self.message_reaction_count
-            self._content_type = UpdateContentType.MESSAGE_REACTION_COUNT
+            self.content = self.message_reaction_count
+            self.content_type = UpdateContentType.MESSAGE_REACTION_COUNT
         elif self.inline_query is not None:
-            self._content = self.inline_query
-            self._content_type = UpdateContentType.INLINE_QUERY
+            self.content = self.inline_query
+            self.content_type = UpdateContentType.INLINE_QUERY
         elif self.chosen_inline_result is not None:
-            self._content = self.chosen_inline_result
-            self._content_type = UpdateContentType.CHOSEN_INLINE_RESULT
+            self.content = self.chosen_inline_result
+            self.content_type = UpdateContentType.CHOSEN_INLINE_RESULT
         elif self.callback_query is not None:
-            self._content = self.callback_query
-            self._content_type = UpdateContentType.CALLBACK_QUERY
+            self.content = self.callback_query
+            self.content_type = UpdateContentType.CALLBACK_QUERY
         elif self.shipping_query is not None:
-            self._content = self.shipping_query
-            self._content_type = UpdateContentType.SHIPPING_QUERY
+            self.content = self.shipping_query
+            self.content_type = UpdateContentType.SHIPPING_QUERY
         elif self.pre_checkout_query is not None:
-            self._content = self.pre_checkout_query
-            self._content_type = UpdateContentType.PRE_CHECKOUT_QUERY
+            self.content = self.pre_checkout_query
+            self.content_type = UpdateContentType.PRE_CHECKOUT_QUERY
         elif self.poll is not None:
-            self._content = self.poll
-            self._content_type = UpdateContentType.POLL
+            self.content = self.poll
+            self.content_type = UpdateContentType.POLL
         elif self.poll_answer is not None:
-            self._content = self.poll_answer
-            self._content_type = UpdateContentType.POLL_ANSWER
+            self.content = self.poll_answer
+            self.content_type = UpdateContentType.POLL_ANSWER
         elif self.my_chat_member is not None:
-            self._content = self.my_chat_member
-            self._content_type = UpdateContentType.MY_CHAT_MEMBER
+            self.content = self.my_chat_member
+            self.content_type = UpdateContentType.MY_CHAT_MEMBER
         elif self.chat_member is not None:
-            self._content = self.chat_member
-            self._content_type = UpdateContentType.CHAT_MEMBER
+            self.content = self.chat_member
+            self.content_type = UpdateContentType.CHAT_MEMBER
         elif self.chat_join_request is not None:
-            self._content = self.chat_join_request
-            self._content_type = UpdateContentType.CHAT_JOIN_REQUEST
+            self.content = self.chat_join_request
+            self.content_type = UpdateContentType.CHAT_JOIN_REQUEST
         elif self.chat_boost is not None:
-            self._content = self.chat_boost
-            self._content_type = UpdateContentType.CHAT_BOOST
+            self.content = self.chat_boost
+            self.content_type = UpdateContentType.CHAT_BOOST
         elif self.removed_chat_boost is not None:
-            self._content = self.removed_chat_boost
-            self._content_type = UpdateContentType.REMOVED_CHAT_BOOST
+            self.content = self.removed_chat_boost
+            self.content_type = UpdateContentType.REMOVED_CHAT_BOOST
         else:
-            self._content = self._content_type = None
-
-    @property
-    def content(self) -> Optional[UpdateContent]:
-        return self._content
-
-    @property
-    def content_type(self) -> Optional[UpdateContentType]:
-        return self._content_type
+            self.content = self.content_type = None

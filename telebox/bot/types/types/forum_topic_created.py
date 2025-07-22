@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ForumTopicCreated(Type):
     name: str
     icon_color: int

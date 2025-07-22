@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.utils.deep_links import get_username_link
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class WebAppChat(Type):
     id: int
     type: str

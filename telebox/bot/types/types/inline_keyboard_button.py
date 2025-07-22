@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.web_app_info import WebAppInfo
@@ -8,7 +9,7 @@ from telebox.bot.types.types.callback_game import CallbackGame
 from telebox.bot.types.types.switch_inline_query_chosen_chat import SwitchInlineQueryChosenChat
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InlineKeyboardButton(Type):
     text: str
     url: Optional[str] = None

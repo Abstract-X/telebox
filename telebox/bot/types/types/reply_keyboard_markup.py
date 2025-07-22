@@ -1,13 +1,14 @@
-from dataclasses import dataclass, field
 from typing import Optional
+
+from attrs import define, field
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.keyboard_button import KeyboardButton
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ReplyKeyboardMarkup(Type):
-    keyboard: list[list[KeyboardButton]] = field(default_factory=list)
+    keyboard: list[list[KeyboardButton]] = field(factory=list)
     is_persistent: Optional[bool] = None
     resize_keyboard: Optional[bool] = None
     one_time_keyboard: Optional[bool] = None

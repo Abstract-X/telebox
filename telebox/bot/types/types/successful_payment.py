@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.order_info import OrderInfo
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class SuccessfulPayment(Type):
     currency: str
     total_amount: int

@@ -1,10 +1,10 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.consts import background_fill_types
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class BackgroundFillGradient(Type):
     top_color: int
     bottom_color: int

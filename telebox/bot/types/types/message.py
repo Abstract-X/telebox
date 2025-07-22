@@ -1,6 +1,7 @@
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Literal, Any, TYPE_CHECKING
+
+from attrs import define, field
 
 from telebox.bot.consts import chat_types
 from telebox.bot.utils.deep_links import get_message_public_link, get_message_private_link
@@ -73,7 +74,7 @@ _html_formatter = HTMLFormatter()
 _markdown_formatter = MarkdownFormatter()
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class Message(Type):
     message_id: int
     date: datetime
@@ -160,183 +161,177 @@ class Message(Type):
     video_chat_participants_invited: Optional[VideoChatParticipantsInvited] = None
     web_app_data: Optional[WebAppData] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
+    content: Optional[Any] = field(init=False)
+    content_type: Optional[MessageContentType] = field(init=False)
 
-    def __post_init__(self) -> None:
+    def __attrs_post_init__(self) -> None:
         if self.text is not None:
-            self._content = self.text
-            self._content_type = MessageContentType.TEXT
+            self.content = self.text
+            self.content_type = MessageContentType.TEXT
         elif self.animation is not None:
-            self._content = self.animation
-            self._content_type = MessageContentType.ANIMATION
+            self.content = self.animation
+            self.content_type = MessageContentType.ANIMATION
         elif self.audio is not None:
-            self._content = self.audio
-            self._content_type = MessageContentType.AUDIO
+            self.content = self.audio
+            self.content_type = MessageContentType.AUDIO
         elif self.document is not None:
-            self._content = self.document
-            self._content_type = MessageContentType.DOCUMENT
+            self.content = self.document
+            self.content_type = MessageContentType.DOCUMENT
         elif self.paid_media is not None:
-            self._content = self.paid_media
-            self._content_type = MessageContentType.PAID_MEDIA
+            self.content = self.paid_media
+            self.content_type = MessageContentType.PAID_MEDIA
         elif self.photo is not None:
-            self._content = self.photo
-            self._content_type = MessageContentType.PHOTO
+            self.content = self.photo
+            self.content_type = MessageContentType.PHOTO
         elif self.sticker is not None:
-            self._content = self.sticker
-            self._content_type = MessageContentType.STICKER
+            self.content = self.sticker
+            self.content_type = MessageContentType.STICKER
         elif self.story is not None:
-            self._content = self.story
-            self._content_type = MessageContentType.STORY
+            self.content = self.story
+            self.content_type = MessageContentType.STORY
         elif self.video is not None:
-            self._content = self.video
-            self._content_type = MessageContentType.VIDEO
+            self.content = self.video
+            self.content_type = MessageContentType.VIDEO
         elif self.video_note is not None:
-            self._content = self.video_note
-            self._content_type = MessageContentType.VIDEO_NOTE
+            self.content = self.video_note
+            self.content_type = MessageContentType.VIDEO_NOTE
         elif self.voice is not None:
-            self._content = self.voice
-            self._content_type = MessageContentType.VOICE
+            self.content = self.voice
+            self.content_type = MessageContentType.VOICE
         elif self.contact is not None:
-            self._content = self.contact
-            self._content_type = MessageContentType.CONTACT
+            self.content = self.contact
+            self.content_type = MessageContentType.CONTACT
         elif self.dice is not None:
-            self._content = self.dice
-            self._content_type = MessageContentType.DICE
+            self.content = self.dice
+            self.content_type = MessageContentType.DICE
         elif self.game is not None:
-            self._content = self.game
-            self._content_type = MessageContentType.GAME
+            self.content = self.game
+            self.content_type = MessageContentType.GAME
         elif self.poll is not None:
-            self._content = self.poll
-            self._content_type = MessageContentType.POLL
+            self.content = self.poll
+            self.content_type = MessageContentType.POLL
         elif self.venue is not None:
-            self._content = self.venue
-            self._content_type = MessageContentType.VENUE
+            self.content = self.venue
+            self.content_type = MessageContentType.VENUE
         elif self.location is not None:
-            self._content = self.location
-            self._content_type = MessageContentType.LOCATION
+            self.content = self.location
+            self.content_type = MessageContentType.LOCATION
         elif self.new_chat_members is not None:
-            self._content = self.new_chat_members
-            self._content_type = MessageContentType.NEW_CHAT_MEMBERS
+            self.content = self.new_chat_members
+            self.content_type = MessageContentType.NEW_CHAT_MEMBERS
         elif self.left_chat_member is not None:
-            self._content = self.left_chat_member
-            self._content_type = MessageContentType.LEFT_CHAT_MEMBER
+            self.content = self.left_chat_member
+            self.content_type = MessageContentType.LEFT_CHAT_MEMBER
         elif self.new_chat_title is not None:
-            self._content = self.new_chat_title
-            self._content_type = MessageContentType.NEW_CHAT_TITLE
+            self.content = self.new_chat_title
+            self.content_type = MessageContentType.NEW_CHAT_TITLE
         elif self.new_chat_photo is not None:
-            self._content = self.new_chat_photo
-            self._content_type = MessageContentType.NEW_CHAT_PHOTO
+            self.content = self.new_chat_photo
+            self.content_type = MessageContentType.NEW_CHAT_PHOTO
         elif self.delete_chat_photo is not None:
-            self._content = self.delete_chat_photo
-            self._content_type = MessageContentType.DELETE_CHAT_PHOTO
+            self.content = self.delete_chat_photo
+            self.content_type = MessageContentType.DELETE_CHAT_PHOTO
         elif self.group_chat_created is not None:
-            self._content = self.group_chat_created
-            self._content_type = MessageContentType.GROUP_CHAT_CREATED
+            self.content = self.group_chat_created
+            self.content_type = MessageContentType.GROUP_CHAT_CREATED
         elif self.supergroup_chat_created is not None:
-            self._content = self.supergroup_chat_created
-            self._content_type = MessageContentType.SUPERGROUP_CHAT_CREATED
+            self.content = self.supergroup_chat_created
+            self.content_type = MessageContentType.SUPERGROUP_CHAT_CREATED
         elif self.channel_chat_created is not None:
-            self._content = self.channel_chat_created
-            self._content_type = MessageContentType.CHANNEL_CHAT_CREATED
+            self.content = self.channel_chat_created
+            self.content_type = MessageContentType.CHANNEL_CHAT_CREATED
         elif self.message_auto_delete_timer_changed is not None:
-            self._content = self.message_auto_delete_timer_changed
-            self._content_type = MessageContentType.MESSAGE_AUTO_DELETE_TIMER_CHANGED
+            self.content = self.message_auto_delete_timer_changed
+            self.content_type = MessageContentType.MESSAGE_AUTO_DELETE_TIMER_CHANGED
         elif self.migrate_to_chat_id is not None:
-            self._content = self.migrate_to_chat_id
-            self._content_type = MessageContentType.MIGRATE_TO_CHAT_ID
+            self.content = self.migrate_to_chat_id
+            self.content_type = MessageContentType.MIGRATE_TO_CHAT_ID
         elif self.migrate_from_chat_id is not None:
-            self._content = self.migrate_from_chat_id
-            self._content_type = MessageContentType.MIGRATE_FROM_CHAT_ID
+            self.content = self.migrate_from_chat_id
+            self.content_type = MessageContentType.MIGRATE_FROM_CHAT_ID
         elif self.pinned_message is not None:
-            self._content = self.pinned_message
-            self._content_type = MessageContentType.PINNED_MESSAGE
+            self.content = self.pinned_message
+            self.content_type = MessageContentType.PINNED_MESSAGE
         elif self.invoice is not None:
-            self._content = self.invoice
-            self._content_type = MessageContentType.INVOICE
+            self.content = self.invoice
+            self.content_type = MessageContentType.INVOICE
         elif self.successful_payment is not None:
-            self._content = self.successful_payment
-            self._content_type = MessageContentType.SUCCESSFUL_PAYMENT
+            self.content = self.successful_payment
+            self.content_type = MessageContentType.SUCCESSFUL_PAYMENT
         elif self.refunded_payment is not None:
-            self._content = self.refunded_payment
-            self._content_type = MessageContentType.REFUNDED_PAYMENT
+            self.content = self.refunded_payment
+            self.content_type = MessageContentType.REFUNDED_PAYMENT
         elif self.users_shared is not None:
-            self._content = self.users_shared
-            self._content_type = MessageContentType.USERS_SHARED
+            self.content = self.users_shared
+            self.content_type = MessageContentType.USERS_SHARED
         elif self.chat_shared is not None:
-            self._content = self.chat_shared
-            self._content_type = MessageContentType.CHAT_SHARED
+            self.content = self.chat_shared
+            self.content_type = MessageContentType.CHAT_SHARED
         elif self.connected_website is not None:
-            self._content = self.connected_website
-            self._content_type = MessageContentType.CONNECTED_WEBSITE
+            self.content = self.connected_website
+            self.content_type = MessageContentType.CONNECTED_WEBSITE
         elif self.write_access_allowed is not None:
-            self._content = self.write_access_allowed
-            self._content_type = MessageContentType.WRITE_ACCESS_ALLOWED
+            self.content = self.write_access_allowed
+            self.content_type = MessageContentType.WRITE_ACCESS_ALLOWED
         elif self.passport_data is not None:
-            self._content = self.passport_data
-            self._content_type = MessageContentType.PASSPORT_DATA
+            self.content = self.passport_data
+            self.content_type = MessageContentType.PASSPORT_DATA
         elif self.proximity_alert_triggered is not None:
-            self._content = self.proximity_alert_triggered
-            self._content_type = MessageContentType.PROXIMITY_ALERT_TRIGGERED
+            self.content = self.proximity_alert_triggered
+            self.content_type = MessageContentType.PROXIMITY_ALERT_TRIGGERED
         elif self.boost_added is not None:
-            self._content = self.boost_added
-            self._content_type = MessageContentType.BOOST_ADDED
+            self.content = self.boost_added
+            self.content_type = MessageContentType.BOOST_ADDED
         elif self.chat_background_set is not None:
-            self._content = self.chat_background_set
-            self._content_type = MessageContentType.CHAT_BACKGROUND_SET
+            self.content = self.chat_background_set
+            self.content_type = MessageContentType.CHAT_BACKGROUND_SET
         elif self.forum_topic_created is not None:
-            self._content = self.forum_topic_created
-            self._content_type = MessageContentType.FORUM_TOPIC_CREATED
+            self.content = self.forum_topic_created
+            self.content_type = MessageContentType.FORUM_TOPIC_CREATED
         elif self.forum_topic_edited is not None:
-            self._content = self.forum_topic_edited
-            self._content_type = MessageContentType.FORUM_TOPIC_EDITED
+            self.content = self.forum_topic_edited
+            self.content_type = MessageContentType.FORUM_TOPIC_EDITED
         elif self.forum_topic_closed is not None:
-            self._content = self.forum_topic_closed
-            self._content_type = MessageContentType.FORUM_TOPIC_CLOSED
+            self.content = self.forum_topic_closed
+            self.content_type = MessageContentType.FORUM_TOPIC_CLOSED
         elif self.forum_topic_reopened is not None:
-            self._content = self.forum_topic_reopened
-            self._content_type = MessageContentType.FORUM_TOPIC_REOPENED
+            self.content = self.forum_topic_reopened
+            self.content_type = MessageContentType.FORUM_TOPIC_REOPENED
         elif self.general_forum_topic_hidden is not None:
-            self._content = self.general_forum_topic_hidden
-            self._content_type = MessageContentType.GENERAL_FORUM_TOPIC_HIDDEN
+            self.content = self.general_forum_topic_hidden
+            self.content_type = MessageContentType.GENERAL_FORUM_TOPIC_HIDDEN
         elif self.general_forum_topic_unhidden is not None:
-            self._content = self.general_forum_topic_unhidden
-            self._content_type = MessageContentType.GENERAL_FORUM_TOPIC_UNHIDDEN
+            self.content = self.general_forum_topic_unhidden
+            self.content_type = MessageContentType.GENERAL_FORUM_TOPIC_UNHIDDEN
         elif self.giveaway_created is not None:
-            self._content = self.giveaway_created
-            self._content_type = MessageContentType.GIVEAWAY_CREATED
+            self.content = self.giveaway_created
+            self.content_type = MessageContentType.GIVEAWAY_CREATED
         elif self.giveaway is not None:
-            self._content = self.giveaway
-            self._content_type = MessageContentType.GIVEAWAY
+            self.content = self.giveaway
+            self.content_type = MessageContentType.GIVEAWAY
         elif self.giveaway_winners is not None:
-            self._content = self.giveaway_winners
-            self._content_type = MessageContentType.GIVEAWAY_WINNERS
+            self.content = self.giveaway_winners
+            self.content_type = MessageContentType.GIVEAWAY_WINNERS
         elif self.giveaway_completed is not None:
-            self._content = self.giveaway_completed
-            self._content_type = MessageContentType.GIVEAWAY_COMPLETED
+            self.content = self.giveaway_completed
+            self.content_type = MessageContentType.GIVEAWAY_COMPLETED
         elif self.video_chat_scheduled is not None:
-            self._content = self.video_chat_scheduled
-            self._content_type = MessageContentType.VIDEO_CHAT_SCHEDULED
+            self.content = self.video_chat_scheduled
+            self.content_type = MessageContentType.VIDEO_CHAT_SCHEDULED
         elif self.video_chat_started is not None:
-            self._content = self.video_chat_started
-            self._content_type = MessageContentType.VIDEO_CHAT_STARTED
+            self.content = self.video_chat_started
+            self.content_type = MessageContentType.VIDEO_CHAT_STARTED
         elif self.video_chat_ended is not None:
-            self._content = self.video_chat_ended
-            self._content_type = MessageContentType.VIDEO_CHAT_ENDED
+            self.content = self.video_chat_ended
+            self.content_type = MessageContentType.VIDEO_CHAT_ENDED
         elif self.video_chat_participants_invited is not None:
-            self._content = self.video_chat_participants_invited
-            self._content_type = MessageContentType.VIDEO_CHAT_PARTICIPANTS_INVITED
+            self.content = self.video_chat_participants_invited
+            self.content_type = MessageContentType.VIDEO_CHAT_PARTICIPANTS_INVITED
         elif self.web_app_data is not None:
-            self._content = self.web_app_data
-            self._content_type = MessageContentType.WEB_APP_DATA
+            self.content = self.web_app_data
+            self.content_type = MessageContentType.WEB_APP_DATA
         else:
-            self._content = self._content_type = None
-
-    @property
-    def content(self) -> Any:
-        return self._content
-
-    @property
-    def content_type(self) -> Optional[MessageContentType]:
-        return self._content_type
+            self.content = self.content_type = None
 
     @property
     def chat_type(self) -> str:
@@ -435,7 +430,7 @@ class Message(Type):
         text = self.get_text()
 
         if text is None:
-            return
+            return None
 
         entities = self.get_entities()
 

@@ -1,18 +1,19 @@
-from dataclasses import dataclass, field
 from typing import Optional, BinaryIO, Union
 from pathlib import Path
 import os.path
+
+from attrs import define, field
 
 from telebox.bot.types.type import Type
 from telebox.bot.enums.input_file_type import InputFileType
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InputFile(Type):
     file: Union[str, Path, BinaryIO, None] = field(repr=False)
     name: Optional[str] = None
 
-    def __post_init__(self):
+    def __attrs_post_init__(self):
         if self.type is InputFileType.PATH:
             self.file = Path(self.file).resolve()
 

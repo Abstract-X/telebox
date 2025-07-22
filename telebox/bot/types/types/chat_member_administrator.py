@@ -1,12 +1,13 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.consts import chat_member_statuses
 from telebox.bot.types.types.user import User
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ChatMemberAdministrator(Type):
     user: User
     can_be_edited: bool

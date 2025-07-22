@@ -5,7 +5,6 @@ from typing import Any
 
 @dataclass
 class Group:
-
     def __post_init__(self):
         self._items = _get_items(self)
 

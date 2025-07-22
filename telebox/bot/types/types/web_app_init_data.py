@@ -1,13 +1,14 @@
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.web_app_user import WebAppUser
 from telebox.bot.types.types.web_app_chat import WebAppChat
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class WebAppInitData(Type):
     auth_date: datetime
     hash: str

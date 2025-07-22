@@ -1,12 +1,13 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.location import Location
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InlineQuery(Type):
     id: str
     from_: User

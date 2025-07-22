@@ -1,10 +1,10 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ChatBoostSourcePremium(Type):
     user: User
     source: str = "premium"

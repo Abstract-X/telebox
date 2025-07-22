@@ -1,10 +1,10 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.reaction_type import ReactionType
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ReactionCount(Type):
     type: ReactionType
     total_count: int

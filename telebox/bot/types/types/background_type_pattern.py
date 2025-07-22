@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional, Literal
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.document import Document
@@ -7,7 +8,7 @@ from telebox.bot.types.types.background_fill import BackgroundFill
 from telebox.bot.consts import background_types
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class BackgroundTypePattern(Type):
     document: Document
     fill: BackgroundFill

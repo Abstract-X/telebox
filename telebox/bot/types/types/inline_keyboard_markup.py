@@ -1,12 +1,12 @@
-from dataclasses import dataclass, field
+from attrs import define, field
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.inline_keyboard_button import InlineKeyboardButton
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InlineKeyboardMarkup(Type):
-    inline_keyboard: list[list[InlineKeyboardButton]] = field(default_factory=list)
+    inline_keyboard: list[list[InlineKeyboardButton]] = field(factory=list)
 
     def __iter__(self):
         return iter(self.inline_keyboard)

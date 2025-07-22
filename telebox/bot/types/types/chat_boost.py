@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from datetime import datetime
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.chat_boost_source import ChatBoostSource
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ChatBoost(Type):
     boost_id: str
     add_date: datetime

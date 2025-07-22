@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ChatPhoto(Type):
     small_file_id: str
     small_file_unique_id: str

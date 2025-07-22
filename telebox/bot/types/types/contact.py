@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.utils.users import get_full_name
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class Contact(Type):
     phone_number: str
     first_name: str

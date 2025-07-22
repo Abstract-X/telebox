@@ -1,11 +1,11 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.chat import Chat
 from telebox.bot.types.types.chat_boost import ChatBoost
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ChatBoostUpdated(Type):
     chat: Chat
     boost: ChatBoost

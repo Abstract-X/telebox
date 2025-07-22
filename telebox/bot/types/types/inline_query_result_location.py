@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.consts import inline_query_result_types
@@ -7,7 +8,7 @@ from telebox.bot.types.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.types.input_message_content import InputMessageContent
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InlineQueryResultLocation(Type):
     id: str
     latitude: float

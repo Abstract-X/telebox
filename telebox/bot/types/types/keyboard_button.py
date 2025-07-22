@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.keyboard_button_request_users import KeyboardButtonRequestUsers
@@ -8,7 +9,7 @@ from telebox.bot.types.types.keyboard_button_poll_type import KeyboardButtonPoll
 from telebox.bot.types.types.web_app_info import WebAppInfo
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class KeyboardButton(Type):
     text: str
     request_users: Optional[KeyboardButtonRequestUsers] = None
