@@ -2,7 +2,7 @@ from .factory import AbstractEventFilterFactory
 from .filter import AbstractEventFilter, AbstractEventBaseFilter
 from .cache import AbstractEventFilterCache
 from .factories import (
-    CallbackKeyFilterFactory,
+    CallbackIDFilterFactory,
     CashtagFilterFactory,
     ChatStateFilterFactory,
     CommandFilterFactory,
@@ -37,7 +37,7 @@ __all__ = [
     "AbstractEventFilter",
     "AbstractEventBaseFilter",
     "AbstractEventFilterCache",
-    "CallbackKeyFilterFactory",
+    "CallbackIDFilterFactory",
     "CashtagFilterFactory",
     "ChatStateFilterFactory",
     "CommandFilterFactory",

@@ -1,4 +1,4 @@
-from .callback_key import CallbackKeyFilterFactory
+from .callback_id import CallbackIDFilterFactory
 from .cashtag import CashtagFilterFactory
 from .chat_state import ChatStateFilterFactory
 from .command import CommandFilterFactory
@@ -12,7 +12,7 @@ from .user_state import UserStateFilterFactory
 
 
 __all__ = [
-    "CallbackKeyFilterFactory",
+    "CallbackIDFilterFactory",
     "CashtagFilterFactory",
     "ChatStateFilterFactory",
     "CommandFilterFactory",

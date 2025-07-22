@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from attrs import define
 
@@ -6,6 +6,7 @@ from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
 from telebox.bot.utils.ids import get_unprefixed_chat_id
+from telebox.utils.callback_data import get_parsed_callback_data
 
 
 @define(repr=False)
@@ -38,3 +39,10 @@ class CallbackQuery(Type):
     @property
     def message_id(self) -> Optional[int]:
         return self.message.message_id if self.message is not None else None
+
+    @property
+    def payload(self) -> Union[str, int, float, bool, list, None]:
+        if self.data:
+            _, payload = get_parsed_callback_data(self.data)
+
+            return payload
