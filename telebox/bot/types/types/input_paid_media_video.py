@@ -1,12 +1,13 @@
-from dataclasses import dataclass
 from typing import Union, Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.consts import input_paid_media_types
 from telebox.bot.types.types.input_file import InputFile
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InputPaidMediaVideo(Type):
     media: Union[InputFile, str]
     thumbnail: Union[InputFile, str, None] = None

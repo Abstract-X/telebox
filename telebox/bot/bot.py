@@ -1,14 +1,13 @@
 from typing import Union, Optional, Any, Literal, IO, BinaryIO
 import time
 from datetime import datetime
-from dataclasses import is_dataclass
 import secrets
 from http import HTTPStatus
 
 from requests import Session, Response, RequestException
 from requests_toolbelt import MultipartEncoder
 
-from telebox.bot.utils.converters import DataclassConverter, get_timestamp
+from telebox.bot.utils.converter import Converter, get_timestamp
 from telebox.bot.errors import get_request_error, BotError, RetryAfterError, InternalServerError
 from telebox.bot.consts import chat_member_statuses
 from telebox.bot.enums.input_file_type import InputFileType
@@ -139,7 +138,7 @@ class Bot:
         self._wait_on_rate_limit = wait_on_rate_limit
         self._use_cache = use_cache
         self.context = Context(self)
-        self._converter = DataclassConverter()
+        self._converter = Converter()
         self._user: Optional[User] = None
         self._cached_file_ids: dict[tuple[str, str], str] = {}
 
@@ -3437,7 +3436,7 @@ class Bot:
                 return f"attach://{name}"
 
             return value.name, file
-        elif is_dataclass(value):
+        elif self._converter.check_object(value):
             return {
                 name: self._prepare_parameter_value(
                     value_,

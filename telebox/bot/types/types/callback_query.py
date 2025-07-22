@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
@@ -7,7 +8,7 @@ from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessible
 from telebox.bot.utils.ids import get_unprefixed_chat_id
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class CallbackQuery(Type):
     id: str
     from_: User

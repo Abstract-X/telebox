@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 from datetime import datetime
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class MessageOriginHiddenUser(Type):
     date: datetime
     sender_user_name: str

@@ -1,12 +1,13 @@
-from dataclasses import dataclass
 from typing import Optional, Literal
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.utils.users import get_full_name
 from telebox.bot.utils.deep_links import get_username_link, get_user_link
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class User(Type):
     id: int
     is_bot: bool

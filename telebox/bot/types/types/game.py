@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.photo_size import PhotoSize
@@ -7,7 +8,7 @@ from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.bot.types.types.animation import Animation
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class Game(Type):
     title: str
     description: str

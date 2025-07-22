@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.labeled_price import LabeledPrice
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InputInvoiceMessageContent(Type):
     title: str
     description: str

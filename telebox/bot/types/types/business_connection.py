@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from datetime import datetime
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class BusinessConnection(Type):
     id: str
     user: User

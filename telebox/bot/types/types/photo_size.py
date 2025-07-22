@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class PhotoSize(Type):
     file_id: str
     file_unique_id: str

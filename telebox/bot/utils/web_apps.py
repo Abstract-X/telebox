@@ -3,12 +3,12 @@ from typing import Any
 import hashlib
 import hmac
 
-from telebox.bot.utils.converters import DataclassConverter
+from telebox.bot.utils.converter import Converter
 from telebox.bot.types.types.web_app_init_data import WebAppInitData
 from telebox.utils.serialization import get_deserialized_data
 
 
-_dataclass_converter = DataclassConverter()
+_dataclass_converter = Converter()
 
 
 def check_web_app_init_data(data: str, token: str, *, with_exceptions: bool = False) -> bool:

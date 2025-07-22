@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.shipping_address import ShippingAddress
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class OrderInfo(Type):
     name: Optional[str] = None
     phone_number: Optional[str] = None

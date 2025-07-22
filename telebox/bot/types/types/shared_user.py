@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.photo_size import PhotoSize
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class SharedUser(Type):
     user_id: int
     first_name: Optional[str] = None

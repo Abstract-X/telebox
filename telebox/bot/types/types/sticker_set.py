@@ -1,12 +1,13 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.sticker import Sticker
 from telebox.bot.types.types.photo_size import PhotoSize
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class StickerSet(Type):
     name: str
     title: str

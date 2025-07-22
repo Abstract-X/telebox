@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Union, Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.consts import input_media_types
@@ -8,7 +9,7 @@ from telebox.bot.types.types.message_entity import MessageEntity
 from telebox.utils.not_set import NotSet, NOT_SET
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InputMediaVideo(Type):
     media: Union[InputFile, str]
     thumbnail: Union[InputFile, str, None] = None

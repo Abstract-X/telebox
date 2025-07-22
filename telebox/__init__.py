@@ -104,9 +104,13 @@ def _evaluate_type_annotations() -> None:
 
     for class_ in classes:
         class_.__annotations__ = get_type_hints(class_, mapping)
+        attrs = {
+            i.name: i
+            for i in class_.__attrs_attrs__
+        }
 
         for name, type_ in class_.__annotations__.items():
-            class_.__dataclass_fields__[name].type = type_  # noqa
+            object.__setattr__(attrs[name], "type", type_)
 
 
 def _patch_requests_serializer() -> None:

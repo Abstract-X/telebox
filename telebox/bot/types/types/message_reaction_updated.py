@@ -1,6 +1,7 @@
 from typing import Optional
 from datetime import datetime
-from dataclasses import dataclass
+
+from attrs import define
 
 from telebox.bot.utils.ids import get_unprefixed_chat_id
 from telebox.bot.types.type import Type
@@ -9,7 +10,7 @@ from telebox.bot.types.types.user import User
 from telebox.bot.types.types.reaction_type import ReactionType
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class MessageReactionUpdated(Type):
     chat: Chat
     message_id: int

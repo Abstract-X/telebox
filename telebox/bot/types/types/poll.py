@@ -1,13 +1,14 @@
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.poll_option import PollOption
 from telebox.bot.types.types.message_entity import MessageEntity
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class Poll(Type):
     id: str
     question: str

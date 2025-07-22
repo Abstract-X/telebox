@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.chat_administrator_rights import ChatAdministratorRights
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class KeyboardButtonRequestChat(Type):
     request_id: int
     chat_is_channel: bool

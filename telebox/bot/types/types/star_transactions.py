@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.star_transaction import StarTransaction
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class StarTransactions(Type):
     transactions: list[StarTransaction]

@@ -1,12 +1,13 @@
-from dataclasses import dataclass
 from typing import Union, Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.input_file import InputFile
 from telebox.bot.types.types.mask_position import MaskPosition
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class InputSticker(Type):
     sticker: Union[InputFile, str]
     format: str

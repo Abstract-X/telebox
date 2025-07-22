@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ChatAdministratorRights(Type):
     is_anonymous: bool
     can_manage_chat: bool

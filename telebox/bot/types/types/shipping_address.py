@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ShippingAddress(Type):
     country_code: str
     state: str

@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.consts import paid_media_types
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class PaidMediaPreview(Type):
     width: Optional[int] = None
     height: Optional[int] = None

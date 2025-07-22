@@ -1,11 +1,11 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.user import User
 from telebox.bot.types.types.shipping_address import ShippingAddress
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ShippingQuery(Type):
     id: str
     from_: User

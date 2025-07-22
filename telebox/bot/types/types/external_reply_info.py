@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional, Literal
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.message_origin import MessageOrigin
@@ -26,7 +27,7 @@ from telebox.bot.types.types.venue import Venue
 from telebox.bot.types.types.paid_media_info import PaidMediaInfo
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ExternalReplyInfo(Type):
     origin: MessageOrigin
     chat: Optional[Chat] = None

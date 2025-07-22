@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from typing import Optional, Literal
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.types.types.photo_size import PhotoSize
@@ -7,7 +8,7 @@ from telebox.bot.types.types.file import File
 from telebox.bot.types.types.mask_position import MaskPosition
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class Sticker(Type):
     file_id: str
     file_unique_id: str

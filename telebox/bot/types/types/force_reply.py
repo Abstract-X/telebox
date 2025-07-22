@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 from typing import Literal, Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ForceReply(Type):
     force_reply: Literal[True] = True
     input_field_placeholder: Optional[str] = None

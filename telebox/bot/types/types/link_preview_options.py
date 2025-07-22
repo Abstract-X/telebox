@@ -1,10 +1,11 @@
-from dataclasses import dataclass
 from typing import Optional
+
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class LinkPreviewOptions(Type):
     is_disabled: Optional[bool] = None
     url: Optional[str] = None

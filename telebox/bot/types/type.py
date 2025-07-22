@@ -1,14 +1,16 @@
-import dataclasses
-from dataclasses import dataclass
+import attrs
+from attrs import define
 
 
-@dataclass
+@define(repr=False)
 class Type:
-
     def __repr__(self) -> str:
         values = {}
 
-        for i in dataclasses.fields(self):
+        for i in attrs.fields(type(self)):
+            if not i.repr:
+                continue
+
             value = getattr(self, i.name)
 
             if value is not None:

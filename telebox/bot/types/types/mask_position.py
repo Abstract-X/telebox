@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class MaskPosition(Type):
     point: str
     x_shift: float

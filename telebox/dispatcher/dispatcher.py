@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from telebox.bot.bot import Bot
 from telebox.bot.types.types.update import Update
 from telebox.bot.types.types.message import Message
-from telebox.bot.utils.converters import DataclassConverter
+from telebox.bot.utils.converter import Converter
 from telebox.dispatcher.typing import Event
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.dispatcher.enums.event_type import EventType
@@ -1230,7 +1230,7 @@ def _get_server_root(
         def __init__(self):
             self._update_processor = update_processor
             self._secret_token = secret_token
-            self._dataclass_converter = DataclassConverter()
+            self._dataclass_converter = Converter()
 
         @cherrypy.expose
         def index(self) -> str:

@@ -1,10 +1,10 @@
-from dataclasses import dataclass
+from attrs import define
 
 from telebox.bot.types.type import Type
 from telebox.bot.consts import reaction_types
 
 
-@dataclass(repr=False)
+@define(repr=False)
 class ReactionTypeCustomEmoji(Type):
     custom_emoji_id: str
     type: str = reaction_types.CUSTOM_EMOJI
