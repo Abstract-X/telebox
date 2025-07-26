@@ -15,16 +15,13 @@ if TYPE_CHECKING:
 from telebox.bot.types.types.update import Update
 from telebox.bot.types.types.message import Message
 from telebox.bot.utils.converter import Converter
-from telebox.dispatcher.typing import Event
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.enums.processing_status import ProcessingStatus
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.handlers.error import AbstractErrorHandler
-from telebox.dispatcher.filters.events.filter import AbstractEventBaseFilter
-from telebox.dispatcher.filters.errors.filter import AbstractErrorBaseFilter
-from telebox.dispatcher.filters.events.filters.none import NoneFilter
-from telebox.dispatcher.filters.errors.filters.none import NoneErrorFilter
+from telebox.dispatcher.filters.filter import AbstractBaseFilter
+from telebox.dispatcher.filters.filters.none import NoneFilter
 from telebox.dispatcher.middlewares.middleware import Middleware
 from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
@@ -48,7 +45,6 @@ from telebox.utils.serialization import get_deserialized_data
 
 logger = logging.getLogger(__name__)
 _none_filter = NoneFilter()
-_none_error_filter = NoneErrorFilter()
 _WORKER_WAITING_SECS = 60
 _DROPPED_UNKNOWN_UPDATE_MESSAGE = "Update dropped because it contains an unknown content type: %r."
 _EVENT_PROCESSING_LOG_TEMPLATES = {
@@ -107,7 +103,7 @@ class Dispatcher:
     def add_message_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = True
     ) -> None:
@@ -122,7 +118,7 @@ class Dispatcher:
     def add_edited_message_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = False
     ) -> None:
@@ -137,7 +133,7 @@ class Dispatcher:
     def add_business_connection_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -148,7 +144,7 @@ class Dispatcher:
     def add_business_message_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = False
     ) -> None:
@@ -163,7 +159,7 @@ class Dispatcher:
     def add_edited_business_message_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = False
     ) -> None:
@@ -178,7 +174,7 @@ class Dispatcher:
     def add_deleted_business_messages_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -189,7 +185,7 @@ class Dispatcher:
     def add_channel_post_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = False
     ) -> None:
@@ -204,7 +200,7 @@ class Dispatcher:
     def add_edited_channel_post_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = False
     ) -> None:
@@ -219,7 +215,7 @@ class Dispatcher:
     def add_media_group_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = True
     ) -> None:
@@ -234,7 +230,7 @@ class Dispatcher:
     def add_channel_media_group_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = False
     ) -> None:
@@ -249,7 +245,7 @@ class Dispatcher:
     def add_message_reaction_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = False
     ) -> None:
@@ -264,7 +260,7 @@ class Dispatcher:
     def add_message_reaction_count_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = False
     ) -> None:
@@ -279,7 +275,7 @@ class Dispatcher:
     def add_inline_query_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(
@@ -292,7 +288,7 @@ class Dispatcher:
     def add_chosen_inline_result_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(
@@ -305,7 +301,7 @@ class Dispatcher:
     def add_callback_query_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
         with_chat_queue: bool = True
     ) -> None:
@@ -320,7 +316,7 @@ class Dispatcher:
     def add_shipping_query_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(
@@ -333,7 +329,7 @@ class Dispatcher:
     def add_pre_checkout_query_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
     ) -> None:
         self._add_event_handler(
@@ -346,7 +342,7 @@ class Dispatcher:
     def add_poll_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -357,7 +353,7 @@ class Dispatcher:
     def add_poll_answer_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -368,7 +364,7 @@ class Dispatcher:
     def add_my_chat_member_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -381,7 +377,7 @@ class Dispatcher:
     def add_chat_member_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -394,7 +390,7 @@ class Dispatcher:
     def add_chat_join_request_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -405,7 +401,7 @@ class Dispatcher:
     def add_chat_boost_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -416,7 +412,7 @@ class Dispatcher:
     def add_removed_chat_boost_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -427,14 +423,12 @@ class Dispatcher:
     def add_error_handler(
         self,
         handler: AbstractErrorHandler,
-        filter_: Optional[AbstractErrorBaseFilter] = None
+        error_type: type = Exception
     ) -> None:
-        filter_ = _get_error_filter(filter_)
-
         self._error_handlers.append(
             ErrorHandlerInfo(
                 handler=handler,
-                filter=filter_
+                error_type=error_type
             )
         )
 
@@ -444,7 +438,7 @@ class Dispatcher:
     def check_message_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
         with_chat_queue: bool = True
     ) -> bool:
@@ -459,7 +453,7 @@ class Dispatcher:
     def check_edited_message_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
         with_chat_queue: bool = False
     ) -> bool:
@@ -474,7 +468,7 @@ class Dispatcher:
     def check_channel_post_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
         with_chat_queue: bool = False
     ) -> bool:
@@ -489,7 +483,7 @@ class Dispatcher:
     def check_edited_channel_post_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
         with_chat_queue: bool = False
     ) -> bool:
@@ -504,7 +498,7 @@ class Dispatcher:
     def check_media_group_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
         with_chat_queue: bool = True
     ) -> bool:
@@ -519,7 +513,7 @@ class Dispatcher:
     def check_channel_media_group_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
         with_chat_queue: bool = False
     ) -> bool:
@@ -534,7 +528,7 @@ class Dispatcher:
     def check_inline_query_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None
     ) -> bool:
         return self._check_event_handler(
@@ -547,7 +541,7 @@ class Dispatcher:
     def check_chosen_inline_result_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None
     ) -> bool:
         return self._check_event_handler(
@@ -560,7 +554,7 @@ class Dispatcher:
     def check_callback_query_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None,
         with_chat_queue: bool = True
     ) -> bool:
@@ -575,7 +569,7 @@ class Dispatcher:
     def check_shipping_query_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None
     ) -> bool:
         return self._check_event_handler(
@@ -588,7 +582,7 @@ class Dispatcher:
     def check_pre_checkout_query_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Optional[RateLimit] = None
     ) -> bool:
         return self._check_event_handler(
@@ -601,7 +595,7 @@ class Dispatcher:
     def check_poll_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
@@ -612,7 +606,7 @@ class Dispatcher:
     def check_poll_answer_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
@@ -623,7 +617,7 @@ class Dispatcher:
     def check_my_chat_member_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
@@ -634,7 +628,7 @@ class Dispatcher:
     def check_chat_member_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
@@ -645,7 +639,7 @@ class Dispatcher:
     def check_chat_join_request_handler(
         self,
         handler: AbstractEventHandler,
-        filter_: Optional[AbstractEventBaseFilter] = None
+        filter_: Optional[AbstractBaseFilter] = None
     ) -> bool:
         return self._check_event_handler(
             handler=handler,
@@ -656,12 +650,10 @@ class Dispatcher:
     def check_error_handler(
         self,
         handler: AbstractErrorHandler,
-        filter_: Optional[AbstractErrorBaseFilter] = None
+        error_type: type
     ) -> bool:
-        filter_ = _get_error_filter(filter_)
-
         for i in self._error_handlers:
-            if (i.handler is handler) and (i.filter is filter_):
+            if (i.handler is handler) and (error_type is i.error_type):
                 return True
 
         return False
@@ -830,7 +822,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         event_type: EventType,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = None,
         with_chat_queue: bool = False
     ) -> None:
@@ -854,7 +846,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         event_type: EventType,
-        filter_: Optional[AbstractEventBaseFilter] = None,
+        filter_: Optional[AbstractBaseFilter] = None,
         rate_limit: Union[RateLimit, None, NotSet] = None,
         with_chat_queue: bool = False
     ) -> bool:
@@ -872,18 +864,22 @@ class Dispatcher:
 
         return False
 
-    def _get_event_handler(self, event: Event, event_type: EventType) -> Optional[EventHandlerInfo]:
-        results = {}
+    def _get_event_handler(self, event: EventInfo) -> Optional[EventHandlerInfo]:
+        filter_results: dict[AbstractBaseFilter, bool] = {}
 
-        for i in self._event_handlers[event_type]:
-            if i.filter.get_result(event, results):
+        for i in self._event_handlers[event.event_type]:
+            try:
+                result = filter_results[i.filter]
+            except KeyError:
+                result = i.filter.get_result(event.event)
+                filter_results[i.filter] = result
+
+            if result:
                 return i
 
-    def _get_error_handler(self, error: Exception, event: Event) -> Optional[ErrorHandlerInfo]:
-        results = {}
-
+    def _get_error_handler(self, error: Exception) -> Optional[ErrorHandlerInfo]:
         for i in self._error_handlers:
-            if i.filter.get_result(error, event, results):
+            if isinstance(error, i.error_type):
                 return i
 
     def _get_rate_limit(
@@ -1054,14 +1050,12 @@ class Dispatcher:
 
                     if result is ABORTING:
                         event.processing_status = ProcessingStatus.ABORTED
-                        break
 
-                if event.processing_status is ProcessingStatus.ABORTED:
-                    return
+                        return
 
                 event.middleware_pre_processed = True
 
-            event_handler = self._get_event_handler(event.event, event.event_type)
+            event_handler = self._get_event_handler(event)
 
             if event_handler is None:
                 event.processing_status = ProcessingStatus.HANDLER_NOT_FOUND
@@ -1105,10 +1099,8 @@ class Dispatcher:
 
                 if result is ABORTING:
                     event.processing_status = ProcessingStatus.ABORTED
-                    break
 
-            if event.processing_status is ProcessingStatus.ABORTED:
-                return
+                    return
 
             result = event_handler.handler.process_event(event.event)
 
@@ -1189,7 +1181,7 @@ class Dispatcher:
             for i in self._middlewares:
                 i.pre_process_error(error, event.event, event.event_type)
 
-            error_handler = self._get_error_handler(error, event.event)
+            error_handler = self._get_error_handler(error)
 
             if error_handler is None:
                 raise error
@@ -1208,15 +1200,9 @@ class Dispatcher:
 
 
 def _get_event_filter(
-    filter_: Optional[AbstractEventBaseFilter] = None
-) -> AbstractEventBaseFilter:
+    filter_: Optional[AbstractBaseFilter] = None
+) -> AbstractBaseFilter:
     return filter_ if filter_ is not None else _none_filter
-
-
-def _get_error_filter(
-    filter_: Optional[AbstractErrorBaseFilter] = None
-) -> AbstractErrorBaseFilter:
-    return filter_ if filter_ is not None else _none_error_filter
 
 
 def _get_server_root(

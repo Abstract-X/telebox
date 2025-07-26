@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 
-class AbstractEventHandler(ABC):
+class AbstractFilterFactory(ABC):
 
     @abstractmethod
-    def process_event(self, event):
+    def get(self, *args, **kwargs):
         pass
