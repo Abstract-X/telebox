@@ -175,6 +175,8 @@ class MediaGroup:
             if entities:
                 return entities
 
+        return []
+
     def get_command_args(self) -> list[str]:
         for i in self.messages:
             text = i.get_text()
