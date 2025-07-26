@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from telebox.dispatcher.handlers.event import AbstractEventHandler
-from telebox.dispatcher.filters.events.filter import AbstractEventBaseFilter
+from telebox.dispatcher.filters.filter import AbstractBaseFilter
 from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 
@@ -10,7 +10,7 @@ from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 @dataclass
 class EventHandlerInfo:
     handler: AbstractEventHandler
-    filter: AbstractEventBaseFilter
+    filter: AbstractBaseFilter
     with_chat_queue: bool
     rate_limiter: Optional[RateLimiter] = None
 

@@ -1,16 +1,12 @@
-from .dispatcher import Dispatcher, Event
+from .dispatcher import Dispatcher
+from .typing import Event
 from .enums import EventType, MediaGroupContentType
 from .types import Aborting, ABORTING
 from .handlers import AbstractEventHandler, AbstractErrorHandler
 from .filters import (
-    AbstractEventFilterFactory,
-    AbstractEventFilter,
-    AbstractEventBaseFilter,
-    AbstractEventFilterCache,
-    AbstractErrorFilterFactory,
-    AbstractErrorFilter,
-    AbstractErrorBaseFilter,
-    AbstractErrorFilterCache
+    AbstractFilterFactory,
+    AbstractFilter,
+    AbstractBaseFilter
 )
 from .middlewares import Middleware
 from .utils import (
@@ -35,14 +31,9 @@ __all__ = [
     "ABORTING",
     "AbstractEventHandler",
     "AbstractErrorHandler",
-    "AbstractEventFilterFactory",
-    "AbstractEventFilter",
-    "AbstractEventBaseFilter",
-    "AbstractEventFilterCache",
-    "AbstractErrorFilterFactory",
-    "AbstractErrorFilter",
-    "AbstractErrorBaseFilter",
-    "AbstractErrorFilterCache",
+    "AbstractFilterFactory",
+    "AbstractFilter",
+    "AbstractBaseFilter",
     "Middleware",
     "MediaGroup",
     "RateLimit",
