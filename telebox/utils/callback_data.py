@@ -10,9 +10,14 @@ def get_callback_data(id_: int, payload: Union[str, int, float, bool, list, None
     if payload is not None:
         serialized_payload = _get_serialized_object(payload)
 
-        return f"{id_}{DATA_DELIMITER}{serialized_payload}"
+        data = f"{id_}{DATA_DELIMITER}{serialized_payload}"
+    else:
+        data = str(id_)
 
-    return str(id_)
+    if len(data.encode("UTF-8")) > 64:
+        raise ValueError("Callback data is greater than 64 bytes!")
+
+    return data
 
 
 def get_parsed_callback_data(data: str) -> tuple[int, Union[str, int, float, bool, list, None]]:
@@ -30,7 +35,7 @@ def get_parsed_callback_data(data: str) -> tuple[int, Union[str, int, float, boo
     return int(id_), payload
 
 
-def _get_serialized_object(object_) -> str:
+def _get_serialized_object(object_: Union[str, int, float, bool, list, None]) -> str:
     if isinstance(object_, str):
         escaped_string = _get_escaped_string(object_)
 
@@ -44,9 +49,17 @@ def _get_serialized_object(object_) -> str:
     elif isinstance(object_, float):
         return f"f{object_}"
     elif isinstance(object_, list):
-        escaped_string = LIST_DELIMITER.join(
-            _get_serialized_object(i) for i in object_
-        )
+        serialized_objects = []
+
+        for i in object_:
+            if isinstance(i, list):
+                raise ValueError("Nested lists are not supported!")
+
+            serialized_objects.append(
+                _get_serialized_object(i)
+            )
+
+        escaped_string = LIST_DELIMITER.join(serialized_objects)
 
         return f"l{escaped_string}"
     else:
@@ -58,6 +71,9 @@ def _get_deserialized_object(string: str):
     value = string[1:]
 
     if character == "l":
+        if not value:
+            return []
+
         return [
             _get_deserialized_object(i)
             for i in _get_parts(LIST_DELIMITER, value)
