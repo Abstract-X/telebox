@@ -4,5 +4,5 @@ from telebox.errors import TeleboxError
 
 
 @dataclass
-class EnvError(TeleboxError):
-    """Class for env errors."""
+class DepsError(TeleboxError):
+    """Class for deps errors."""

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Union, Any, Iterable, TYPE_CHECKING
+from typing import Optional, Union, Iterable, TYPE_CHECKING
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.storage import AbstractStateStorage
@@ -13,6 +13,7 @@ from telebox.state_machine.errors import (
     PreviousStateNotFoundError
 )
 from telebox.dispatcher.handlers.event import AbstractEventHandler
+from telebox.utils.deps.deps import Deps
 if TYPE_CHECKING:
     from telebox.dispatcher.typing import Event
 
@@ -26,8 +27,10 @@ class StateMachine:
         self,
         initial_state: State,
         states: Iterable[State],
-        storage: AbstractStateStorage
+        storage: AbstractStateStorage,
+        deps: Deps
     ):
+        self._deps = deps
         self._state_manager = StateManager(initial_state, storage)
         self.add_states(states)
         self._transition_scheme = TransitionScheme()
@@ -96,11 +99,12 @@ class StateMachine:
         handler: AbstractEventHandler,
         event: Optional[Event] = None,
         direction: Optional[str] = None,
-        data: Any = None,
+        data: Optional[dict] = None,
         *,
         chat_id: int,
         user_id: Optional[int] = None
     ) -> None:
+        data = data or {}
         magazine = self._state_manager.load_magazine(chat_id=chat_id, user_id=user_id)
         current_state = self._state_manager.get_state(magazine.current_state)
 
@@ -132,11 +136,12 @@ class StateMachine:
     def set_previous_state(
         self,
         event: Optional[Event] = None,
-        data: Any = None,
+        data: Optional[dict] = None,
         *,
         chat_id: int,
         user_id: Optional[int] = None
     ) -> None:
+        data = data or {}
         magazine = self._state_manager.load_magazine(chat_id=chat_id, user_id=user_id)
         current_state = self._state_manager.get_state(magazine.current_state)
 
@@ -162,11 +167,12 @@ class StateMachine:
         self,
         state: State,
         event: Optional[Event] = None,
-        data: Any = None,
+        data: Optional[dict] = None,
         *,
         chat_id: int,
         user_id: Optional[int] = None
     ) -> None:
+        data = data or {}
         magazine = self._state_manager.load_magazine(chat_id=chat_id, user_id=user_id)
         current_state = self._state_manager.get_state(magazine.current_state)
         self._process_transition(
@@ -182,18 +188,31 @@ class StateMachine:
     def reset_state(
         self,
         event: Optional[Event] = None,
-        data: Any = None,
+        data: Optional[dict] = None,
         *,
         chat_id: int,
         user_id: Optional[int] = None,
         with_exit: bool = True
     ) -> None:
+        data = data or {}
         state = self.get_state(chat_id=chat_id, user_id=user_id)
 
         if with_exit:
-            state.process_exit(chat_id, user_id, event, data)
+            state.process_exit(
+                deps=self._deps,
+                chat_id=chat_id,
+                user_id=user_id,
+                event=event,
+                data=data
+            )
 
-        state.process_enter(chat_id, user_id, event, data)
+        state.process_enter(
+            deps=self._deps,
+            chat_id=chat_id,
+            user_id=user_id,
+            event=event,
+            data=data
+        )
 
     def _process_transition(
         self,
@@ -201,12 +220,25 @@ class StateMachine:
         source_state: State,
         destination_state: State,
         event: Optional[Event] = None,
-        data: Any = None,
+        data: Optional[dict] = None,
         *,
         chat_id: int,
         user_id: int
     ) -> None:
-        source_state.process_exit(chat_id, user_id, event, data)
-        destination_state.process_enter(chat_id, user_id, event, data)
+        data = data or {}
+        source_state.process_exit(
+            deps=self._deps,
+            chat_id=chat_id,
+            user_id=user_id,
+            event=event,
+            data=data
+        )
+        destination_state.process_enter(
+            deps=self._deps,
+            chat_id=chat_id,
+            user_id=user_id,
+            event=event,
+            data=data
+        )
         magazine.set_state(str(destination_state))
         self._state_manager.save_magazine(magazine, chat_id=chat_id, user_id=user_id)
