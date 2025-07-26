@@ -39,6 +39,7 @@ from telebox.dispatcher.types.event_handler_info import EventHandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.types.aborting import ABORTING
 from telebox.dispatcher.errors import DispatcherError
+from telebox.utils.deps.deps import Deps
 from telebox.utils.not_set import NotSet, NOT_SET
 from telebox.utils.serialization import get_deserialized_data
 
@@ -60,6 +61,7 @@ class Dispatcher:
     def __init__(
         self,
         bot: "Bot",
+        deps: Deps,
         *,
         min_workers: int = 10,
         max_workers: int = 100,
@@ -67,6 +69,7 @@ class Dispatcher:
         media_group_collecting_secs: Union[int, float] = 3
     ):
         self.bot = bot
+        self._deps = deps
         self._min_workers = min_workers
         self._max_workers = max_workers
         self._rate_limit = rate_limit
@@ -1044,6 +1047,7 @@ class Dispatcher:
             if not event.middleware_pre_processed:
                 for i in self._middlewares:
                     result = i.pre_process_event(
+                        deps=self._deps,
                         event=event.event,
                         event_type=event.event_type
                     )
@@ -1092,6 +1096,7 @@ class Dispatcher:
 
             for i in self._middlewares:
                 result = i.process_event(
+                    deps=self._deps,
                     event=event.event,
                     event_type=event.event_type,
                     handler=event_handler.handler
@@ -1102,7 +1107,10 @@ class Dispatcher:
 
                     return
 
-            result = event_handler.handler.process_event(event.event)
+            result = event_handler.handler.process_event(
+                deps=self._deps,
+                event=event.event
+            )
 
             if result is ABORTING:
                 event.processing_status = ProcessingStatus.ABORTED
@@ -1111,6 +1119,7 @@ class Dispatcher:
 
             for i in self._middlewares:
                 result = i.post_process_event(
+                    deps=self._deps,
                     event=event.event,
                     event_type=event.event_type,
                     handler=event_handler.handler
@@ -1179,7 +1188,12 @@ class Dispatcher:
         # noinspection PyBroadException
         try:
             for i in self._middlewares:
-                i.pre_process_error(error, event.event, event.event_type)
+                i.pre_process_error(
+                    deps=self._deps,
+                    error=error,
+                    event=event.event,
+                    event_type=event.event_type
+                )
 
             error_handler = self._get_error_handler(error)
 
@@ -1189,12 +1203,26 @@ class Dispatcher:
             error_handler_context.set(error_handler.handler)
 
             for i in self._middlewares:
-                i.process_error(error, event.event, event.event_type)
+                i.process_error(
+                    deps=self._deps,
+                    error=error,
+                    event=event.event,
+                    event_type=event.event_type
+                )
 
-            error_handler.handler.process_error(error, event.event)
+            error_handler.handler.process_error(
+                deps=self._deps,
+                error=error,
+                event=event.event
+            )
 
             for i in self._middlewares:
-                i.post_process_error(error, event.event, event.event_type)
+                i.post_process_error(
+                    deps=self._deps,
+                    error=error,
+                    event=event.event,
+                    event_type=event.event_type
+                )
         except Exception:
             logger.exception("An error occurred while processing an event %r!", event.event)
 

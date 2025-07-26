@@ -7,6 +7,7 @@ class Middleware:
 
     def pre_process_event(
         self,
+        deps,
         event: Event,
         event_type: EventType
     ):
@@ -14,6 +15,7 @@ class Middleware:
 
     def process_event(
         self,
+        deps,
         event: Event,
         event_type: EventType,
         handler: AbstractEventHandler
@@ -22,6 +24,7 @@ class Middleware:
 
     def post_process_event(
         self,
+        deps,
         event: Event,
         event_type: EventType,
         handler: AbstractEventHandler
@@ -30,6 +33,7 @@ class Middleware:
 
     def pre_process_error(
         self,
+        deps,
         error: Exception,
         event: Event,
         event_type: EventType
@@ -38,6 +42,7 @@ class Middleware:
 
     def process_error(
         self,
+        deps,
         error: Exception,
         event: Event,
         event_type: EventType
@@ -46,6 +51,7 @@ class Middleware:
 
     def post_process_error(
         self,
+        deps,
         error: Exception,
         event: Event,
         event_type: EventType

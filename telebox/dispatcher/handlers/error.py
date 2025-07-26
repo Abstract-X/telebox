@@ -4,5 +4,5 @@ from abc import ABC, abstractmethod
 class AbstractErrorHandler(ABC):
 
     @abstractmethod
-    def process_error(self, error, event):
+    def process_error(self, deps, error, event):
         pass

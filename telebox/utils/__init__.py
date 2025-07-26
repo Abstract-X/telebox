@@ -1,7 +1,7 @@
 from .not_set import NotSet, NOT_SET
 from .group import Group
 from .task_executor import TaskExecutor
-from .env import Env
+from .deps import Deps
 from .text import get_html_text, get_markdown_text
 from .signals import set_signal_handler
 from .discovering import get_group
@@ -13,7 +13,7 @@ __all__ = [
     "NOT_SET",
     "Group",
     "TaskExecutor",
-    "Env",
+    "Deps",
     "get_html_text",
     "get_markdown_text",
     "set_signal_handler",
