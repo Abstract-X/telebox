@@ -16,13 +16,6 @@ class InputFile(Type):
     def __attrs_post_init__(self):
         if self.type is InputFileType.PATH:
             self.file = Path(self.file).resolve()
-
-            if not self.file.exists():
-                raise ValueError(f"File doesn't exist {self.file!r}!")
-
-            if not self.file.is_file():
-                raise ValueError(f"File is not file {self.file!r}!")
-
         if not self.name:
             if self.type is InputFileType.FILE:
                 if hasattr(self.file, "name"):

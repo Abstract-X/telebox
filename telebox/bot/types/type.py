@@ -8,7 +8,7 @@ class Type:
         values = {}
 
         for i in attrs.fields(type(self)):
-            if not i.repr:
+            if not i.repr or not i.init:
                 continue
 
             value = getattr(self, i.name)

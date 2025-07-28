@@ -9,7 +9,6 @@ from requests_toolbelt import MultipartEncoder
 
 from telebox.bot.utils.converter import Converter, get_timestamp
 from telebox.bot.errors import get_request_error, BotError, RetryAfterError, InternalServerError
-from telebox.bot.consts import chat_member_statuses
 from telebox.bot.enums.input_file_type import InputFileType
 from telebox.bot.types.types.response_parameters import ResponseParameters
 from telebox.bot.types.types.update import Update
@@ -54,10 +53,6 @@ from telebox.bot.types.types.game_high_score import GameHighScore
 from telebox.bot.types.types.chat_member import ChatMember
 from telebox.bot.types.types.chat_member_owner import ChatMemberOwner
 from telebox.bot.types.types.chat_member_administrator import ChatMemberAdministrator
-from telebox.bot.types.types.chat_member_member import ChatMemberMember
-from telebox.bot.types.types.chat_member_restricted import ChatMemberRestricted
-from telebox.bot.types.types.chat_member_left import ChatMemberLeft
-from telebox.bot.types.types.chat_member_banned import ChatMemberBanned
 from telebox.bot.types.types.inline_query_results_button import InlineQueryResultsButton
 from telebox.bot.types.types.reaction_type import ReactionType
 from telebox.bot.types.types.reply_parameters import ReplyParameters
@@ -100,14 +95,6 @@ from telebox.utils.serialization import get_serialized_data
 
 
 API_URL = "https://api.telegram.org"
-_CHAT_MEMBER_TYPES = {
-    chat_member_statuses.CREATOR: ChatMemberOwner,
-    chat_member_statuses.ADMINISTRATOR: ChatMemberAdministrator,
-    chat_member_statuses.MEMBER: ChatMemberMember,
-    chat_member_statuses.RESTRICTED: ChatMemberRestricted,
-    chat_member_statuses.LEFT: ChatMemberLeft,
-    chat_member_statuses.KICKED: ChatMemberBanned
-}
 
 
 class Bot:
@@ -1772,7 +1759,10 @@ class Bot:
     ) -> list[Union[ChatMemberOwner,
                     ChatMemberAdministrator]]:
         return [
-            self._converter.get_object(data=i, class_=_CHAT_MEMBER_TYPES[i["status"]])
+            self._converter.get_object(
+                data=i,
+                class_=ChatMember
+            )
             for i in self._send_request(
                 method="getChatAdministrators",
                 parameters={
@@ -1814,7 +1804,7 @@ class Bot:
 
         return self._converter.get_object(
             data=data,
-            class_=_CHAT_MEMBER_TYPES[data["status"]]
+            class_=ChatMember
         )
 
     def set_chat_sticker_set(
@@ -3436,7 +3426,7 @@ class Bot:
                 return f"attach://{name}"
 
             return value.name, file
-        elif self._converter.check_object(value):
+        elif self._converter.check_class(type(value)):
             return {
                 name: self._prepare_parameter_value(
                     value_,
