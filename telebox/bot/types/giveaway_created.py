@@ -1,3 +1,5 @@
+from typing import Optional
+
 from attrs import define
 
 from telebox.bot.type import Type
@@ -5,4 +7,4 @@ from telebox.bot.type import Type
 
 @define(repr=False)
 class GiveawayCreated(Type):
-    pass
+    prize_star_count: Optional[int] = None

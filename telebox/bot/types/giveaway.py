@@ -16,4 +16,5 @@ class Giveaway(Type):
     has_public_winners: Optional[Literal[True]] = None
     prize_description: Optional[str] = None
     country_codes: Optional[list[str]] = None
+    prize_star_count: Optional[int] = None
     premium_subscription_month_count: Optional[int] = None
