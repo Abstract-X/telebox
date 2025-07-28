@@ -1,0 +1,15 @@
+from typing import Optional
+
+from attrs import define
+
+from telebox.bot.type import Type
+from telebox.bot.consts import inline_query_result_types
+from telebox.bot.types.inline_keyboard_markup import InlineKeyboardMarkup
+
+
+@define(repr=False)
+class InlineQueryResultGame(Type):
+    id: str
+    game_short_name: str
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    type: str = inline_query_result_types.GAME

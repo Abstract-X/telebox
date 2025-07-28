@@ -6,17 +6,17 @@ import attrs
 import cattrs
 from cattrs.gen import make_dict_unstructure_fn, make_dict_structure_fn, override
 
-from telebox.bot.types.type import Type as Type_
-from telebox.bot.types.types.input_file import InputFile
-from telebox.bot.types.types.input_message_content import InputMessageContent
-from telebox.bot.types.types.inline_query_result import InlineQueryResult
-from telebox.bot.types.types.transaction_partner import TransactionPartner
-from telebox.bot.types.types.revenue_withdrawal_state import RevenueWithdrawalState
-from telebox.bot.types.types.maybe_inaccessible_message import MaybeInaccessibleMessage
-from telebox.bot.types.types.chat_member import ChatMember
-from telebox.bot.types.types.chat_boost_source import ChatBoostSource
-from telebox.bot.types.types.message import Message
-from telebox.bot.types.types.inaccessible_message import InaccessibleMessage
+from telebox.bot.type import Type as Type_
+from telebox.bot.types.input_file import InputFile
+from telebox.bot.types.input_message_content import InputMessageContent
+from telebox.bot.types.inline_query_result import InlineQueryResult
+from telebox.bot.types.transaction_partner import TransactionPartner
+from telebox.bot.types.revenue_withdrawal_state import RevenueWithdrawalState
+from telebox.bot.types.maybe_inaccessible_message import MaybeInaccessibleMessage
+from telebox.bot.types.chat_member import ChatMember
+from telebox.bot.types.chat_boost_source import ChatBoostSource
+from telebox.bot.types.message import Message
+from telebox.bot.types.inaccessible_message import InaccessibleMessage
 from telebox.utils.not_set import NotSet, NOT_SET
 
 

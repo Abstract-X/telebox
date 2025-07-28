@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from attrs import define
 
-from telebox.bot.types.type import Type
+from telebox.bot.type import Type
 from telebox.bot.utils.converter import Converter
 
 

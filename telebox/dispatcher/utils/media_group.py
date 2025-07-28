@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Literal
 
-from telebox.bot.types.types.message import Message
-from telebox.bot.types.types.user import User
-from telebox.bot.types.types.chat import Chat
-from telebox.bot.types.types.message_origin import MessageOrigin
-from telebox.bot.types.types.message_entity import MessageEntity
+from telebox.bot.types.message import Message
+from telebox.bot.types.user import User
+from telebox.bot.types.chat import Chat
+from telebox.bot.types.message_origin import MessageOrigin
+from telebox.bot.types.message_entity import MessageEntity
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
 

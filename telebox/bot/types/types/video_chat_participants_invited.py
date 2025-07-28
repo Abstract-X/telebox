@@ -1,9 +1,0 @@
-from attrs import define
-
-from telebox.bot.types.type import Type
-from telebox.bot.types.types.user import User
-
-
-@define(repr=False)
-class VideoChatParticipantsInvited(Type):
-    users: list[User]

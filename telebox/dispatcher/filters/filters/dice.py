@@ -2,8 +2,8 @@ from typing import Optional
 
 from telebox.dispatcher.filters.filter import AbstractFilter
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.bot.types.types.message import Message
-from telebox.bot.types.types.dice import Dice
+from telebox.bot.types.message import Message
+from telebox.bot.types.dice import Dice
 
 
 class DiceFilter(AbstractFilter):

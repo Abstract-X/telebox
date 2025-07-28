@@ -1,6 +1,6 @@
 import time
 
-from telebox.bot.types.types.message import Message
+from telebox.bot.types.message import Message
 from telebox.dispatcher.enums.event_type import EventType
 
 

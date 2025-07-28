@@ -2,10 +2,10 @@ from dataclasses import dataclass
 from typing import Optional, TYPE_CHECKING
 
 from telebox.bot.consts import menu_button_types
-from telebox.bot.types.types.bot_command_scope import BotCommandScope
-from telebox.bot.types.types.bot_command import BotCommand
-from telebox.bot.types.types.input_file import InputFile
-from telebox.bot.types.types.menu_button_web_app import MenuButtonWebApp
+from telebox.bot.types.bot_command_scope import BotCommandScope
+from telebox.bot.types.bot_command import BotCommand
+from telebox.bot.types.input_file import InputFile
+from telebox.bot.types.menu_button_web_app import MenuButtonWebApp
 if TYPE_CHECKING:
     from telebox.bot.bot import Bot
 

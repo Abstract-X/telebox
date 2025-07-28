@@ -3,7 +3,7 @@ from typing import Optional, Any
 from http import HTTPStatus
 
 from telebox.errors import TeleboxError
-from telebox.bot.types.types.response_parameters import ResponseParameters
+from telebox.bot.types.response_parameters import ResponseParameters
 
 
 @dataclass

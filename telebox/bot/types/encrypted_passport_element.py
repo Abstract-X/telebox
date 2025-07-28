@@ -1,0 +1,20 @@
+from typing import Optional
+
+from attrs import define
+
+from telebox.bot.type import Type
+from telebox.bot.types.passport_file import PassportFile
+
+
+@define(repr=False)
+class EncryptedPassportElement(Type):
+    type: str
+    hash: str
+    data: Optional[str] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    files: Optional[list[PassportFile]] = None
+    front_side: Optional[PassportFile] = None
+    reverse_side: Optional[PassportFile] = None
+    selfie: Optional[PassportFile] = None
+    translation: Optional[list[PassportFile]] = None

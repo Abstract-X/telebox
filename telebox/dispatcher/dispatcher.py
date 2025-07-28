@@ -12,8 +12,8 @@ from requests.exceptions import Timeout as RequestTimeoutError
 
 if TYPE_CHECKING:
     from telebox.bot.bot import Bot
-from telebox.bot.types.types.update import Update
-from telebox.bot.types.types.message import Message
+from telebox.bot.types.update import Update
+from telebox.bot.types.message import Message
 from telebox.bot.utils.converter import Converter
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.dispatcher.enums.event_type import EventType

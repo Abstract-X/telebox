@@ -2,7 +2,7 @@ import pytest
 from attrs import define
 
 from telebox.bot.utils.converter import Converter
-from telebox.bot.types import Type
+from telebox.bot.type import Type
 import telebox.bot.types
 
 

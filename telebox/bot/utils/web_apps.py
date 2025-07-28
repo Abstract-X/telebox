@@ -4,7 +4,7 @@ import hashlib
 import hmac
 
 from telebox.bot.utils.converter import Converter
-from telebox.bot.types.types.web_app_init_data import WebAppInitData
+from telebox.bot.types.web_app_init_data import WebAppInitData
 from telebox.utils.serialization import get_deserialized_data
 
 

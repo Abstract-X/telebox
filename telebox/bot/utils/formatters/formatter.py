@@ -3,7 +3,7 @@ from typing import Optional
 import re
 
 from telebox.bot.utils.deep_links import get_user_link
-from telebox.bot.types.types.message_entity import MessageEntity
+from telebox.bot.types.message_entity import MessageEntity
 from telebox.bot.consts import message_entity_types
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 
