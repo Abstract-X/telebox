@@ -16,6 +16,7 @@ class GiveawayWinners(Type):
     winner_count: int
     winners: list[User]
     additional_chat_count: Optional[int] = None
+    prize_star_count: Optional[int] = None
     premium_subscription_month_count: Optional[int] = None
     unclaimed_prize_count: Optional[int] = None
     only_new_members: Optional[Literal[True]] = None

@@ -10,5 +10,6 @@ from telebox.bot.types.user import User
 class ChatBoostSourceGiveaway(Type):
     giveaway_message_id: int
     user: Optional[User] = None
+    prize_star_count: Optional[int] = None
     is_unclaimed: Optional[Literal[True]] = None
     source: str = "giveaway"

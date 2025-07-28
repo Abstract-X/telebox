@@ -212,6 +212,7 @@ from .web_app_init_data import WebAppInitData
 from .web_app_user import WebAppUser
 from .web_app_chat import WebAppChat
 from .reaction_type_paid import ReactionTypePaid
+from .paid_media_purchased import PaidMediaPurchased
 
 
 __all__ = [
@@ -427,5 +428,6 @@ __all__ = [
     "WebAppInitData",
     "WebAppUser",
     "WebAppChat",
-    "ReactionTypePaid"
+    "ReactionTypePaid",
+    "PaidMediaPurchased"
 ]

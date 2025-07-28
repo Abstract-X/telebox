@@ -2489,6 +2489,7 @@ class Bot:
         media: list[InputPaidMedia],
         *,
         timeout_secs: Union[int, float, None] = None,
+        payload: Optional[str] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -2510,6 +2511,7 @@ class Bot:
                     "chat_id": chat_id,
                     "star_count": star_count,
                     "media": media,
+                    "payload": payload,
                     "caption": caption,
                     "parse_mode": self._get_parse_mode(
                         parse_mode=parse_mode,

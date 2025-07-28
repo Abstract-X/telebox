@@ -20,6 +20,7 @@ from telebox.bot.types.chat_boost_updated import ChatBoostUpdated
 from telebox.bot.types.chat_boost_removed import ChatBoostRemoved
 from telebox.bot.types.business_connection import BusinessConnection
 from telebox.bot.types.business_messages_deleted import BusinessMessagesDeleted
+from telebox.bot.types.paid_media_purchased import PaidMediaPurchased
 
 
 UpdateContent = Union[
@@ -38,7 +39,8 @@ UpdateContent = Union[
     BusinessConnection,
     BusinessMessagesDeleted,
     ChatBoostUpdated,
-    ChatBoostRemoved
+    ChatBoostRemoved,
+    PaidMediaPurchased
 ]
 
 
@@ -60,6 +62,7 @@ class Update(Type):
     callback_query: Optional[CallbackQuery] = None
     shipping_query: Optional[ShippingQuery] = None
     pre_checkout_query: Optional[PreCheckoutQuery] = None
+    purchased_paid_media: Optional[PaidMediaPurchased] = None
     poll: Optional[Poll] = None
     poll_answer: Optional[PollAnswer] = None
     my_chat_member: Optional[ChatMemberUpdated] = None
@@ -116,6 +119,9 @@ class Update(Type):
         elif self.pre_checkout_query is not None:
             self.content = self.pre_checkout_query
             self.content_type = UpdateContentType.PRE_CHECKOUT_QUERY
+        elif self.purchased_paid_media is not None:
+            self.content = self.purchased_paid_media
+            self.content_type = UpdateContentType.PURCHASED_PAID_MEDIA
         elif self.poll is not None:
             self.content = self.poll
             self.content_type = UpdateContentType.POLL

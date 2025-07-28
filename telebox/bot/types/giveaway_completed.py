@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Literal
 
 from attrs import define
 
@@ -11,3 +11,4 @@ class GiveawayCompleted(Type):
     winner_count: int
     unclaimed_prize_count: Optional[int] = None
     giveaway_message: Optional[Message] = None
+    is_star_giveaway: Optional[Literal[True]] = None
