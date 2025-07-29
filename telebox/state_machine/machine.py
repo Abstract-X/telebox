@@ -94,6 +94,15 @@ class StateMachine:
 
         return self._state_manager.get_state(magazine.current_state)
 
+    def get_states(self, *, chat_id: int, user_id: Optional[int] = None) -> list[State]:
+        return [
+            self._state_manager.get_state(i)
+            for i in self._state_manager.load_magazine(
+                chat_id=chat_id,
+                user_id=user_id
+            )
+        ]
+
     def set_next_state(
         self,
         handler: AbstractEventHandler,

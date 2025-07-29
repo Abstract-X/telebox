@@ -22,6 +22,12 @@ class Context:
             user_id=None if for_chat else get_context_event_user_id()
         )
 
+    def get_states(self, *, for_chat: bool = False) -> list[State]:
+        return self._machine.get_states(
+            chat_id=get_context_event_chat_id(),
+            user_id=None if for_chat else get_context_event_user_id()
+        )
+
     def set_next_state(
         self,
         direction: Optional[str] = None,
