@@ -81,6 +81,10 @@ class MediaGroup:
         return self.messages[0].forward_origin
 
     @property
+    def business_connection_id(self) -> Optional[str]:
+        return self.messages[0].business_connection_id
+
+    @property
     def is_topic_messages(self) -> Optional[Literal[True]]:
         return self.messages[0].is_topic_message
 
