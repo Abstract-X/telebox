@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 import secrets
 from http import HTTPStatus
+from pathlib import Path
 
 from requests import Session, Response, RequestException
 from requests_toolbelt import MultipartEncoder
@@ -124,7 +125,7 @@ class Bot:
         self.context = Context(self)
         self._converter = Converter()
         self._user: Optional[User] = None
-        self._cached_file_ids: dict[tuple[str, str], str] = {}
+        self._cached_file_ids: dict[str, str] = {}
 
     @property
     def user(self) -> User:
@@ -135,6 +136,17 @@ class Bot:
             )
 
         return self._user
+
+    def clear_file_cache(self, path: Union[str, Path, None] = None) -> None:
+        if path is None:
+            self._cached_file_ids.clear()
+        else:
+            path = Path(path).resolve()
+
+            try:
+                del self._cached_file_ids[str(path)]
+            except KeyError:
+                return
 
     def get_updates(
         self,
@@ -3321,9 +3333,9 @@ class Bot:
             use_cache
             and isinstance(file, InputFile)
             and (file.type is InputFileType.PATH)
-            and ((str(file.file), file.name) not in self._cached_file_ids)
+            and (str(file.file) not in self._cached_file_ids)
         ):
-            self._cached_file_ids[(str(file.file), file.name)] = file_id
+            self._cached_file_ids[str(file.file)] = file_id
 
     def _send_request(
         self,
@@ -3404,7 +3416,7 @@ class Bot:
             and isinstance(file, InputFile)
             and (file.type is InputFileType.PATH)
         ):
-            return self._cached_file_ids.get((str(file.file), file.name), file)
+            return self._cached_file_ids.get(str(file.file), file)
 
         return file
 
