@@ -1,4 +1,5 @@
 from typing import Optional, BinaryIO, Union
+import secrets
 from pathlib import Path
 import os.path
 
@@ -10,12 +11,16 @@ from telebox.bot.enums.input_file_type import InputFileType
 
 @define(repr=False)
 class InputFile(Type):
-    file: Union[str, Path, BinaryIO, None] = field(repr=False)
+    file: Union[str, Path, BinaryIO] = field(repr=False)
     name: Optional[str] = None
 
     def __attrs_post_init__(self):
+        if isinstance(self.file, str):
+            self.file = Path(self.file)
+
         if self.type is InputFileType.PATH:
-            self.file = Path(self.file).resolve()
+            self.file = self.file.resolve()
+
         if not self.name:
             if self.type is InputFileType.FILE:
                 if hasattr(self.file, "name"):
@@ -24,11 +29,11 @@ class InputFile(Type):
                 self.name = self.file.name
 
         if not self.name:
-            self.name = "untitled"
+            self.name = secrets.token_urlsafe(12)
 
     @property
     def type(self) -> InputFileType:
-        if isinstance(self.file, (Path, str)):
+        if isinstance(self.file, Path):
             return InputFileType.PATH
         else:
             return InputFileType.FILE
