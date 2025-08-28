@@ -56,7 +56,6 @@ from telebox.utils.not_set import NotSet, NOT_SET
 
 
 class Context:
-
     def __init__(self, bot: "Bot"):
         self._bot = bot
 
@@ -305,6 +304,7 @@ class Context:
         photo: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -324,6 +324,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             photo=photo,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),
@@ -347,6 +348,7 @@ class Context:
         audio: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -368,6 +370,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             audio=audio,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),
@@ -393,6 +396,7 @@ class Context:
         document: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         thumbnail: Union[InputFile, str, None] = None,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
@@ -412,6 +416,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             document=document,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),
@@ -435,6 +440,7 @@ class Context:
         video: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
@@ -459,6 +465,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             video=video,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),
@@ -487,6 +494,7 @@ class Context:
         animation: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
@@ -510,6 +518,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             animation=animation,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),
@@ -537,6 +546,7 @@ class Context:
         voice: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         caption: Optional[str] = None,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Optional[list[MessageEntity]] = None,
@@ -555,6 +565,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             voice=voice,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),
@@ -577,6 +588,7 @@ class Context:
         video_note: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         duration: Optional[int] = None,
         length: Optional[int] = None,
         thumbnail: Union[InputFile, str, None] = None,
@@ -594,6 +606,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             video_note=video_note,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),
@@ -618,6 +631,7 @@ class Context:
                           InputMediaVideo]],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         caption: Union[str, None, NotSet] = NOT_SET,
         caption_entities: Union[list[MessageEntity], None, NotSet] = NOT_SET,
         parse_mode: Union[str, None, NotSet] = NOT_SET,
@@ -630,6 +644,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             media=media,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),
@@ -1726,6 +1741,7 @@ class Context:
         sticker: Union[InputFile, str],
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -1741,6 +1757,7 @@ class Context:
             chat_id=get_context_event_chat_id(),
             sticker=sticker,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             emoji=emoji,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
