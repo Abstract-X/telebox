@@ -90,6 +90,17 @@ class Converter(metaclass=Singleton):
             hook=self._get_maybe_inaccessible_message
         )
 
+        for i in (
+            InputFile,
+            Union[InputFile, str],
+            Union[InputFile, str, NotSet],
+            Union[str, NotSet]
+        ):
+            self._register_optional_structure_hook(
+                class_=i,
+                hook=lambda object_: object_
+            )
+
         for type_, name in (
             (ChatMember, "status"),
             (ChatBoostSource, "source"),
