@@ -1626,12 +1626,14 @@ class Context:
         media: InputMedia,
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         message_id: Optional[int] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None
     ) -> Message:
         return self._bot.edit_message_media(
             media=media,
             timeout_secs=timeout_secs,
+            use_cache=use_cache,
             business_connection_id=get_context_event_business_connection_id(
                 strictly=False
             ),

@@ -28,6 +28,7 @@ from telebox.bot.types.input_media_audio import InputMediaAudio
 from telebox.bot.types.input_media_document import InputMediaDocument
 from telebox.bot.types.input_media_photo import InputMediaPhoto
 from telebox.bot.types.input_media_video import InputMediaVideo
+from telebox.bot.types.input_media_animation import InputMediaAnimation
 from telebox.bot.types.user_profile_photos import UserProfilePhotos
 from telebox.bot.types.chat_permissions import ChatPermissions
 from telebox.bot.types.file import File
@@ -2430,6 +2431,7 @@ class Bot:
         media: InputMedia,
         *,
         timeout_secs: Union[int, float, None] = None,
+        use_cache: bool = True,
         business_connection_id: Optional[str] = None,
         chat_id: Union[int, str, None] = None,
         message_id: Optional[int] = None,
@@ -2438,6 +2440,7 @@ class Bot:
     ) -> Union[Message, Literal[True]]:
         media_class = type(media)
         media_data = self._converter.get_data(media)
+        media_data["media"] = self._get_file(media_data["media"], use_cache=use_cache)
         media_data["parse_mode"] = self._get_parse_mode(
             parse_mode=media_data.get("parse_mode", NOT_SET),
             with_entities=bool(
@@ -2461,10 +2464,46 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return data if data is True else self._converter.get_object(
+        if data is True:
+            return True
+
+        message = self._converter.get_object(
             data=data,
             class_=Message
         )
+
+        if isinstance(media, InputMediaPhoto):
+            self._process_file_id(
+                file=media.media,
+                file_id=message.best_photo.file_id,
+                use_cache=use_cache
+            )
+        elif isinstance(media, InputMediaVideo):
+            self._process_file_id(
+                file=media.media,
+                file_id=message.video.file_id,
+                use_cache=use_cache
+            )
+        elif isinstance(media, InputMediaAnimation):
+            self._process_file_id(
+                file=media.media,
+                file_id=message.animation.file_id,
+                use_cache=use_cache
+            )
+        elif isinstance(media, InputMediaAudio):
+            self._process_file_id(
+                file=media.media,
+                file_id=message.audio.file_id,
+                use_cache=use_cache
+            )
+        elif isinstance(media, InputMediaDocument):
+            self._process_file_id(
+                file=media.media,
+                file_id=message.document.file_id,
+                use_cache=use_cache
+            )
+
+        return message
 
     def edit_message_reply_markup(
         self,
@@ -2516,6 +2555,7 @@ class Bot:
             class_=Poll
         )
 
+    # TODO: Add use_cache
     def send_paid_media(
         self,
         chat_id: Union[int, str],
