@@ -1,8 +1,8 @@
-from .update_content_type import UpdateContentType
-from .message_content_type import MessageContentType
+from .update_type import UpdateType
+from .message_type import MessageType
 
 
 __all__ = [
-    "UpdateContentType",
-    "MessageContentType"
+    "UpdateType",
+    "MessageType"
 ]

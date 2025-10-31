@@ -1,4 +1,4 @@
-from .bot import Bot, get_bot, UpdateContentType, MessageContentType, set_up_bot, Webhook
+from .bot import Bot, UpdateType, MessageType, set_up_bot, Webhook
 from .dispatcher import (
     Dispatcher,
     Event,
@@ -24,13 +24,12 @@ from .dispatcher import (
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
 from .utils import (
-    NotSet,
-    NOT_SET,
+    Unset,
+    UNSET,
     Group,
     TaskExecutor,
     Deps,
-    get_html_text,
-    get_markdown_text,
+    get_text,
     set_signal_handler,
     get_group,
     get_callback_data
@@ -39,9 +38,8 @@ from .utils import (
 
 __all__ = [
     "Bot",
-    "get_bot",
-    "UpdateContentType",
-    "MessageContentType",
+    "UpdateType",
+    "MessageType",
     "set_up_bot",
     "Webhook",
     "Dispatcher",
@@ -66,56 +64,15 @@ __all__ = [
     "event_context",
     "event_handler_context",
     "error_handler_context",
-    "NotSet",
-    "NOT_SET",
+    "Unset",
+    "UNSET",
     "Group",
     "TaskExecutor",
     "Deps",
-    "get_html_text",
-    "get_markdown_text",
+    "get_text",
     "set_signal_handler",
     "get_group",
     "get_callback_data",
     "get_event_chat_id",
     "get_event_user_id"
 ]
-
-
-def _evaluate_type_annotations() -> None:
-    from typing import get_type_hints
-
-    from .bot.types.giveaway_completed import GiveawayCompleted
-    from .bot.types.maybe_inaccessible_message import MaybeInaccessibleMessage
-    from .bot.types.message import Message
-
-    classes = (GiveawayCompleted, Message)
-    mapping = {i.__name__: i for i in classes}
-    mapping["MaybeInaccessibleMessage"] = MaybeInaccessibleMessage
-
-    for class_ in classes:
-        class_.__annotations__ = get_type_hints(class_, mapping)
-        attrs = {
-            i.name: i
-            for i in class_.__attrs_attrs__
-        }
-
-        for name, type_ in class_.__annotations__.items():
-            object.__setattr__(attrs[name], "type", type_)
-
-
-def _patch_requests_serializer() -> None:
-    import warnings
-
-    import orjson
-
-    # https://github.com/psf/requests/issues/1595#issuecomment-30993198
-    try:
-        import requests.compat
-    except ModuleNotFoundError:
-        warnings.warn("Failed to set orjson in requests: structure has changed!", stacklevel=2)
-    else:
-        requests.compat.json = orjson
-
-
-_evaluate_type_annotations()
-_patch_requests_serializer()

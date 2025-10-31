@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.dispatcher.filters.filter import AbstractBaseFilter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
-from telebox.utils.not_set import NotSet, NOT_SET
+from telebox.utils.unset import Unset, UNSET
 
 
 class Router:
@@ -34,7 +34,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_message_handler(
@@ -48,7 +48,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_edited_message_handler(
@@ -72,7 +72,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_business_message_handler(
@@ -86,7 +86,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_edited_business_message_handler(
@@ -110,7 +110,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_channel_post_handler(
@@ -124,7 +124,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_edited_channel_post_handler(
@@ -138,7 +138,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_media_group_handler(
@@ -152,7 +152,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_channel_media_group_handler(
@@ -166,7 +166,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_message_reaction_handler(
@@ -180,7 +180,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._dispatcher.add_message_reaction_count_handler(
@@ -194,7 +194,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> None:
         self._dispatcher.add_inline_query_handler(
             handler=handler,
@@ -206,7 +206,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> None:
         self._dispatcher.add_chosen_inline_result_handler(
             handler=handler,
@@ -218,7 +218,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_callback_query_handler(
@@ -232,7 +232,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> None:
         self._dispatcher.add_shipping_query_handler(
             handler=handler,
@@ -244,7 +244,7 @@ class Router:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> None:
         self._dispatcher.add_pre_checkout_query_handler(
             handler=handler,

@@ -8,7 +8,7 @@ from threading import Thread, RLock, Condition, Event as ThreadingEvent
 import contextlib
 import time
 
-from requests.exceptions import Timeout as RequestTimeoutError
+from httpx import TimeoutException
 
 if TYPE_CHECKING:
     from telebox.bot.bot import Bot
@@ -40,7 +40,7 @@ from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.types.aborting import ABORTING
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.deps.deps import Deps
-from telebox.utils.not_set import NotSet, NOT_SET
+from telebox.utils.unset import Unset, UNSET
 from telebox.utils.serialization import get_deserialized_data
 
 
@@ -107,7 +107,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = True
     ) -> None:
         self._add_event_handler(
@@ -122,7 +122,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -148,7 +148,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -163,7 +163,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -189,7 +189,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -204,7 +204,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -219,7 +219,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = True
     ) -> None:
         self._add_event_handler(
@@ -234,7 +234,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -249,7 +249,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -264,7 +264,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = False
     ) -> None:
         self._add_event_handler(
@@ -279,7 +279,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -292,7 +292,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -305,7 +305,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET,
+        rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = True
     ) -> None:
         self._add_event_handler(
@@ -320,7 +320,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -333,7 +333,7 @@ class Dispatcher:
         self,
         handler: AbstractEventHandler,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> None:
         self._add_event_handler(
             handler=handler,
@@ -697,7 +697,7 @@ class Dispatcher:
                         timeout=timeout,
                         allowed_updates=allowed_updates
                     )
-                except RequestTimeoutError:
+                except TimeoutException:
                     logger.error("Timeout for requesting updates has expired!")
                 except Exception:
                     logger.exception("An error occurred while receiving updates!")
@@ -826,7 +826,7 @@ class Dispatcher:
         handler: AbstractEventHandler,
         event_type: EventType,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = None,
+        rate_limit: Union[RateLimit, None, Unset] = None,
         with_chat_queue: bool = False
     ) -> None:
         filter_ = _get_event_filter(filter_)
@@ -850,7 +850,7 @@ class Dispatcher:
         handler: AbstractEventHandler,
         event_type: EventType,
         filter_: Optional[AbstractBaseFilter] = None,
-        rate_limit: Union[RateLimit, None, NotSet] = None,
+        rate_limit: Union[RateLimit, None, Unset] = None,
         with_chat_queue: bool = False
     ) -> bool:
         filter_ = _get_event_filter(filter_)
@@ -887,9 +887,9 @@ class Dispatcher:
 
     def _get_rate_limit(
         self,
-        rate_limit: Union[RateLimit, None, NotSet] = NOT_SET
+        rate_limit: Union[RateLimit, None, Unset] = UNSET
     ) -> Optional[RateLimit]:
-        return rate_limit if rate_limit is not NOT_SET else self._rate_limit
+        return rate_limit if rate_limit is not UNSET else self._rate_limit
 
     def _create_media_group_collector(self) -> None:
         self._media_group_collector = Thread(
@@ -917,18 +917,15 @@ class Dispatcher:
         logger.debug("Update received: %r.", update)
         event = update.content
 
-        if (
-            (event is None)
-            or (isinstance(event, Message) and (event.content is None))
-        ):
+        if event is None:
             logger.debug(_DROPPED_UNKNOWN_UPDATE_MESSAGE, update)
 
             return
 
-        event_type = EventType(update.content_type.value)
+        event_type = EventType(update.type.value)
 
         if (
-            (event_type in frozenset((EventType.MESSAGE, EventType.CHANNEL_POST)))
+            (event_type in (EventType.MESSAGE, EventType.CHANNEL_POST))
             and (event.media_group_id is not None)
         ):
             event: Message

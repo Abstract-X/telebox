@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 import re
 
-from telebox.bot.utils.deep_links import get_user_link
+from telebox.bot.utils.links import get_user_link
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.bot.consts import message_entity_types
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
@@ -24,7 +24,6 @@ _FORMATTING_ENTITY_TYPES = {
 
 
 class AbstractFormatter(ABC):
-
     @abstractmethod
     def get_escaped_text(self, text: str) -> str:
         pass

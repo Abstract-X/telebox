@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any, Optional, Iterable, TYPE_CHECKING
-from contextvars import ContextVar
+from contextvars import ContextVar  # noqa
 
 if TYPE_CHECKING:
     from telebox.dispatcher.typing import Event

@@ -3,7 +3,7 @@ from typing import Optional
 from attrs import define
 
 from telebox.bot.type import Type
-from telebox.bot.utils.deep_links import get_username_link
+from telebox.bot.utils.links import get_username_link
 
 
 @define(repr=False)

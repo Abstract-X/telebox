@@ -13,7 +13,7 @@ from .text_mention import TextMentionFilter
 from .forwarded_message import ForwardedMessageFilter
 from .left_chat_member import LeftChatMemberFilter
 from .media_group_content_type import MediaGroupContentTypeFilter
-from .message_content_type import MessageContentTypeFilter
+from .message_type import MessageTypeFilter
 from .new_chat_member import NewChatMemberFilter
 from .none import NoneFilter
 from .reply_message import ReplyMessageFilter
@@ -38,7 +38,7 @@ __all__ = [
     "ForwardedMessageFilter",
     "LeftChatMemberFilter",
     "MediaGroupContentTypeFilter",
-    "MessageContentTypeFilter",
+    "MessageTypeFilter",
     "NewChatMemberFilter",
     "NoneFilter",
     "ReplyMessageFilter",

@@ -1,14 +1,14 @@
-from typing import Callable
-
-from telebox.bot.utils.formatting import get_escaped_html_text, get_escaped_markdown_text
+from telebox.bot.utils.utils import get_text_formatter
 
 
-def get_html_text(template: str, /, *args, **kwargs) -> str:
-    return _get_formatted_text(get_escaped_html_text, template, *args, **kwargs)
+def get_text(template: str, parse_mode: str, /, **fields) -> str:
+    formatter = get_text_formatter(parse_mode)
+    fields = {
+        name: formatter.get_escaped_text(str(value))
+        for name, value in fields.items()
+    }
 
-
-def get_markdown_text(template: str, /, *args, **kwargs) -> str:
-    return _get_formatted_text(get_escaped_markdown_text, template, *args, **kwargs)
+    return template.format(**fields)
 
 
 def get_text_with_surrogates(text: str) -> bytes:
@@ -17,19 +17,3 @@ def get_text_with_surrogates(text: str) -> bytes:
 
 def get_text_without_surrogates(text: bytes) -> str:
     return text.decode("UTF-16-LE")
-
-
-def _get_formatted_text(
-    escaping_func: Callable[[str], str],
-    template: str,
-    /,
-    *args,
-    **kwargs
-) -> str:
-    args = tuple(escaping_func(str(i)) for i in args)
-    kwargs = {
-        name: escaping_func(str(value))
-        for name, value in kwargs.items()
-    }
-
-    return template.format(*args, **kwargs)

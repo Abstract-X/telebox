@@ -6,8 +6,19 @@ from telebox.bot.types.bot_command_scope import BotCommandScope
 from telebox.bot.types.bot_command import BotCommand
 from telebox.bot.types.input_file import InputFile
 from telebox.bot.types.menu_button_web_app import MenuButtonWebApp
+from telebox.bot.utils.formatter import AbstractFormatter
+from telebox.bot.utils.formatters.html import HTMLFormatter
+from telebox.bot.utils.formatters.markdown import MarkdownFormatter
 if TYPE_CHECKING:
     from telebox.bot.bot import Bot
+
+
+_markdown_formatter = MarkdownFormatter()
+TEXT_FORMATTERS = {
+    "html": HTMLFormatter(),
+    "markdown": _markdown_formatter,
+    "markdownv2": _markdown_formatter
+}
 
 
 @dataclass
@@ -19,6 +30,10 @@ class Webhook:
     allowed_updates: Optional[list[str]] = None
     drop_pending_updates: Optional[bool] = None
     secret_token: Optional[str] = None
+
+
+def get_text_formatter(parse_mode: str) -> AbstractFormatter:
+    return TEXT_FORMATTERS[parse_mode.lower()]
 
 
 def set_up_bot(
