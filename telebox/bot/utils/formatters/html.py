@@ -1,13 +1,12 @@
 from typing import Optional
+import html
 
-from telebox.bot.utils.formatters.formatter import AbstractFormatter
-from telebox.bot.utils.formatting import get_escaped_html_text
+from telebox.bot.utils.formatter import AbstractFormatter
 
 
 class HTMLFormatter(AbstractFormatter):
-
     def get_escaped_text(self, text: str) -> str:
-        return get_escaped_html_text(text)
+        return html.escape(text, quote=False)
 
     def get_bold_text(self, text: str) -> str:
         return f"<b>{text}</b>"

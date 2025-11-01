@@ -1,6 +1,6 @@
 
 
-class NotSet:
+class Unset:
     __instance = None
 
     def __new__(cls):
@@ -10,10 +10,10 @@ class NotSet:
         return cls.__instance
 
     def __repr__(self):
-        return type(self).__name__
+        return f"<{type(self).__name__}>"
 
     def __bool__(self):
         return False
 
 
-NOT_SET = NotSet()
+UNSET = Unset()

@@ -4,7 +4,7 @@ import re
 
 def create_app(name: str, path: Path, full: bool) -> None:
     try:
-        from jinja2 import Environment, PackageLoader
+        from jinja2 import Environment, PackageLoader  # noqa
     except ImportError:
         raise ImportError(
             "To use code generation you need to install «Jinja2»:"

@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
-from telebox.bot.bot import get_bot
+from telebox.bot.bot import Bot
 from telebox.bot.errors import UnauthorizedError, NotFoundError
 from telebox.utils.code_generation.generation import create_app
 
@@ -45,7 +45,7 @@ def info(namespace: Namespace) -> None:
     token = namespace.token
 
     try:
-        with get_bot(token) as bot:
+        with Bot(token) as bot:
             short_description = bot.get_my_short_description().short_description
             description = bot.get_my_description().description
             commands = bot.get_my_commands()
@@ -63,10 +63,10 @@ def info(namespace: Namespace) -> None:
         else:
             description = "—"
 
-        can_join_groups = _get_yes_or_no(bot.user.can_join_groups)
-        can_read_all_group_messages = _get_yes_or_no(bot.user.can_read_all_group_messages)
-        supports_inline_queries = _get_yes_or_no(bot.user.supports_inline_queries)
-        can_connect_to_business = _get_yes_or_no(bot.user.can_connect_to_business)
+        can_join_groups = _get_yes_or_no(bot.profile.can_join_groups)
+        can_read_all_group_messages = _get_yes_or_no(bot.profile.can_read_all_group_messages)
+        supports_inline_queries = _get_yes_or_no(bot.profile.supports_inline_queries)
+        can_connect_to_business = _get_yes_or_no(bot.profile.can_connect_to_business)
 
         if commands:
             commands = "\n" + "\n".join(f"      • /{i.command} - {i.description}" for i in commands)
@@ -93,9 +93,9 @@ def info(namespace: Namespace) -> None:
             webhook_info_text = ".................. —"
 
         text = (
-            f"• ID: ............................ {bot.user.id}"
-            f"\n• Name: .......................... {bot.user.full_name}"
-            f"\n• Username: ...................... @{bot.user.username}"
+            f"• ID: ............................ {bot.profile.id}"
+            f"\n• Name: .......................... {bot.profile.full_name}"
+            f"\n• Username: ...................... @{bot.profile.username}"
             f"\n• Short description: ............. {short_description}"
             f"\n• Description: ................... {description}"
             f"\n• Can join groups: ............... {can_join_groups}"

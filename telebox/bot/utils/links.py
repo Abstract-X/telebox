@@ -1,7 +1,7 @@
 from typing import Optional, Any, Iterable
 from urllib.parse import urlencode
 
-from telebox.utils.not_set import NOT_SET
+from telebox.utils.unset import UNSET
 
 
 def get_username_link(username: str, *, with_tg: bool = False) -> str:
@@ -84,7 +84,7 @@ def get_video_chat_link(
     *,
     with_tg: bool = False
 ) -> str:
-    video_chat_value = NOT_SET if invite_hash is None else invite_hash
+    video_chat_value = UNSET if invite_hash is None else invite_hash
 
     if with_tg:
         return _get_parametrized_link(
@@ -109,7 +109,7 @@ def get_livestream_link(
     *,
     with_tg: bool = False
 ) -> str:
-    livestream_value = NOT_SET if invite_hash is None else invite_hash
+    livestream_value = UNSET if invite_hash is None else invite_hash
 
     if with_tg:
         return _get_parametrized_link(
@@ -134,7 +134,7 @@ def get_voice_chat_link(
     *,
     with_tg: bool = False
 ) -> str:
-    voice_chat_value = NOT_SET if invite_hash is None else invite_hash
+    voice_chat_value = UNSET if invite_hash is None else invite_hash
 
     if with_tg:
         return _get_parametrized_link(
@@ -244,7 +244,7 @@ def get_group_bot_link(
     *,
     with_tg: bool = False
 ) -> str:
-    payload_value = NOT_SET if payload is None else payload
+    payload_value = UNSET if payload is None else payload
     admin_value = "+".join(admin_rights) if admin_rights is not None else None
 
     if with_tg:
@@ -279,7 +279,7 @@ def get_channel_bot_link(
             "tg://resolve",
             parameters={
                 "domain": username,
-                "startchannel": NOT_SET,
+                "startchannel": UNSET,
                 "admin": admin_value
             }
         )
@@ -287,7 +287,7 @@ def get_channel_bot_link(
         return _get_parametrized_link(
             f"t.me/{username}",
             parameters={
-                "startchannel": NOT_SET,
+                "startchannel": UNSET,
                 "admin": admin_value
             }
         )
@@ -325,7 +325,7 @@ def _get_parametrized_link(uri: str, parameters: dict[str, Any]) -> str:
     no_value_parameters = []
 
     for name, value in parameters.items():
-        if value is NOT_SET:
+        if value is UNSET:
             no_value_parameters.append(name)
         elif value is not None:
             value_parameters[name] = value

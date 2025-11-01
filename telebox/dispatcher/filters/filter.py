@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from contextvars import ContextVar
+from contextvars import ContextVar  # noqa
 
 from telebox.dispatcher.enums.event_type import EventType
 

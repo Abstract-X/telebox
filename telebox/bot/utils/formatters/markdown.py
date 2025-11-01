@@ -1,7 +1,7 @@
 from typing import Optional
+import re
 
-from telebox.bot.utils.formatters.formatter import AbstractFormatter
-from telebox.bot.utils.formatting import get_escaped_markdown_text
+from telebox.bot.utils.formatter import AbstractFormatter
 
 
 _TAG_PATTERNS = [
@@ -13,12 +13,12 @@ _TAG_PATTERNS = [
     "`",
     "```"
 ]
+_markdown_pattern = re.compile(r"([_*\[\]()~`>#+\-=|{}.!\\])")
 
 
 class MarkdownFormatter(AbstractFormatter):
-
     def get_escaped_text(self, text: str) -> str:
-        return get_escaped_markdown_text(text)
+        return re.sub(_markdown_pattern, r"\\\1", text)
 
     def get_bold_text(self, text: str) -> str:
         return f"*{text}*"
