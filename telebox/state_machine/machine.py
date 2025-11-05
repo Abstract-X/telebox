@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Union, Iterable, TYPE_CHECKING
+from typing import Optional, Union, Iterable
 
 from telebox.state_machine.state import State
 from telebox.state_machine.storages.storage import AbstractStateStorage
@@ -12,13 +12,11 @@ from telebox.state_machine.errors import (
     NextStateNotFoundError,
     PreviousStateNotFoundError
 )
-from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.utils.deps.deps import Deps
-if TYPE_CHECKING:
-    from telebox.dispatcher.type_hints import Event
+from telebox.dispatcher.type_hints import Event, Handler
 
 
-TransitionDict = dict[State, dict[AbstractEventHandler, Union[State, dict[str, State]]]]
+TransitionDict = dict[State, dict[Handler, Union[State, dict[str, State]]]]
 
 
 class StateMachine:
@@ -52,7 +50,7 @@ class StateMachine:
         self,
         source_state: State,
         destination_state: State,
-        handler: AbstractEventHandler,
+        handler: Handler,
         direction: Optional[str] = None
     ) -> None:
         self._transition_scheme.add_transition(
@@ -79,7 +77,7 @@ class StateMachine:
         self,
         source_state: State,
         destination_state: State,
-        handler: AbstractEventHandler,
+        handler: Handler,
         direction: Optional[str] = None
     ) -> bool:
         return self._transition_scheme.check_transition(
@@ -105,7 +103,7 @@ class StateMachine:
 
     def set_next_state(
         self,
-        handler: AbstractEventHandler,
+        handler: Handler,
         event: Optional[Event] = None,
         direction: Optional[str] = None,
         data: Optional[dict] = None,

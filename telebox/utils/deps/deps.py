@@ -4,7 +4,6 @@ from telebox.utils.deps.errors import DepsError
 
 
 class Deps:
-
     def __init__(self, **deps):
         self.__check_deps(deps)
         self.__deps = deps
