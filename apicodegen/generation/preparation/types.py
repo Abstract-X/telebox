@@ -5,6 +5,7 @@ from typing import Optional
 @dataclass
 class PreparedField:
     name: str
+    types: list[str]
     type_hint: str
     description: str
     is_optional: bool

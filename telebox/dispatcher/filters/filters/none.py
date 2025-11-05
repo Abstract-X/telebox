@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from telebox.dispatcher.filters.filter import AbstractFilter
 from telebox.dispatcher.enums.event_type import EventType
 if TYPE_CHECKING:
-    from telebox.dispatcher.typing import Event
+    from telebox.dispatcher.type_hints import Event
 
 
 class NoneFilter(AbstractFilter):

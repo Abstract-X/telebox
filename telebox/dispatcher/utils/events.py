@@ -3,7 +3,7 @@ from typing import Any, Optional, Iterable, TYPE_CHECKING
 from contextvars import ContextVar  # noqa
 
 if TYPE_CHECKING:
-    from telebox.dispatcher.typing import Event
+    from telebox.dispatcher.type_hints import Event
 from telebox.dispatcher.errors import InvalidEventError
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.bot.types.message import Message

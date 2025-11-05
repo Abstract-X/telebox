@@ -1,0 +1,10 @@
+{{ imports }}
+
+
+Event = Union[
+    {% for i in hint_types %}
+    {{ i }}{% if not loop.last %},{% endif +%}
+    {% endfor %}
+]
+Handler = Callable[[Event, Deps], None]
+ErrorHandler = Callable[[Exception, Event, Deps], None]

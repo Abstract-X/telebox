@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from telebox.dispatcher.typing import Event
+from telebox.dispatcher.type_hints import Event
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.enums.processing_status import ProcessingStatus
 
