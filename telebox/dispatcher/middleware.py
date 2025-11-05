@@ -1,16 +1,14 @@
-from telebox.dispatcher.handlers.event import AbstractEventHandler
-from telebox.dispatcher.typing import Event
+from telebox.dispatcher.type_hints import Event, Handler
 from telebox.dispatcher.enums.event_type import EventType
 
 
 class Middleware:
-
     def pre_process_event(
         self,
         deps,
         event: Event,
         event_type: EventType
-    ):
+    ) -> None:
         pass
 
     def process_event(
@@ -18,8 +16,8 @@ class Middleware:
         deps,
         event: Event,
         event_type: EventType,
-        handler: AbstractEventHandler
-    ):
+        handler: Handler
+    ) -> None:
         pass
 
     def post_process_event(
@@ -27,7 +25,7 @@ class Middleware:
         deps,
         event: Event,
         event_type: EventType,
-        handler: AbstractEventHandler
+        handler: Handler
     ):
         pass
 

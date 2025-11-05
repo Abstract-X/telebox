@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from telebox.errors import TeleboxError
 if TYPE_CHECKING:
-    from telebox.dispatcher.typing import Event
+    from telebox.dispatcher.type_hints import Event
 
 
 @dataclass

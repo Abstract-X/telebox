@@ -15,7 +15,7 @@ from telebox.state_machine.errors import (
 from telebox.dispatcher.handlers.event import AbstractEventHandler
 from telebox.utils.deps.deps import Deps
 if TYPE_CHECKING:
-    from telebox.dispatcher.typing import Event
+    from telebox.dispatcher.type_hints import Event
 
 
 TransitionDict = dict[State, dict[AbstractEventHandler, Union[State, dict[str, State]]]]

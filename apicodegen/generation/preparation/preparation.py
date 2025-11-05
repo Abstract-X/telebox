@@ -2,8 +2,9 @@ import re
 import keyword
 from typing import Optional
 
+from getpycode import ImportBuilder  # noqa
+
 from apicodegen.documentation.types import Type, Method, Field, Parameter
-from apicodegen.generation.import_builder import ImportBuilder
 from apicodegen.generation.preparation.additional_codes import (
     TYPE_ADDITIONAL_CODES,
     TYPE_ADDITIONAL_CODE_IMPORTS
@@ -163,10 +164,10 @@ def prepare_type(
     _set_prepared_type_additional_code(prepared_type, import_builder)
 
     if prepared_type.is_union:
-        import_builder.add_import("typing", "Union")
+        import_builder.add("typing", "Union")
 
         for i in prepared_type.types:
-            import_builder.add_import(f"telebox.bot.types.{get_snake_case_string(i)}", i)
+            import_builder.add(f"telebox.bot.types.{get_snake_case_string(i)}", i)
 
     return prepared_type
 
@@ -218,7 +219,7 @@ def _set_prepared_type_additional_code(
             ("attrs", "field"),
             ("telebox.bot.enums.message_type", "MessageType")
         ):
-            import_builder.add_import(module_path, entity)
+            import_builder.add(module_path, entity)
     elif type_.name == "Update":
         additional_code = (
             "type: Optional[UpdateType] = field(init=False)"
@@ -246,7 +247,7 @@ def _set_prepared_type_additional_code(
             ("attrs", "field"),
             ("telebox.bot.enums.update_type", "UpdateType")
         ):
-            import_builder.add_import(module_path, entity)
+            import_builder.add(module_path, entity)
     else:
         additional_code = ""
 
@@ -256,7 +257,7 @@ def _set_prepared_type_additional_code(
         type_.additional_code = additional_code
 
         for module_path, entity in TYPE_ADDITIONAL_CODE_IMPORTS.get(type_.name, ()):
-            import_builder.add_import(module_path, entity)
+            import_builder.add(module_path, entity)
 
 
 def _set_prepared_method_value_codes(method: PreparedMethod) -> None:
@@ -296,6 +297,7 @@ def _prepare_field(
 
     return PreparedField(
         name=_get_safe_name(field.name),
+        types=field.types,
         type_hint=_prepare_entity_type_hint(
             name=field.name,
             types=field.types,
@@ -367,15 +369,15 @@ def _prepare_entity_type_hint(
     for i in types:
         if name and _check_entity_timestamp_type(name=name, type_=i):
             hint_types.append("datetime")
-            import_builder.add_import("datetime", "datetime")
+            import_builder.add("datetime", "datetime")
         elif i == "String":
             if value is not None:
                 hint_types.append(f'Literal["{value}"]')
-                import_builder.add_import("typing", "Literal")
+                import_builder.add("typing", "Literal")
             elif description and ("attach://" in description.lower()):
                 hint_types.append("str")
                 hint_types.append("InputFile")
-                import_builder.add_import("telebox.bot.types.input_file", "InputFile")
+                import_builder.add("telebox.bot.types.input_file", "InputFile")
             else:
                 hint_types.append("str")
         elif i == "Integer":
@@ -386,19 +388,19 @@ def _prepare_entity_type_hint(
             hint_types.append("float")
         elif i == "InputFile":
             hint_types.append("InputFile")
-            import_builder.add_import("telebox.bot.types.input_file", "InputFile")
+            import_builder.add("telebox.bot.types.input_file", "InputFile")
         elif i == "True":
             hint_types.append("Literal[True]")
-            import_builder.add_import("typing", "Literal")
+            import_builder.add("typing", "Literal")
         elif i in type_names:
             hint_types.append(i)
-            import_builder.add_import(f"telebox.bot.types.{get_snake_case_string(i)}", i)
+            import_builder.add(f"telebox.bot.types.{get_snake_case_string(i)}", i)
         else:
             raise ValueError(f"Unknown type {i!r} (description={description!r})!")
 
     if len(hint_types) > 1:
         hint = f"Union[{', '.join(hint_types)}]"
-        import_builder.add_import("typing", "Union")
+        import_builder.add("typing", "Union")
     else:
         hint = hint_types[0]
 
@@ -411,8 +413,8 @@ def _prepare_entity_type_hint(
         else:
             hint = f"Union[{hint}, None, Unset]"
 
-        import_builder.add_import("telebox.utils.unset", "Unset")
-        import_builder.add_import("typing", "Union")
+        import_builder.add("telebox.utils.unset", "Unset")
+        import_builder.add("typing", "Union")
 
     return hint
 
