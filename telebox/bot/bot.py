@@ -4137,6 +4137,20 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
+    def drop_pending_updates(
+        self,
+        *,
+        with_delete_webhook: bool = True,
+        timeout_secs: Union[int, float, None] = None
+    ) -> None:
+        if with_delete_webhook:
+            self.delete_webhook(timeout_secs=timeout_secs, drop_pending_updates=True)
+        else:
+            updates = self.get_updates(timeout_secs=timeout_secs, offset=-1)
+
+            if updates:
+                self.get_updates(timeout_secs=timeout_secs, offset=updates[-1].update_id + 1)
+
     def _get_parse_mode(
         self,
         parse_mode: Union[str, None, Unset],

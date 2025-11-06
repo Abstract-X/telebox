@@ -1,20 +1,13 @@
 import logging
-from typing import Optional, Union, NoReturn, Callable, TYPE_CHECKING
-from pathlib import Path
+from typing import Optional, Union, NoReturn
 from collections import deque
-from queue import SimpleQueue as Queue
+from queue import Queue, SimpleQueue
 import threading
-from threading import Thread, RLock, Condition, Event as ThreadingEvent
-import contextlib
+from threading import Thread, RLock, Condition
 import time
 
-from httpx import TimeoutException
-
-if TYPE_CHECKING:  # TODO: Check
-    from telebox.bot.bot import Bot
 from telebox.bot.types.update import Update
 from telebox.bot.types.message import Message
-from telebox.bot.utils.converter import Converter
 from telebox.dispatcher.utils.media_group import MediaGroup
 from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.enums.processing_status import ProcessingStatus
@@ -32,6 +25,7 @@ from telebox.dispatcher.utils.events import (
     get_event_chat_id,
     get_event_user_id
 )
+from telebox.dispatcher.listener import AbstractListener
 from telebox.dispatcher.types.event_info import EventInfo
 from telebox.dispatcher.types.handler_info import HandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
@@ -40,7 +34,6 @@ from telebox.dispatcher.type_hints import Handler, ErrorHandler
 from telebox.dispatcher.errors import DispatcherError
 from telebox.utils.deps.deps import Deps
 from telebox.utils.unset import Unset, UNSET
-from telebox.utils.serialization import get_deserialized_data
 
 
 logger = logging.getLogger(__name__)
@@ -59,7 +52,7 @@ _EVENT_PROCESSING_LOG_TEMPLATES = {
 class Dispatcher:
     def __init__(
         self,
-        bot: "Bot",
+        listener: AbstractListener,
         deps: Deps,
         *,
         min_workers: int = 10,
@@ -67,40 +60,31 @@ class Dispatcher:
         rate_limit: Optional[RateLimit] = None,
         media_group_collecting_secs: Union[int, float] = 3
     ):
-        self.bot = bot
+        self._listener = listener
         self._deps = deps
         self._min_workers = min_workers
         self._max_workers = max_workers
         self._rate_limit = rate_limit
         self._media_group_collecting_secs = media_group_collecting_secs
-        self._polling_is_used = False
-        self._server_is_used = False
+        self._updates: Queue[Update] = Queue()
         self._events: deque[EventInfo] = deque()
         self._processing_chat_ids: set[int] = set()
-        self._chat_queues: dict[int, Queue[EventInfo]] = {}
+        self._chat_queues: dict[int, SimpleQueue[EventInfo]] = {}
         self._unprocessed_events = 0
         self._event_lock = RLock()
         self._new_event_condition = Condition(self._event_lock)
         self._all_events_processed_condition = Condition(self._event_lock)
         self._workers: dict[str, Thread] = {}
+        self._update_worker: Optional[Thread] = None
+        self._media_group_worker: Optional[Thread] = None
         self._worker_lock = RLock()
         self._worker_count = 0
-        self._event_handlers: dict[EventType, list[HandlerInfo]] = {i: [] for i in EventType}
+        self._handlers: dict[EventType, list[HandlerInfo]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandlerInfo] = []
         self._middlewares: list[Middleware] = []
         self.router = Router(self)
-        self._media_group_collector: Optional[Thread] = None
         self._media_group_containers: dict[str, MediaGroupContainer] = {}
-        self._media_group_message_lock = RLock()
-        self._polling_stopping_event = ThreadingEvent()
-
-    @property
-    def polling_is_used(self) -> bool:
-        return self._polling_is_used
-
-    @property
-    def server_is_used(self) -> bool:
-        return self._server_is_used
+        self._media_group_lock = RLock()
 
     def add_message_handler(
         self,
@@ -132,158 +116,34 @@ class Dispatcher:
     def add_middleware(self, middleware: Middleware) -> None:
         self._middlewares.append(middleware)
 
-    def run_polling(
-        self,
-        *,
-        error_delay_secs: Union[int, float] = 5,
-        limit: Optional[int] = None,
-        timeout: Optional[int] = 10,
-        allowed_updates: Optional[list[str]] = None
-    ) -> None:
-        if self._polling_is_used:
-            raise DispatcherError("Polling cannot be run twice!")
+    def run(self) -> None:
+        self._create_workers()
+        self._listener.run(self._updates)
 
-        if self._server_is_used:
-            raise DispatcherError("Polling cannot be run while the server is used!")
+        logger.info("Finishing update processing...")
 
-        if error_delay_secs < 0:
-            raise ValueError("Error delay seconds cannot be negative!")
+        self._updates.join()
+        self._wait_events()
 
-        self._polling_is_used = True
-        offset_update_id = None
-        self._initialize_event_listening()
-        logger.info("Polling started.")
+        logger.info("Update processing finished.")
 
-        with contextlib.suppress(KeyboardInterrupt):
-            while not self._polling_stopping_event.is_set():
-                # noinspection PyBroadException
-                try:
-                    updates = self.bot.get_updates(
-                        timeout_secs=timeout + 1 if timeout else None,
-                        offset=offset_update_id,
-                        limit=limit,
-                        timeout=timeout,
-                        allowed_updates=allowed_updates
-                    )
-                except TimeoutException:
-                    logger.error("Timeout for requesting updates has expired!")
-                except Exception:
-                    logger.exception("An error occurred while receiving updates!")
-                    time.sleep(error_delay_secs)
-                else:
-                    for i in updates:
-                        self._process_update(i)
+    def stop(self) -> None:
+        self._listener.stop()
 
-                    if updates:
-                        offset_update_id = updates[-1].update_id + 1
-
-        self._polling_stopping_event.clear()
-        logger.info("Polling stopped.")
-        self._finish_update_processing()
-        self._polling_is_used = False
-
-    def stop_polling(self) -> None:
-        if not self._polling_is_used:
-            raise DispatcherError("Polling not running!")
-
-        logger.info("Polling stopping...")
-        self._polling_stopping_event.set()
-
-    def run_server(
-        self,
-        *,
-        host: str = "0.0.0.0",
-        port: int = 443,
-        path: Optional[str] = None,
-        secret_token: Optional[str] = None,
-        certificate_path: Union[str, Path, None] = None,
-        private_key_path: Union[str, Path, None] = None
-    ) -> None:
-        try:
-            import cherrypy  # noqa
-        except ImportError:
-            raise ImportError(
-                "To use server you need to install «CherryPy»:"
-                "\npip install -U telebox[server]"
-            ) from None
-
-        if self._server_is_used:
-            raise DispatcherError("Server cannot be run twice!")
-
-        if self._polling_is_used:
-            raise DispatcherError("Server cannot be run while polling is used!")
-
-        self._server_is_used = True
-        cherrypy.config.update({
-            "server.socket_host": host,
-            "server.socket_port": port,
-            "server.shutdown_timeout": 1,
-            "log.screen": False,
-            "environment": "production"
-        })
-
-        if (certificate_path is not None) and (private_key_path is not None):
-            cherrypy.config.update({
-                "server.ssl_module": "builtin",
-                "server.ssl_certificate": str(certificate_path),
-                "server.ssl_private_key": str(private_key_path),
-            })
-
-        server_root = _get_server_root(
-            update_processor=self._process_update,
-            secret_token=secret_token
+    def _create_workers(self) -> None:
+        self._update_worker = Thread(
+            target=self._run_update_processing,
+            name="UpdateWorker",
+            daemon=True
         )
-        self._initialize_event_listening()
-        path = (path or "").rstrip()
+        self._media_group_worker = Thread(
+            target=self._run_media_group_collecting,
+            name="MediaGroupWorker",
+            daemon=True
+        )
 
-        if not path.startswith("/"):
-            path = f"/{path}"
-
-        cherrypy.log.error_log.propagate = False
-        cherrypy.log.access_log.propagate = False
-        logger.info("Server started.")
-        cherrypy.tree.mount(server_root, path)
-        cherrypy.engine.start()
-        cherrypy.engine.block()
-        logger.info("Server stopped.")
-        self._finish_update_processing()
-        self._server_is_used = False
-
-    def stop_server(self) -> None:
-        if not self._server_is_used:
-            raise DispatcherError("Server not running!")
-
-        import cherrypy  # noqa
-
-        logger.info("Server stopping...")
-        cherrypy.engine.exit()
-
-    def drop_pending_updates(
-        self,
-        *,
-        timeout_secs: Union[int, float, None] = None,
-        with_delete_webhook: bool = True
-    ) -> None:
-        logger.debug("Dropping pending updates...")
-
-        if with_delete_webhook:
-            self.bot.delete_webhook(timeout_secs=timeout_secs, drop_pending_updates=True)
-        else:
-            updates = self.bot.get_updates(
-                timeout_secs=timeout_secs,
-                offset=-1
-            )
-
-            if updates:
-                self.bot.get_updates(
-                    timeout_secs=timeout_secs,
-                    offset=updates[-1].update_id + 1
-                )
-
-        logger.info("Pending updates dropped.")
-
-    def _initialize_event_listening(self) -> None:
-        self._create_media_group_collector()
+        self._update_worker.start()
+        self._media_group_worker.start()
 
         with self._worker_lock:
             for _ in range(self._min_workers):
@@ -297,14 +157,14 @@ class Dispatcher:
         rate_limit: Union[RateLimit, None, Unset] = None,
         with_chat_queue: bool = False
     ) -> None:
-        filter_ = _get_event_filter(filter_)
+        filter_ = filter_ or _none_filter
 
         if not filter_.check_event_type(event_type):
             raise DispatcherError(f"{event_type!r} is not supported by this filter!")
 
         rate_limit = self._get_rate_limit(rate_limit)
         rate_limiter = RateLimiter(rate_limit) if rate_limit is not None else None
-        self._event_handlers[event_type].append(
+        self._handlers[event_type].append(
             HandlerInfo(
                 handler=handler,
                 filter=filter_,
@@ -316,7 +176,7 @@ class Dispatcher:
     def _get_event_handler(self, event_info: EventInfo) -> Optional[HandlerInfo]:
         filter_results: dict[AbstractBaseFilter, bool] = {}
 
-        for i in self._event_handlers[event_info.event_type]:
+        for i in self._handlers[event_info.event_type]:
             if not i.filter in filter_results:
                 filter_results[i.filter] = i.filter.get_result(event_info.event)
 
@@ -334,18 +194,11 @@ class Dispatcher:
     ) -> Optional[RateLimit]:
         return rate_limit if rate_limit is not UNSET else self._rate_limit
 
-    def _create_media_group_collector(self) -> None:
-        self._media_group_collector = Thread(
-            target=self._run_media_group_collecting,
-            daemon=True
-        )
-        self._media_group_collector.start()
-
     def _create_worker(self) -> None:
         self._worker_count += 1
         worker = Thread(
             target=self._run_event_processing,
-            name=f"DispatcherWorker-{self._worker_count}",
+            name=f"EventWorker-{self._worker_count}",
             daemon=True
         )
         self._workers[worker.name] = worker
@@ -356,53 +209,9 @@ class Dispatcher:
         )
         worker.start()
 
-    def _process_update(self, update: Update) -> None:
-        logger.debug("Update received: %r.", update)
-        event = update.content
-
-        if event is None:
-            logger.debug(_DROPPED_UNKNOWN_UPDATE_MESSAGE, update)
-
-            return
-
-        event_type = EventType(update.type.value)
-
-        if (
-            (event_type in (EventType.MESSAGE, EventType.CHANNEL_POST))
-            and (event.media_group_id is not None)
-        ):
-            event: Message
-
-            with self._media_group_message_lock:
-                if event.media_group_id not in self._media_group_containers:
-                    self._media_group_containers[event.media_group_id] = MediaGroupContainer(
-                        event=event,
-                        event_type=event_type
-                    )
-                else:
-                    self._media_group_containers[event.media_group_id].add_event(event)
-
-            return
-
-        self._add_event_to_queue(
-            EventInfo(
-                event=event,
-                event_type=event_type,
-                chat_id=get_event_chat_id(event),
-                user_id=get_event_user_id(event)
-            )
-        )
-
-    def _finish_update_processing(self) -> None:
-        logger.info("Finishing update processing...")
-        self._wait_events()
-        self._media_group_gathering_thread = None
-        self._thread_pool = None
-        logger.info("Update processing finished.")
-
     def _run_media_group_collecting(self) -> NoReturn:
         while True:
-            with self._media_group_message_lock:
+            with self._media_group_lock:
                 for media_group_id in tuple(self._media_group_containers):
                     secs = time.monotonic() - self._media_group_containers[media_group_id].time
 
@@ -510,7 +319,7 @@ class Dispatcher:
                             chat_events = self._chat_queues.get(event_info.chat_id)
 
                             if chat_events is None:
-                                chat_events = self._chat_queues[event_info.chat_id] = Queue()
+                                chat_events = self._chat_queues[event_info.chat_id] = SimpleQueue()
 
                             chat_events.put_nowait(event_info)
                             event_info.processing_status = ProcessingStatus.ADDED_TO_CHAT_QUEUE
@@ -550,7 +359,7 @@ class Dispatcher:
             event_info.processing_status = ProcessingStatus.ABORTED
         except Exception as error:
             event_info.processing_status = ProcessingStatus.ERROR_OCCURRED
-            self._process_event_error(error, event_info)
+            self._process_error(error, event_info)
         finally:
             if event_info.processing_status is not ProcessingStatus.ERROR_OCCURRED:
                 logger.debug(
@@ -567,6 +376,47 @@ class Dispatcher:
                 self._set_chat_event_completion(chat_id=event_info.chat_id)
 
             self._set_event_completion()
+
+    def _run_update_processing(self) -> None:
+        while True:
+            update = self._updates.get()
+
+            try:
+                event = update.content
+
+                if event is None:
+                    logger.debug(_DROPPED_UNKNOWN_UPDATE_MESSAGE, update)
+                    continue
+
+                event_type = EventType(update.type.value)
+
+                if (
+                    (event_type in (EventType.MESSAGE, EventType.CHANNEL_POST))
+                    and (event.media_group_id is not None)
+                ):
+                    event: Message
+
+                    with self._media_group_lock:
+                        if event.media_group_id not in self._media_group_containers:
+                            self._media_group_containers[event.media_group_id] = MediaGroupContainer(
+                                event=event,
+                                event_type=event_type
+                            )
+                        else:
+                            self._media_group_containers[event.media_group_id].add_event(event)
+
+                    continue
+
+                self._add_event_to_queue(
+                    EventInfo(
+                        event=event,
+                        event_type=event_type,
+                        chat_id=get_event_chat_id(event),
+                        user_id=get_event_user_id(event)
+                    )
+                )
+            finally:
+                self._updates.task_done()
 
     def _run_event_processing(self) -> None:
         worker_name = threading.current_thread().name
@@ -601,7 +451,7 @@ class Dispatcher:
             self._process_event(event)
             last_processing_time = time.monotonic()
 
-    def _process_event_error(self, error: Exception, event_info: EventInfo) -> None:
+    def _process_error(self, error: Exception, event_info: EventInfo) -> None:
         # noinspection PyBroadException
         try:
             for i in self._middlewares:
@@ -627,11 +477,7 @@ class Dispatcher:
                     event_type=event_info.event_type
                 )
 
-            error_handler.handler.process_error(
-                deps=self._deps,
-                error=error,
-                event=event_info.event
-            )
+            error_handler.handler(error, event_info.event, self._deps)
 
             for i in self._middlewares:
                 i.post_process_error(
@@ -642,50 +488,3 @@ class Dispatcher:
                 )
         except Exception:
             logger.exception("An error occurred while processing an event %r!", event_info.event)
-
-
-def _get_event_filter(
-    filter_: Optional[AbstractBaseFilter] = None
-) -> AbstractBaseFilter:
-    return filter_ if filter_ is not None else _none_filter
-
-
-def _get_server_root(
-    update_processor: Callable[[Update], None],
-    secret_token: Optional[str] = None
-):
-    import cherrypy  # noqa
-
-    class ServerRoot:
-
-        def __init__(self):
-            self._update_processor = update_processor
-            self._secret_token = secret_token
-            self._dataclass_converter = Converter()
-
-        @cherrypy.expose
-        def index(self) -> str:
-            if self._secret_token is not None:
-                secret_token_ = cherrypy.request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-
-                if secret_token_ != self._secret_token:
-                    raise cherrypy.HTTPError(403)
-
-            content_length = cherrypy.request.headers.get("Content-Length")
-
-            if content_length is None:
-                raise cherrypy.HTTPError(403)
-
-            update = self._dataclass_converter.get_object(
-                data=get_deserialized_data(
-                    cherrypy.request.body.read(
-                        int(content_length)
-                    )
-                ),
-                class_=Update
-            )
-            self._update_processor(update)
-
-            return ""
-
-    return ServerRoot()

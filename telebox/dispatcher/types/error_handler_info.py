@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from telebox.dispatcher.handlers.error import AbstractErrorHandler
+from telebox.dispatcher.type_hints import ErrorHandler
 
 
 @dataclass
 class ErrorHandlerInfo:
-    handler: AbstractErrorHandler
+    handler: ErrorHandler
     error_type: type

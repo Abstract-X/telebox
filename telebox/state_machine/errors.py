@@ -3,7 +3,7 @@ from typing import Optional
 
 from telebox.errors import TeleboxError
 from telebox.state_machine.state import State
-from telebox.dispatcher.handlers.event import AbstractEventHandler
+from telebox.dispatcher.type_hints import Handler
 
 
 @dataclass
@@ -19,21 +19,21 @@ class StateNameExistsError(StateMachineError):
 @dataclass
 class TransitionExistsError(StateMachineError):
     source_state: State
-    handler: AbstractEventHandler
+    handler: Handler
     direction: Optional[str] = None
 
 
 @dataclass
 class DestinationStateNotFoundError(StateMachineError):
     source_state: State
-    handler: AbstractEventHandler
+    handler: Handler
     direction: Optional[str] = None
 
 
 @dataclass
 class NextStateNotFoundError(StateMachineError):
     source_state: State
-    handler: AbstractEventHandler
+    handler: Handler
     direction: Optional[str] = None
 
 
