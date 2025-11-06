@@ -5,7 +5,7 @@ if TYPE_CHECKING:
 from telebox.state_machine.state import State
 from telebox.dispatcher.utils.events import (
     event_context,
-    event_handler_context,
+    handler_context,
     get_context_event_chat_id,
     get_context_event_user_id
 )
@@ -37,7 +37,7 @@ class Context:
     ) -> None:
         self._machine.set_next_state(
             event=event_context.get(),
-            handler=event_handler_context.get(),
+            handler=handler_context.get(),
             direction=direction,
             data=data,
             chat_id=get_context_event_chat_id(),

@@ -34,7 +34,7 @@ TYPES_PRE_CHECKOUT_QUERY_ID = frozenset({
 })
 
 event_context = ContextVar("event_context")
-event_handler_context = ContextVar("event_handler_context")
+handler_context = ContextVar("handler_context")
 error_handler_context = ContextVar("error_handler_context")
 
 

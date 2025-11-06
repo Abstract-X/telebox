@@ -10,11 +10,10 @@ from telebox.utils.unset import Unset, UNSET
 
 
 class Router:
-
     def __init__(
         self,
         dispatcher: Dispatcher,
-        filter_: Optional[AbstractBaseFilter] = None
+        filter_: AbstractBaseFilter
     ):
         self._dispatcher = dispatcher
         self.filter = filter_
@@ -326,10 +325,11 @@ class Router:
             filter_=self._get_filter(filter_)
         )
 
-    def _get_filter(self, filter_: AbstractBaseFilter) -> Optional[AbstractBaseFilter]:
+    def _get_filter(
+        self,
+        filter_: Optional[AbstractBaseFilter]
+    ) -> Optional[AbstractBaseFilter]:
         if filter_ is None:
             return self.filter
-        elif self.filter is None:
-            return filter_
 
         return self.filter & filter_
