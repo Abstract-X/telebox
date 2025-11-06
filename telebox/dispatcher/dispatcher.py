@@ -17,10 +17,10 @@ from telebox.dispatcher.middleware import Middleware
 from telebox.dispatcher.utils.rate_limiter.rate_limiter import RateLimiter
 from telebox.dispatcher.utils.rate_limiter.rate_limit import RateLimit
 from telebox.dispatcher.utils.media_group_container import MediaGroupContainer
-from telebox.dispatcher.utils.router import Router
+from telebox.dispatcher.router import Router
 from telebox.dispatcher.utils.events import (
     event_context,
-    event_handler_context,
+    handler_context,
     error_handler_context,
     get_event_chat_id,
     get_event_user_id
@@ -39,7 +39,6 @@ from telebox.utils.unset import Unset, UNSET
 logger = logging.getLogger(__name__)
 _none_filter = NoneFilter()
 _WORKER_WAITING_SECS = 60
-_DROPPED_UNKNOWN_UPDATE_MESSAGE = "Update dropped because it contains an unknown content type: %r."
 _EVENT_PROCESSING_LOG_TEMPLATES = {
     ProcessingStatus.PROCESSING: "Event processing finished: %r.",
     ProcessingStatus.ABORTED: "Event processing aborted: %r.",
@@ -82,7 +81,6 @@ class Dispatcher:
         self._handlers: dict[EventType, list[HandlerInfo]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandlerInfo] = []
         self._middlewares: list[Middleware] = []
-        self.router = Router(self)
         self._media_group_containers: dict[str, MediaGroupContainer] = {}
         self._media_group_lock = RLock()
 
@@ -93,7 +91,7 @@ class Dispatcher:
         rate_limit: Union[RateLimit, None, Unset] = UNSET,
         with_chat_queue: bool = True
     ) -> None:
-        self._add_event_handler(
+        self._add_handler(
             handler=handler,
             event_type=EventType.MESSAGE,
             filter_=filter_,
@@ -112,6 +110,9 @@ class Dispatcher:
                 error_type=error_type
             )
         )
+
+    def get_router(self, filter_: AbstractBaseFilter) -> Router:
+        return Router(dispatcher=self, filter_=filter_)
 
     def add_middleware(self, middleware: Middleware) -> None:
         self._middlewares.append(middleware)
@@ -149,7 +150,7 @@ class Dispatcher:
             for _ in range(self._min_workers):
                 self._create_worker()
 
-    def _add_event_handler(
+    def _add_handler(
         self,
         handler: Handler,
         event_type: EventType,
@@ -173,7 +174,7 @@ class Dispatcher:
             )
         )
 
-    def _get_event_handler(self, event_info: EventInfo) -> Optional[HandlerInfo]:
+    def _get_handler(self, event_info: EventInfo) -> Optional[HandlerInfo]:
         filter_results: dict[AbstractBaseFilter, bool] = {}
 
         for i in self._handlers[event_info.event_type]:
@@ -303,14 +304,14 @@ class Dispatcher:
 
                 event_info.middleware_pre_processed = True
 
-            event_handler = self._get_event_handler(event_info)
+            handler = self._get_handler(event_info)
 
-            if event_handler is None:
+            if handler is None:
                 event_info.processing_status = ProcessingStatus.HANDLER_NOT_FOUND
 
                 return
 
-            if event_handler.with_chat_queue and (event_info.chat_id is not None):
+            if handler.with_chat_queue and (event_info.chat_id is not None):
                 event_info.with_chat_queue = True
 
                 if not event_info.from_chat_queue:
@@ -328,11 +329,11 @@ class Dispatcher:
                         else:
                             self._processing_chat_ids.add(event_info.chat_id)
 
-            event_handler_context.set(event_handler.handler)
+            handler_context.set(handler.handler)
 
             if (
-                (event_handler.rate_limiter is not None)
-                and event_handler.rate_limiter.process_call(event_info.chat_id, event_info.user_id)
+                (handler.rate_limiter is not None)
+                and handler.rate_limiter.process_call(event_info.chat_id, event_info.user_id)
             ):
                 event_info.processing_status = ProcessingStatus.RATE_LIMIT_EXCEEDED
 
@@ -343,17 +344,17 @@ class Dispatcher:
                     deps=self._deps,
                     event=event_info.event,
                     event_type=event_info.event_type,
-                    handler=event_handler.handler
+                    handler=handler.handler
                 )
 
-            event_handler.handler(event_info.event, self._deps)
+            handler.handler(event_info.event, self._deps)
 
             for i in self._middlewares:
                 i.post_process_event(
                     deps=self._deps,
                     event=event_info.event,
                     event_type=event_info.event_type,
-                    handler=event_handler.handler
+                    handler=handler.handler
                 )
         except Abort:
             event_info.processing_status = ProcessingStatus.ABORTED
@@ -385,7 +386,11 @@ class Dispatcher:
                 event = update.content
 
                 if event is None:
-                    logger.debug(_DROPPED_UNKNOWN_UPDATE_MESSAGE, update)
+                    logger.debug(
+                        "Update dropped because it contains "
+                        "an unknown content type: %r.",
+                        update
+                    )
                     continue
 
                 event_type = EventType(update.type.value)
