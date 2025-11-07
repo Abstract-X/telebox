@@ -1,13 +1,11 @@
 from typing import Optional, Union
 
 from telebox.dispatcher.filters.filter import AbstractFilter
-from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.utils.media_group import MediaGroup
+from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 
 
 class TextCommandFilter(AbstractFilter):
-
     def __init__(
         self,
         *commands: str,
@@ -27,16 +25,6 @@ class TextCommandFilter(AbstractFilter):
 
         self._prefix = prefix or ""
         self._ignore_case = ignore_case
-
-    def get_event_types(self) -> set[EventType]:
-        return {
-            EventType.MESSAGE,
-            EventType.EDITED_MESSAGE,
-            EventType.CHANNEL_POST,
-            EventType.EDITED_CHANNEL_POST,
-            EventType.MEDIA_GROUP,
-            EventType.CHANNEL_MEDIA_GROUP
-        }
 
     def get_value(self, event: Union[Message, MediaGroup]) -> Optional[str]:
         message = event.messages[0] if isinstance(event, MediaGroup) else event

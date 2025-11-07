@@ -1,13 +1,11 @@
 from typing import Union
 
 from telebox.dispatcher.filters.filter import AbstractFilter
-from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.utils.media_group import MediaGroup
+from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 
 
 class TextFilter(AbstractFilter):
-
     def __init__(
         self,
         *texts: str,
@@ -17,16 +15,6 @@ class TextFilter(AbstractFilter):
         self._texts = {i.lower() for i in texts} if ignore_case else set(texts)
         self._full_match = full_match
         self._ignore_case = ignore_case
-
-    def get_event_types(self) -> set[EventType]:
-        return {
-            EventType.MESSAGE,
-            EventType.EDITED_MESSAGE,
-            EventType.CHANNEL_POST,
-            EventType.EDITED_CHANNEL_POST,
-            EventType.MEDIA_GROUP,
-            EventType.CHANNEL_MEDIA_GROUP
-        }
 
     def get_value(self, event: Union[Message, MediaGroup]) -> list[str]:
         texts = []

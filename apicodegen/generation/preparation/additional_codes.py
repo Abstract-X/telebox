@@ -256,12 +256,17 @@ CHAT_JOIN_REQUEST = """
 
 POLL_ANSWER = """
     @property
-    def voter_chat_id(self) -> Optional[int]:
+    def chat_type(self) -> Optional[str]:
+        if self.voter_chat:
+            return self.voter_chat.type
+
+    @property
+    def chat_id(self) -> Optional[int]:
         if self.voter_chat:
             return self.voter_chat.id
 
     @property
-    def unprefixed_voter_chat_id(self) -> Optional[int]:
+    def unprefixed_chat_id(self) -> Optional[int]:
         if self.voter_chat:
             return get_unprefixed_chat_id(self.voter_chat.id, self.voter_chat.type)
 
@@ -308,6 +313,65 @@ CHAT_MEMBER_UPDATED = """
     def user_id(self) -> int:
         return self.from_.id"""
 
+BUSINESS_CONNECTION = """
+    @property
+    def user_id(self) -> int:
+        return self.user.id"""
+
+BUSINESS_MESSAGES_DELETED = """
+    @property
+    def chat_type(self) -> str:
+        return self.chat.type
+
+    @property
+    def chat_id(self) -> int:
+        return self.chat.id
+
+    @property
+    def unprefixed_chat_id(self) -> int:
+        return get_unprefixed_chat_id(self.chat.id, self.chat.type)"""
+
+CHAT_BOOST_REMOVED = """
+    @property
+    def chat_type(self) -> str:
+        return self.chat.type
+
+    @property
+    def chat_id(self) -> int:
+        return self.chat.id
+
+    @property
+    def unprefixed_chat_id(self) -> int:
+        return get_unprefixed_chat_id(self.chat.id, self.chat.type)
+    
+    @property
+    def user_id(self) -> Optional[int]:
+        if self.source.user:
+            return self.source.user.id"""
+
+CHAT_BOOST_UPDATED = """
+    @property
+    def chat_type(self) -> str:
+        return self.chat.type
+
+    @property
+    def chat_id(self) -> int:
+        return self.chat.id
+
+    @property
+    def unprefixed_chat_id(self) -> int:
+        return get_unprefixed_chat_id(self.chat.id, self.chat.type)
+
+    @property
+    def user_id(self) -> Optional[int]:
+        if self.boost.source.user:
+            return self.boost.source.user.id"""
+
+PAID_MEDIA_PURCHASED = """
+    @property
+    def user_id(self) -> int:
+        return self.from_.id"""
+
 TYPE_ADDITIONAL_CODES = {
     "Message": MESSAGE,
     "CallbackQuery": CALLBACK_QUERY,
@@ -327,7 +391,12 @@ TYPE_ADDITIONAL_CODES = {
     "PollAnswer": POLL_ANSWER,
     "InlineQuery": INLINE_QUERY,
     "ReplyKeyboardMarkup": REPLY_KEYBOARD_MARKUP,
-    "ChatMemberUpdated": CHAT_MEMBER_UPDATED
+    "ChatMemberUpdated": CHAT_MEMBER_UPDATED,
+    "BusinessConnection": BUSINESS_CONNECTION,
+    "BusinessMessagesDeleted": BUSINESS_MESSAGES_DELETED,
+    "ChatBoostRemoved": CHAT_BOOST_REMOVED,
+    "ChatBoostUpdated": CHAT_BOOST_UPDATED,
+    "PaidMediaPurchased": PAID_MEDIA_PURCHASED
 }
 
 TYPE_ADDITIONAL_CODE_IMPORTS = {
@@ -384,6 +453,17 @@ TYPE_ADDITIONAL_CODE_IMPORTS = {
         ("telebox.bot.utils.ids", "get_unprefixed_chat_id")
     ],
     "ChatMemberUpdated": [
+        ("telebox.bot.utils.ids", "get_unprefixed_chat_id")
+    ],
+    "BusinessMessagesDeleted": [
+        ("telebox.bot.utils.ids", "get_unprefixed_chat_id")
+    ],
+    "ChatBoostRemoved": [
+        ("typing", "Optional"),
+        ("telebox.bot.utils.ids", "get_unprefixed_chat_id")
+    ],
+    "ChatBoostUpdated": [
+        ("typing", "Optional"),
         ("telebox.bot.utils.ids", "get_unprefixed_chat_id")
     ]
 }

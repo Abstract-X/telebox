@@ -5,6 +5,7 @@ from attrs import define, field
 
 from telebox.bot.type import Type
 from telebox.bot.types.chat import Chat
+from telebox.bot.utils.ids import get_unprefixed_chat_id
 
 
 @define(repr=False)
@@ -12,3 +13,15 @@ class BusinessMessagesDeleted(Type):
     business_connection_id: str = field()
     chat: Chat = field()
     message_ids: list[int] = field()
+    
+    @property
+    def chat_type(self) -> str:
+        return self.chat.type
+
+    @property
+    def chat_id(self) -> int:
+        return self.chat.id
+
+    @property
+    def unprefixed_chat_id(self) -> int:
+        return get_unprefixed_chat_id(self.chat.id, self.chat.type)

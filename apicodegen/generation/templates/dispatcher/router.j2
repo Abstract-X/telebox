@@ -1,0 +1,55 @@
+from typing import Optional, Union, TYPE_CHECKING
+
+from telebox.dispatcher.filters.filter import AbstractBaseFilter
+from telebox.dispatcher.type_hints import Handler
+if TYPE_CHECKING:
+    from telebox.dispatcher.dispatcher import Dispatcher
+
+
+class Router:
+    def __init__(
+        self,
+        dispatcher: "Dispatcher",
+        filter_: AbstractBaseFilter
+    ):
+        self._dispatcher = dispatcher
+        self.filter = filter_
+
+    def __add__(self, other: Union[AbstractBaseFilter, "Router"]) -> "Router":
+        if isinstance(other, AbstractBaseFilter):
+            return Router(self._dispatcher, self._get_filter(other))
+        elif isinstance(other, Router):
+            return Router(self._dispatcher, self._get_filter(other.filter))
+
+        return NotImplemented
+
+    def __iadd__(self, other: Union[AbstractBaseFilter, "Router"]) -> "Router":
+        return self.__add__(other)
+    {% for i in event_types %}
+
+    def add_{{ i.lower() }}_handler(
+        self,
+        handler: Handler,
+        filter_: Optional[AbstractBaseFilter] = None{% if i in state_event_types %},{% endif +%}
+        {% if i in state_event_types %}
+        *,
+        with_chat_queue: bool = True
+        {% endif %}
+    ) -> None:
+        self._dispatcher.add_{{ i.lower() }}_handler(
+            handler=handler,
+            filter_=self._get_filter(filter_){% if i in state_event_types %},{% endif +%}
+            {% if i in state_event_types %}
+            with_chat_queue=with_chat_queue
+            {% endif %}
+        )
+    {% endfor %}
+
+    def _get_filter(
+        self,
+        filter_: Optional[AbstractBaseFilter]
+    ) -> Optional[AbstractBaseFilter]:
+        if filter_ is None:
+            return self.filter
+
+        return self.filter & filter_

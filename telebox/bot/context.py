@@ -40,7 +40,7 @@ from telebox.bot.types.user_chat_boosts import UserChatBoosts
 from telebox.bot.types.input_poll_option import InputPollOption
 from telebox.bot.types.chat_full_info import ChatFullInfo
 from telebox.bot.types.input_paid_media import InputPaidMedia
-from telebox.dispatcher.utils.events import (
+from telebox.dispatcher.events import (
     get_context_event_chat_id,
     get_context_event_user_id,
     get_context_event_message_topic_id,

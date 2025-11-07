@@ -20,7 +20,7 @@ from telebox.bot.types.poll import Poll
 from telebox.bot.types.poll_answer import PollAnswer
 from telebox.bot.types.pre_checkout_query import PreCheckoutQuery
 from telebox.bot.types.shipping_query import ShippingQuery
-from telebox.dispatcher.utils.media_group import MediaGroup
+from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.utils.deps import Deps
 
 
