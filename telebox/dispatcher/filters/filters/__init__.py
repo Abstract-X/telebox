@@ -15,7 +15,7 @@ from .left_chat_member import LeftChatMemberFilter
 from .media_group_content_type import MediaGroupContentTypeFilter
 from .message_type import MessageTypeFilter
 from .new_chat_member import NewChatMemberFilter
-from .none import NoneFilter
+from .empty import EmptyFilter
 from .reply_message import ReplyMessageFilter
 from .sender_chat import SenderChatFilter
 from .sender_contact import SenderContactFilter
@@ -40,7 +40,7 @@ __all__ = [
     "MediaGroupContentTypeFilter",
     "MessageTypeFilter",
     "NewChatMemberFilter",
-    "NoneFilter",
+    "EmptyFilter",
     "ReplyMessageFilter",
     "SenderChatFilter",
     "SenderContactFilter",

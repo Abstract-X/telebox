@@ -3,12 +3,6 @@ from typing import Optional, Any, TYPE_CHECKING
 if TYPE_CHECKING:
     from telebox.state_machine.machine import StateMachine
 from telebox.state_machine.state import State
-from telebox.dispatcher.utils.events import (
-    event_context,
-    handler_context,
-    get_context_event_chat_id,
-    get_context_event_user_id
-)
 
 
 class Context:

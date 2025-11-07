@@ -21,3 +21,7 @@ class BusinessConnection(Type):
     date: datetime = field()
     is_enabled: bool = field()
     rights: Union[BusinessBotRights, None, Unset] = field(factory=default_factory, kw_only=True)
+    
+    @property
+    def user_id(self) -> int:
+        return self.user.id

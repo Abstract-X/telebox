@@ -11,3 +11,7 @@ from telebox.bot.types.user import User
 class PaidMediaPurchased(Type):
     from_: User = field()
     paid_media_payload: str = field()
+    
+    @property
+    def user_id(self) -> int:
+        return self.from_.id

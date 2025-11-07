@@ -21,12 +21,17 @@ class PollAnswer(Type):
     user: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
     
     @property
-    def voter_chat_id(self) -> Optional[int]:
+    def chat_type(self) -> Optional[str]:
+        if self.voter_chat:
+            return self.voter_chat.type
+
+    @property
+    def chat_id(self) -> Optional[int]:
         if self.voter_chat:
             return self.voter_chat.id
 
     @property
-    def unprefixed_voter_chat_id(self) -> Optional[int]:
+    def unprefixed_chat_id(self) -> Optional[int]:
         if self.voter_chat:
             return get_unprefixed_chat_id(self.voter_chat.id, self.voter_chat.type)
 

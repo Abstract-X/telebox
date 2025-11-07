@@ -1,8 +1,7 @@
 from typing import Union, Optional
 
 from telebox.dispatcher.filters.filter import AbstractFilter
-from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.utils.media_group import MediaGroup
+from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 from telebox.bot.types.inline_query import InlineQuery
 from telebox.bot.types.chosen_inline_result import ChosenInlineResult
@@ -12,41 +11,36 @@ from telebox.bot.types.pre_checkout_query import PreCheckoutQuery
 from telebox.bot.types.poll_answer import PollAnswer
 from telebox.bot.types.chat_member_updated import ChatMemberUpdated
 from telebox.bot.types.chat_join_request import ChatJoinRequest
+from telebox.bot.types.business_connection import BusinessConnection
+from telebox.bot.types.chat_boost_removed import ChatBoostRemoved
+from telebox.bot.types.chat_boost_updated import ChatBoostUpdated
+from telebox.bot.types.message_reaction_updated import MessageReactionUpdated
+from telebox.bot.types.paid_media_purchased import PaidMediaPurchased
 
 
 class UserFilter(AbstractFilter):
-
     def __init__(self, *ids: int):
         self._ids = set(ids)
 
-    def get_event_types(self) -> set[EventType]:
-        return {
-            EventType.MESSAGE,
-            EventType.EDITED_MESSAGE,
-            EventType.MEDIA_GROUP,
-            EventType.INLINE_QUERY,
-            EventType.CHOSEN_INLINE_RESULT,
-            EventType.CALLBACK_QUERY,
-            EventType.SHIPPING_QUERY,
-            EventType.PRE_CHECKOUT_QUERY,
-            EventType.POLL_ANSWER,
-            EventType.MY_CHAT_MEMBER,
-            EventType.CHAT_MEMBER,
-            EventType.CHAT_JOIN_REQUEST
-        }
-
     def get_value(
         self,
-        event: Union[Message,
-                     MediaGroup,
-                     InlineQuery,
-                     ChosenInlineResult,
-                     CallbackQuery,
-                     ShippingQuery,
-                     PreCheckoutQuery,
-                     PollAnswer,
-                     ChatMemberUpdated,
-                     ChatJoinRequest]
+        event: Union[
+            Message,
+            MediaGroup,
+            InlineQuery,
+            ChosenInlineResult,
+            CallbackQuery,
+            ShippingQuery,
+            PreCheckoutQuery,
+            PollAnswer,
+            ChatMemberUpdated,
+            ChatJoinRequest,
+            BusinessConnection,
+            ChatBoostRemoved,
+            ChatBoostUpdated,
+            MessageReactionUpdated,
+            PaidMediaPurchased
+        ]
     ) -> Optional[int]:
         return event.user_id
 

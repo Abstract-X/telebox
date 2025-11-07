@@ -2,14 +2,12 @@ from typing import Optional, Union
 
 from telebox.dispatcher.filters.factory import AbstractFilterFactory
 from telebox.dispatcher.filters.filter import AbstractFilter
-from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.utils.media_group import MediaGroup
+from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 from telebox.bot.consts import message_entity_types
 
 
 class CommandFilter(AbstractFilter):
-
     def __init__(
         self,
         *commands: str,
@@ -29,13 +27,6 @@ class CommandFilter(AbstractFilter):
             self._commands.update((i, f"{i}@{username}"))
 
         self._ignore_case = ignore_case
-
-    def get_event_types(self) -> set[EventType]:
-        return {
-            EventType.MESSAGE,
-            EventType.EDITED_MESSAGE,
-            EventType.MEDIA_GROUP
-        }
 
     def get_value(self, event: Union[Message, MediaGroup]) -> Optional[str]:
         message = event.messages[0] if isinstance(event, MediaGroup) else event
@@ -61,7 +52,6 @@ class CommandFilter(AbstractFilter):
 
 
 class CommandFilterFactory(AbstractFilterFactory):
-
     def __init__(self, username: str):
         self._username = username
 

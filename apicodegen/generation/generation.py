@@ -21,8 +21,19 @@ types_dir = telebox_dir / "bot" / "types"
 bot_path = telebox_dir / "bot" / "bot.py"
 message_type_path = telebox_dir / "bot" / "enums" / "message_type.py"
 update_type_path = telebox_dir / "bot" / "enums" / "update_type.py"
+dispatcher_path = telebox_dir / "dispatcher" / "dispatcher.py"
+router_path = telebox_dir / "dispatcher" / "router.py"
 type_hints_path = telebox_dir / "dispatcher" / "type_hints.py"
 event_type_path = telebox_dir / "dispatcher" / "enums" / "event_type.py"
+STATE_EVENT_TYPES = [
+    "MESSAGE",
+    "EDITED_MESSAGE",
+    "CHANNEL_POST",
+    "EDITED_CHANNEL_POST",
+    "CALLBACK_QUERY",
+    "MEDIA_GROUP",
+    "CHANNEL_MEDIA_GROUP"
+]
 
 
 class Comment(AbstractComment):
@@ -90,6 +101,14 @@ def create_code(documentation: Documentation) -> None:
     _create_event_type_module(
         generator=generator,
         types=event_types
+    )
+    _create_dispatcher_module(
+        generator=generator,
+        event_types=event_types
+    )
+    _create_router_module(
+        generator=generator,
+        event_types=event_types
     )
     _create_type_hints_module(
         generator=generator,
@@ -214,6 +233,34 @@ def _create_event_type_module(
     )
 
 
+def _create_dispatcher_module(
+    generator: CodeGenerator,
+    event_types: list[str]
+) -> None:
+    generator.create_module(
+        Module(
+            dispatcher_path,
+            "dispatcher/dispatcher.j2",
+            event_types=event_types,
+            state_event_types=STATE_EVENT_TYPES
+        )
+    )
+
+
+def _create_router_module(
+    generator: CodeGenerator,
+    event_types: list[str]
+) -> None:
+    generator.create_module(
+        Module(
+            router_path,
+            "dispatcher/router.j2",
+            event_types=event_types,
+            state_event_types=STATE_EVENT_TYPES
+        )
+    )
+
+
 def _create_type_hints_module(
     generator: CodeGenerator,
     hint_types: list[str]
@@ -225,7 +272,7 @@ def _create_type_hints_module(
 
     for i in hint_types:
         if i == "MediaGroup":
-            import_builder.add("telebox.dispatcher.utils.media_group", "MediaGroup")
+            import_builder.add("telebox.dispatcher.types.media_group", "MediaGroup")
         else:
             import_builder.add(f"telebox.bot.types.{get_snake_case_string(i)}", i)
 

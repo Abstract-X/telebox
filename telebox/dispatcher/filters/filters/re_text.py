@@ -1,29 +1,17 @@
 from typing import Pattern, Union
 
 from telebox.dispatcher.filters.filter import AbstractFilter
-from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.utils.media_group import MediaGroup
+from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 
 
 class RETextFilter(AbstractFilter):
-
     def __init__(self, *patterns: Pattern, full_match: bool = False):
         if not patterns:
             raise ValueError("No patterns!")
 
         self._patterns = patterns
         self._full_match = full_match
-
-    def get_event_types(self) -> set[EventType]:
-        return {
-            EventType.MESSAGE,
-            EventType.EDITED_MESSAGE,
-            EventType.CHANNEL_POST,
-            EventType.EDITED_CHANNEL_POST,
-            EventType.MEDIA_GROUP,
-            EventType.CHANNEL_MEDIA_GROUP
-        }
 
     def get_value(self, event: Union[Message, MediaGroup]) -> list[str]:
         texts = []
