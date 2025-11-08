@@ -9,6 +9,7 @@ from cattrs.strategies import configure_union_passthrough
 from cattrs.gen import make_dict_unstructure_fn, make_dict_structure_fn, override  # noqa
 
 from telebox.utils.unset import Unset, UNSET
+from telebox.bot.default_parameters import DefaultParameterSet
 
 
 Object = TypeVar("Object")
@@ -35,8 +36,8 @@ def get_datetime(timestamp: int) -> Optional[datetime_]:
 
 
 class Converter:
-    def __init__(self, *, parse_mode: Union[str, Unset] = UNSET):
-        self.parse_mode = parse_mode
+    def __init__(self, default_parameters: DefaultParameterSet):
+        self.default_parameters = default_parameters
         self._converter = cattrs.Converter(detailed_validation=False)
         self._set_structure_parameters()
         self._set_unstructure_parameters()
@@ -111,7 +112,7 @@ class Converter:
             for name, value in data.items():
                 prepared_value = value
 
-                if self.parse_mode is not UNSET:
+                if self.default_parameters.parse_mode is not UNSET:
                     if name.endswith("parse_mode") and value is UNSET:
                         prefix = name.removesuffix("parse_mode")
 
@@ -128,7 +129,7 @@ class Converter:
                             raise ValueError(f"No entities field for {prefix!r} prefix!")
 
                         if not data[entities_field]:
-                            prepared_value = self.parse_mode
+                            prepared_value = self.default_parameters.parse_mode
 
                 if prepared_value is not None and prepared_value is not UNSET:
                     prepared_data[name] = prepared_value

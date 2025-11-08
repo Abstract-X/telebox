@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 class WebhookListener(AbstractListener):
     def __init__(
         self,
+        converter: Converter,
         *,
         host: str = "0.0.0.0",
         port: int = 443,
@@ -23,13 +24,13 @@ class WebhookListener(AbstractListener):
         certificate_path: Union[str, Path, None] = None,
         private_key_path: Union[str, Path, None] = None
     ):
+        self._converter = converter
         self._host = host
         self._port = port
         self._path = path
         self._secret_token = secret_token
         self._certificate_path = certificate_path
         self._private_key_path = private_key_path
-        self._converter = Converter()
 
     def run(self, updates: Queue[Update]) -> None:
         try:

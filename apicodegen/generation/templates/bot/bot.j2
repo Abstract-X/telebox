@@ -13,23 +13,24 @@ class Bot:
         api_url: str = API_URL,
         retries: int = 0,
         retry_delay_secs: Union[int, float] = 0,
-        wait_on_rate_limit: bool = False,
         timeout_secs: Union[int, float, None] = 300
     ):
-        self._parse_mode = parse_mode
-        self.disable_link_preview = disable_link_preview
-        self.disable_notification = disable_notification
-        self.protect_content = protect_content
         self._profile = None
-        self._converter = Converter(parse_mode=parse_mode)
+        self.default_parameters = DefaultParameterSet(
+            parse_mode=parse_mode,
+            disable_link_preview=disable_link_preview,
+            disable_notification=disable_notification,
+            protect_content=protect_content
+        )
+        self.converter = Converter(default_parameters=self.default_parameters)
         self._session = Session(
             token=token,
-            converter=self._converter,
+            converter=self.converter,
             api_url=api_url,
             retries=retries,
             retry_delay_secs=retry_delay_secs,
             timeout_secs=timeout_secs,
-            wait_on_rate_limit=wait_on_rate_limit
+            default_parameters=self.default_parameters
         )
 
     def __enter__(self) -> "Bot":
@@ -49,15 +50,6 @@ class Bot:
             )
 
         return self._profile
-
-    @property
-    def parse_mode(self) -> Union[str, Unset]:
-        return self._parse_mode
-
-    @parse_mode.setter
-    def parse_mode(self, value) -> None:
-        self._parse_mode = value
-        self._converter.parse_mode = value
     {% for method in methods %}
 
     def {{ method.function_name }}(
@@ -76,7 +68,7 @@ class Bot:
             {% if method.parameters %}
             parameters={
                 {% for i in method.parameters %}
-                "{{ i.name.rstrip('_') }}": {{ i.value_code }}{% if not loop.last %},{% endif +%}
+                "{{ i.name.rstrip('_') }}": {{ i.name }}{% if not loop.last %},{% endif +%}
                 {% endfor %}
             },
             {% endif %}
@@ -85,20 +77,20 @@ class Bot:
 
         {% if method.result_array_nesting and method.result_is_object %}
         return [
-            self._converter.get_object(
+            self.converter.get_object(
                 data=i,
                 class_={{ method.result_object_type }}
             )
             for i in data
         ]
         {% elif method.result_is_object %}
-        return self._converter.get_object(
+        return self.converter.get_object(
             data=data,
             class_={{ method.result_object_type }}
         )
         {% elif method.result_contains_object %}
         if isinstance(data, dict):
-            return self._converter.get_object(
+            return self.converter.get_object(
                 data=data,
                 class_={{ method.result_object_type }}
             )
@@ -140,49 +132,3 @@ class Bot:
 
             if updates:
                 self.get_updates(timeout_secs=timeout_secs, offset=updates[-1].update_id + 1)
-
-    def _get_parse_mode(
-        self,
-        parse_mode: Union[str, None, Unset],
-        entities: Optional[list[MessageEntity]] = None
-    ) -> Optional[str]:
-        if parse_mode is not UNSET:
-            return parse_mode
-        elif self._parse_mode is not UNSET and not entities:
-            return self._parse_mode
-
-    def _get_link_preview_options(
-        self,
-        options: Union[LinkPreviewOptions, None, Unset]
-    ) -> Optional[LinkPreviewOptions]:
-        if options:
-            if options.is_disabled is not UNSET:
-                return options
-            elif self.disable_link_preview:
-                data = self._converter.get_data(options)
-                data["is_disabled"] = True
-
-                return self._converter.get_object(
-                    data=data,
-                    class_=LinkPreviewOptions
-                )
-        elif self.disable_link_preview:
-            return LinkPreviewOptions(is_disabled=True)
-
-    def _get_disable_notification(
-        self,
-        disable_notification: Union[bool, None, Unset]
-    ) -> Optional[bool]:
-        if disable_notification is not UNSET:
-            return disable_notification
-        elif self.disable_notification:
-            return True
-
-    def _get_protect_content(
-        self,
-        protect_content: Union[bool, None, Unset]
-    ) -> Optional[bool]:
-        if protect_content is not UNSET:
-            return protect_content
-        elif self.protect_content:
-            return True
