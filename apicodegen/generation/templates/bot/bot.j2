@@ -84,10 +84,19 @@ class Bot:
             for i in data
         ]
         {% elif method.result_is_object %}
+        {% if method.name == "getMe" %}
+        self._profile = self.converter.get_object(
+            data=data,
+            class_={{ method.result_object_type }}
+        )
+
+        return self._profile
+        {% else %}
         return self.converter.get_object(
             data=data,
             class_={{ method.result_object_type }}
         )
+        {% endif %}
         {% elif method.result_contains_object %}
         if isinstance(data, dict):
             return self.converter.get_object(

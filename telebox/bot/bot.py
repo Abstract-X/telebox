@@ -219,10 +219,12 @@ class Bot:
             timeout_secs=timeout_secs
         )
 
-        return self.converter.get_object(
+        self._profile = self.converter.get_object(
             data=data,
             class_=User
         )
+
+        return self._profile
 
     def log_out(
         self,
