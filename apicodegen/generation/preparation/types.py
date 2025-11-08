@@ -18,7 +18,6 @@ class PreparedParameter:
     type_hint: str
     description: str
     is_optional: bool
-    value_code: Optional[str] = None
 
 
 @dataclass

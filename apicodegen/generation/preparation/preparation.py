@@ -133,7 +133,6 @@ def prepare_method(
         ),
         result_object_type=result_object_type
     )
-    _set_prepared_method_value_codes(prepared_method)
 
     return prepared_method
 
@@ -258,34 +257,6 @@ def _set_prepared_type_additional_code(
 
         for module_path, entity in TYPE_ADDITIONAL_CODE_IMPORTS.get(type_.name, ()):
             import_builder.add(module_path, entity)
-
-
-def _set_prepared_method_value_codes(method: PreparedMethod) -> None:
-    for parameter in method.parameters:
-        if parameter.name.endswith("parse_mode"):
-            prefix = parameter.name.removesuffix("parse_mode")
-
-            if prefix:
-                entities_parameter_names = (f"{prefix}entities",)
-            else:
-                entities_parameter_names = ("entities", "caption_entities")
-
-            for i in method.parameters:
-                if i.name in entities_parameter_names:
-                    entities_parameter = i
-                    break
-            else:
-                raise ValueError(f"No entities parameter for {prefix!r} prefix!")
-
-            parameter.value_code = f"self._get_parse_mode({parameter.name}, {entities_parameter.name})"
-        elif parameter.name == "link_preview_options":
-            parameter.value_code = f"self._get_link_preview_options({parameter.name})"
-        elif parameter.name == "disable_notification":
-            parameter.value_code = f"self._get_disable_notification({parameter.name})"
-        elif parameter.name == "protect_content":
-            parameter.value_code = f"self._get_protect_content({parameter.name})"
-        else:
-            parameter.value_code = parameter.name
 
 
 def _prepare_field(

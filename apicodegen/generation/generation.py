@@ -173,11 +173,11 @@ def _create_bot_module(
         import_builder.add("telebox.bot.session", i)
 
     # For `download_file` method
-    for i in ("Optional", "BinaryIO"):
-        import_builder.add("typing", i)
+    import_builder.add("typing", "BinaryIO")
 
     # For default values
     import_builder.add("telebox.utils.unset", "UNSET")
+    import_builder.add("telebox.bot.default_parameters", "DefaultParameterSet")
 
     # For `profile` property
     import_builder.add("telebox.bot.errors", "BotError")
