@@ -1,9 +1,11 @@
 import logging
-from typing import Optional, Union, NoReturn
+from typing import Optional, Union, NoReturn, Callable, Iterable
 from collections import deque
 from queue import Queue, SimpleQueue
 import threading
-from threading import Thread, RLock, Condition
+from threading import Thread, RLock, Condition, Event
+import signal
+from signal import Signals, SIGINT, SIGTERM
 import time
 
 from telebox.bot.types.update import Update
@@ -133,6 +135,32 @@ class Dispatcher:
 
     def stop(self) -> None:
         self._listener.stop()
+
+    def set_signal_handler(
+        self,
+        callback: Optional[Callable] = None,
+        *,
+        signals: Iterable[int] = (SIGINT, SIGTERM)
+    ) -> Event:
+        stop_event = Event()
+
+        def stop(signal_number: int, _) -> None:
+            signal_name = Signals(signal_number).name
+            logger.info("Signal handler called with signal %r (%r).", signal_name, signal_number)
+
+            if callback is not None:
+                try:
+                    callback()
+                except Exception:  # noqa
+                    logger.exception("An error occurred while calling signal callback!")
+
+            stop_event.set()
+            self.stop()
+
+        for i in signals:
+            signal.signal(i, stop)
+
+        return stop_event
 
     def _create_workers(self) -> None:
         self._update_worker = Thread(
