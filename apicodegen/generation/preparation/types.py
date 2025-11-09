@@ -18,6 +18,7 @@ class PreparedParameter:
     type_hint: str
     description: str
     is_optional: bool
+    is_context: bool
 
 
 @dataclass
@@ -44,9 +45,9 @@ class PreparedMethod:
     result_object_type: Optional[str] = None
 
     @property
-    def required_parameters(self) -> list[PreparedParameter]:
-        return [i for i in self.parameters if not i.is_optional]
+    def positional_parameters(self) -> list[PreparedParameter]:
+        return [i for i in self.parameters if i not in self.keyword_parameters]
 
     @property
-    def optional_parameters(self) -> list[PreparedParameter]:
-        return [i for i in self.parameters if i.is_optional]
+    def keyword_parameters(self) -> list[PreparedParameter]:
+        return [i for i in self.parameters if i.is_optional or i.is_context]

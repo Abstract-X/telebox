@@ -90,6 +90,18 @@ MESSAGE_TYPES = [
     "VIDEO_CHAT_PARTICIPANTS_INVITED",
     "WEB_APP_DATA"
 ]
+CONTEXT_PARAMETERS = [
+    "chat_id",
+    "user_id",
+    "message_thread_id",
+    "business_connection_id",
+    "sender_chat_id",
+    "message_id",
+    "callback_query_id",
+    "inline_query_id",
+    "shipping_query_id",
+    "pre_checkout_query_id"
+]
 
 
 def prepare_method(
@@ -105,7 +117,7 @@ def prepare_method(
         )
         for i in method.parameters
     ]
-    parameters.sort(key=lambda parameter_: parameter_.is_optional)
+    parameters.sort(key=_get_parameter_priority)
 
     result_contains_object = any(i in type_names for i in method.result_types)
 
@@ -190,6 +202,17 @@ def get_update_types(update: PreparedType) -> list[str]:
         )
 
     return types
+
+
+def _get_parameter_priority(parameter: PreparedParameter) -> int:
+    if not parameter.is_optional and not parameter.is_context:
+        return 0
+    elif parameter.is_context:
+        return 1
+    elif parameter.is_optional:
+        return 2
+    else:
+        return 3
 
 
 def _set_prepared_type_additional_code(
@@ -290,6 +313,8 @@ def _prepare_parameter(
     type_names: set[str],
     import_builder: ImportBuilder
 ) -> PreparedParameter:
+    is_context = parameter.name in CONTEXT_PARAMETERS
+
     return PreparedParameter(
         name=_get_safe_name(parameter.name),
         type_hint=_prepare_entity_type_hint(
@@ -299,10 +324,12 @@ def _prepare_parameter(
             type_names=type_names,
             import_builder=import_builder,
             is_optional=parameter.is_optional,
+            is_context=is_context,
             description=parameter.description
         ),
         description=_get_description(parameter.description),
-        is_optional=parameter.is_optional
+        is_optional=parameter.is_optional,
+        is_context=is_context
     )
 
 
@@ -331,6 +358,7 @@ def _prepare_entity_type_hint(
     type_names: set[str],
     import_builder: ImportBuilder,
     is_optional: bool = False,
+    is_context: bool = False,
     name: Optional[str] = None,
     description: Optional[str] = None,
     value: Optional[str] = None
@@ -369,6 +397,10 @@ def _prepare_entity_type_hint(
         else:
             raise ValueError(f"Unknown type {i!r} (description={description!r})!")
 
+    if is_context:
+        hint_types.append("Context")
+        import_builder.add("telebox.dispatcher.context", "Context")
+
     if len(hint_types) > 1:
         hint = f"Union[{', '.join(hint_types)}]"
         import_builder.add("typing", "Union")
@@ -379,12 +411,17 @@ def _prepare_entity_type_hint(
         hint = f"list[{hint}]"
 
     if is_optional:
-        if len(hint_types) > 1 and not array_nesting:
-            hint = f"Union[{', '.join(hint_types)}, None, Unset]"
-        else:
-            hint = f"Union[{hint}, None, Unset]"
+        optional_types = ["None"]
 
-        import_builder.add("telebox.utils.unset", "Unset")
+        if not is_context:
+            optional_types.append("Unset")
+            import_builder.add("telebox.utils.unset", "Unset")
+
+        if len(hint_types) > 1 and not array_nesting:
+            hint = f"Union[{', '.join(hint_types)}, {', '.join(optional_types)}]"
+        else:
+            hint = f"Union[{hint}, {', '.join(optional_types)}]"
+
         import_builder.add("typing", "Union")
 
     return hint

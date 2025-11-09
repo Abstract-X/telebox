@@ -175,6 +175,10 @@ def _create_bot_module(
     # For `download_file` method
     import_builder.add("typing", "BinaryIO")
 
+    # For context values
+    for i in ("CONTEXT", "OPTIONAL_CONTEXT"):
+        import_builder.add("telebox.dispatcher.context", i)
+
     # For default values
     import_builder.add("telebox.utils.unset", "UNSET")
     import_builder.add("telebox.bot.default_parameters", "DefaultParameterSet")
