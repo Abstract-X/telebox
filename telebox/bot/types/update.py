@@ -6,7 +6,7 @@ from typing import Union, Optional, Any
 from attrs import field, define
 
 from telebox.bot.enums.update_type import UpdateType
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.business_connection import BusinessConnection
 from telebox.bot.types.business_messages_deleted import BusinessMessagesDeleted
 from telebox.bot.types.callback_query import CallbackQuery
@@ -24,7 +24,6 @@ from telebox.bot.types.poll import Poll
 from telebox.bot.types.poll_answer import PollAnswer
 from telebox.bot.types.pre_checkout_query import PreCheckoutQuery
 from telebox.bot.types.shipping_query import ShippingQuery
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

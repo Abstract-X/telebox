@@ -5,10 +5,9 @@ from typing import Union
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.chat import Chat
 from telebox.bot.types.sticker import Sticker
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

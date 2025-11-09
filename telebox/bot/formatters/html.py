@@ -1,7 +1,7 @@
 from typing import Optional
 import html
 
-from telebox.bot.utils.formatter import AbstractFormatter
+from telebox.bot.formatter import AbstractFormatter
 
 
 class HTMLFormatter(AbstractFormatter):

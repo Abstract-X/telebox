@@ -4,6 +4,7 @@
 from datetime import datetime
 from typing import Union, Literal, BinaryIO
 
+from telebox.bot.converter import Converter
 from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.errors import BotError
 from telebox.bot.session import Session, API_URL
@@ -68,7 +69,6 @@ from telebox.bot.types.user import User
 from telebox.bot.types.user_chat_boosts import UserChatBoosts
 from telebox.bot.types.user_profile_photos import UserProfilePhotos
 from telebox.bot.types.webhook_info import WebhookInfo
-from telebox.bot.utils.converter import Converter
 from telebox.utils.unset import Unset, UNSET
 
 

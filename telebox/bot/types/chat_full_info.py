@@ -6,7 +6,7 @@ from typing import Union, Literal, Optional
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.accepted_gift_types import AcceptedGiftTypes
 from telebox.bot.types.birthdate import Birthdate
 from telebox.bot.types.business_intro import BusinessIntro
@@ -19,7 +19,6 @@ from telebox.bot.types.chat_photo import ChatPhoto
 from telebox.bot.types.message import Message
 from telebox.bot.types.reaction_type import ReactionType
 from telebox.bot.utils.links import get_username_link
-from telebox.bot.utils.types import default_factory
 from telebox.bot.utils.users import get_full_name
 from telebox.utils.unset import Unset
 

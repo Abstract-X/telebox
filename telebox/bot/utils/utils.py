@@ -1,24 +1,14 @@
 from dataclasses import dataclass
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, Iterable, TYPE_CHECKING
 
 from telebox.bot.consts import menu_button_types
 from telebox.bot.types.bot_command_scope import BotCommandScope
 from telebox.bot.types.bot_command import BotCommand
 from telebox.bot.types.input_file import InputFile
 from telebox.bot.types.menu_button_web_app import MenuButtonWebApp
-from telebox.bot.utils.formatter import AbstractFormatter
-from telebox.bot.utils.formatters.html import HTMLFormatter
-from telebox.bot.utils.formatters.markdown import MarkdownFormatter
+
 if TYPE_CHECKING:
     from telebox.bot.bot import Bot
-
-
-_markdown_formatter = MarkdownFormatter()
-TEXT_FORMATTERS = {
-    "html": HTMLFormatter(),
-    "markdown": _markdown_formatter,
-    "markdownv2": _markdown_formatter
-}
 
 
 @dataclass
@@ -32,24 +22,10 @@ class Webhook:
     secret_token: Optional[str] = None
 
 
-def get_text_formatter(parse_mode: str) -> AbstractFormatter:
-    return TEXT_FORMATTERS[parse_mode.lower()]
-
-
-def get_text(template: str, parse_mode: str, /, **fields) -> str:
-    formatter = get_text_formatter(parse_mode)
-    fields = {
-        name: formatter.get_escaped_text(str(value))
-        for name, value in fields.items()
-    }
-
-    return template.format(**fields)
-
-
 def set_up_bot(
     bot: "Bot",
     *,
-    commands: Optional[list[tuple[BotCommandScope, list[BotCommand]]]] = None,
+    commands: Optional[Iterable[tuple[BotCommandScope, Iterable[BotCommand]]]] = None,
     description: Optional[str] = None,
     short_description: Optional[str] = None,
     menu_button: Optional[MenuButtonWebApp] = None,

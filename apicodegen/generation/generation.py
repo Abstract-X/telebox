@@ -150,7 +150,7 @@ def _create_types_package(
                 import_builders[type_].add("attrs", "field")
 
             if import_builders[type_].check("telebox.utils.unset", "Unset"):
-                import_builders[type_].add("telebox.bot.utils.types", "default_factory")
+                import_builders[type_].add("telebox.bot.type", "default_factory")
 
         package.add_module(
             f"{types[type_].module_name}.py",
@@ -167,7 +167,7 @@ def _create_bot_module(
     import_builder: ImportBuilder,
     methods: list[PreparedMethod]
 ) -> None:
-    import_builder.add("telebox.bot.utils.converter", "Converter")
+    import_builder.add("telebox.bot.converter", "Converter")
 
     for i in ("Session", "API_URL"):
         import_builder.add("telebox.bot.session", i)

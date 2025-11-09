@@ -406,7 +406,7 @@ TYPE_ADDITIONAL_CODE_IMPORTS = {
         ("telebox.bot.utils.ids", "get_unprefixed_chat_id"),
         ("telebox.bot.utils.links", "get_message_public_link"),
         ("telebox.bot.utils.links", "get_message_private_link"),
-        ("telebox.bot.utils.utils", "get_text_formatter"),
+        ("telebox.bot.utils.texts", "get_text_formatter"),
         ("telebox.utils.text", "get_text_with_surrogates"),
         ("telebox.utils.text", "get_text_without_surrogates")
     ],

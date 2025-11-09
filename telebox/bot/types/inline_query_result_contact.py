@@ -5,10 +5,9 @@ from typing import Union, Literal
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.input_message_content import InputMessageContent
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

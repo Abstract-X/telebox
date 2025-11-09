@@ -3,7 +3,7 @@ from typing import Any
 import hashlib
 import hmac
 
-# from telebox.bot.utils.converter import Converter
+from telebox.bot.converter import Converter
 from telebox.bot.types.web_app_init_data import WebAppInitData
 from telebox.utils.serialization import get_deserialized_data
 
@@ -40,7 +40,7 @@ def check_web_app_init_data(data: str, token: str, *, with_exceptions: bool = Fa
         return False
 
 
-def get_web_app_init_data(data: str) -> WebAppInitData:
+def get_web_app_init_data(data: str, converter: Converter) -> WebAppInitData:
     data = _get_parsed_init_data(data)
 
     for name in ("user", "receiver", "chat"):
@@ -49,14 +49,14 @@ def get_web_app_init_data(data: str) -> WebAppInitData:
         if value:
             data[name] = get_deserialized_data(value)
 
-    _set_empty_string_none(data)
+    _replace_empty_strings(data)
     data["auth_date"] = int(data["auth_date"])
     can_send_after = data.get("can_send_after")
 
     if can_send_after is not None:
         data["can_send_after"] = int(can_send_after)
 
-    return _dataclass_converter.get_object(
+    return converter.get_object(
         data=data,
         class_=WebAppInitData
     )
@@ -72,9 +72,9 @@ def _get_parsed_init_data(data: str) -> dict[str, Any]:
     )
 
 
-def _set_empty_string_none(data: dict[str, Any]) -> None:
+def _replace_empty_strings(data: dict[str, Any]) -> None:
     for name, value in data.items():
         if isinstance(value, dict):
-            _set_empty_string_none(value)
+            _replace_empty_strings(value)
         elif value == "":
             data[name] = None

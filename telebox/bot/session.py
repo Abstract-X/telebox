@@ -7,7 +7,7 @@ from httpx import Client, Response, RequestError
 
 from telebox.utils.unset import Unset, UNSET
 from telebox.bot.errors import get_request_error, InternalServerError
-from telebox.bot.utils.converter import Converter, get_timestamp
+from telebox.bot.converter import Converter, get_timestamp
 from telebox.utils.serialization import get_serialized_data, get_deserialized_data
 from telebox.bot.types.response_parameters import ResponseParameters
 from telebox.bot.types.input_file import InputFile
