@@ -5,7 +5,7 @@ from typing import Union, Literal
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.animation import Animation
 from telebox.bot.types.audio import Audio
 from telebox.bot.types.chat import Chat
@@ -29,7 +29,6 @@ from telebox.bot.types.venue import Venue
 from telebox.bot.types.video import Video
 from telebox.bot.types.video_note import VideoNote
 from telebox.bot.types.voice import Voice
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

@@ -5,12 +5,11 @@ from typing import Union, Literal
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.affiliate_info import AffiliateInfo
 from telebox.bot.types.gift import Gift
 from telebox.bot.types.paid_media import PaidMedia
 from telebox.bot.types.user import User
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

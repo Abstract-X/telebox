@@ -7,7 +7,7 @@ from typing import Union, Literal, Optional, TYPE_CHECKING
 from attrs import field, define
 
 from telebox.bot.enums.message_type import MessageType
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.animation import Animation
 from telebox.bot.types.audio import Audio
 from telebox.bot.types.chat import Chat
@@ -66,8 +66,7 @@ from telebox.bot.types.web_app_data import WebAppData
 from telebox.bot.types.write_access_allowed import WriteAccessAllowed
 from telebox.bot.utils.ids import get_unprefixed_chat_id
 from telebox.bot.utils.links import get_message_public_link, get_message_private_link
-from telebox.bot.utils.types import default_factory
-from telebox.bot.utils.utils import get_text_formatter
+from telebox.bot.utils.texts import get_text_formatter
 from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
 from telebox.utils.unset import Unset
 if TYPE_CHECKING:

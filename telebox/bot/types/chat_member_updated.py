@@ -6,13 +6,12 @@ from typing import Union
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.chat import Chat
 from telebox.bot.types.chat_invite_link import ChatInviteLink
 from telebox.bot.types.chat_member import ChatMember
 from telebox.bot.types.user import User
 from telebox.bot.utils.ids import get_unprefixed_chat_id
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

@@ -5,9 +5,8 @@ from typing import Union, Literal
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.revenue_withdrawal_state import RevenueWithdrawalState
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

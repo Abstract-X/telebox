@@ -1,6 +1,16 @@
 import attrs
 from attrs import define
 
+from telebox.bot.converter import converting_context
+from telebox.utils.unset import UNSET
+
+
+def default_factory():
+    if converting_context.get():
+        return None
+
+    return UNSET
+
 
 @define(repr=False)
 class Type:

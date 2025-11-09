@@ -5,12 +5,11 @@ from typing import Union
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.chat import Chat
 from telebox.bot.types.unique_gift_backdrop import UniqueGiftBackdrop
 from telebox.bot.types.unique_gift_model import UniqueGiftModel
 from telebox.bot.types.unique_gift_symbol import UniqueGiftSymbol
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

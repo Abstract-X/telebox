@@ -5,11 +5,10 @@ from typing import Union
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.animation import Animation
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.bot.types.photo_size import PhotoSize
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

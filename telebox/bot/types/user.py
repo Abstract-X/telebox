@@ -5,9 +5,8 @@ from typing import Union, Literal, Optional
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.utils.links import get_username_link, get_user_link
-from telebox.bot.utils.types import default_factory
 from telebox.bot.utils.users import get_full_name
 from telebox.utils.unset import Unset
 

@@ -1,4 +1,4 @@
-from .bot import Bot, UpdateType, MessageType, set_up_bot, Webhook
+from .bot import Bot, UpdateType, MessageType, get_text, set_up_bot, Webhook
 from .dispatcher import (
     Dispatcher,
     Event,
@@ -34,6 +34,7 @@ __all__ = [
     "Bot",
     "UpdateType",
     "MessageType",
+    "get_text",
     "set_up_bot",
     "Webhook",
     "Dispatcher",

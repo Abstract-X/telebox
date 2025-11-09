@@ -5,13 +5,12 @@ from typing import Union
 
 from attrs import define, field
 
-from telebox.bot.type import Type
+from telebox.bot.type import Type, default_factory
 from telebox.bot.types.callback_game import CallbackGame
 from telebox.bot.types.copy_text_button import CopyTextButton
 from telebox.bot.types.login_url import LoginUrl
 from telebox.bot.types.switch_inline_query_chosen_chat import SwitchInlineQueryChosenChat
 from telebox.bot.types.web_app_info import WebAppInfo
-from telebox.bot.utils.types import default_factory
 from telebox.utils.unset import Unset
 
 

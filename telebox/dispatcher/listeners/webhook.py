@@ -4,7 +4,7 @@ from typing import Optional, Union
 from pathlib import Path
 
 from telebox.bot.types import Update
-from telebox.bot.utils.converter import Converter
+from telebox.bot.converter import Converter
 from telebox.dispatcher.listener import AbstractListener
 from telebox.utils.serialization import get_deserialized_data
 
