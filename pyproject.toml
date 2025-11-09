@@ -20,8 +20,7 @@ classifiers = [
 dependencies = [
     "attrs == 25.3.0",
     "cattrs == 25.1.1",
-    "requests >= 2.28.2, < 3",
-    "requests-toolbelt >= 0.10.1",
+    "httpx == 0.28.1",
     "orjson >= 3.9.10, < 4",
     "xcept >= 3.1.0, < 4"
 ]
