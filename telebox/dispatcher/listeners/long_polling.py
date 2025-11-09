@@ -1,6 +1,6 @@
 import logging
 from queue import Queue
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 from threading import Event
 import contextlib
 import time
@@ -8,8 +8,9 @@ import time
 from httpx import TimeoutException
 
 from telebox.bot.types import Update
-from telebox.bot.bot import Bot
 from telebox.dispatcher.listener import AbstractListener
+if TYPE_CHECKING:
+    from telebox.bot.bot import Bot
 
 
 logger = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 class LongPollingListener(AbstractListener):
     def __init__(
         self,
-        bot: Bot,
+        bot: "Bot",
         *,
         error_delay_secs: Union[int, float] = 5,
         limit: Optional[int] = None,

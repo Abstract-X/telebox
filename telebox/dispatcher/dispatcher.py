@@ -3,7 +3,6 @@
 
 import logging
 from typing import Optional, Union, NoReturn
-from contextvars import ContextVar  # noqa
 from collections import deque
 from queue import Queue, SimpleQueue
 import threading
@@ -24,15 +23,12 @@ from telebox.dispatcher.types.event_info import EventInfo
 from telebox.dispatcher.types.handler_info import HandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.abort import Abort
+from telebox.dispatcher.context import event_context, handler_context, error_handler_context
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
 from telebox.utils.deps.deps import Deps
 
 
 logger = logging.getLogger(__name__)
-
-event_context = ContextVar("event_context")
-handler_context = ContextVar("handler_context")
-error_handler_context = ContextVar("error_handler_context")
 
 _empty_filter = EmptyFilter()
 _WORKER_WAITING_SECS = 60

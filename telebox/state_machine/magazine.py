@@ -2,7 +2,6 @@ from typing import Optional
 
 
 class StateMagazine:
-
     def __init__(self, states: list[str]):
         if not states:
             raise ValueError("State magazine cannot be empty!")

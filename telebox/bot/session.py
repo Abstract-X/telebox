@@ -6,6 +6,7 @@ import time
 from httpx import Client, Response, RequestError
 
 from telebox.utils.unset import Unset, UNSET
+from telebox.dispatcher.context import Context, get_event_value
 from telebox.bot.errors import get_request_error, InternalServerError
 from telebox.bot.converter import Converter, get_timestamp
 from telebox.utils.serialization import get_serialized_data, get_deserialized_data
@@ -147,6 +148,9 @@ class Session:
                     value = self._get_disable_notification(value)
                 elif parameter == "protect_content":
                     value = self._get_protect_content(value)
+
+                if isinstance(value, Context):
+                    value = get_event_value(parameter, optional=value.optional)
 
                 if value is None or value is UNSET:
                     continue

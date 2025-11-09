@@ -69,6 +69,7 @@ from telebox.bot.types.user import User
 from telebox.bot.types.user_chat_boosts import UserChatBoosts
 from telebox.bot.types.user_profile_photos import UserProfilePhotos
 from telebox.bot.types.webhook_info import WebhookInfo
+from telebox.dispatcher.context import Context, CONTEXT, OPTIONAL_CONTEXT
 from telebox.utils.unset import Unset, UNSET
 
 
@@ -252,11 +253,11 @@ class Bot:
 
     def send_message(
         self,
-        chat_id: Union[int, str],
         text: str,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         parse_mode: Union[str, None, Unset] = UNSET,
         entities: Union[list[MessageEntity], None, Unset] = UNSET,
@@ -273,8 +274,8 @@ class Bot:
         data = self._session.send_request(
             method="sendMessage",
             parameters={
-                "chat_id": chat_id,
                 "text": text,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -299,11 +300,11 @@ class Bot:
 
     def forward_message(
         self,
-        chat_id: Union[int, str],
         from_chat_id: Union[int, str],
-        message_id: int,
         *,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         video_start_timestamp: Union[int, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
@@ -314,8 +315,8 @@ class Bot:
         data = self._session.send_request(
             method="forwardMessage",
             parameters={
-                "chat_id": chat_id,
                 "from_chat_id": from_chat_id,
+                "chat_id": chat_id,
                 "message_id": message_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -334,11 +335,11 @@ class Bot:
 
     def forward_messages(
         self,
-        chat_id: Union[int, str],
         from_chat_id: Union[int, str],
         message_ids: list[int],
         *,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
@@ -347,9 +348,9 @@ class Bot:
         data = self._session.send_request(
             method="forwardMessages",
             parameters={
-                "chat_id": chat_id,
                 "from_chat_id": from_chat_id,
                 "message_ids": message_ids,
+                "chat_id": chat_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
                 "disable_notification": disable_notification,
@@ -368,11 +369,11 @@ class Bot:
 
     def copy_message(
         self,
-        chat_id: Union[int, str],
         from_chat_id: Union[int, str],
-        message_id: int,
         *,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         video_start_timestamp: Union[int, None, Unset] = UNSET,
         caption: Union[str, None, Unset] = UNSET,
@@ -390,8 +391,8 @@ class Bot:
         data = self._session.send_request(
             method="copyMessage",
             parameters={
-                "chat_id": chat_id,
                 "from_chat_id": from_chat_id,
+                "chat_id": chat_id,
                 "message_id": message_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -417,11 +418,11 @@ class Bot:
 
     def copy_messages(
         self,
-        chat_id: Union[int, str],
         from_chat_id: Union[int, str],
         message_ids: list[int],
         *,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
@@ -431,9 +432,9 @@ class Bot:
         data = self._session.send_request(
             method="copyMessages",
             parameters={
-                "chat_id": chat_id,
                 "from_chat_id": from_chat_id,
                 "message_ids": message_ids,
+                "chat_id": chat_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
                 "disable_notification": disable_notification,
@@ -453,11 +454,11 @@ class Bot:
 
     def send_photo(
         self,
-        chat_id: Union[int, str],
         photo: Union[InputFile, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         caption: Union[str, None, Unset] = UNSET,
         parse_mode: Union[str, None, Unset] = UNSET,
@@ -476,8 +477,8 @@ class Bot:
         data = self._session.send_request(
             method="sendPhoto",
             parameters={
-                "chat_id": chat_id,
                 "photo": photo,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -504,11 +505,11 @@ class Bot:
 
     def send_audio(
         self,
-        chat_id: Union[int, str],
         audio: Union[InputFile, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         caption: Union[str, None, Unset] = UNSET,
         parse_mode: Union[str, None, Unset] = UNSET,
@@ -529,8 +530,8 @@ class Bot:
         data = self._session.send_request(
             method="sendAudio",
             parameters={
-                "chat_id": chat_id,
                 "audio": audio,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -559,11 +560,11 @@ class Bot:
 
     def send_document(
         self,
-        chat_id: Union[int, str],
         document: Union[InputFile, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         thumbnail: Union[InputFile, str, InputFile, None, Unset] = UNSET,
         caption: Union[str, None, Unset] = UNSET,
@@ -582,8 +583,8 @@ class Bot:
         data = self._session.send_request(
             method="sendDocument",
             parameters={
-                "chat_id": chat_id,
                 "document": document,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -610,11 +611,11 @@ class Bot:
 
     def send_video(
         self,
-        chat_id: Union[int, str],
         video: Union[InputFile, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         duration: Union[int, None, Unset] = UNSET,
         width: Union[int, None, Unset] = UNSET,
@@ -640,8 +641,8 @@ class Bot:
         data = self._session.send_request(
             method="sendVideo",
             parameters={
-                "chat_id": chat_id,
                 "video": video,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -675,11 +676,11 @@ class Bot:
 
     def send_animation(
         self,
-        chat_id: Union[int, str],
         animation: Union[InputFile, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         duration: Union[int, None, Unset] = UNSET,
         width: Union[int, None, Unset] = UNSET,
@@ -702,8 +703,8 @@ class Bot:
         data = self._session.send_request(
             method="sendAnimation",
             parameters={
-                "chat_id": chat_id,
                 "animation": animation,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -734,11 +735,11 @@ class Bot:
 
     def send_voice(
         self,
-        chat_id: Union[int, str],
         voice: Union[InputFile, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         caption: Union[str, None, Unset] = UNSET,
         parse_mode: Union[str, None, Unset] = UNSET,
@@ -756,8 +757,8 @@ class Bot:
         data = self._session.send_request(
             method="sendVoice",
             parameters={
-                "chat_id": chat_id,
                 "voice": voice,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -783,11 +784,11 @@ class Bot:
 
     def send_video_note(
         self,
-        chat_id: Union[int, str],
         video_note: Union[InputFile, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         duration: Union[int, None, Unset] = UNSET,
         length: Union[int, None, Unset] = UNSET,
@@ -804,8 +805,8 @@ class Bot:
         data = self._session.send_request(
             method="sendVideoNote",
             parameters={
-                "chat_id": chat_id,
                 "video_note": video_note,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -830,12 +831,12 @@ class Bot:
 
     def send_paid_media(
         self,
-        chat_id: Union[int, str],
         star_count: int,
         media: list[InputPaidMedia],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         payload: Union[str, None, Unset] = UNSET,
         caption: Union[str, None, Unset] = UNSET,
@@ -853,9 +854,9 @@ class Bot:
         data = self._session.send_request(
             method="sendPaidMedia",
             parameters={
-                "chat_id": chat_id,
                 "star_count": star_count,
                 "media": media,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -881,11 +882,11 @@ class Bot:
 
     def send_media_group(
         self,
-        chat_id: Union[int, str],
         media: list[Union[InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo]],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
@@ -897,8 +898,8 @@ class Bot:
         data = self._session.send_request(
             method="sendMediaGroup",
             parameters={
-                "chat_id": chat_id,
                 "media": media,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -921,12 +922,12 @@ class Bot:
 
     def send_location(
         self,
-        chat_id: Union[int, str],
         latitude: float,
         longitude: float,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         horizontal_accuracy: Union[float, None, Unset] = UNSET,
         live_period: Union[int, None, Unset] = UNSET,
@@ -944,9 +945,9 @@ class Bot:
         data = self._session.send_request(
             method="sendLocation",
             parameters={
-                "chat_id": chat_id,
                 "latitude": latitude,
                 "longitude": longitude,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -972,14 +973,14 @@ class Bot:
 
     def send_venue(
         self,
-        chat_id: Union[int, str],
         latitude: float,
         longitude: float,
         title: str,
         address: str,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         foursquare_id: Union[str, None, Unset] = UNSET,
         foursquare_type: Union[str, None, Unset] = UNSET,
@@ -997,11 +998,11 @@ class Bot:
         data = self._session.send_request(
             method="sendVenue",
             parameters={
-                "chat_id": chat_id,
                 "latitude": latitude,
                 "longitude": longitude,
                 "title": title,
                 "address": address,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -1027,12 +1028,12 @@ class Bot:
 
     def send_contact(
         self,
-        chat_id: Union[int, str],
         phone_number: str,
         first_name: str,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         last_name: Union[str, None, Unset] = UNSET,
         vcard: Union[str, None, Unset] = UNSET,
@@ -1048,9 +1049,9 @@ class Bot:
         data = self._session.send_request(
             method="sendContact",
             parameters={
-                "chat_id": chat_id,
                 "phone_number": phone_number,
                 "first_name": first_name,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -1074,12 +1075,12 @@ class Bot:
 
     def send_poll(
         self,
-        chat_id: Union[int, str],
         question: str,
         options: list[InputPollOption],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         question_parse_mode: Union[str, None, Unset] = UNSET,
         question_entities: Union[list[MessageEntity], None, Unset] = UNSET,
         is_anonymous: Union[bool, None, Unset] = UNSET,
@@ -1103,9 +1104,9 @@ class Bot:
         data = self._session.send_request(
             method="sendPoll",
             parameters={
-                "chat_id": chat_id,
                 "question": question,
                 "options": options,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "question_parse_mode": question_parse_mode,
@@ -1137,10 +1138,10 @@ class Bot:
 
     def send_checklist(
         self,
-        business_connection_id: str,
-        chat_id: int,
         checklist: InputChecklist,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
+        chat_id: Union[int, Context] = CONTEXT,
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
         message_effect_id: Union[str, None, Unset] = UNSET,
@@ -1151,9 +1152,9 @@ class Bot:
         data = self._session.send_request(
             method="sendChecklist",
             parameters={
+                "checklist": checklist,
                 "business_connection_id": business_connection_id,
                 "chat_id": chat_id,
-                "checklist": checklist,
                 "disable_notification": disable_notification,
                 "protect_content": protect_content,
                 "message_effect_id": message_effect_id,
@@ -1170,10 +1171,10 @@ class Bot:
 
     def send_dice(
         self,
-        chat_id: Union[int, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         emoji: Union[str, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
@@ -1211,18 +1212,18 @@ class Bot:
 
     def send_chat_action(
         self,
-        chat_id: Union[int, str],
         action: str,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="sendChatAction",
             parameters={
-                "chat_id": chat_id,
                 "action": action,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id
             },
@@ -1233,9 +1234,9 @@ class Bot:
 
     def set_message_reaction(
         self,
-        chat_id: Union[int, str],
-        message_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
         reaction: Union[list[ReactionType], None, Unset] = UNSET,
         is_big: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -1255,8 +1256,8 @@ class Bot:
 
     def get_user_profile_photos(
         self,
-        user_id: int,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         offset: Union[int, None, Unset] = UNSET,
         limit: Union[int, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -1278,8 +1279,8 @@ class Bot:
 
     def set_user_emoji_status(
         self,
-        user_id: int,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         emoji_status_custom_emoji_id: Union[str, None, Unset] = UNSET,
         emoji_status_expiration_date: Union[datetime, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -1317,9 +1318,9 @@ class Bot:
 
     def ban_chat_member(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         until_date: Union[datetime, None, Unset] = UNSET,
         revoke_messages: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -1339,9 +1340,9 @@ class Bot:
 
     def unban_chat_member(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         only_if_banned: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -1359,10 +1360,10 @@ class Bot:
 
     def restrict_chat_member(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         permissions: ChatPermissions,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         use_independent_chat_permissions: Union[bool, None, Unset] = UNSET,
         until_date: Union[datetime, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -1370,9 +1371,9 @@ class Bot:
         data = self._session.send_request(
             method="restrictChatMember",
             parameters={
+                "permissions": permissions,
                 "chat_id": chat_id,
                 "user_id": user_id,
-                "permissions": permissions,
                 "use_independent_chat_permissions": use_independent_chat_permissions,
                 "until_date": until_date
             },
@@ -1383,9 +1384,9 @@ class Bot:
 
     def promote_chat_member(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         is_anonymous: Union[bool, None, Unset] = UNSET,
         can_manage_chat: Union[bool, None, Unset] = UNSET,
         can_delete_messages: Union[bool, None, Unset] = UNSET,
@@ -1433,18 +1434,18 @@ class Bot:
 
     def set_chat_administrator_custom_title(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         custom_title: str,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatAdministratorCustomTitle",
             parameters={
+                "custom_title": custom_title,
                 "chat_id": chat_id,
-                "user_id": user_id,
-                "custom_title": custom_title
+                "user_id": user_id
             },
             timeout_secs=timeout_secs
         )
@@ -1453,9 +1454,9 @@ class Bot:
 
     def ban_chat_sender_chat(
         self,
-        chat_id: Union[int, str],
-        sender_chat_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        sender_chat_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1471,9 +1472,9 @@ class Bot:
 
     def unban_chat_sender_chat(
         self,
-        chat_id: Union[int, str],
-        sender_chat_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        sender_chat_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1489,17 +1490,17 @@ class Bot:
 
     def set_chat_permissions(
         self,
-        chat_id: Union[int, str],
         permissions: ChatPermissions,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         use_independent_chat_permissions: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatPermissions",
             parameters={
-                "chat_id": chat_id,
                 "permissions": permissions,
+                "chat_id": chat_id,
                 "use_independent_chat_permissions": use_independent_chat_permissions
             },
             timeout_secs=timeout_secs
@@ -1509,8 +1510,8 @@ class Bot:
 
     def export_chat_invite_link(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> str:
         data = self._session.send_request(
@@ -1525,8 +1526,8 @@ class Bot:
 
     def create_chat_invite_link(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         name: Union[str, None, Unset] = UNSET,
         expire_date: Union[datetime, None, Unset] = UNSET,
         member_limit: Union[int, None, Unset] = UNSET,
@@ -1552,9 +1553,9 @@ class Bot:
 
     def edit_chat_invite_link(
         self,
-        chat_id: Union[int, str],
         invite_link: str,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         name: Union[str, None, Unset] = UNSET,
         expire_date: Union[datetime, None, Unset] = UNSET,
         member_limit: Union[int, None, Unset] = UNSET,
@@ -1564,8 +1565,8 @@ class Bot:
         data = self._session.send_request(
             method="editChatInviteLink",
             parameters={
-                "chat_id": chat_id,
                 "invite_link": invite_link,
+                "chat_id": chat_id,
                 "name": name,
                 "expire_date": expire_date,
                 "member_limit": member_limit,
@@ -1581,19 +1582,19 @@ class Bot:
 
     def create_chat_subscription_invite_link(
         self,
-        chat_id: Union[int, str],
         subscription_period: int,
         subscription_price: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         name: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> ChatInviteLink:
         data = self._session.send_request(
             method="createChatSubscriptionInviteLink",
             parameters={
-                "chat_id": chat_id,
                 "subscription_period": subscription_period,
                 "subscription_price": subscription_price,
+                "chat_id": chat_id,
                 "name": name
             },
             timeout_secs=timeout_secs
@@ -1606,17 +1607,17 @@ class Bot:
 
     def edit_chat_subscription_invite_link(
         self,
-        chat_id: Union[int, str],
         invite_link: str,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         name: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> ChatInviteLink:
         data = self._session.send_request(
             method="editChatSubscriptionInviteLink",
             parameters={
-                "chat_id": chat_id,
                 "invite_link": invite_link,
+                "chat_id": chat_id,
                 "name": name
             },
             timeout_secs=timeout_secs
@@ -1629,16 +1630,16 @@ class Bot:
 
     def revoke_chat_invite_link(
         self,
-        chat_id: Union[int, str],
         invite_link: str,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> ChatInviteLink:
         data = self._session.send_request(
             method="revokeChatInviteLink",
             parameters={
-                "chat_id": chat_id,
-                "invite_link": invite_link
+                "invite_link": invite_link,
+                "chat_id": chat_id
             },
             timeout_secs=timeout_secs
         )
@@ -1650,9 +1651,9 @@ class Bot:
 
     def approve_chat_join_request(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1668,9 +1669,9 @@ class Bot:
 
     def decline_chat_join_request(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1686,16 +1687,16 @@ class Bot:
 
     def set_chat_photo(
         self,
-        chat_id: Union[int, str],
         photo: InputFile,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatPhoto",
             parameters={
-                "chat_id": chat_id,
-                "photo": photo
+                "photo": photo,
+                "chat_id": chat_id
             },
             timeout_secs=timeout_secs
         )
@@ -1704,8 +1705,8 @@ class Bot:
 
     def delete_chat_photo(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1720,16 +1721,16 @@ class Bot:
 
     def set_chat_title(
         self,
-        chat_id: Union[int, str],
         title: str,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatTitle",
             parameters={
-                "chat_id": chat_id,
-                "title": title
+                "title": title,
+                "chat_id": chat_id
             },
             timeout_secs=timeout_secs
         )
@@ -1738,8 +1739,8 @@ class Bot:
 
     def set_chat_description(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         description: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -1756,10 +1757,10 @@ class Bot:
 
     def pin_chat_message(
         self,
-        chat_id: Union[int, str],
-        message_id: int,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
         disable_notification: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -1778,10 +1779,10 @@ class Bot:
 
     def unpin_chat_message(
         self,
-        chat_id: Union[int, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1798,8 +1799,8 @@ class Bot:
 
     def unpin_all_chat_messages(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1814,8 +1815,8 @@ class Bot:
 
     def leave_chat(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1830,8 +1831,8 @@ class Bot:
 
     def get_chat(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> ChatFullInfo:
         data = self._session.send_request(
@@ -1849,8 +1850,8 @@ class Bot:
 
     def get_chat_administrators(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> list[ChatMember]:
         data = self._session.send_request(
@@ -1871,8 +1872,8 @@ class Bot:
 
     def get_chat_member_count(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> int:
         data = self._session.send_request(
@@ -1887,9 +1888,9 @@ class Bot:
 
     def get_chat_member(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> ChatMember:
         data = self._session.send_request(
@@ -1908,16 +1909,16 @@ class Bot:
 
     def set_chat_sticker_set(
         self,
-        chat_id: Union[int, str],
         sticker_set_name: str,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatStickerSet",
             parameters={
-                "chat_id": chat_id,
-                "sticker_set_name": sticker_set_name
+                "sticker_set_name": sticker_set_name,
+                "chat_id": chat_id
             },
             timeout_secs=timeout_secs
         )
@@ -1926,8 +1927,8 @@ class Bot:
 
     def delete_chat_sticker_set(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1960,9 +1961,9 @@ class Bot:
 
     def create_forum_topic(
         self,
-        chat_id: Union[int, str],
         name: str,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         icon_color: Union[int, None, Unset] = UNSET,
         icon_custom_emoji_id: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -1970,8 +1971,8 @@ class Bot:
         data = self._session.send_request(
             method="createForumTopic",
             parameters={
-                "chat_id": chat_id,
                 "name": name,
+                "chat_id": chat_id,
                 "icon_color": icon_color,
                 "icon_custom_emoji_id": icon_custom_emoji_id
             },
@@ -1985,9 +1986,9 @@ class Bot:
 
     def edit_forum_topic(
         self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_thread_id: Union[int, Context] = CONTEXT,
         name: Union[str, None, Unset] = UNSET,
         icon_custom_emoji_id: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -2007,9 +2008,9 @@ class Bot:
 
     def close_forum_topic(
         self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_thread_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2025,9 +2026,9 @@ class Bot:
 
     def reopen_forum_topic(
         self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_thread_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2043,9 +2044,9 @@ class Bot:
 
     def delete_forum_topic(
         self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_thread_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2061,9 +2062,9 @@ class Bot:
 
     def unpin_all_forum_topic_messages(
         self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_thread_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2079,16 +2080,16 @@ class Bot:
 
     def edit_general_forum_topic(
         self,
-        chat_id: Union[int, str],
         name: str,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="editGeneralForumTopic",
             parameters={
-                "chat_id": chat_id,
-                "name": name
+                "name": name,
+                "chat_id": chat_id
             },
             timeout_secs=timeout_secs
         )
@@ -2097,8 +2098,8 @@ class Bot:
 
     def close_general_forum_topic(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2113,8 +2114,8 @@ class Bot:
 
     def reopen_general_forum_topic(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2129,8 +2130,8 @@ class Bot:
 
     def hide_general_forum_topic(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2145,8 +2146,8 @@ class Bot:
 
     def unhide_general_forum_topic(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2161,8 +2162,8 @@ class Bot:
 
     def unpin_all_general_forum_topic_messages(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2177,8 +2178,8 @@ class Bot:
 
     def answer_callback_query(
         self,
-        callback_query_id: str,
         *,
+        callback_query_id: Union[str, Context] = CONTEXT,
         text: Union[str, None, Unset] = UNSET,
         show_alert: Union[bool, None, Unset] = UNSET,
         url: Union[str, None, Unset] = UNSET,
@@ -2201,9 +2202,9 @@ class Bot:
 
     def get_user_chat_boosts(
         self,
-        chat_id: Union[int, str],
-        user_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> UserChatBoosts:
         data = self._session.send_request(
@@ -2222,8 +2223,8 @@ class Bot:
 
     def get_business_connection(
         self,
-        business_connection_id: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> BusinessConnection:
         data = self._session.send_request(
@@ -2415,7 +2416,7 @@ class Bot:
     def set_chat_menu_button(
         self,
         *,
-        chat_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         menu_button: Union[MenuButton, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -2433,7 +2434,7 @@ class Bot:
     def get_chat_menu_button(
         self,
         *,
-        chat_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> MenuButton:
         data = self._session.send_request(
@@ -2505,8 +2506,8 @@ class Bot:
         self,
         gift_id: str,
         *,
-        user_id: Union[int, None, Unset] = UNSET,
-        chat_id: Union[int, str, None, Unset] = UNSET,
+        user_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        chat_id: Union[int, str, Context, None] = OPTIONAL_CONTEXT,
         pay_for_upgrade: Union[bool, None, Unset] = UNSET,
         text: Union[str, None, Unset] = UNSET,
         text_parse_mode: Union[str, None, Unset] = UNSET,
@@ -2531,10 +2532,10 @@ class Bot:
 
     def gift_premium_subscription(
         self,
-        user_id: int,
         month_count: int,
         star_count: int,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         text: Union[str, None, Unset] = UNSET,
         text_parse_mode: Union[str, None, Unset] = UNSET,
         text_entities: Union[list[MessageEntity], None, Unset] = UNSET,
@@ -2543,9 +2544,9 @@ class Bot:
         data = self._session.send_request(
             method="giftPremiumSubscription",
             parameters={
-                "user_id": user_id,
                 "month_count": month_count,
                 "star_count": star_count,
+                "user_id": user_id,
                 "text": text,
                 "text_parse_mode": text_parse_mode,
                 "text_entities": text_entities
@@ -2557,8 +2558,8 @@ class Bot:
 
     def verify_user(
         self,
-        user_id: int,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         custom_description: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -2575,8 +2576,8 @@ class Bot:
 
     def verify_chat(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         custom_description: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -2593,8 +2594,8 @@ class Bot:
 
     def remove_user_verification(
         self,
-        user_id: int,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2609,8 +2610,8 @@ class Bot:
 
     def remove_chat_verification(
         self,
-        chat_id: Union[int, str],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2625,10 +2626,10 @@ class Bot:
 
     def read_business_message(
         self,
-        business_connection_id: str,
-        chat_id: int,
-        message_id: int,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
+        chat_id: Union[int, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -2645,16 +2646,16 @@ class Bot:
 
     def delete_business_messages(
         self,
-        business_connection_id: str,
         message_ids: list[int],
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteBusinessMessages",
             parameters={
-                "business_connection_id": business_connection_id,
-                "message_ids": message_ids
+                "message_ids": message_ids,
+                "business_connection_id": business_connection_id
             },
             timeout_secs=timeout_secs
         )
@@ -2663,17 +2664,17 @@ class Bot:
 
     def set_business_account_name(
         self,
-        business_connection_id: str,
         first_name: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         last_name: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setBusinessAccountName",
             parameters={
-                "business_connection_id": business_connection_id,
                 "first_name": first_name,
+                "business_connection_id": business_connection_id,
                 "last_name": last_name
             },
             timeout_secs=timeout_secs
@@ -2683,8 +2684,8 @@ class Bot:
 
     def set_business_account_username(
         self,
-        business_connection_id: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         username: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -2701,8 +2702,8 @@ class Bot:
 
     def set_business_account_bio(
         self,
-        business_connection_id: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         bio: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -2719,17 +2720,17 @@ class Bot:
 
     def set_business_account_profile_photo(
         self,
-        business_connection_id: str,
         photo: InputProfilePhoto,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         is_public: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setBusinessAccountProfilePhoto",
             parameters={
-                "business_connection_id": business_connection_id,
                 "photo": photo,
+                "business_connection_id": business_connection_id,
                 "is_public": is_public
             },
             timeout_secs=timeout_secs
@@ -2739,8 +2740,8 @@ class Bot:
 
     def remove_business_account_profile_photo(
         self,
-        business_connection_id: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         is_public: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -2757,18 +2758,18 @@ class Bot:
 
     def set_business_account_gift_settings(
         self,
-        business_connection_id: str,
         show_gift_button: bool,
         accepted_gift_types: AcceptedGiftTypes,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setBusinessAccountGiftSettings",
             parameters={
-                "business_connection_id": business_connection_id,
                 "show_gift_button": show_gift_button,
-                "accepted_gift_types": accepted_gift_types
+                "accepted_gift_types": accepted_gift_types,
+                "business_connection_id": business_connection_id
             },
             timeout_secs=timeout_secs
         )
@@ -2777,8 +2778,8 @@ class Bot:
 
     def get_business_account_star_balance(
         self,
-        business_connection_id: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> StarAmount:
         data = self._session.send_request(
@@ -2796,16 +2797,16 @@ class Bot:
 
     def transfer_business_account_stars(
         self,
-        business_connection_id: str,
         star_count: int,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="transferBusinessAccountStars",
             parameters={
-                "business_connection_id": business_connection_id,
-                "star_count": star_count
+                "star_count": star_count,
+                "business_connection_id": business_connection_id
             },
             timeout_secs=timeout_secs
         )
@@ -2814,8 +2815,8 @@ class Bot:
 
     def get_business_account_gifts(
         self,
-        business_connection_id: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         exclude_unsaved: Union[bool, None, Unset] = UNSET,
         exclude_saved: Union[bool, None, Unset] = UNSET,
         exclude_unlimited: Union[bool, None, Unset] = UNSET,
@@ -2849,16 +2850,16 @@ class Bot:
 
     def convert_gift_to_stars(
         self,
-        business_connection_id: str,
         owned_gift_id: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="convertGiftToStars",
             parameters={
-                "business_connection_id": business_connection_id,
-                "owned_gift_id": owned_gift_id
+                "owned_gift_id": owned_gift_id,
+                "business_connection_id": business_connection_id
             },
             timeout_secs=timeout_secs
         )
@@ -2867,9 +2868,9 @@ class Bot:
 
     def upgrade_gift(
         self,
-        business_connection_id: str,
         owned_gift_id: str,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         keep_original_details: Union[bool, None, Unset] = UNSET,
         star_count: Union[int, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -2877,8 +2878,8 @@ class Bot:
         data = self._session.send_request(
             method="upgradeGift",
             parameters={
-                "business_connection_id": business_connection_id,
                 "owned_gift_id": owned_gift_id,
+                "business_connection_id": business_connection_id,
                 "keep_original_details": keep_original_details,
                 "star_count": star_count
             },
@@ -2889,19 +2890,19 @@ class Bot:
 
     def transfer_gift(
         self,
-        business_connection_id: str,
         owned_gift_id: str,
         new_owner_chat_id: int,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         star_count: Union[int, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="transferGift",
             parameters={
-                "business_connection_id": business_connection_id,
                 "owned_gift_id": owned_gift_id,
                 "new_owner_chat_id": new_owner_chat_id,
+                "business_connection_id": business_connection_id,
                 "star_count": star_count
             },
             timeout_secs=timeout_secs
@@ -2911,10 +2912,10 @@ class Bot:
 
     def post_story(
         self,
-        business_connection_id: str,
         content: InputStoryContent,
         active_period: int,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         caption: Union[str, None, Unset] = UNSET,
         parse_mode: Union[str, None, Unset] = UNSET,
         caption_entities: Union[list[MessageEntity], None, Unset] = UNSET,
@@ -2926,9 +2927,9 @@ class Bot:
         data = self._session.send_request(
             method="postStory",
             parameters={
-                "business_connection_id": business_connection_id,
                 "content": content,
                 "active_period": active_period,
+                "business_connection_id": business_connection_id,
                 "caption": caption,
                 "parse_mode": parse_mode,
                 "caption_entities": caption_entities,
@@ -2946,10 +2947,10 @@ class Bot:
 
     def edit_story(
         self,
-        business_connection_id: str,
         story_id: int,
         content: InputStoryContent,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         caption: Union[str, None, Unset] = UNSET,
         parse_mode: Union[str, None, Unset] = UNSET,
         caption_entities: Union[list[MessageEntity], None, Unset] = UNSET,
@@ -2959,9 +2960,9 @@ class Bot:
         data = self._session.send_request(
             method="editStory",
             parameters={
-                "business_connection_id": business_connection_id,
                 "story_id": story_id,
                 "content": content,
+                "business_connection_id": business_connection_id,
                 "caption": caption,
                 "parse_mode": parse_mode,
                 "caption_entities": caption_entities,
@@ -2977,16 +2978,16 @@ class Bot:
 
     def delete_story(
         self,
-        business_connection_id: str,
         story_id: int,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteStory",
             parameters={
-                "business_connection_id": business_connection_id,
-                "story_id": story_id
+                "story_id": story_id,
+                "business_connection_id": business_connection_id
             },
             timeout_secs=timeout_secs
         )
@@ -2997,9 +2998,9 @@ class Bot:
         self,
         text: str,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        chat_id: Union[int, str, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        chat_id: Union[int, str, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         parse_mode: Union[str, None, Unset] = UNSET,
         entities: Union[list[MessageEntity], None, Unset] = UNSET,
@@ -3034,9 +3035,9 @@ class Bot:
     def edit_message_caption(
         self,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        chat_id: Union[int, str, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        chat_id: Union[int, str, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         caption: Union[str, None, Unset] = UNSET,
         parse_mode: Union[str, None, Unset] = UNSET,
@@ -3073,9 +3074,9 @@ class Bot:
         self,
         media: InputMedia,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        chat_id: Union[int, str, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        chat_id: Union[int, str, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -3106,9 +3107,9 @@ class Bot:
         latitude: float,
         longitude: float,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        chat_id: Union[int, str, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        chat_id: Union[int, str, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         live_period: Union[int, None, Unset] = UNSET,
         horizontal_accuracy: Union[float, None, Unset] = UNSET,
@@ -3146,9 +3147,9 @@ class Bot:
     def stop_message_live_location(
         self,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        chat_id: Union[int, str, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        chat_id: Union[int, str, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -3175,21 +3176,21 @@ class Bot:
 
     def edit_message_checklist(
         self,
-        business_connection_id: str,
-        chat_id: int,
-        message_id: int,
         checklist: InputChecklist,
         *,
+        business_connection_id: Union[str, Context] = CONTEXT,
+        chat_id: Union[int, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="editMessageChecklist",
             parameters={
+                "checklist": checklist,
                 "business_connection_id": business_connection_id,
                 "chat_id": chat_id,
                 "message_id": message_id,
-                "checklist": checklist,
                 "reply_markup": reply_markup
             },
             timeout_secs=timeout_secs
@@ -3203,9 +3204,9 @@ class Bot:
     def edit_message_reply_markup(
         self,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        chat_id: Union[int, str, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        chat_id: Union[int, str, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -3232,10 +3233,10 @@ class Bot:
 
     def stop_poll(
         self,
-        chat_id: Union[int, str],
-        message_id: int,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Poll:
@@ -3257,9 +3258,9 @@ class Bot:
 
     def approve_suggested_post(
         self,
-        chat_id: int,
-        message_id: int,
         *,
+        chat_id: Union[int, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
         send_date: Union[datetime, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -3277,9 +3278,9 @@ class Bot:
 
     def decline_suggested_post(
         self,
-        chat_id: int,
-        message_id: int,
         *,
+        chat_id: Union[int, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
         comment: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -3297,9 +3298,9 @@ class Bot:
 
     def delete_message(
         self,
-        chat_id: Union[int, str],
-        message_id: int,
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -3315,16 +3316,16 @@ class Bot:
 
     def delete_messages(
         self,
-        chat_id: Union[int, str],
         message_ids: list[int],
         *,
+        chat_id: Union[int, str, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteMessages",
             parameters={
-                "chat_id": chat_id,
-                "message_ids": message_ids
+                "message_ids": message_ids,
+                "chat_id": chat_id
             },
             timeout_secs=timeout_secs
         )
@@ -3333,11 +3334,11 @@ class Bot:
 
     def send_sticker(
         self,
-        chat_id: Union[int, str],
         sticker: Union[InputFile, str],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         emoji: Union[str, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
@@ -3352,8 +3353,8 @@ class Bot:
         data = self._session.send_request(
             method="sendSticker",
             parameters={
-                "chat_id": chat_id,
                 "sticker": sticker,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
@@ -3417,18 +3418,18 @@ class Bot:
 
     def upload_sticker_file(
         self,
-        user_id: int,
         sticker: InputFile,
         sticker_format: str,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> File:
         data = self._session.send_request(
             method="uploadStickerFile",
             parameters={
-                "user_id": user_id,
                 "sticker": sticker,
-                "sticker_format": sticker_format
+                "sticker_format": sticker_format,
+                "user_id": user_id
             },
             timeout_secs=timeout_secs
         )
@@ -3440,11 +3441,11 @@ class Bot:
 
     def create_new_sticker_set(
         self,
-        user_id: int,
         name: str,
         title: str,
         stickers: list[InputSticker],
         *,
+        user_id: Union[int, Context] = CONTEXT,
         sticker_type: Union[str, None, Unset] = UNSET,
         needs_repainting: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -3452,10 +3453,10 @@ class Bot:
         data = self._session.send_request(
             method="createNewStickerSet",
             parameters={
-                "user_id": user_id,
                 "name": name,
                 "title": title,
                 "stickers": stickers,
+                "user_id": user_id,
                 "sticker_type": sticker_type,
                 "needs_repainting": needs_repainting
             },
@@ -3466,18 +3467,18 @@ class Bot:
 
     def add_sticker_to_set(
         self,
-        user_id: int,
         name: str,
         sticker: InputSticker,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="addStickerToSet",
             parameters={
-                "user_id": user_id,
                 "name": name,
-                "sticker": sticker
+                "sticker": sticker,
+                "user_id": user_id
             },
             timeout_secs=timeout_secs
         )
@@ -3520,20 +3521,20 @@ class Bot:
 
     def replace_sticker_in_set(
         self,
-        user_id: int,
         name: str,
         old_sticker: str,
         sticker: InputSticker,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="replaceStickerInSet",
             parameters={
-                "user_id": user_id,
                 "name": name,
                 "old_sticker": old_sticker,
-                "sticker": sticker
+                "sticker": sticker,
+                "user_id": user_id
             },
             timeout_secs=timeout_secs
         )
@@ -3615,9 +3616,9 @@ class Bot:
     def set_sticker_set_thumbnail(
         self,
         name: str,
-        user_id: int,
         format: str,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         thumbnail: Union[InputFile, str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
@@ -3625,8 +3626,8 @@ class Bot:
             method="setStickerSetThumbnail",
             parameters={
                 "name": name,
-                "user_id": user_id,
                 "format": format,
+                "user_id": user_id,
                 "thumbnail": thumbnail
             },
             timeout_secs=timeout_secs
@@ -3670,9 +3671,9 @@ class Bot:
 
     def answer_inline_query(
         self,
-        inline_query_id: str,
         results: list[InlineQueryResult],
         *,
+        inline_query_id: Union[str, Context] = CONTEXT,
         cache_time: Union[int, None, Unset] = UNSET,
         is_personal: Union[bool, None, Unset] = UNSET,
         next_offset: Union[str, None, Unset] = UNSET,
@@ -3682,8 +3683,8 @@ class Bot:
         data = self._session.send_request(
             method="answerInlineQuery",
             parameters={
-                "inline_query_id": inline_query_id,
                 "results": results,
+                "inline_query_id": inline_query_id,
                 "cache_time": cache_time,
                 "is_personal": is_personal,
                 "next_offset": next_offset,
@@ -3717,9 +3718,9 @@ class Bot:
 
     def save_prepared_inline_message(
         self,
-        user_id: int,
         result: InlineQueryResult,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         allow_user_chats: Union[bool, None, Unset] = UNSET,
         allow_bot_chats: Union[bool, None, Unset] = UNSET,
         allow_group_chats: Union[bool, None, Unset] = UNSET,
@@ -3729,8 +3730,8 @@ class Bot:
         data = self._session.send_request(
             method="savePreparedInlineMessage",
             parameters={
-                "user_id": user_id,
                 "result": result,
+                "user_id": user_id,
                 "allow_user_chats": allow_user_chats,
                 "allow_bot_chats": allow_bot_chats,
                 "allow_group_chats": allow_group_chats,
@@ -3746,14 +3747,14 @@ class Bot:
 
     def send_invoice(
         self,
-        chat_id: Union[int, str],
         title: str,
         description: str,
         payload: str,
         currency: str,
         prices: list[LabeledPrice],
         *,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         provider_token: Union[str, None, Unset] = UNSET,
         max_tip_amount: Union[int, None, Unset] = UNSET,
@@ -3783,12 +3784,12 @@ class Bot:
         data = self._session.send_request(
             method="sendInvoice",
             parameters={
-                "chat_id": chat_id,
                 "title": title,
                 "description": description,
                 "payload": payload,
                 "currency": currency,
                 "prices": prices,
+                "chat_id": chat_id,
                 "message_thread_id": message_thread_id,
                 "direct_messages_topic_id": direct_messages_topic_id,
                 "provider_token": provider_token,
@@ -3831,7 +3832,7 @@ class Bot:
         currency: str,
         prices: list[LabeledPrice],
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
         provider_token: Union[str, None, Unset] = UNSET,
         subscription_period: Union[int, None, Unset] = UNSET,
         max_tip_amount: Union[int, None, Unset] = UNSET,
@@ -3883,9 +3884,9 @@ class Bot:
 
     def answer_shipping_query(
         self,
-        shipping_query_id: str,
         ok: bool,
         *,
+        shipping_query_id: Union[str, Context] = CONTEXT,
         shipping_options: Union[list[ShippingOption], None, Unset] = UNSET,
         error_message: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
@@ -3893,8 +3894,8 @@ class Bot:
         data = self._session.send_request(
             method="answerShippingQuery",
             parameters={
-                "shipping_query_id": shipping_query_id,
                 "ok": ok,
+                "shipping_query_id": shipping_query_id,
                 "shipping_options": shipping_options,
                 "error_message": error_message
             },
@@ -3905,17 +3906,17 @@ class Bot:
 
     def answer_pre_checkout_query(
         self,
-        pre_checkout_query_id: str,
         ok: bool,
         *,
+        pre_checkout_query_id: Union[str, Context] = CONTEXT,
         error_message: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="answerPreCheckoutQuery",
             parameters={
-                "pre_checkout_query_id": pre_checkout_query_id,
                 "ok": ok,
+                "pre_checkout_query_id": pre_checkout_query_id,
                 "error_message": error_message
             },
             timeout_secs=timeout_secs
@@ -3961,16 +3962,16 @@ class Bot:
 
     def refund_star_payment(
         self,
-        user_id: int,
         telegram_payment_charge_id: str,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="refundStarPayment",
             parameters={
-                "user_id": user_id,
-                "telegram_payment_charge_id": telegram_payment_charge_id
+                "telegram_payment_charge_id": telegram_payment_charge_id,
+                "user_id": user_id
             },
             timeout_secs=timeout_secs
         )
@@ -3979,18 +3980,18 @@ class Bot:
 
     def edit_user_star_subscription(
         self,
-        user_id: int,
         telegram_payment_charge_id: str,
         is_canceled: bool,
         *,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="editUserStarSubscription",
             parameters={
-                "user_id": user_id,
                 "telegram_payment_charge_id": telegram_payment_charge_id,
-                "is_canceled": is_canceled
+                "is_canceled": is_canceled,
+                "user_id": user_id
             },
             timeout_secs=timeout_secs
         )
@@ -3999,16 +4000,16 @@ class Bot:
 
     def set_passport_data_errors(
         self,
-        user_id: int,
         errors: list[PassportElementError],
         *,
+        user_id: Union[int, Context] = CONTEXT,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setPassportDataErrors",
             parameters={
-                "user_id": user_id,
-                "errors": errors
+                "errors": errors,
+                "user_id": user_id
             },
             timeout_secs=timeout_secs
         )
@@ -4017,11 +4018,11 @@ class Bot:
 
     def send_game(
         self,
-        chat_id: int,
         game_short_name: str,
         *,
-        business_connection_id: Union[str, None, Unset] = UNSET,
-        message_thread_id: Union[int, None, Unset] = UNSET,
+        chat_id: Union[int, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
         allow_paid_broadcast: Union[bool, None, Unset] = UNSET,
@@ -4033,8 +4034,8 @@ class Bot:
         data = self._session.send_request(
             method="sendGame",
             parameters={
-                "chat_id": chat_id,
                 "game_short_name": game_short_name,
+                "chat_id": chat_id,
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id,
                 "disable_notification": disable_notification,
@@ -4054,25 +4055,25 @@ class Bot:
 
     def set_game_score(
         self,
-        user_id: int,
         score: int,
         *,
+        user_id: Union[int, Context] = CONTEXT,
+        chat_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         force: Union[bool, None, Unset] = UNSET,
         disable_edit_message: Union[bool, None, Unset] = UNSET,
-        chat_id: Union[int, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
         inline_message_id: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Union[Message, Literal[True]]:
         data = self._session.send_request(
             method="setGameScore",
             parameters={
-                "user_id": user_id,
                 "score": score,
-                "force": force,
-                "disable_edit_message": disable_edit_message,
+                "user_id": user_id,
                 "chat_id": chat_id,
                 "message_id": message_id,
+                "force": force,
+                "disable_edit_message": disable_edit_message,
                 "inline_message_id": inline_message_id
             },
             timeout_secs=timeout_secs
@@ -4088,10 +4089,10 @@ class Bot:
 
     def get_game_high_scores(
         self,
-        user_id: int,
         *,
-        chat_id: Union[int, None, Unset] = UNSET,
-        message_id: Union[int, None, Unset] = UNSET,
+        user_id: Union[int, Context] = CONTEXT,
+        chat_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> list[GameHighScore]:

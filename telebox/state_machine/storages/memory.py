@@ -1,6 +1,6 @@
 from typing import Optional
 
-from telebox.state_machine.storages.storage import AbstractStateStorage
+from telebox.state_machine.storage import AbstractStateStorage
 
 
 StateDict = dict[
@@ -13,7 +13,6 @@ StateDict = dict[
 
 
 class MemoryStateStorage(AbstractStateStorage):
-
     def __init__(self):
         self._states: StateDict = {}
 

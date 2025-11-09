@@ -21,7 +21,6 @@ TransitionDict = dict[
 
 
 class TransitionScheme:
-
     def __init__(self):
         self._transitions: TransitionDict = {}
 

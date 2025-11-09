@@ -1,12 +1,11 @@
 from typing import Optional
 from threading import RLock
 
-from telebox.state_machine.storages.storage import AbstractStateStorage
+from telebox.state_machine.storage import AbstractStateStorage
 from telebox.utils.serialization import get_serialized_data, get_deserialized_data
 
 
 class JSONStateStorage(AbstractStateStorage):
-
     def __init__(self, path: str):
         self._path = path
         self._lock = RLock()

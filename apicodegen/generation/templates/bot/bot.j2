@@ -54,12 +54,12 @@ class Bot:
 
     def {{ method.function_name }}(
         self,
-        {% for i in method.required_parameters %}
-        {{ i.name }}: {{ i.type_hint }},
+        {% for i in method.positional_parameters %}
+        {{ i.name }}: {{ i.type_hint }}{% if i.is_context %} = CONTEXT{% endif %},
         {% endfor %}
         *,
-        {% for i in method.optional_parameters %}
-        {{ i.name }}: {{ i.type_hint }} = UNSET,
+        {% for i in method.keyword_parameters %}
+        {{ i.name }}: {{ i.type_hint }} = {% if i.is_optional and i.is_context %}OPTIONAL_CONTEXT{% elif i.is_context %}CONTEXT{% else %}UNSET{% endif %},
         {% endfor %}
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> {{ method.result_type_hint }}:
