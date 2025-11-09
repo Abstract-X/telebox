@@ -1,8 +1,7 @@
 from .unset import Unset, UNSET
-from .group import Group
+from .group import Group, get_group
 from .task_executor import TaskExecutor
 from .deps import Deps
-from .discovering import get_group
 from .callback_data import get_callback_data
 
 
