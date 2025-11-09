@@ -1,6 +1,8 @@
 from typing import Iterable, get_type_hints
 
-from telebox.utils.deps.errors import DepsError
+
+class DepsError(Exception):
+    pass
 
 
 class Deps:

@@ -10,7 +10,7 @@ from telebox.state_machine.errors import (
     NextStateNotFoundError,
     PreviousStateNotFoundError
 )
-from telebox.utils.deps.deps import Deps
+from telebox.utils.deps import Deps
 from telebox.dispatcher.context import Context, CONTEXT, OPTIONAL_CONTEXT, event_context, get_event_value
 from telebox.dispatcher.type_hints import Event, Handler
 
