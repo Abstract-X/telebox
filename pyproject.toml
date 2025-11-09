@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-server = [
+webhook = [
     "cherrypy >= 18.8.0, < 19"
 ]
 codegen = [
