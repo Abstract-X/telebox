@@ -1,9 +1,8 @@
-from .storage import AbstractStateStorage
-from .storages import MemoryStateStorage, JSONStateStorage
+from .json import JSONStateStorage
+from .memory import MemoryStateStorage
 
 
 __all__ = [
-    "AbstractStateStorage",
-    "MemoryStateStorage",
-    "JSONStateStorage"
+    "JSONStateStorage",
+    "MemoryStateStorage"
 ]

@@ -2,7 +2,6 @@ from typing import Optional
 
 
 class State:
-
     def __init__(self, name: Optional[str] = None):
         self._name = name or type(self).__name__
 

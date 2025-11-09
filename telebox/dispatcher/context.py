@@ -1,7 +1,10 @@
 from typing import Any
+from contextvars import ContextVar  # noqa
 
-from telebox.dispatcher.dispatcher import event_context
 
+event_context = ContextVar("event_context")
+handler_context = ContextVar("handler_context")
+error_handler_context = ContextVar("error_handler_context")
 
 _CONTEXT_ATTRS = {
     "chat_id": "chat_id",

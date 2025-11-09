@@ -3,7 +3,6 @@ from typing import Optional
 
 
 class AbstractStateStorage(ABC):
-
     @abstractmethod
     def save_states(
         self,
