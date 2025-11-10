@@ -21,7 +21,13 @@ _CONTEXT_ATTRS = {
 
 
 def get_event_value(name: str, optional: bool = False) -> Any:
-    event = event_context.get()
+    event = event_context.get(None)
+
+    if event is None:
+        if optional:
+            return None
+
+        raise LookupError(f"Unable to get {name!r}: event context is not set!")
 
     if not hasattr(event, _CONTEXT_ATTRS[name]):
         if not optional:
