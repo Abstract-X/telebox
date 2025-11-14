@@ -10,6 +10,7 @@ class Bot:
         disable_link_preview: Union[bool, Unset] = UNSET,
         disable_notification: Union[bool, Unset] = UNSET,
         protect_content: Union[bool, Unset] = UNSET,
+        resize_reply_keyboard: Union[bool, Unset] = UNSET,
         api_url: str = API_URL,
         retries: int = 0,
         retry_delay_secs: Union[int, float] = 0,
@@ -20,7 +21,8 @@ class Bot:
             parse_mode=parse_mode,
             disable_link_preview=disable_link_preview,
             disable_notification=disable_notification,
-            protect_content=protect_content
+            protect_content=protect_content,
+            resize_reply_keyboard=resize_reply_keyboard
         )
         self.converter = Converter(default_parameters=self.default_parameters)
         self._session = Session(
