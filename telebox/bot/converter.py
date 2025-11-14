@@ -112,24 +112,33 @@ class Converter:
             for name, value in data.items():
                 prepared_value = value
 
-                if self.default_parameters.parse_mode is not UNSET:
-                    if name.endswith("parse_mode") and value is UNSET:
-                        prefix = name.removesuffix("parse_mode")
+                if (
+                    name.endswith("parse_mode")
+                    and (value is UNSET)
+                    and self.default_parameters.parse_mode
+                ):
+                    prefix = name.removesuffix("parse_mode")
 
-                        if prefix:
-                            entities_field_names = (f"{prefix}entities",)
-                        else:
-                            entities_field_names = ("entities", "caption_entities")
+                    if prefix:
+                        entities_field_names = (f"{prefix}entities",)
+                    else:
+                        entities_field_names = ("entities", "caption_entities")
 
-                        for i in data:
-                            if i in entities_field_names:
-                                entities_field = i
-                                break
-                        else:
-                            raise ValueError(f"No entities field for {prefix!r} prefix!")
+                    for i in data:
+                        if i in entities_field_names:
+                            entities_field = i
+                            break
+                    else:
+                        raise ValueError(f"No entities field for {prefix!r} prefix!")
 
-                        if not data[entities_field]:
-                            prepared_value = self.default_parameters.parse_mode
+                    if not data[entities_field]:
+                        prepared_value = self.default_parameters.parse_mode
+                elif (
+                    (name == "resize_keyboard")
+                    and (value is UNSET)
+                    and self.default_parameters.resize_reply_keyboard
+                ):
+                    prepared_value = True
 
                 if prepared_value is not None and prepared_value is not UNSET:
                     prepared_data[name] = prepared_value
