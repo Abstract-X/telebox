@@ -1,4 +1,4 @@
-from .callback import CallbackButton
+from .callback import AbstractCallbackButton
 from .chosen_chat_query import ChosenChatQueryButton
 from .copy_text import CopyTextButton
 from .current_chat_query import CurrentChatQueryButton
@@ -9,7 +9,7 @@ from .web_app import WebAppButton
 
 
 __all__ = [
-    "CallbackButton",
+    "AbstractCallbackButton",
     "ChosenChatQueryButton",
     "CopyTextButton",
     "CurrentChatQueryButton",

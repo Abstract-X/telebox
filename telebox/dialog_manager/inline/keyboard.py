@@ -1,14 +1,18 @@
-from telebox.dispatcher.router import Router
-from telebox.dialog_manager.keyboard import AbstractKeyboard
+from typing import Optional
+
 from telebox.dialog_manager.inline.button import AbstractInlineButton
 from telebox.bot.types.inline_keyboard_markup import InlineKeyboardMarkup
 
 
-class InlineKeyboard(AbstractKeyboard):
-    def __init__(self, buttons: list[list[AbstractInlineButton]]):
-        self.buttons = buttons
+class InlineKeyboard:
+    def __init__(self, buttons: Optional[list[list[AbstractInlineButton]]] = None):
+        self.buttons = buttons or []
 
-    def get(self) -> InlineKeyboardMarkup:
+    @property
+    def rows(self) -> int:
+        return len(self.buttons)
+
+    def get_markup(self) -> InlineKeyboardMarkup:
         return InlineKeyboardMarkup(
             inline_keyboard=[
                 [button.get() for button in row]
@@ -16,7 +20,13 @@ class InlineKeyboard(AbstractKeyboard):
             ]
         )
 
-    def set_handlers(self, router: Router) -> None:
-        for row in self.buttons:
-            for button in row:
-                button.set_handler(router=router)
+    def add_row(self, *buttons: AbstractInlineButton) -> None:
+        self.buttons.append(
+            list(buttons)
+        )
+
+    def get_row_length(self, *, index: int = -1) -> int:
+        return len(self.buttons[index])
+
+    def add_in_row(self, button: AbstractInlineButton, *, index: int = -1) -> None:
+        self.buttons[index].append(button)

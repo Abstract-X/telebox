@@ -1,20 +1,20 @@
+from abc import ABC, abstractmethod
+
 from telebox.bot.types.keyboard_button import KeyboardButton
-from telebox.dispatcher.router import Router
-from telebox.dispatcher.type_hints import Handler
-from telebox.dispatcher.filters.filters.text import TextFilter
+from telebox.bot.types.message import Message
 from telebox.dialog_manager.reply.button import AbstractReplyButton
 
 
-class TextButton(AbstractReplyButton):
-    def __init__(self, handler: Handler, text: str):
-        self.handler = handler
-        self.text = text
+class AbstractTextButton(AbstractReplyButton, ABC):
+    @staticmethod
+    @abstractmethod
+    def process_event(event: Message, deps) -> None:
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_text(cls) -> str:
+        pass
 
     def get(self) -> KeyboardButton:
-        return KeyboardButton(text=self.text)
-
-    def set_handler(self, router: Router) -> None:
-        router.add_message_handler(
-            self.handler,
-            TextFilter(self.text)
-        )
+        return KeyboardButton(text=self.get_text())

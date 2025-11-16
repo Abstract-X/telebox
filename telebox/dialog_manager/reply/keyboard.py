@@ -1,30 +1,32 @@
-from typing import Union
+from typing import Union, Optional
 
-from telebox.dispatcher.router import Router
-from telebox.dialog_manager.keyboard import AbstractKeyboard
 from telebox.dialog_manager.reply.button import AbstractReplyButton
 from telebox.bot.types import ReplyKeyboardMarkup
 from telebox.utils.unset import Unset, UNSET
 
 
-class ReplyKeyboard(AbstractKeyboard):
+class ReplyKeyboard:
     def __init__(
         self,
-        buttons: list[list[AbstractReplyButton]],
+        buttons: Optional[list[list[AbstractReplyButton]]] = None,
         is_persistent: Union[bool, None, Unset] = UNSET,
         resize: Union[bool, None, Unset] = UNSET,
         one_time: Union[bool, None, Unset] = UNSET,
         input_field_placeholder: Union[str, None, Unset] = UNSET,
         selective: Union[bool, None, Unset] = UNSET
     ):
-        self.buttons = buttons
+        self.buttons = buttons or []
         self.is_persistent = is_persistent
         self.resize = resize
         self.one_time = one_time
         self.input_field_placeholder = input_field_placeholder
         self.selective = selective
 
-    def get(self) -> ReplyKeyboardMarkup:
+    @property
+    def rows(self) -> int:
+        return len(self.buttons)
+
+    def get_markup(self) -> ReplyKeyboardMarkup:
         return ReplyKeyboardMarkup(
             keyboard=[
                 [button.get() for button in row]
@@ -37,7 +39,13 @@ class ReplyKeyboard(AbstractKeyboard):
             selective=self.selective
         )
 
-    def set_handlers(self, router: Router) -> None:
-        for row in self.buttons:
-            for button in row:
-                button.set_handler(router=router)
+    def add_row(self, *buttons: AbstractReplyButton) -> None:
+        self.buttons.append(
+            list(buttons)
+        )
+
+    def get_row_length(self, *, index: int = -1) -> int:
+        return len(self.buttons[index])
+
+    def add_in_row(self, button: AbstractReplyButton, *, index: int = -1) -> None:
+        self.buttons[index].append(button)

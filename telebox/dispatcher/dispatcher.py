@@ -18,6 +18,8 @@ from telebox.dispatcher.enums.event_type import EventType
 from telebox.dispatcher.enums.processing_status import ProcessingStatus
 from telebox.dispatcher.filters.filter import AbstractBaseFilter
 from telebox.dispatcher.filters.filters.empty import EmptyFilter
+from telebox.dispatcher.filters.filters.text import TextFilter
+from telebox.dispatcher.filters.filters.callback import CallbackFilter
 from telebox.dispatcher.middleware import Middleware
 from telebox.dispatcher.router import Router
 from telebox.dispatcher.listener import AbstractListener
@@ -27,6 +29,10 @@ from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.abort import Abort
 from telebox.dispatcher.context import event_context, handler_context, error_handler_context
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
+from telebox.dialog_manager.reply.button import AbstractReplyButton
+from telebox.dialog_manager.inline.button import AbstractInlineButton
+from telebox.dialog_manager.reply.buttons.text import AbstractTextButton
+from telebox.dialog_manager.inline.buttons.callback import AbstractCallbackButton
 from telebox.utils.deps import Deps
 
 
@@ -382,6 +388,25 @@ class Dispatcher:
             event_type=EventType.SHIPPING_QUERY,
             filter_=filter_
         )
+
+    def add_button_handler(
+        self,
+        type_: Union[type[AbstractReplyButton], type[AbstractInlineButton]]
+    ) -> None:
+        if issubclass(type_, AbstractTextButton):
+            self.add_message_handler(
+                type_.process_event,
+                TextFilter(
+                    type_.get_text()
+                )
+            )
+        elif issubclass(type_, AbstractCallbackButton):
+            self.add_callback_query_handler(
+                type_.process_event,
+                CallbackFilter(
+                    type_.get_id()
+                )
+            )
 
     def add_error_handler(
         self,

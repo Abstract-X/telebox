@@ -5,7 +5,7 @@ from telebox.bot.types.callback_query import CallbackQuery
 from telebox.utils.callback_data import get_parsed_callback_data
 
 
-class CallbackIDFilter(AbstractFilter):
+class CallbackFilter(AbstractFilter):
     def __init__(self, *ids: int):
         if not ids:
             raise ValueError("No ids!")

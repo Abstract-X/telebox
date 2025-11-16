@@ -7,7 +7,7 @@ from telebox.dispatcher.filters.factories import (
 )
 from telebox.dispatcher.filters.filters import (
     CallbackDataFilter,
-    CallbackIDFilter,
+    CallbackFilter,
     CashtagFilter,
     HashtagFilter,
     MentionFilter,
@@ -39,7 +39,7 @@ __all__ = [
     "CommandFilterFactory",
     "UserStateFilterFactory",
     "CallbackDataFilter",
-    "CallbackIDFilter",
+    "CallbackFilter",
     "CashtagFilter",
     "HashtagFilter",
     "MentionFilter",

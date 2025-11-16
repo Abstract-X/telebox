@@ -1,7 +1,5 @@
-from typing import Union, Optional
+from typing import Union, Optional, TYPE_CHECKING
 
-from telebox.bot.bot import Bot
-from telebox.bot.enums.message_type import MessageType
 from telebox.bot.types.callback_query import CallbackQuery
 from telebox.bot.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.input_media import InputMedia
@@ -15,21 +13,23 @@ from telebox.bot.types.message import Message
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.bot.types.reply_keyboard_markup import ReplyKeyboardMarkup
 from telebox.bot.types.reply_parameters import ReplyParameters
-from telebox.dialog_manager.inline.menu import AbstractInlineMenu
-from telebox.dialog_manager.reply.menu import AbstractReplyMenu
+from telebox.dialog_manager.reply.menu import ReplyMenu
+from telebox.dialog_manager.inline.menu import InlineMenu
 from telebox.dispatcher.context import Context, CONTEXT, OPTIONAL_CONTEXT, event_context
 from telebox.utils.deps import Deps
 from telebox.utils.unset import Unset, UNSET
+if TYPE_CHECKING:
+    from telebox.bot.bot import Bot
 
 
 class DialogManager:
-    def __init__(self, bot: Bot, deps: Deps):
+    def __init__(self, bot: "Bot", deps: Deps):
         self._bot = bot
         self._deps = deps
 
     def send_reply_menu(
         self,
-        menu: AbstractReplyMenu,
+        menu: ReplyMenu,
         chat_id: Union[int, str, Context] = CONTEXT,
         business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
         message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
@@ -42,12 +42,12 @@ class DialogManager:
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         return self._send_menu(
-            text=menu.get_text(deps=self._deps),
-            reply_markup=menu.get_markup(deps=self._deps),
+            text=menu.text,
+            reply_markup=menu.keyboard.get_markup(),
             chat_id=chat_id,
-            parse_mode=menu.get_parse_mode(),
-            entities=menu.get_entities(),
-            media=menu.get_media(deps=self._deps),
+            parse_mode=menu.parse_mode,
+            entities=menu.entities,
+            media=menu.media,
             business_connection_id=business_connection_id,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
@@ -61,7 +61,7 @@ class DialogManager:
 
     def send_inline_menu(
         self,
-        menu: AbstractInlineMenu,
+        menu: InlineMenu,
         chat_id: Union[int, str, Context] = CONTEXT,
         edit: bool = True,
         message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
@@ -75,11 +75,7 @@ class DialogManager:
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Message:
-        text = menu.get_text(deps=self._deps)
-        parse_mode = menu.get_parse_mode()
-        entities = menu.get_entities()
-        media = menu.get_media(deps=self._deps)
-        markup = menu.get_markup(deps=self._deps)
+        markup = menu.keyboard.get_markup()
         event = event_context.get(None)
 
         if (
@@ -90,14 +86,14 @@ class DialogManager:
                 and edit
             )
         ):
-            if media:
-                data = self._bot.converter.get_data(media)
-                data["caption"] = text
-                data["parse_mode"] = parse_mode
-                data["caption_entities"] = entities
+            if menu.media:
+                data = self._bot.converter.get_data(menu.media)
+                data["caption"] = menu.text
+                data["parse_mode"] = menu.parse_mode
+                data["caption_entities"] = menu.entities
                 media = self._bot.converter.get_object(
                     data=data,
-                    class_=type(media)
+                    class_=type(menu.media)
                 )
 
                 return self._bot.edit_message_media(
@@ -110,24 +106,24 @@ class DialogManager:
                 )
 
             return self._bot.edit_message_text(
-                text=text,
+                text=menu.text,
                 business_connection_id=business_connection_id,
                 chat_id=chat_id,
                 message_id=message_id,
-                parse_mode=parse_mode,
-                entities=entities,
+                parse_mode=menu.parse_mode,
+                entities=menu.entities,
                 link_preview_options=link_preview_options,
                 reply_markup=markup,
                 timeout_secs=timeout_secs
             )
 
         return self._send_menu(
-            text=text,
+            text=menu.text,
             reply_markup=markup,
             chat_id=chat_id,
-            parse_mode=parse_mode,
-            entities=entities,
-            media=media,
+            parse_mode=menu.parse_mode,
+            entities=menu.entities,
+            media=menu.media,
             business_connection_id=business_connection_id,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
