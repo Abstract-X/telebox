@@ -1,5 +1,5 @@
 from .callback_data import CallbackDataFilter
-from .callback_id import CallbackIDFilter
+from .callback import CallbackFilter
 from .cashtag import CashtagFilter
 from .hashtag import HashtagFilter
 from .mention import MentionFilter
@@ -24,7 +24,7 @@ from .user import UserFilter
 
 __all__ = [
     "CallbackDataFilter",
-    "CallbackIDFilter",
+    "CallbackFilter",
     "CashtagFilter",
     "HashtagFilter",
     "MentionFilter",

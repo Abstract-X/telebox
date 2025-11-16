@@ -1,7 +1,8 @@
-from .menu import AbstractInlineMenu, InlineMenu
+from .menu import InlineMenu
 from .keyboard import InlineKeyboard
+from .keyboards import PaginatedInlineKeyboard
 from .buttons import (
-    CallbackButton,
+    AbstractCallbackButton,
     ChosenChatQueryButton,
     CopyTextButton,
     CurrentChatQueryButton,
@@ -13,10 +14,10 @@ from .buttons import (
 
 
 __all__ = [
-    "AbstractInlineMenu",
     "InlineMenu",
     "InlineKeyboard",
-    "CallbackButton",
+    "PaginatedInlineKeyboard",
+    "AbstractCallbackButton",
     "ChosenChatQueryButton",
     "CopyTextButton",
     "CurrentChatQueryButton",

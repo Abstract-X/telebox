@@ -1,25 +1,24 @@
-from .menu import AbstractReplyMenu, ReplyMenu
+from .menu import ReplyMenu
 from .keyboard import ReplyKeyboard
 from .buttons import (
     ChatRequestButton,
     ContactRequestButton,
     LocationRequestButton,
     PollRequestButton,
-    TextButton,
+    AbstractTextButton,
     UserRequestButton,
     WebAppButton
 )
 
 
 __all__ = [
-    "AbstractReplyMenu",
     "ReplyMenu",
     "ReplyKeyboard",
     "ChatRequestButton",
     "ContactRequestButton",
     "LocationRequestButton",
     "PollRequestButton",
-    "TextButton",
+    "AbstractTextButton",
     "UserRequestButton",
     "WebAppButton"
 ]

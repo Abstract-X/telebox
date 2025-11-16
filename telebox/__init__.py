@@ -1,10 +1,8 @@
 from .bot import Bot, UpdateType, MessageType, get_text, set_up_bot, Webhook
 from .dialog_manager import (
     DialogManager,
-    AbstractReplyMenu,
     ReplyMenu,
     ReplyKeyboard,
-    AbstractInlineMenu,
     InlineMenu,
     InlineKeyboard
 )
@@ -46,10 +44,8 @@ __all__ = [
     "set_up_bot",
     "Webhook",
     "DialogManager",
-    "AbstractReplyMenu",
     "ReplyMenu",
     "ReplyKeyboard",
-    "AbstractInlineMenu",
     "InlineMenu",
     "InlineKeyboard",
     "Dispatcher",
