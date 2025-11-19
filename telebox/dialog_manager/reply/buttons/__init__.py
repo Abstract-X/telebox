@@ -2,7 +2,7 @@ from .chat_request import ChatRequestButton
 from .contact_request import ContactRequestButton
 from .location_request import LocationRequestButton
 from .poll_request import PollRequestButton
-from .text import AbstractTextButton
+from .text import TextButton
 from .user_request import UserRequestButton
 from .web_app import WebAppButton
 
@@ -12,7 +12,7 @@ __all__ = [
     "ContactRequestButton",
     "LocationRequestButton",
     "PollRequestButton",
-    "AbstractTextButton",
+    "TextButton",
     "UserRequestButton",
     "WebAppButton"
 ]

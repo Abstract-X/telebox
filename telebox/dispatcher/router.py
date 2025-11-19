@@ -4,13 +4,7 @@
 from typing import Optional, Union, TYPE_CHECKING
 
 from telebox.dispatcher.filters.filter import AbstractBaseFilter
-from telebox.dispatcher.filters.filters.text import TextFilter
-from telebox.dispatcher.filters.filters.callback import CallbackFilter
 from telebox.dispatcher.type_hints import Handler
-from telebox.dialog_manager.reply.button import AbstractReplyButton
-from telebox.dialog_manager.inline.button import AbstractInlineButton
-from telebox.dialog_manager.reply.buttons.text import AbstractTextButton
-from telebox.dialog_manager.inline.buttons.callback import AbstractCallbackButton
 if TYPE_CHECKING:
     from telebox.dispatcher.dispatcher import Dispatcher
 
@@ -305,25 +299,6 @@ class Router:
             handler=handler,
             filter_=self._get_filter(filter_)
         )
-
-    def add_button_handler(
-        self,
-        type_: Union[type[AbstractReplyButton], type[AbstractInlineButton]]
-    ) -> None:
-        if issubclass(type_, AbstractTextButton):
-            self.add_message_handler(
-                type_.process_event,
-                TextFilter(
-                    type_.get_text()
-                )
-            )
-        elif issubclass(type_, AbstractCallbackButton):
-            self.add_callback_query_handler(
-                type_.process_event,
-                CallbackFilter(
-                    type_.get_id()
-                )
-            )
 
     def _get_filter(
         self,
