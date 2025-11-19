@@ -2,7 +2,7 @@ from typing import Optional
 
 from telebox.dialog_manager.inline.keyboard import InlineKeyboard
 from telebox.dialog_manager.inline.button import AbstractInlineButton
-from telebox.dialog_manager.inline.buttons.callback import AbstractCallbackButton
+from telebox.dialog_manager.inline.buttons.callback import CallbackButton
 
 
 class PaginatedInlineKeyboard(InlineKeyboard):
@@ -10,11 +10,11 @@ class PaginatedInlineKeyboard(InlineKeyboard):
         self,
         buttons: list[AbstractInlineButton],
         total_pages: int,
-        previous_page_button: AbstractCallbackButton,
-        next_page_button: AbstractCallbackButton,
-        page_button: Optional[AbstractCallbackButton] = None,
-        start_page_button: Optional[AbstractCallbackButton] = None,
-        end_page_button: Optional[AbstractCallbackButton] = None,
+        previous_page_button: CallbackButton,
+        next_page_button: CallbackButton,
+        page_button: Optional[CallbackButton] = None,
+        start_page_button: Optional[CallbackButton] = None,
+        end_page_button: Optional[CallbackButton] = None,
         width: int = 1
     ):
         super().__init__()

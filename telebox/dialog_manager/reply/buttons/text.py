@@ -1,20 +1,10 @@
-from abc import ABC, abstractmethod
-
 from telebox.bot.types.keyboard_button import KeyboardButton
-from telebox.bot.types.message import Message
 from telebox.dialog_manager.reply.button import AbstractReplyButton
 
 
-class AbstractTextButton(AbstractReplyButton, ABC):
-    @staticmethod
-    @abstractmethod
-    def process_event(event: Message, deps) -> None:
-        pass
-
-    @classmethod
-    @abstractmethod
-    def get_text(cls) -> str:
-        pass
+class TextButton(AbstractReplyButton):
+    def __init__(self, text: str):
+        self.text = text
 
     def get(self) -> KeyboardButton:
-        return KeyboardButton(text=self.get_text())
+        return KeyboardButton(text=self.text)

@@ -5,7 +5,7 @@ from .buttons import (
     ContactRequestButton,
     LocationRequestButton,
     PollRequestButton,
-    AbstractTextButton,
+    TextButton,
     UserRequestButton,
     WebAppButton
 )
@@ -18,7 +18,7 @@ __all__ = [
     "ContactRequestButton",
     "LocationRequestButton",
     "PollRequestButton",
-    "AbstractTextButton",
+    "TextButton",
     "UserRequestButton",
     "WebAppButton"
 ]
