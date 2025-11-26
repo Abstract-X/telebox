@@ -19,6 +19,8 @@ from .dispatcher import (
     AbstractListener,
     LongPollingListener,
     WebhookListener,
+    Handler,
+    ErrorHandler,
     event_context,
     handler_context,
     error_handler_context
@@ -60,6 +62,8 @@ __all__ = [
     "AbstractListener",
     "LongPollingListener",
     "WebhookListener",
+    "Handler",
+    "ErrorHandler",
     "StateMachine",
     "State",
     "AbstractStateStorage",
