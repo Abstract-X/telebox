@@ -107,7 +107,7 @@ class Dispatcher:
     def add_error_handler(
         self,
         handler: ErrorHandler,
-        error_type: type = Exception
+        error_type: type[Exception] = Exception
     ) -> None:
         self._error_handlers.append(
             ErrorHandlerInfo(
