@@ -1,5 +1,6 @@
 from telebox.dispatcher.type_hints import Event, Handler
 from telebox.dispatcher.enums.event_type import EventType
+from telebox.utils.data import Data
 
 
 class Middleware:
@@ -7,7 +8,8 @@ class Middleware:
         self,
         deps,
         event: Event,
-        event_type: EventType
+        event_type: EventType,
+        data: Data
     ) -> None:
         pass
 
@@ -16,6 +18,7 @@ class Middleware:
         deps,
         event: Event,
         event_type: EventType,
+        data: Data,
         handler: Handler
     ) -> None:
         pass
@@ -25,6 +28,7 @@ class Middleware:
         deps,
         event: Event,
         event_type: EventType,
+        data: Data,
         handler: Handler
     ):
         pass

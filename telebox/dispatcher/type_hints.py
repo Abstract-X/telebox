@@ -21,6 +21,7 @@ from telebox.bot.types.poll_answer import PollAnswer
 from telebox.bot.types.pre_checkout_query import PreCheckoutQuery
 from telebox.bot.types.shipping_query import ShippingQuery
 from telebox.dispatcher.types.media_group import MediaGroup
+from telebox.utils.data import Data
 from telebox.utils.deps import Deps
 
 
@@ -44,5 +45,5 @@ Event = Union[
     PreCheckoutQuery,
     ShippingQuery
 ]
-Handler = Callable[[Event, Deps], None]
+Handler = Callable[[Event, Deps, Data], None]
 ErrorHandler = Callable[[Exception, Event, Deps], None]

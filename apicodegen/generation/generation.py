@@ -281,6 +281,7 @@ def _create_type_hints_module(
             import_builder.add(f"telebox.bot.types.{get_snake_case_string(i)}", i)
 
     import_builder.add("telebox.utils.deps", "Deps")
+    import_builder.add("telebox.utils.data", "Data")
 
     generator.create_module(
         Module(

@@ -1,5 +1,7 @@
 from typing import Optional
 
+from telebox.utils.data import Data
+
 
 class State:
     def __init__(self, name: Optional[str] = None):
@@ -15,8 +17,8 @@ class State:
     def name(self) -> str:
         return self._name
 
-    def process_enter(self, deps, chat_id, user_id, event, data) -> None:
+    def process_enter(self, deps, chat_id: int, user_id: int, event, data: Data) -> None:
         pass
 
-    def process_exit(self, deps, chat_id, user_id, event, data) -> None:
+    def process_exit(self, deps, chat_id: int, user_id: int, event, data: Data) -> None:
         pass

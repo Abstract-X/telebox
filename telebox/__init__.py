@@ -30,6 +30,7 @@ from .utils import (
     Group,
     TaskExecutor,
     Deps,
+    Data,
     get_group,
     get_callback_data
 )
@@ -70,6 +71,7 @@ __all__ = [
     "Group",
     "TaskExecutor",
     "Deps",
+    "Data",
     "get_group",
     "get_callback_data"
 ]

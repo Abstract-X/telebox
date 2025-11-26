@@ -11,6 +11,7 @@ from telebox.state_machine.errors import (
     PreviousStateNotFoundError
 )
 from telebox.utils.deps import Deps
+from telebox.utils.data import Data
 from telebox.dispatcher.context import Context, CONTEXT, OPTIONAL_CONTEXT, event_context, get_event_value
 from telebox.dispatcher.type_hints import Event, Handler
 
@@ -118,10 +119,10 @@ class StateMachine:
         chat_id: Union[int, Context] = CONTEXT,
         user_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         event: Union[Event, Context, None] = OPTIONAL_CONTEXT,
-        data: Optional[dict] = None,
+        data: Optional[Data] = None,
         direction: Optional[str] = None
     ) -> None:
-        data = data or {}
+        data = Data() if data is None else data
         chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         event = _get_event(event)
         magazine = self._state_manager.load_magazine(chat_id=chat_id, user_id=user_id)
@@ -158,9 +159,9 @@ class StateMachine:
         chat_id: Union[int, Context] = CONTEXT,
         user_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         event: Union[Event, Context, None] = OPTIONAL_CONTEXT,
-        data: Optional[dict] = None
+        data: Optional[Data] = None
     ) -> None:
-        data = data or {}
+        data = Data() if data is None else data
         chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         event = _get_event(event)
         magazine = self._state_manager.load_magazine(chat_id=chat_id, user_id=user_id)
@@ -191,9 +192,9 @@ class StateMachine:
         chat_id: Union[int, Context] = CONTEXT,
         user_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         event: Union[Event, Context, None] = OPTIONAL_CONTEXT,
-        data: Optional[dict] = None
+        data: Optional[Data] = None
     ) -> None:
-        data = data or {}
+        data = Data() if data is None else data
         chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         event = _get_event(event)
         magazine = self._state_manager.load_magazine(chat_id=chat_id, user_id=user_id)
@@ -214,10 +215,10 @@ class StateMachine:
         chat_id: Union[int, Context] = CONTEXT,
         user_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
         event: Union[Event, Context, None] = OPTIONAL_CONTEXT,
-        data: Optional[dict] = None,
+        data: Optional[Data] = None,
         with_exit: bool = True
     ) -> None:
-        data = data or {}
+        data = Data() if data is None else data
         chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         event = _get_event(event)
         state = self.get_state(chat_id=chat_id, user_id=user_id)
@@ -248,9 +249,9 @@ class StateMachine:
         chat_id: int,
         user_id: Optional[int] = None,
         event: Optional[Event] = None,
-        data: Optional[dict] = None
+        data: Optional[Data] = None
     ) -> None:
-        data = data or {}
+        data = Data() if data is None else data
         source_state.process_exit(
             deps=self._deps,
             chat_id=chat_id,

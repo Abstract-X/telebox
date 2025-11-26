@@ -29,6 +29,7 @@ from telebox.dispatcher.abort import Abort
 from telebox.dispatcher.context import event_context, handler_context, error_handler_context
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
 from telebox.utils.deps import Deps
+from telebox.utils.data import Data
 
 
 logger = logging.getLogger(__name__)
@@ -599,6 +600,7 @@ class Dispatcher:
         logger.debug("Event processing started: %r.", event_info.event)
 
         try:
+            data = Data()
             event_context.set(event_info.event)
 
             if not event_info.middleware_pre_processed:
@@ -606,7 +608,8 @@ class Dispatcher:
                     i.middleware.pre_process_event(
                         deps=self._deps,
                         event=event_info.event,
-                        event_type=event_info.event_type
+                        event_type=event_info.event_type,
+                        data=data
                     )
 
                 event_info.middleware_pre_processed = True
@@ -646,10 +649,11 @@ class Dispatcher:
                     deps=self._deps,
                     event=event_info.event,
                     event_type=event_info.event_type,
+                    data=data,
                     handler=handler_info.handler
                 )
 
-            handler_info.handler(event_info.event, self._deps)
+            handler_info.handler(event_info.event, self._deps, data)
 
             for i in self._middlewares:
                 if i.handlers and (handler_info.handler not in i.handlers):
@@ -659,6 +663,7 @@ class Dispatcher:
                     deps=self._deps,
                     event=event_info.event,
                     event_type=event_info.event_type,
+                    data=data,
                     handler=handler_info.handler
                 )
         except Abort:
