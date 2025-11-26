@@ -1,4 +1,4 @@
-from telebox.dispatcher.filters.filter import AbstractFilter
+from telebox.dispatcher.filter import AbstractFilter
 from telebox.bot.types.message import Message
 from telebox.bot.types.user import User
 

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from telebox.dispatcher.filters.filter import AbstractFilter
+from telebox.dispatcher.filter import AbstractFilter
 from telebox.bot.types.callback_query import CallbackQuery
 from telebox.utils.callback_data import get_parsed_callback_data
 

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from telebox.dispatcher.filters.filter import AbstractBaseFilter
+from telebox.dispatcher.filter import AbstractBaseFilter
 from telebox.dispatcher.type_hints import Handler
 
 

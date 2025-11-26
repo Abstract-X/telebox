@@ -3,7 +3,6 @@ from .type_hints import Event, Handler, ErrorHandler
 from .abort import Abort
 from .enums import EventType, MediaGroupContentType
 from .filters import (
-    AbstractFilterFactory,
     AbstractFilter,
     AbstractBaseFilter
 )
@@ -19,7 +18,6 @@ __all__ = [
     "EventType",
     "MediaGroupContentType",
     "Abort",
-    "AbstractFilterFactory",
     "AbstractFilter",
     "AbstractBaseFilter",
     "Middleware",

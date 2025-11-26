@@ -1,6 +1,6 @@
 from typing import Union
 
-from telebox.dispatcher.filters.filter import AbstractFilter
+from telebox.dispatcher.filter import AbstractFilter
 from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 from telebox.bot.consts import message_entity_types

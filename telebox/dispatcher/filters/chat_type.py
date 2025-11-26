@@ -1,6 +1,6 @@
 from typing import Union, Optional
 
-from telebox.dispatcher.filters.filter import AbstractFilter
+from telebox.dispatcher.filter import AbstractFilter
 from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 from telebox.bot.types.callback_query import CallbackQuery
@@ -14,9 +14,12 @@ from telebox.bot.types.message_reaction_updated import MessageReactionUpdated
 from telebox.bot.types.poll_answer import PollAnswer
 
 
-class ChatFilter(AbstractFilter):
-    def __init__(self, *ids: int):
-        self._ids = set(ids)
+class ChatTypeFilter(AbstractFilter):
+    def __init__(self, *types: str):
+        if not types:
+            raise ValueError("No chat types!")
+
+        self._types = set(types)
 
     def get_value(
         self,
@@ -33,11 +36,8 @@ class ChatFilter(AbstractFilter):
             MessageReactionUpdated,
             PollAnswer
         ]
-    ) -> Optional[int]:
-        return event.chat_id
+    ) -> Optional[str]:
+        return event.chat_type
 
-    def check_value(self, value: Optional[int]) -> bool:
-        if self._ids:
-            return value in self._ids
-
-        return value is not None
+    def check_value(self, value: Optional[str]) -> bool:
+        return value in self._types

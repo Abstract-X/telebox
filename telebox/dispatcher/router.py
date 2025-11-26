@@ -3,7 +3,7 @@
 
 from typing import Optional, Union, TYPE_CHECKING
 
-from telebox.dispatcher.filters.filter import AbstractBaseFilter
+from telebox.dispatcher.filter import AbstractBaseFilter
 from telebox.dispatcher.type_hints import Handler
 if TYPE_CHECKING:
     from telebox.dispatcher.dispatcher import Dispatcher

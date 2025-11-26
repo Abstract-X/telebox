@@ -1,7 +1,6 @@
 from typing import Optional, Union
 
-from telebox.dispatcher.filters.factory import AbstractFilterFactory
-from telebox.dispatcher.filters.filter import AbstractFilter
+from telebox.dispatcher.filter import AbstractFilter
 from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 from telebox.bot.types.callback_query import CallbackQuery
@@ -23,11 +22,3 @@ class UserStateFilter(AbstractFilter):
 
     def check_value(self, value: Optional[State]) -> bool:
         return value in self._states
-
-
-class UserStateFilterFactory(AbstractFilterFactory):
-    def __init__(self, machine: StateMachine):
-        self._machine = machine
-
-    def get(self, *states: State) -> UserStateFilter:
-        return UserStateFilter(*states, machine=self._machine)

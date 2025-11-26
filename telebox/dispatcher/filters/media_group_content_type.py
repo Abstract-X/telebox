@@ -1,4 +1,4 @@
-from telebox.dispatcher.filters.filter import AbstractFilter
+from telebox.dispatcher.filter import AbstractFilter
 from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
 
