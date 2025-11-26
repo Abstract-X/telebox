@@ -24,6 +24,7 @@ from telebox.dispatcher.listener import AbstractListener
 from telebox.dispatcher.types.event_info import EventInfo
 from telebox.dispatcher.types.handler_info import HandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
+from telebox.dispatcher.types.middleware_info import MiddlewareInfo
 from telebox.dispatcher.abort import Abort
 from telebox.dispatcher.context import event_context, handler_context, error_handler_context
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
@@ -83,7 +84,7 @@ class Dispatcher:
         self._worker_count = 0
         self._handlers: dict[EventType, list[HandlerInfo]] = {i: [] for i in EventType}
         self._error_handlers: list[ErrorHandlerInfo] = []
-        self._middlewares: list[Middleware] = []
+        self._middlewares: list[MiddlewareInfo] = []
         self._media_group_containers: dict[str, MediaGroupContainer] = {}
         self._media_group_lock = RLock()
 
@@ -398,8 +399,21 @@ class Dispatcher:
     def get_router(self, filter_: AbstractBaseFilter) -> Router:
         return Router(dispatcher=self, filter_=filter_)
 
-    def add_middleware(self, middleware: Middleware) -> None:
-        self._middlewares.append(middleware)
+    def add_middleware(
+        self,
+        middleware: Middleware,
+        handlers: Optional[list[Handler]] = None
+    ) -> None:
+        for i in self._middlewares:
+            if i.middleware is middleware:
+                raise ValueError(f"Middleware {middleware!r} is already added!")
+
+        self._middlewares.append(
+            MiddlewareInfo(
+                middleware=middleware,
+                handlers=handlers or []
+            )
+        )
 
     def run(self) -> None:
         self._create_workers()
@@ -589,7 +603,7 @@ class Dispatcher:
 
             if not event_info.middleware_pre_processed:
                 for i in self._middlewares:
-                    i.pre_process_event(
+                    i.middleware.pre_process_event(
                         deps=self._deps,
                         event=event_info.event,
                         event_type=event_info.event_type
@@ -597,14 +611,14 @@ class Dispatcher:
 
                 event_info.middleware_pre_processed = True
 
-            handler = self._get_handler(event_info)
+            handler_info = self._get_handler(event_info)
 
-            if handler is None:
+            if handler_info is None:
                 event_info.processing_status = ProcessingStatus.HANDLER_NOT_FOUND
 
                 return
 
-            if handler.with_chat_queue and (event_info.chat_id is not None):
+            if handler_info.with_chat_queue and (event_info.chat_id is not None):
                 event_info.with_chat_queue = True
 
                 if not event_info.from_chat_queue:
@@ -622,24 +636,30 @@ class Dispatcher:
                         else:
                             self._processing_chat_ids.add(event_info.chat_id)
 
-            handler_context.set(handler.handler)
+            handler_context.set(handler_info.handler)
 
             for i in self._middlewares:
-                i.process_event(
+                if i.handlers and (handler_info.handler not in i.handlers):
+                    continue
+
+                i.middleware.process_event(
                     deps=self._deps,
                     event=event_info.event,
                     event_type=event_info.event_type,
-                    handler=handler.handler
+                    handler=handler_info.handler
                 )
 
-            handler.handler(event_info.event, self._deps)
+            handler_info.handler(event_info.event, self._deps)
 
             for i in self._middlewares:
-                i.post_process_event(
+                if i.handlers and (handler_info.handler not in i.handlers):
+                    continue
+
+                i.middleware.post_process_event(
                     deps=self._deps,
                     event=event_info.event,
                     event_type=event_info.event_type,
-                    handler=handler.handler
+                    handler=handler_info.handler
                 )
         except Abort:
             event_info.processing_status = ProcessingStatus.ABORTED
@@ -742,32 +762,32 @@ class Dispatcher:
         # noinspection PyBroadException
         try:
             for i in self._middlewares:
-                i.pre_process_error(
+                i.middleware.pre_process_error(
                     deps=self._deps,
                     error=error,
                     event=event_info.event,
                     event_type=event_info.event_type
                 )
 
-            error_handler = self._get_error_handler(error)
+            error_handler_info = self._get_error_handler(error)
 
-            if error_handler is None:
+            if error_handler_info is None:
                 raise error
 
-            error_handler_context.set(error_handler.handler)
+            error_handler_context.set(error_handler_info.handler)
 
             for i in self._middlewares:
-                i.process_error(
+                i.middleware.process_error(
                     deps=self._deps,
                     error=error,
                     event=event_info.event,
                     event_type=event_info.event_type
                 )
 
-            error_handler.handler(error, event_info.event, self._deps)
+            error_handler_info.handler(error, event_info.event, self._deps)
 
             for i in self._middlewares:
-                i.post_process_error(
+                i.middleware.post_process_error(
                     deps=self._deps,
                     error=error,
                     event=event_info.event,
