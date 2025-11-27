@@ -399,7 +399,7 @@ def _prepare_entity_type_hint(
 
     if is_context:
         hint_types.append("Context")
-        import_builder.add("telebox.dispatcher.context", "Context")
+        import_builder.add("telebox.utils.context", "Context")
 
     if len(hint_types) > 1:
         hint = f"Union[{', '.join(hint_types)}]"

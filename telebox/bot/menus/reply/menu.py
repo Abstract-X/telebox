@@ -1,7 +1,7 @@
 from typing import Union, Optional
 
-from telebox.dialog_manager.menu import Menu
-from telebox.dialog_manager.reply.keyboard import ReplyKeyboard
+from telebox.bot.menu import Menu
+from telebox.bot.menus.reply.keyboard import ReplyKeyboard
 from telebox.bot.types.input_media import InputMedia
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.utils.unset import Unset, UNSET

@@ -1,6 +1,6 @@
 from telebox.bot.types.keyboard_button import KeyboardButton
 from telebox.bot.types.web_app_info import WebAppInfo
-from telebox.dialog_manager.reply.button import AbstractReplyButton
+from telebox.bot.menus.reply.button import AbstractReplyButton
 
 
 class WebAppButton(AbstractReplyButton):

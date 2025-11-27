@@ -1,6 +1,6 @@
 from telebox.bot.types.inline_keyboard_button import InlineKeyboardButton
 from telebox.bot.types.switch_inline_query_chosen_chat import SwitchInlineQueryChosenChat
-from telebox.dialog_manager.inline.button import AbstractInlineButton
+from telebox.bot.menus.inline.button import AbstractInlineButton
 
 
 class ChosenChatQueryButton(AbstractInlineButton):

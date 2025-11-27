@@ -1,10 +1,15 @@
-from .bot import Bot, UpdateType, MessageType, get_text, set_up_bot, Webhook
-from .dialog_manager import (
-    DialogManager,
+from .bot import (
+    Bot,
+    UpdateType,
+    MessageType,
+    get_text,
+    set_up_bot,
+    Webhook,
     ReplyMenu,
-    ReplyKeyboard,
     InlineMenu,
-    InlineKeyboard
+    ReplyKeyboard,
+    InlineKeyboard,
+    PaginatedInlineKeyboard
 )
 from .dispatcher import (
     Dispatcher,
@@ -20,10 +25,7 @@ from .dispatcher import (
     LongPollingListener,
     WebhookListener,
     Handler,
-    ErrorHandler,
-    event_context,
-    handler_context,
-    error_handler_context
+    ErrorHandler
 )
 from .state_machine import StateMachine, State, AbstractStateStorage
 from .utils import (
@@ -34,7 +36,10 @@ from .utils import (
     Deps,
     Data,
     get_group,
-    get_callback_data
+    get_callback_data,
+    event_context,
+    handler_context,
+    error_handler_context
 )
 
 
@@ -45,7 +50,6 @@ __all__ = [
     "get_text",
     "set_up_bot",
     "Webhook",
-    "DialogManager",
     "ReplyMenu",
     "ReplyKeyboard",
     "InlineMenu",

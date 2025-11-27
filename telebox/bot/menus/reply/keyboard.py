@@ -1,6 +1,6 @@
 from typing import Union, Optional
 
-from telebox.dialog_manager.reply.button import AbstractReplyButton
+from telebox.bot.menus.reply.button import AbstractReplyButton
 from telebox.bot.types import ReplyKeyboardMarkup
 from telebox.utils.unset import Unset, UNSET
 

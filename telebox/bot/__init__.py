@@ -1,6 +1,7 @@
 from .bot import Bot
 from .enums import UpdateType, MessageType
 from .utils import get_text, set_up_bot, Webhook
+from .menus import ReplyMenu, InlineMenu, ReplyKeyboard, InlineKeyboard, PaginatedInlineKeyboard
 
 
 __all__ = [
@@ -9,5 +10,10 @@ __all__ = [
     "MessageType",
     "get_text",
     "set_up_bot",
-    "Webhook"
+    "Webhook",
+    "ReplyMenu",
+    "InlineMenu",
+    "ReplyKeyboard",
+    "InlineKeyboard",
+    "PaginatedInlineKeyboard"
 ]

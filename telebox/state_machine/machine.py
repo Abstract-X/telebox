@@ -12,7 +12,7 @@ from telebox.state_machine.errors import (
 )
 from telebox.utils.deps import Deps
 from telebox.utils.data import Data
-from telebox.dispatcher.context import Context, CONTEXT, OPTIONAL_CONTEXT, event_context, get_event_value
+from telebox.utils.context import Context, CONTEXT, OPTIONAL_CONTEXT, event_context, get_event_value
 from telebox.dispatcher.type_hints import Event, Handler
 
 

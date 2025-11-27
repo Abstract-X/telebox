@@ -1,5 +1,5 @@
 from telebox.bot.types.keyboard_button import KeyboardButton
-from telebox.dialog_manager.reply.button import AbstractReplyButton
+from telebox.bot.menus.reply.button import AbstractReplyButton
 
 
 class LocationRequestButton(AbstractReplyButton):

@@ -1,7 +1,7 @@
 from typing import Union
 
 from telebox.bot.types.inline_keyboard_button import InlineKeyboardButton
-from telebox.dialog_manager.inline.button import AbstractInlineButton
+from telebox.bot.menus.inline.button import AbstractInlineButton
 from telebox.utils.callback_data import get_callback_data
 
 

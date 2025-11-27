@@ -1,6 +1,6 @@
 from telebox.bot.types.inline_keyboard_button import InlineKeyboardButton
 from telebox.bot.types.web_app_info import WebAppInfo
-from telebox.dialog_manager.inline.button import AbstractInlineButton
+from telebox.bot.menus.inline.button import AbstractInlineButton
 
 
 class WebAppButton(AbstractInlineButton):

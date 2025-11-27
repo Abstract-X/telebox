@@ -1,8 +1,8 @@
 from typing import Optional
 
-from telebox.dialog_manager.inline.keyboard import InlineKeyboard
-from telebox.dialog_manager.inline.button import AbstractInlineButton
-from telebox.dialog_manager.inline.buttons.callback import CallbackButton
+from telebox.bot.menus.inline.keyboard import InlineKeyboard
+from telebox.bot.menus.inline.button import AbstractInlineButton
+from telebox.bot.menus.inline.buttons.callback import CallbackButton
 
 
 class PaginatedInlineKeyboard(InlineKeyboard):

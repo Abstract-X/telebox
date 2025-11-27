@@ -1,4 +1,4 @@
-from telebox.dialog_manager.inline.button import AbstractInlineButton
+from telebox.bot.menus.inline.button import AbstractInlineButton
 from telebox.bot.types.inline_keyboard_button import InlineKeyboardButton
 from telebox.bot.types.copy_text_button import CopyTextButton as CopyText
 

@@ -7,6 +7,8 @@ from typing import Union, Literal, BinaryIO
 from telebox.bot.converter import Converter
 from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.errors import BotError
+from telebox.bot.menus.inline.menu import InlineMenu
+from telebox.bot.menus.reply.menu import ReplyMenu
 from telebox.bot.session import Session, API_URL
 from telebox.bot.types.accepted_gift_types import AcceptedGiftTypes
 from telebox.bot.types.bot_command import BotCommand
@@ -15,6 +17,7 @@ from telebox.bot.types.bot_description import BotDescription
 from telebox.bot.types.bot_name import BotName
 from telebox.bot.types.bot_short_description import BotShortDescription
 from telebox.bot.types.business_connection import BusinessConnection
+from telebox.bot.types.callback_query import CallbackQuery
 from telebox.bot.types.chat_administrator_rights import ChatAdministratorRights
 from telebox.bot.types.chat_full_info import ChatFullInfo
 from telebox.bot.types.chat_invite_link import ChatInviteLink
@@ -31,6 +34,7 @@ from telebox.bot.types.inline_query_results_button import InlineQueryResultsButt
 from telebox.bot.types.input_checklist import InputChecklist
 from telebox.bot.types.input_file import InputFile
 from telebox.bot.types.input_media import InputMedia
+from telebox.bot.types.input_media_animation import InputMediaAnimation
 from telebox.bot.types.input_media_audio import InputMediaAudio
 from telebox.bot.types.input_media_document import InputMediaDocument
 from telebox.bot.types.input_media_photo import InputMediaPhoto
@@ -69,7 +73,7 @@ from telebox.bot.types.user import User
 from telebox.bot.types.user_chat_boosts import UserChatBoosts
 from telebox.bot.types.user_profile_photos import UserProfilePhotos
 from telebox.bot.types.webhook_info import WebhookInfo
-from telebox.dispatcher.context import Context, CONTEXT, OPTIONAL_CONTEXT
+from telebox.utils.context import Context, CONTEXT, OPTIONAL_CONTEXT, event_context
 from telebox.utils.unset import Unset, UNSET
 
 
@@ -4148,3 +4152,218 @@ class Bot:
 
             if updates:
                 self.get_updates(timeout_secs=timeout_secs, offset=updates[-1].update_id + 1)
+
+    def send_reply_menu(
+        self,
+        menu: ReplyMenu,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        direct_messages_topic_id: Union[int, None, Unset] = UNSET,
+        link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
+        disable_notification: Union[bool, None, Unset] = UNSET,
+        protect_content: Union[bool, None, Unset] = UNSET,
+        message_effect_id: Union[str, None, Unset] = UNSET,
+        reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> Message:
+        return self._send_menu(
+            text=menu.text,
+            reply_markup=menu.keyboard.get_markup(),
+            chat_id=chat_id,
+            parse_mode=menu.parse_mode,
+            entities=menu.entities,
+            media=menu.media,
+            business_connection_id=business_connection_id,
+            message_thread_id=message_thread_id,
+            direct_messages_topic_id=direct_messages_topic_id,
+            link_preview_options=link_preview_options,
+            disable_notification=disable_notification,
+            protect_content=protect_content,
+            message_effect_id=message_effect_id,
+            reply_parameters=reply_parameters,
+            timeout_secs=timeout_secs
+        )
+
+    def send_inline_menu(
+        self,
+        menu: InlineMenu,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        edit: bool = True,
+        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        direct_messages_topic_id: Union[int, None, Unset] = UNSET,
+        link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
+        disable_notification: Union[bool, None, Unset] = UNSET,
+        protect_content: Union[bool, None, Unset] = UNSET,
+        message_effect_id: Union[str, None, Unset] = UNSET,
+        reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> Message:
+        markup = menu.keyboard.get_markup()
+        event = event_context.get(None)
+
+        if (
+            message_id
+            or (
+                (event is not None)
+                and isinstance(event, CallbackQuery)
+                and edit
+            )
+        ):
+            if menu.media:
+                data = self.converter.get_data(menu.media)
+                data["caption"] = menu.text
+                data["parse_mode"] = menu.parse_mode
+                data["caption_entities"] = menu.entities
+                media = self.converter.get_object(
+                    data=data,
+                    class_=type(menu.media)
+                )
+
+                return self.edit_message_media(
+                    media=media,
+                    business_connection_id=business_connection_id,
+                    chat_id=chat_id,
+                    message_id=message_id,
+                    reply_markup=markup,
+                    timeout_secs=timeout_secs
+                )
+
+            return self.edit_message_text(
+                text=menu.text,
+                business_connection_id=business_connection_id,
+                chat_id=chat_id,
+                message_id=message_id,
+                parse_mode=menu.parse_mode,
+                entities=menu.entities,
+                link_preview_options=link_preview_options,
+                reply_markup=markup,
+                timeout_secs=timeout_secs
+            )
+
+        return self._send_menu(
+            text=menu.text,
+            reply_markup=markup,
+            chat_id=chat_id,
+            parse_mode=menu.parse_mode,
+            entities=menu.entities,
+            media=menu.media,
+            business_connection_id=business_connection_id,
+            message_thread_id=message_thread_id,
+            direct_messages_topic_id=direct_messages_topic_id,
+            link_preview_options=link_preview_options,
+            disable_notification=disable_notification,
+            protect_content=protect_content,
+            message_effect_id=message_effect_id,
+            reply_parameters=reply_parameters,
+            timeout_secs=timeout_secs
+        )
+
+    def _send_menu(
+        self,
+        text: str,
+        reply_markup: Union[ReplyKeyboardMarkup, InlineKeyboardMarkup],
+        chat_id: Union[int, str, Context] = CONTEXT,
+        parse_mode: Union[str, None, Unset] = UNSET,
+        entities: Union[list[MessageEntity], None, Unset] = UNSET,
+        media: Union[InputMedia, None, Unset] = UNSET,
+        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        direct_messages_topic_id: Union[int, None, Unset] = UNSET,
+        link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
+        disable_notification: Union[bool, None, Unset] = UNSET,
+        protect_content: Union[bool, None, Unset] = UNSET,
+        message_effect_id: Union[str, None, Unset] = UNSET,
+        reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> Message:
+        if media:
+            if isinstance(media, InputMediaPhoto):
+                return self.send_photo(
+                    photo=media.media,
+                    chat_id=chat_id,
+                    caption=text,
+                    parse_mode=parse_mode,
+                    caption_entities=entities,
+                    show_caption_above_media=media.show_caption_above_media,
+                    has_spoiler=media.has_spoiler,
+                    reply_markup=reply_markup
+                )
+            elif isinstance(media, InputMediaVideo):
+                return self.send_video(
+                    video=media.media,
+                    chat_id=chat_id,
+                    duration=media.duration,
+                    width=media.width,
+                    height=media.height,
+                    thumbnail=media.thumbnail,
+                    cover=media.cover,
+                    start_timestamp=media.start_timestamp,
+                    caption=text,
+                    parse_mode=parse_mode,
+                    caption_entities=entities,
+                    show_caption_above_media=media.show_caption_above_media,
+                    has_spoiler=media.has_spoiler,
+                    supports_streaming=media.supports_streaming,
+                    reply_markup=reply_markup
+                )
+            elif isinstance(media, InputMediaAnimation):
+                return self.send_animation(
+                    animation=media.media,
+                    chat_id=chat_id,
+                    duration=media.duration,
+                    width=media.width,
+                    height=media.height,
+                    thumbnail=media.thumbnail,
+                    caption=text,
+                    parse_mode=parse_mode,
+                    caption_entities=entities,
+                    show_caption_above_media=media.show_caption_above_media,
+                    has_spoiler=media.has_spoiler,
+                    reply_markup=reply_markup
+                )
+            elif isinstance(media, InputMediaDocument):
+                return self.send_document(
+                    document=media.media,
+                    chat_id=chat_id,
+                    thumbnail=media.thumbnail,
+                    caption=text,
+                    parse_mode=parse_mode,
+                    caption_entities=entities,
+                    disable_content_type_detection=media.disable_content_type_detection,
+                    reply_markup=reply_markup
+                )
+            elif isinstance(media, InputMediaAudio):
+                return self.send_audio(
+                    audio=media.media,
+                    chat_id=chat_id,
+                    caption=text,
+                    parse_mode=text,
+                    caption_entities=entities,
+                    duration=media.duration,
+                    performer=media.performer,
+                    title=media.title,
+                    thumbnail=media.thumbnail,
+                    reply_markup=reply_markup
+                )
+            else:
+                raise ValueError(f"Unknown media type {media.type!r}!")
+
+        return self.send_message(
+            text=text,
+            chat_id=chat_id,
+            business_connection_id=business_connection_id,
+            message_thread_id=message_thread_id,
+            direct_messages_topic_id=direct_messages_topic_id,
+            parse_mode=parse_mode,
+            entities=entities,
+            link_preview_options=link_preview_options,
+            disable_notification=disable_notification,
+            protect_content=protect_content,
+            message_effect_id=message_effect_id,
+            reply_parameters=reply_parameters,
+            reply_markup=reply_markup,
+            timeout_secs=timeout_secs
+        )

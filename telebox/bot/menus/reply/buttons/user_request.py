@@ -1,4 +1,4 @@
-from telebox.dialog_manager.reply.button import AbstractReplyButton
+from telebox.bot.menus.reply.button import AbstractReplyButton
 from telebox.bot.types.keyboard_button import KeyboardButton
 from telebox.bot.types.keyboard_button_request_users import KeyboardButtonRequestUsers
 

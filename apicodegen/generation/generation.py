@@ -177,7 +177,7 @@ def _create_bot_module(
 
     # For context values
     for i in ("CONTEXT", "OPTIONAL_CONTEXT"):
-        import_builder.add("telebox.dispatcher.context", i)
+        import_builder.add("telebox.utils.context", i)
 
     # For default values
     import_builder.add("telebox.utils.unset", "UNSET")
@@ -185,6 +185,23 @@ def _create_bot_module(
 
     # For `profile` property
     import_builder.add("telebox.bot.errors", "BotError")
+
+    # For menus
+    import_builder.add("telebox.bot.menus.reply.menu", "ReplyMenu")
+    import_builder.add("telebox.bot.menus.inline.menu", "InlineMenu")
+    import_builder.add("telebox.bot.types.callback_query", "CallbackQuery")
+    import_builder.add("telebox.utils.context", "event_context")
+    import_builder.add("telebox.bot.types.link_preview_options", "LinkPreviewOptions")
+    import_builder.add("telebox.bot.types.reply_parameters", "ReplyParameters")
+    import_builder.add("telebox.bot.types.reply_keyboard_markup", "ReplyKeyboardMarkup")
+    import_builder.add("telebox.bot.types.inline_keyboard_markup", "InlineKeyboardMarkup")
+    import_builder.add("telebox.bot.types.message_entity", "MessageEntity")
+    import_builder.add("telebox.bot.types.input_media", "InputMedia")
+    import_builder.add("telebox.bot.types.input_media_photo", "InputMediaPhoto")
+    import_builder.add("telebox.bot.types.input_media_video", "InputMediaVideo")
+    import_builder.add("telebox.bot.types.input_media_animation", "InputMediaAnimation")
+    import_builder.add("telebox.bot.types.input_media_document", "InputMediaDocument")
+    import_builder.add("telebox.bot.types.input_media_audio", "InputMediaAudio")
 
     generator.create_module(
         Module(

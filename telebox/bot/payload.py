@@ -8,7 +8,7 @@ from telebox.bot.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.enums.input_file_type import InputFileType
 from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.converter import Converter, get_timestamp
-from telebox.dispatcher.context import Context, get_event_value
+from telebox.utils.context import Context, get_event_value
 from telebox.utils.serialization import get_serialized_data
 from telebox.utils.unset import Unset, UNSET
 
