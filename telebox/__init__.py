@@ -8,8 +8,7 @@ from .bot import (
     ReplyMenu,
     InlineMenu,
     ReplyKeyboard,
-    InlineKeyboard,
-    PaginatedInlineKeyboard
+    InlineKeyboard
 )
 from .dispatcher import (
     Dispatcher,
