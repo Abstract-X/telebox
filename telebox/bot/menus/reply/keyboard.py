@@ -39,10 +39,11 @@ class ReplyKeyboard:
             selective=self.selective
         )
 
-    def add_row(self, *buttons: AbstractReplyButton) -> None:
-        self.buttons.append(
-            list(buttons)
-        )
+    def add_row(self, *buttons: AbstractReplyButton, index: Optional[int] = None) -> None:
+        if index is None:
+            self.buttons.append(list(buttons))
+        else:
+            self.buttons.insert(index, list(buttons))
 
     def get_row_length(self, *, index: int = -1) -> int:
         return len(self.buttons[index])

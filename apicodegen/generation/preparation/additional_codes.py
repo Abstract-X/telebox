@@ -133,10 +133,11 @@ INLINE_KEYBOARD_MARKUP = """
     def rows(self) -> int:
         return len(self.inline_keyboard)
 
-    def add_row(self, *buttons: InlineKeyboardButton) -> None:
-        self.inline_keyboard.append(
-            list(buttons)
-        )
+    def add_row(self, *buttons: InlineKeyboardButton, index: Optional[int] = None) -> None:
+        if index is None:
+            self.inline_keyboard.append(list(buttons))
+        else:
+            self.inline_keyboard.insert(index, list(buttons))
 
     def get_row_length(self, *, index: int = -1) -> int:
         return len(self.inline_keyboard[index])
@@ -285,10 +286,11 @@ REPLY_KEYBOARD_MARKUP = """
     def rows(self) -> int:
         return len(self.keyboard)
 
-    def add_row(self, *buttons: KeyboardButton) -> None:
-        self.keyboard.append(
-            list(buttons)
-        )
+    def add_row(self, *buttons: KeyboardButton, index: Optional[int] = None) -> None:
+        if index is None:
+            self.keyboard.append(list(buttons))
+        else:
+            self.keyboard.insert(index, list(buttons))
 
     def get_row_length(self, *, index: int = -1) -> int:
         return len(self.keyboard[index])
@@ -465,5 +467,11 @@ TYPE_ADDITIONAL_CODE_IMPORTS = {
     "ChatBoostUpdated": [
         ("typing", "Optional"),
         ("telebox.bot.utils.ids", "get_unprefixed_chat_id")
+    ],
+    "InlineKeyboardMarkup": [
+        ("typing", "Optional")
+    ],
+    "ReplyKeyboardMarkup": [
+        ("typing", "Optional")
     ]
 }
