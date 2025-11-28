@@ -22,7 +22,7 @@ class PaginatedInlineKeyboard(InlineKeyboard):
         for row in (buttons[i:i + width] for i in range(0, len(buttons), width)):
             self.add_row(*row)
 
-        if total_pages == 1:
+        if total_pages < 2:
             return
 
         self.add_row()
