@@ -6,29 +6,29 @@ class StateMagazine:
         if not states:
             raise ValueError("State magazine cannot be empty!")
 
-        self._states = states[:]
+        self.states = states
 
     def __iter__(self):
-        return iter(self._states)
+        return iter(self.states)
 
     def __repr__(self):
-        return f"{type(self).__name__}({self._states!r})"
+        return f"{type(self).__name__}({self.states!r})"
 
     @property
-    def current_state(self) -> str:
-        return self._states[-1]
+    def state(self) -> str:
+        return self.states[-1]
 
     @property
     def previous_state(self) -> Optional[str]:
         try:
-            return self._states[-2]
+            return self.states[-2]
         except IndexError:
             return None
 
     def set_state(self, state: str) -> None:
         try:
-            index = self._states.index(state)
+            index = self.states.index(state)
         except ValueError:
-            self._states.append(state)
+            self.states.append(state)
         else:
-            del self._states[index + 1:]
+            del self.states[index + 1:]

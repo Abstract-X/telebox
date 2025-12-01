@@ -1,5 +1,5 @@
 from typing import Optional
-from threading import RLock
+from threading import Lock
 
 from telebox.state_machine.storage import AbstractStateStorage
 from telebox.utils.serialization import get_serialized_data, get_deserialized_data
@@ -8,7 +8,7 @@ from telebox.utils.serialization import get_serialized_data, get_deserialized_da
 class JSONStateStorage(AbstractStateStorage):
     def __init__(self, path: str):
         self._path = path
-        self._lock = RLock()
+        self._lock = Lock()
 
     def save_states(
         self,

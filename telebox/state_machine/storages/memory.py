@@ -1,4 +1,5 @@
 from typing import Optional
+from threading import Lock
 
 from telebox.state_machine.storage import AbstractStateStorage
 
@@ -15,6 +16,7 @@ StateDict = dict[
 class MemoryStateStorage(AbstractStateStorage):
     def __init__(self):
         self._states: StateDict = {}
+        self._lock = Lock()
 
     def save_states(
         self,
@@ -23,15 +25,17 @@ class MemoryStateStorage(AbstractStateStorage):
         chat_id: int,
         user_id: Optional[int] = None
     ) -> None:
-        try:
-            self._states[chat_id][user_id] = states[:]
-        except KeyError:
-            self._states[chat_id] = {
-                user_id: states[:]
-            }
+        with self._lock:
+            try:
+                self._states[chat_id][user_id] = states[:]
+            except KeyError:
+                self._states[chat_id] = {
+                    user_id: states[:]
+                }
 
     def load_states(self, *, chat_id: int, user_id: Optional[int] = None) -> list[str]:
-        try:
-            return self._states[chat_id][user_id][:]
-        except KeyError:
-            return []
+        with self._lock:
+            try:
+                return self._states[chat_id][user_id][:]
+            except KeyError:
+                return []

@@ -26,7 +26,7 @@ from .dispatcher import (
     Handler,
     ErrorHandler
 )
-from .state_machine import StateMachine, State, AbstractStateStorage
+from .state_machine import StateMachine, AbstractStateStorage
 from .utils import (
     Unset,
     UNSET,
@@ -68,7 +68,6 @@ __all__ = [
     "Handler",
     "ErrorHandler",
     "StateMachine",
-    "State",
     "AbstractStateStorage",
     "event_context",
     "handler_context",
