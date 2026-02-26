@@ -61,6 +61,8 @@ from .chat_member_member import ChatMemberMember
 from .chat_member_owner import ChatMemberOwner
 from .chat_member_restricted import ChatMemberRestricted
 from .chat_member_updated import ChatMemberUpdated
+from .chat_owner_changed import ChatOwnerChanged
+from .chat_owner_left import ChatOwnerLeft
 from .chat_permissions import ChatPermissions
 from .chat_photo import ChatPhoto
 from .chat_shared import ChatShared
@@ -90,6 +92,7 @@ from .game_high_score import GameHighScore
 from .general_forum_topic_hidden import GeneralForumTopicHidden
 from .general_forum_topic_unhidden import GeneralForumTopicUnhidden
 from .gift import Gift
+from .gift_background import GiftBackground
 from .gift_info import GiftInfo
 from .gifts import Gifts
 from .giveaway import Giveaway
@@ -261,13 +264,16 @@ from .transaction_partner_user import TransactionPartnerUser
 from .unique_gift import UniqueGift
 from .unique_gift_backdrop import UniqueGiftBackdrop
 from .unique_gift_backdrop_colors import UniqueGiftBackdropColors
+from .unique_gift_colors import UniqueGiftColors
 from .unique_gift_info import UniqueGiftInfo
 from .unique_gift_model import UniqueGiftModel
 from .unique_gift_symbol import UniqueGiftSymbol
 from .update import Update
 from .user import User
 from .user_chat_boosts import UserChatBoosts
+from .user_profile_audios import UserProfileAudios
 from .user_profile_photos import UserProfilePhotos
+from .user_rating import UserRating
 from .users_shared import UsersShared
 from .venue import Venue
 from .video import Video
@@ -276,6 +282,7 @@ from .video_chat_participants_invited import VideoChatParticipantsInvited
 from .video_chat_scheduled import VideoChatScheduled
 from .video_chat_started import VideoChatStarted
 from .video_note import VideoNote
+from .video_quality import VideoQuality
 from .voice import Voice
 from .web_app_data import WebAppData
 from .web_app_info import WebAppInfo
@@ -307,6 +314,7 @@ __all__ = [
     "Audio",
     "Document",
     "Story",
+    "VideoQuality",
     "Video",
     "VideoNote",
     "Voice",
@@ -374,6 +382,7 @@ __all__ = [
     "SuggestedPostParameters",
     "DirectMessagesTopic",
     "UserProfilePhotos",
+    "UserProfileAudios",
     "File",
     "WebAppInfo",
     "ReplyKeyboardMarkup",
@@ -407,6 +416,7 @@ __all__ = [
     "BusinessLocation",
     "BusinessOpeningHoursInterval",
     "BusinessOpeningHours",
+    "UserRating",
     "StoryAreaPosition",
     "LocationAddress",
     "StoryAreaType",
@@ -425,12 +435,14 @@ __all__ = [
     "MessageReactionUpdated",
     "MessageReactionCountUpdated",
     "ForumTopic",
+    "GiftBackground",
     "Gift",
     "Gifts",
     "UniqueGiftModel",
     "UniqueGiftSymbol",
     "UniqueGiftBackdropColors",
     "UniqueGiftBackdrop",
+    "UniqueGiftColors",
     "UniqueGift",
     "GiftInfo",
     "UniqueGiftInfo",
@@ -463,6 +475,8 @@ __all__ = [
     "ChatBoost",
     "ChatBoostUpdated",
     "ChatBoostRemoved",
+    "ChatOwnerLeft",
+    "ChatOwnerChanged",
     "UserChatBoosts",
     "BusinessBotRights",
     "BusinessConnection",

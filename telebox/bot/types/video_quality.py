@@ -6,13 +6,14 @@ from typing import Union
 from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
-from telebox.bot.types.sticker import Sticker
 from telebox.utils.unset import Unset
 
 
 @define(repr=False)
-class UniqueGiftModel(Type):
-    name: str = field()
-    sticker: Sticker = field()
-    rarity_per_mille: int = field()
-    rarity: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
+class VideoQuality(Type):
+    file_id: str = field()
+    file_unique_id: str = field()
+    width: int = field()
+    height: int = field()
+    codec: str = field()
+    file_size: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)

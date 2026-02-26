@@ -12,3 +12,4 @@ class AcceptedGiftTypes(Type):
     limited_gifts: bool = field()
     unique_gifts: bool = field()
     premium_subscription: bool = field()
+    gifts_from_channels: bool = field()

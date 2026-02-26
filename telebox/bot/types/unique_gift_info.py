@@ -15,7 +15,8 @@ from telebox.utils.unset import Unset
 class UniqueGiftInfo(Type):
     gift: UniqueGift = field()
     origin: str = field()
-    last_resale_star_count: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
+    last_resale_currency: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
+    last_resale_amount: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     owned_gift_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     transfer_star_count: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     next_transfer_date: Union[datetime, None, Unset] = field(factory=default_factory, kw_only=True)

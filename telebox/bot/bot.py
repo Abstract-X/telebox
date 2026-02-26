@@ -71,6 +71,7 @@ from telebox.bot.types.suggested_post_parameters import SuggestedPostParameters
 from telebox.bot.types.update import Update
 from telebox.bot.types.user import User
 from telebox.bot.types.user_chat_boosts import UserChatBoosts
+from telebox.bot.types.user_profile_audios import UserProfileAudios
 from telebox.bot.types.user_profile_photos import UserProfilePhotos
 from telebox.bot.types.webhook_info import WebhookInfo
 from telebox.utils.context import Context, CONTEXT, OPTIONAL_CONTEXT, event_context
@@ -315,6 +316,7 @@ class Bot:
         video_start_timestamp: Union[int, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
+        message_effect_id: Union[str, None, Unset] = UNSET,
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Message:
@@ -329,6 +331,7 @@ class Bot:
                 "video_start_timestamp": video_start_timestamp,
                 "disable_notification": disable_notification,
                 "protect_content": protect_content,
+                "message_effect_id": message_effect_id,
                 "suggested_post_parameters": suggested_post_parameters
             },
             timeout_secs=timeout_secs
@@ -389,6 +392,7 @@ class Bot:
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
         allow_paid_broadcast: Union[bool, None, Unset] = UNSET,
+        message_effect_id: Union[str, None, Unset] = UNSET,
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
@@ -410,6 +414,7 @@ class Bot:
                 "disable_notification": disable_notification,
                 "protect_content": protect_content,
                 "allow_paid_broadcast": allow_paid_broadcast,
+                "message_effect_id": message_effect_id,
                 "suggested_post_parameters": suggested_post_parameters,
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
@@ -1216,6 +1221,32 @@ class Bot:
             class_=Message
         )
 
+    def send_message_draft(
+        self,
+        draft_id: int,
+        text: str,
+        *,
+        chat_id: Union[int, Context] = CONTEXT,
+        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        parse_mode: Union[str, None, Unset] = UNSET,
+        entities: Union[list[MessageEntity], None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> Literal[True]:
+        data = self._session.send_request(
+            method="sendMessageDraft",
+            parameters={
+                "draft_id": draft_id,
+                "text": text,
+                "chat_id": chat_id,
+                "message_thread_id": message_thread_id,
+                "parse_mode": parse_mode,
+                "entities": entities
+            },
+            timeout_secs=timeout_secs
+        )
+
+        return data
+
     def send_chat_action(
         self,
         action: str,
@@ -1281,6 +1312,29 @@ class Bot:
         return self.converter.get_object(
             data=data,
             class_=UserProfilePhotos
+        )
+
+    def get_user_profile_audios(
+        self,
+        *,
+        user_id: Union[int, Context] = CONTEXT,
+        offset: Union[int, None, Unset] = UNSET,
+        limit: Union[int, None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> UserProfileAudios:
+        data = self._session.send_request(
+            method="getUserProfileAudios",
+            parameters={
+                "user_id": user_id,
+                "offset": offset,
+                "limit": limit
+            },
+            timeout_secs=timeout_secs
+        )
+
+        return self.converter.get_object(
+            data=data,
+            class_=UserProfileAudios
         )
 
     def set_user_emoji_status(
@@ -2419,6 +2473,34 @@ class Bot:
             class_=BotShortDescription
         )
 
+    def set_my_profile_photo(
+        self,
+        photo: InputProfilePhoto,
+        *,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> Literal[True]:
+        data = self._session.send_request(
+            method="setMyProfilePhoto",
+            parameters={
+                "photo": photo
+            },
+            timeout_secs=timeout_secs
+        )
+
+        return data
+
+    def remove_my_profile_photo(
+        self,
+        *,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> Literal[True]:
+        data = self._session.send_request(
+            method="removeMyProfilePhoto",
+            timeout_secs=timeout_secs
+        )
+
+        return data
+
     def set_chat_menu_button(
         self,
         *,
@@ -2826,8 +2908,10 @@ class Bot:
         exclude_unsaved: Union[bool, None, Unset] = UNSET,
         exclude_saved: Union[bool, None, Unset] = UNSET,
         exclude_unlimited: Union[bool, None, Unset] = UNSET,
-        exclude_limited: Union[bool, None, Unset] = UNSET,
+        exclude_limited_upgradable: Union[bool, None, Unset] = UNSET,
+        exclude_limited_non_upgradable: Union[bool, None, Unset] = UNSET,
         exclude_unique: Union[bool, None, Unset] = UNSET,
+        exclude_from_blockchain: Union[bool, None, Unset] = UNSET,
         sort_by_price: Union[bool, None, Unset] = UNSET,
         offset: Union[str, None, Unset] = UNSET,
         limit: Union[int, None, Unset] = UNSET,
@@ -2840,7 +2924,83 @@ class Bot:
                 "exclude_unsaved": exclude_unsaved,
                 "exclude_saved": exclude_saved,
                 "exclude_unlimited": exclude_unlimited,
-                "exclude_limited": exclude_limited,
+                "exclude_limited_upgradable": exclude_limited_upgradable,
+                "exclude_limited_non_upgradable": exclude_limited_non_upgradable,
+                "exclude_unique": exclude_unique,
+                "exclude_from_blockchain": exclude_from_blockchain,
+                "sort_by_price": sort_by_price,
+                "offset": offset,
+                "limit": limit
+            },
+            timeout_secs=timeout_secs
+        )
+
+        return self.converter.get_object(
+            data=data,
+            class_=OwnedGifts
+        )
+
+    def get_user_gifts(
+        self,
+        *,
+        user_id: Union[int, Context] = CONTEXT,
+        exclude_unlimited: Union[bool, None, Unset] = UNSET,
+        exclude_limited_upgradable: Union[bool, None, Unset] = UNSET,
+        exclude_limited_non_upgradable: Union[bool, None, Unset] = UNSET,
+        exclude_from_blockchain: Union[bool, None, Unset] = UNSET,
+        exclude_unique: Union[bool, None, Unset] = UNSET,
+        sort_by_price: Union[bool, None, Unset] = UNSET,
+        offset: Union[str, None, Unset] = UNSET,
+        limit: Union[int, None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> OwnedGifts:
+        data = self._session.send_request(
+            method="getUserGifts",
+            parameters={
+                "user_id": user_id,
+                "exclude_unlimited": exclude_unlimited,
+                "exclude_limited_upgradable": exclude_limited_upgradable,
+                "exclude_limited_non_upgradable": exclude_limited_non_upgradable,
+                "exclude_from_blockchain": exclude_from_blockchain,
+                "exclude_unique": exclude_unique,
+                "sort_by_price": sort_by_price,
+                "offset": offset,
+                "limit": limit
+            },
+            timeout_secs=timeout_secs
+        )
+
+        return self.converter.get_object(
+            data=data,
+            class_=OwnedGifts
+        )
+
+    def get_chat_gifts(
+        self,
+        *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        exclude_unsaved: Union[bool, None, Unset] = UNSET,
+        exclude_saved: Union[bool, None, Unset] = UNSET,
+        exclude_unlimited: Union[bool, None, Unset] = UNSET,
+        exclude_limited_upgradable: Union[bool, None, Unset] = UNSET,
+        exclude_limited_non_upgradable: Union[bool, None, Unset] = UNSET,
+        exclude_from_blockchain: Union[bool, None, Unset] = UNSET,
+        exclude_unique: Union[bool, None, Unset] = UNSET,
+        sort_by_price: Union[bool, None, Unset] = UNSET,
+        offset: Union[str, None, Unset] = UNSET,
+        limit: Union[int, None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> OwnedGifts:
+        data = self._session.send_request(
+            method="getChatGifts",
+            parameters={
+                "chat_id": chat_id,
+                "exclude_unsaved": exclude_unsaved,
+                "exclude_saved": exclude_saved,
+                "exclude_unlimited": exclude_unlimited,
+                "exclude_limited_upgradable": exclude_limited_upgradable,
+                "exclude_limited_non_upgradable": exclude_limited_non_upgradable,
+                "exclude_from_blockchain": exclude_from_blockchain,
                 "exclude_unique": exclude_unique,
                 "sort_by_price": sort_by_price,
                 "offset": offset,
@@ -2940,6 +3100,35 @@ class Bot:
                 "parse_mode": parse_mode,
                 "caption_entities": caption_entities,
                 "areas": areas,
+                "post_to_chat_page": post_to_chat_page,
+                "protect_content": protect_content
+            },
+            timeout_secs=timeout_secs
+        )
+
+        return self.converter.get_object(
+            data=data,
+            class_=Story
+        )
+
+    def repost_story(
+        self,
+        from_chat_id: int,
+        from_story_id: int,
+        active_period: int,
+        *,
+        business_connection_id: Union[str, Context] = CONTEXT,
+        post_to_chat_page: Union[bool, None, Unset] = UNSET,
+        protect_content: Union[bool, None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> Story:
+        data = self._session.send_request(
+            method="repostStory",
+            parameters={
+                "from_chat_id": from_chat_id,
+                "from_story_id": from_story_id,
+                "active_period": active_period,
+                "business_connection_id": business_connection_id,
                 "post_to_chat_page": post_to_chat_page,
                 "protect_content": protect_content
             },

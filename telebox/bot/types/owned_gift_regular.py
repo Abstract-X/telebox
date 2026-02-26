@@ -27,4 +27,6 @@ class OwnedGiftRegular(Type):
     was_refunded: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)
     convert_star_count: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     prepaid_upgrade_star_count: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
+    is_upgrade_separate: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)
+    unique_gift_number: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     type: Literal["regular"] = field(default="regular", kw_only=True)

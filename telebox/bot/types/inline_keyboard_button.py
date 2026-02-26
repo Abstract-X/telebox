@@ -17,6 +17,8 @@ from telebox.utils.unset import Unset
 @define(repr=False)
 class InlineKeyboardButton(Type):
     text: str = field()
+    icon_custom_emoji_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
+    style: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     url: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     callback_data: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     web_app: Union[WebAppInfo, None, Unset] = field(factory=default_factory, kw_only=True)
