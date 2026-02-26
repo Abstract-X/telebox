@@ -13,6 +13,8 @@ from telebox.bot.types.audio import Audio
 from telebox.bot.types.chat import Chat
 from telebox.bot.types.chat_background import ChatBackground
 from telebox.bot.types.chat_boost_added import ChatBoostAdded
+from telebox.bot.types.chat_owner_changed import ChatOwnerChanged
+from telebox.bot.types.chat_owner_left import ChatOwnerLeft
 from telebox.bot.types.chat_shared import ChatShared
 from telebox.bot.types.checklist import Checklist
 from telebox.bot.types.contact import Contact
@@ -137,6 +139,8 @@ class Message(Type):
     location: Union[Location, None, Unset] = field(factory=default_factory, kw_only=True)
     new_chat_members: Union[list[User], None, Unset] = field(factory=default_factory, kw_only=True)
     left_chat_member: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
+    chat_owner_left: Union[ChatOwnerLeft, None, Unset] = field(factory=default_factory, kw_only=True)
+    chat_owner_changed: Union[ChatOwnerChanged, None, Unset] = field(factory=default_factory, kw_only=True)
     new_chat_title: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     new_chat_photo: Union[list[PhotoSize], None, Unset] = field(factory=default_factory, kw_only=True)
     delete_chat_photo: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)
@@ -154,6 +158,7 @@ class Message(Type):
     chat_shared: Union[ChatShared, None, Unset] = field(factory=default_factory, kw_only=True)
     gift: Union[GiftInfo, None, Unset] = field(factory=default_factory, kw_only=True)
     unique_gift: Union[UniqueGiftInfo, None, Unset] = field(factory=default_factory, kw_only=True)
+    gift_upgrade_sent: Union[GiftInfo, None, Unset] = field(factory=default_factory, kw_only=True)
     connected_website: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     write_access_allowed: Union[WriteAccessAllowed, None, Unset] = field(factory=default_factory, kw_only=True)
     passport_data: Union[PassportData, None, Unset] = field(factory=default_factory, kw_only=True)

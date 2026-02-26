@@ -8,6 +8,7 @@ from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.accepted_gift_types import AcceptedGiftTypes
+from telebox.bot.types.audio import Audio
 from telebox.bot.types.birthdate import Birthdate
 from telebox.bot.types.business_intro import BusinessIntro
 from telebox.bot.types.business_location import BusinessLocation
@@ -18,6 +19,8 @@ from telebox.bot.types.chat_permissions import ChatPermissions
 from telebox.bot.types.chat_photo import ChatPhoto
 from telebox.bot.types.message import Message
 from telebox.bot.types.reaction_type import ReactionType
+from telebox.bot.types.unique_gift_colors import UniqueGiftColors
+from telebox.bot.types.user_rating import UserRating
 from telebox.bot.utils.links import get_username_link
 from telebox.bot.utils.users import get_full_name
 from telebox.utils.unset import Unset
@@ -72,6 +75,10 @@ class ChatFullInfo(Type):
     custom_emoji_sticker_set_name: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     linked_chat_id: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     location: Union[ChatLocation, None, Unset] = field(factory=default_factory, kw_only=True)
+    rating: Union[UserRating, None, Unset] = field(factory=default_factory, kw_only=True)
+    first_profile_audio: Union[Audio, None, Unset] = field(factory=default_factory, kw_only=True)
+    unique_gift_colors: Union[UniqueGiftColors, None, Unset] = field(factory=default_factory, kw_only=True)
+    paid_message_star_count: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     
     @property
     def full_name(self) -> Optional[str]:

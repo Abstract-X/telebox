@@ -16,6 +16,8 @@ from telebox.utils.unset import Unset
 @define(repr=False)
 class KeyboardButton(Type):
     text: str = field()
+    icon_custom_emoji_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
+    style: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     request_users: Union[KeyboardButtonRequestUsers, None, Unset] = field(factory=default_factory, kw_only=True)
     request_chat: Union[KeyboardButtonRequestChat, None, Unset] = field(factory=default_factory, kw_only=True)
     request_contact: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)

@@ -7,6 +7,7 @@ from typing import Union
 from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
+from telebox.bot.types.chat import Chat
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.bot.types.user import User
 from telebox.utils.unset import Unset
@@ -18,4 +19,5 @@ class ChecklistTask(Type):
     text: str = field()
     text_entities: Union[list[MessageEntity], None, Unset] = field(factory=default_factory, kw_only=True)
     completed_by_user: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
+    completed_by_chat: Union[Chat, None, Unset] = field(factory=default_factory, kw_only=True)
     completion_date: Union[datetime, None, Unset] = field(factory=default_factory, kw_only=True)

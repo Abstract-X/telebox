@@ -6,13 +6,12 @@ from typing import Union
 from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
-from telebox.bot.types.sticker import Sticker
 from telebox.utils.unset import Unset
 
 
 @define(repr=False)
-class UniqueGiftModel(Type):
-    name: str = field()
-    sticker: Sticker = field()
-    rarity_per_mille: int = field()
-    rarity: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
+class UserRating(Type):
+    level: int = field()
+    rating: int = field()
+    current_level_rating: int = field()
+    next_level_rating: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)

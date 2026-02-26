@@ -7,6 +7,7 @@ from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.photo_size import PhotoSize
+from telebox.bot.types.video_quality import VideoQuality
 from telebox.utils.unset import Unset
 
 
@@ -20,6 +21,7 @@ class Video(Type):
     thumbnail: Union[PhotoSize, None, Unset] = field(factory=default_factory, kw_only=True)
     cover: Union[list[PhotoSize], None, Unset] = field(factory=default_factory, kw_only=True)
     start_timestamp: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
+    qualities: Union[list[VideoQuality], None, Unset] = field(factory=default_factory, kw_only=True)
     file_name: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     mime_type: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     file_size: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)

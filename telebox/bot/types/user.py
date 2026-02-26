@@ -26,6 +26,8 @@ class User(Type):
     supports_inline_queries: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_connect_to_business: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     has_main_web_app: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
+    has_topics_enabled: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
+    allows_users_to_create_topics: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     
     @property
     def full_name(self) -> str:
