@@ -6,5 +6,5 @@ Event = Union[
     {{ i }}{% if not loop.last %},{% endif +%}
     {% endfor %}
 ]
-Handler = Callable[[Event, Deps, Data], None]
-ErrorHandler = Callable[[Exception, Event, Deps], None]
+Handler = Callable[["Context"], None]
+ErrorHandler = Callable[["Context"], None]
