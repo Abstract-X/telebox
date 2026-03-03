@@ -8,6 +8,7 @@ from .listener import AbstractListener
 from .listeners import LongPollingListener, WebhookListener
 from .types import MediaGroup
 from .router import Router
+from .context import Context
 
 
 __all__ = [
@@ -24,6 +25,7 @@ __all__ = [
     "WebhookListener",
     "MediaGroup",
     "Router",
+    "Context",
     "Handler",
     "ErrorHandler"
 ]

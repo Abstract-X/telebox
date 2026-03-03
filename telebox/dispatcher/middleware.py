@@ -1,61 +1,15 @@
-from telebox.dispatcher.type_hints import Event, Handler
-from telebox.dispatcher.enums.event_type import EventType
-from telebox.utils.data import Data
+from telebox.dispatcher.context import Context
 
 
 class Middleware:
-    def pre_process_event(
-        self,
-        deps,
-        event: Event,
-        event_type: EventType,
-        data: Data
-    ) -> None:
+    def pre_process_event(self, context: Context) -> None:
         pass
 
-    def process_event(
-        self,
-        deps,
-        event: Event,
-        event_type: EventType,
-        data: Data,
-        handler: Handler
-    ) -> None:
+    def process_event(self, context: Context) -> None:
         pass
 
-    def post_process_event(
-        self,
-        deps,
-        event: Event,
-        event_type: EventType,
-        data: Data,
-        handler: Handler
-    ):
+    def post_process_event(self, context: Context) -> None:
         pass
 
-    def pre_process_error(
-        self,
-        deps,
-        error: Exception,
-        event: Event,
-        event_type: EventType
-    ):
-        pass
-
-    def process_error(
-        self,
-        deps,
-        error: Exception,
-        event: Event,
-        event_type: EventType
-    ):
-        pass
-
-    def post_process_error(
-        self,
-        deps,
-        error: Exception,
-        event: Event,
-        event_type: EventType
-    ):
+    def process_error(self, context: Context) -> None:
         pass
