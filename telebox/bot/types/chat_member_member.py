@@ -14,5 +14,6 @@ from telebox.utils.unset import Unset
 @define(repr=False)
 class ChatMemberMember(Type):
     user: User = field()
+    tag: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     until_date: Union[datetime, None, Unset] = field(factory=default_factory, kw_only=True)
     status: Literal["member"] = field(default="member", kw_only=True)

@@ -94,6 +94,7 @@ class Message(Type):
     sender_chat: Union[Chat, None, Unset] = field(factory=default_factory, kw_only=True)
     sender_boost_count: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     sender_business_bot: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
+    sender_tag: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     business_connection_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     forward_origin: Union[MessageOrigin, None, Unset] = field(factory=default_factory, kw_only=True)
     is_topic_message: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)

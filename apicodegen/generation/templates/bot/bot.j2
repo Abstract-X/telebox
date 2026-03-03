@@ -4,6 +4,7 @@
 class Bot:
     def __init__(
         self,
+        client: Client,
         token: str,
         *,
         parse_mode: Union[str, Unset] = UNSET,
@@ -26,6 +27,7 @@ class Bot:
         )
         self.converter = Converter(default_parameters=self.default_parameters)
         self._session = Session(
+            client=client,
             token=token,
             converter=self.converter,
             api_url=api_url,
@@ -34,14 +36,6 @@ class Bot:
             timeout_secs=timeout_secs,
             default_parameters=self.default_parameters
         )
-
-    def __enter__(self) -> "Bot":
-        self.get_me()
-
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close_session()
 
     @property
     def profile(self) -> User:
@@ -111,9 +105,6 @@ class Bot:
         return data
         {% endif %}
     {% endfor %}
-
-    def close_session(self) -> None:
-        self._session.close()
 
     def download_file(
         self,

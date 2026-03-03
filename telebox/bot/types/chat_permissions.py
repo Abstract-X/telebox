@@ -21,6 +21,7 @@ class ChatPermissions(Type):
     can_send_polls: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_send_other_messages: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_add_web_page_previews: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
+    can_edit_tag: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_change_info: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_invite_users: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_pin_messages: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)

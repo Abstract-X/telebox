@@ -4,6 +4,8 @@
 from datetime import datetime
 from typing import Union, Literal, BinaryIO
 
+from httpx import Client
+
 from telebox.bot.converter import Converter
 from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.errors import BotError
@@ -81,6 +83,7 @@ from telebox.utils.unset import Unset, UNSET
 class Bot:
     def __init__(
         self,
+        client: Client,
         token: str,
         *,
         parse_mode: Union[str, Unset] = UNSET,
@@ -103,6 +106,7 @@ class Bot:
         )
         self.converter = Converter(default_parameters=self.default_parameters)
         self._session = Session(
+            client=client,
             token=token,
             converter=self.converter,
             api_url=api_url,
@@ -111,14 +115,6 @@ class Bot:
             timeout_secs=timeout_secs,
             default_parameters=self.default_parameters
         )
-
-    def __enter__(self) -> "Bot":
-        self.get_me()
-
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close_session()
 
     @property
     def profile(self) -> User:
@@ -1463,6 +1459,7 @@ class Bot:
         can_pin_messages: Union[bool, None, Unset] = UNSET,
         can_manage_topics: Union[bool, None, Unset] = UNSET,
         can_manage_direct_messages: Union[bool, None, Unset] = UNSET,
+        can_manage_tags: Union[bool, None, Unset] = UNSET,
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
@@ -1485,7 +1482,8 @@ class Bot:
                 "can_edit_messages": can_edit_messages,
                 "can_pin_messages": can_pin_messages,
                 "can_manage_topics": can_manage_topics,
-                "can_manage_direct_messages": can_manage_direct_messages
+                "can_manage_direct_messages": can_manage_direct_messages,
+                "can_manage_tags": can_manage_tags
             },
             timeout_secs=timeout_secs
         )
@@ -1506,6 +1504,26 @@ class Bot:
                 "custom_title": custom_title,
                 "chat_id": chat_id,
                 "user_id": user_id
+            },
+            timeout_secs=timeout_secs
+        )
+
+        return data
+
+    def set_chat_member_tag(
+        self,
+        *,
+        chat_id: Union[int, str, Context] = CONTEXT,
+        user_id: Union[int, Context] = CONTEXT,
+        tag: Union[str, None, Unset] = UNSET,
+        timeout_secs: Union[float, int, None, Unset] = UNSET
+    ) -> Literal[True]:
+        data = self._session.send_request(
+            method="setChatMemberTag",
+            parameters={
+                "chat_id": chat_id,
+                "user_id": user_id,
+                "tag": tag
             },
             timeout_secs=timeout_secs
         )
@@ -4309,9 +4327,6 @@ class Bot:
             )
             for i in data
         ]
-
-    def close_session(self) -> None:
-        self._session.close()
 
     def download_file(
         self,
