@@ -1,8 +1,9 @@
-from dataclasses import dataclass
-
-from xcept import Exception_
 
 
-@dataclass
-class TeleboxError(Exception_):
-    pass
+class TeleboxError(Exception):
+    def __init__(self, message: str = ""):
+        super().__init__(message)
+        self.message = message
+
+    def __str__(self):
+        return self.message

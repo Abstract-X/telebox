@@ -8,14 +8,16 @@ from typing import Any, Optional
 from telebox.errors import TeleboxError
 
 
-@dataclass
 class UnknownFieldNameError(TeleboxError):
-    name: str
+    def __init__(self, message: str = "", *, name: str):
+        super().__init__(message=message)
+        self.name = name
 
 
-@dataclass
 class ClassNotFoundError(TeleboxError):
-    field: str
+    def __init__(self, message: str = "", *, field: str):
+        super().__init__(message=message)
+        self.field = field
 
 
 @dataclass
@@ -65,7 +67,7 @@ def get_group(
 
     for i in names.values():
         if i not in items:
-            raise ClassNotFoundError("Class for field {field!r} not found!", field=i)
+            raise ClassNotFoundError(f"Class for field {i!r} not found!", field=i)
 
     return type_(**items)
 
@@ -98,7 +100,7 @@ def _get_item_names(
     if names:
         for field_name, class_name in names.items():
             if field_name not in names_.values():
-                raise UnknownFieldNameError("Unknown field name {name!r}!", name=field_name)
+                raise UnknownFieldNameError(f"Unknown field name {field_name!r}!", name=field_name)
 
             names_[class_name] = field_name
 

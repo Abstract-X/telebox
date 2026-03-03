@@ -21,8 +21,7 @@ dependencies = [
     "attrs == 25.3.0",
     "cattrs == 25.1.1",
     "httpx == 0.28.1",
-    "orjson >= 3.9.10, < 4",
-    "xcept >= 3.1.0, < 4"
+    "orjson >= 3.9.10, < 4"
 ]
 
 [project.optional-dependencies]
