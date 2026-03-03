@@ -27,3 +27,4 @@ class ChatAdministratorRights(Type):
     can_pin_messages: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_manage_topics: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_manage_direct_messages: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
+    can_manage_tags: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)

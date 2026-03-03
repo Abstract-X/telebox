@@ -30,5 +30,6 @@ class ChatMemberAdministrator(Type):
     can_pin_messages: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_manage_topics: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_manage_direct_messages: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
+    can_manage_tags: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     custom_title: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     status: Literal["administrator"] = field(default="administrator", kw_only=True)

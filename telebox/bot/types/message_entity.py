@@ -19,6 +19,8 @@ class MessageEntity(Type):
     user: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
     language: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     custom_emoji_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
+    unix_time: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
+    date_time_format: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     
     @property
     def end_offset(self) -> int:

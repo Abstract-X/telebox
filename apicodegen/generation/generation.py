@@ -167,6 +167,7 @@ def _create_bot_module(
     import_builder: ImportBuilder,
     methods: list[PreparedMethod]
 ) -> None:
+    import_builder.add("httpx", "Client")
     import_builder.add("telebox.bot.converter", "Converter")
 
     for i in ("Session", "API_URL"):

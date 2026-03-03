@@ -18,6 +18,7 @@ API_URL = "https://api.telegram.org"
 class Session:
     def __init__(
         self,
+        client: Client,
         token: str,
         converter: Converter,
         default_parameters: DefaultParameterSet,
@@ -26,6 +27,7 @@ class Session:
         retry_delay_secs: Union[int, float],
         timeout_secs: Union[int, float]
     ):
+        self._client = client
         self._token = token
         self._converter = converter
         self._default_parameters = default_parameters
@@ -33,7 +35,6 @@ class Session:
         self._retries = retries
         self._retry_delay_secs = retry_delay_secs
         self._timeout_secs = timeout_secs
-        self._client = Client()
 
     def send_request(
         self,
@@ -105,9 +106,6 @@ class Session:
                         break
 
                     file.write(chunk)
-
-    def close(self) -> None:
-        self._client.close()
 
     def _get_api_url(self, method: str) -> str:
         return f"{self._api_url}/bot{self._token}/{method}"
