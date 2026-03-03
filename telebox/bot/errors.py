@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Optional, Any
 from http import HTTPStatus
 
@@ -6,35 +5,35 @@ from telebox.errors import TeleboxError
 from telebox.bot.types.response_parameters import ResponseParameters
 
 
-@dataclass
 class BotError(TeleboxError):
-    """Class for bot errors."""
+    pass
 
 
-@dataclass
 class RequestError(BotError):
-    """Class for Telegram Bot API request error."""
-    DEFAULT_TEMPLATE = "\n".join((
-        "A request to the Telegram Bot API was unsuccessful!",
-        "├─ Method: {method!r}",
-        "├─ Parameters: {parameters!r}",
-        "├─ Status code: {status_code!r}",
-        "└─ Description: {description!r}"
-    ))
-    method: str
-    parameters: dict[str, Any]
-    status_code: int
-    description: str
+    """Telegram Bot API request error."""
+
+    def __init__(
+        self,
+        message: str = "",
+        *,
+        method: str,
+        parameters: dict[str, Any],
+        status_code: int,
+        description: str
+    ):
+        super().__init__(message=message)
+        self.method = method
+        self.parameters = parameters
+        self.status_code = status_code
+        self.description = description
 
 
-@dataclass
 class BadRequestError(RequestError):
-    """Error class for 400 status code."""
+    """Error with 400 status code."""
 
 
-@dataclass
 class ChatNotFoundError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: chat not found',
         'error_code': 400,
@@ -43,9 +42,8 @@ class ChatNotFoundError(BadRequestError):
     """
 
 
-@dataclass
 class UserNotFoundError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: user not found',
         'error_code': 400,
@@ -54,9 +52,8 @@ class UserNotFoundError(BadRequestError):
     """
 
 
-@dataclass
 class MessageIsNotModifiedError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message is not modified',
         'error_code': 400,
@@ -65,9 +62,8 @@ class MessageIsNotModifiedError(BadRequestError):
     """
 
 
-@dataclass
 class ChatDescriptionIsNotModifiedError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: chat description is not modified',
         'error_code': 400,
@@ -76,9 +72,8 @@ class ChatDescriptionIsNotModifiedError(BadRequestError):
     """
 
 
-@dataclass
 class MessageToForwardNotFoundError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message to forward not found',
         'error_code': 400,
@@ -87,9 +82,8 @@ class MessageToForwardNotFoundError(BadRequestError):
     """
 
 
-@dataclass
 class MessageToDeleteNotFoundError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message to delete not found',
         'error_code': 400,
@@ -98,9 +92,8 @@ class MessageToDeleteNotFoundError(BadRequestError):
     """
 
 
-@dataclass
 class MessageToEditNotFoundError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message to edit not found',
         'error_code': 400,
@@ -109,9 +102,8 @@ class MessageToEditNotFoundError(BadRequestError):
     """
 
 
-@dataclass
 class PollAlreadyClosedError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: poll has already been closed',
         'error_code': 400,
@@ -120,9 +112,8 @@ class PollAlreadyClosedError(BadRequestError):
     """
 
 
-@dataclass
 class PollMustHaveMoreOptionsError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: poll must have at least 2 option',
         'error_code': 400,
@@ -131,9 +122,8 @@ class PollMustHaveMoreOptionsError(BadRequestError):
     """
 
 
-@dataclass
 class PollCannotHaveMoreOptionsError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: poll can't have more than 10 options',
         'error_code': 400,
@@ -142,9 +132,8 @@ class PollCannotHaveMoreOptionsError(BadRequestError):
     """
 
 
-@dataclass
 class PollOptionsMustBeNonEmptyError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: poll options must be non-empty',
         'error_code': 400,
@@ -153,9 +142,8 @@ class PollOptionsMustBeNonEmptyError(BadRequestError):
     """
 
 
-@dataclass
 class PollQuestionMustBeNonEmptyError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: poll question must be non-empty',
         'error_code': 400,
@@ -164,9 +152,8 @@ class PollQuestionMustBeNonEmptyError(BadRequestError):
     """
 
 
-@dataclass
 class PollOptionsLengthIsTooLongError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: poll options length must not exceed 100',
         'error_code': 400,
@@ -175,9 +162,8 @@ class PollOptionsLengthIsTooLongError(BadRequestError):
     """
 
 
-@dataclass
 class PollQuestionLengthIsTooLongError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: poll question length must not exceed 255',
         'error_code': 400,
@@ -186,9 +172,8 @@ class PollQuestionLengthIsTooLongError(BadRequestError):
     """
 
 
-@dataclass
 class MessageWithPollToStopNotFoundError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message with poll to stop not found',
         'error_code': 400,
@@ -197,9 +182,8 @@ class MessageWithPollToStopNotFoundError(BadRequestError):
     """
 
 
-@dataclass
 class MessageIsNotPollError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message is not a poll',
         'error_code': 400,
@@ -208,9 +192,8 @@ class MessageIsNotPollError(BadRequestError):
     """
 
 
-@dataclass
 class InvalidMessageIDError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: MESSAGE_ID_INVALID',
         'error_code': 400,
@@ -219,9 +202,8 @@ class InvalidMessageIDError(BadRequestError):
     """
 
 
-@dataclass
 class PrivateChannelError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: CHANNEL_PRIVATE',
         'error_code': 400,
@@ -230,9 +212,8 @@ class PrivateChannelError(BadRequestError):
     """
 
 
-@dataclass
 class WriteToChatForbiddenError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: CHAT_WRITE_FORBIDDEN',
         'error_code': 400,
@@ -241,9 +222,8 @@ class WriteToChatForbiddenError(BadRequestError):
     """
 
 
-@dataclass
 class MessageToPinNotFoundError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message to pin not found',
         'error_code': 400,
@@ -252,9 +232,8 @@ class MessageToPinNotFoundError(BadRequestError):
     """
 
 
-@dataclass
 class NoRightsToManagePinnedMessagesError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: not enough rights to manage pinned messages in the chat',
         'error_code': 400,
@@ -263,9 +242,8 @@ class NoRightsToManagePinnedMessagesError(BadRequestError):
     """
 
 
-@dataclass
 class NoRightsToExportChatInviteLinkError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: not enough rights to export chat invite link',
         'error_code': 400,
@@ -274,9 +252,8 @@ class NoRightsToExportChatInviteLinkError(BadRequestError):
     """
 
 
-@dataclass
 class NoRightsToRestrictUnrestrictChatMemberError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: not enough rights to restrict/unrestrict chat member',
         'error_code': 400,
@@ -285,9 +262,8 @@ class NoRightsToRestrictUnrestrictChatMemberError(BadRequestError):
     """
 
 
-@dataclass
 class NoRightsToSendMessageError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: have no rights to send a message',
         'error_code': 400,
@@ -296,9 +272,8 @@ class NoRightsToSendMessageError(BadRequestError):
     """
 
 
-@dataclass
 class RepliedMessageNotFoundError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: replied message not found',
         'error_code': 400,
@@ -307,9 +282,8 @@ class RepliedMessageNotFoundError(BadRequestError):
     """
 
 
-@dataclass
 class MessageIDIsNotSpecifiedError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message identifier is not specified',
         'error_code': 400,
@@ -318,9 +292,8 @@ class MessageIDIsNotSpecifiedError(BadRequestError):
     """
 
 
-@dataclass
 class MessageTextIsEmptyError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message text is empty',
         'error_code': 400,
@@ -329,9 +302,8 @@ class MessageTextIsEmptyError(BadRequestError):
     """
 
 
-@dataclass
 class MessageCannotBeEditedError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message can't be edited',
         'error_code': 400,
@@ -340,9 +312,8 @@ class MessageCannotBeEditedError(BadRequestError):
     """
 
 
-@dataclass
 class MessageCannotBeDeletedError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message can't be deleted',
         'error_code': 400,
@@ -351,9 +322,8 @@ class MessageCannotBeDeletedError(BadRequestError):
     """
 
 
-@dataclass
 class GroupWasUpgradedToSupergroupError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: group chat was upgraded to a supergroup chat',
         'error_code': 400,
@@ -363,13 +333,28 @@ class GroupWasUpgradedToSupergroupError(BadRequestError):
         }
     }
     """
-    ALL_REPLACEMENT_FIELDS_IS_REQUIRED = False
-    migrate_to_chat_id: int
+
+    def __init__(
+        self,
+        message: str = "", *,
+        method: str,
+        parameters: dict[str, Any],
+        status_code: int,
+        description: str,
+        migrate_to_chat_id: int
+    ):
+        super().__init__(
+            message=message,
+            method=method,
+            parameters=parameters,
+            status_code=status_code,
+            description=description
+        )
+        self.migrate_to_chat_id = migrate_to_chat_id
 
 
-@dataclass
 class MessageIsTooLongError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: message is too long',
         'error_code': 400,
@@ -378,9 +363,8 @@ class MessageIsTooLongError(BadRequestError):
     """
 
 
-@dataclass
 class QueryIsTooOldOrInvalidIDError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: query is too old and response timeout expired or query ID is invalid',
         'error_code': 400,
@@ -389,9 +373,8 @@ class QueryIsTooOldOrInvalidIDError(BadRequestError):
     """
 
 
-@dataclass
 class InvalidButtonURLError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: BUTTON_URL_INVALID',
         'error_code': 400,
@@ -400,9 +383,8 @@ class InvalidButtonURLError(BadRequestError):
     """
 
 
-@dataclass
 class InvalidButtonDataError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: BUTTON_DATA_INVALID',
         'error_code': 400,
@@ -411,9 +393,8 @@ class InvalidButtonDataError(BadRequestError):
     """
 
 
-@dataclass
 class InlineKeyboardButtonParsingError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: can't parse inline keyboard button: Text buttons are unallowed in the inline keyboard',
         'error_code': 400,
@@ -422,9 +403,8 @@ class InlineKeyboardButtonParsingError(BadRequestError):
     """
 
 
-@dataclass
 class WrongFileIDError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: wrong file id',
         'error_code': 400,
@@ -433,9 +413,8 @@ class WrongFileIDError(BadRequestError):
     """
 
 
-@dataclass
 class GroupIsDeactivatedError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: group is deactivated',
         'error_code': 400,
@@ -444,9 +423,8 @@ class GroupIsDeactivatedError(BadRequestError):
     """
 
 
-@dataclass
 class PhotoShouldBeUploadedAsInputFileError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: photo should be uploaded as an InputFile',
         'error_code': 400,
@@ -455,9 +433,8 @@ class PhotoShouldBeUploadedAsInputFileError(BadRequestError):
     """
 
 
-@dataclass
 class InvalidStickerSetError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: STICKERSET_INVALID',
         'error_code': 400,
@@ -466,9 +443,8 @@ class InvalidStickerSetError(BadRequestError):
     """
 
 
-@dataclass
 class TooMuchMessagesToSendAsAlbumError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: too much messages to send as an album',
         'error_code': 400,
@@ -477,9 +453,8 @@ class TooMuchMessagesToSendAsAlbumError(BadRequestError):
     """
 
 
-@dataclass
 class DemoteChatCreatorError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: can't demote chat creator',
         'error_code': 400,
@@ -488,9 +463,8 @@ class DemoteChatCreatorError(BadRequestError):
     """
 
 
-@dataclass
 class SelfRestrictError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: can't restrict self',
         'error_code': 400,
@@ -499,9 +473,8 @@ class SelfRestrictError(BadRequestError):
     """
 
 
-@dataclass
 class WebhookURLMustBeHTTPSError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: bad webhook: HTTPS url must be provided for webhook',
         'error_code': 400,
@@ -510,9 +483,8 @@ class WebhookURLMustBeHTTPSError(BadRequestError):
     """
 
 
-@dataclass
 class URLParsingError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: can't parse URL',
         'error_code': 400,
@@ -521,9 +493,8 @@ class URLParsingError(BadRequestError):
     """
 
 
-@dataclass
 class BadWebhookPortError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: bad webhook: Webhook can be set up only on ports 80, 88, 443 or 8443',
         'error_code': 400,
@@ -532,9 +503,8 @@ class BadWebhookPortError(BadRequestError):
     """
 
 
-@dataclass
 class UnknownWebhookHostError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: bad webhook: Failed to resolve host: Name or service not known',
         'error_code': 400,
@@ -543,9 +513,8 @@ class UnknownWebhookHostError(BadRequestError):
     """
 
 
-@dataclass
 class MessageEntitiesParsingError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: can't parse entities',
         'error_code': 400,
@@ -554,9 +523,8 @@ class MessageEntitiesParsingError(BadRequestError):
     """
 
 
-@dataclass
 class WrongHTTPURLError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: wrong HTTP URL',
         'error_code': 400,
@@ -565,9 +533,8 @@ class WrongHTTPURLError(BadRequestError):
     """
 
 
-@dataclass
 class InvalidFileIDError(BadRequestError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Bad Request: invalid file id',
         'error_code': 400,
@@ -576,24 +543,20 @@ class InvalidFileIDError(BadRequestError):
     """
 
 
-@dataclass
 class UnauthorizedError(RequestError):
-    """Error class for 401 status code."""
+    """Error with 401 status code."""
 
 
-@dataclass
 class ForbiddenError(RequestError):
-    """Error class for 403 status code."""
+    """Error with 403 status code."""
 
 
-@dataclass
 class NotFoundError(RequestError):
-    """Error class for 404 status code."""
+    """Error with 404 status code."""
 
 
-@dataclass
 class BotWasBlockedByUserError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: bot was blocked by the user',
         'error_code': 403,
@@ -602,9 +565,8 @@ class BotWasBlockedByUserError(ForbiddenError):
     """
 
 
-@dataclass
 class UserIsDeactivatedError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: user is deactivated',
         'error_code': 403,
@@ -613,9 +575,8 @@ class UserIsDeactivatedError(ForbiddenError):
     """
 
 
-@dataclass
 class BotWasKickedFromGroupError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: bot was kicked from the group chat',
         'error_code': 403,
@@ -624,9 +585,8 @@ class BotWasKickedFromGroupError(ForbiddenError):
     """
 
 
-@dataclass
 class BotWasKickedFromSupergroupError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: bot was kicked from the supergroup chat',
         'error_code': 403,
@@ -635,9 +595,8 @@ class BotWasKickedFromSupergroupError(ForbiddenError):
     """
 
 
-@dataclass
 class BotCannotInitiateConversationWithUserError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: bot can't initiate conversation with a user',
         'error_code': 403,
@@ -646,9 +605,8 @@ class BotCannotInitiateConversationWithUserError(ForbiddenError):
     """
 
 
-@dataclass
 class DeleteMessageForbiddenError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: MESSAGE_DELETE_FORBIDDEN',
         'error_code': 403,
@@ -657,9 +615,8 @@ class DeleteMessageForbiddenError(ForbiddenError):
     """
 
 
-@dataclass
 class BotIsNotSupergroupMemberError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: bot is not a member of the supergroup chat',
         'error_code': 403,
@@ -668,9 +625,8 @@ class BotIsNotSupergroupMemberError(ForbiddenError):
     """
 
 
-@dataclass
 class BotIsNotChannelMemberError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: bot is not a member of the channel chat',
         'error_code': 403,
@@ -679,9 +635,8 @@ class BotIsNotChannelMemberError(ForbiddenError):
     """
 
 
-@dataclass
 class BotCannotSendMessagesToBotsError(ForbiddenError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Forbidden: bot can't send messages to bots',
         'error_code': 403,
@@ -690,14 +645,12 @@ class BotCannotSendMessagesToBotsError(ForbiddenError):
     """
 
 
-@dataclass
 class ConflictError(RequestError):
-    """Error class for 409 status code."""
+    """Error with 409 status code."""
 
 
-@dataclass
 class MultipleGetUpdatesError(ConflictError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Conflict: terminated by other getUpdates request; make sure that only one bot instance is running',
         'error_code': 409,
@@ -706,9 +659,8 @@ class MultipleGetUpdatesError(ConflictError):
     """
 
 
-@dataclass
 class CannotUseGetUpdatesWhileWebhookIsActiveError(ConflictError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Conflict: can't use getUpdates method while webhook is active; use deleteWebhook to delete the webhook first',
         'error_code': 409,
@@ -717,19 +669,16 @@ class CannotUseGetUpdatesWhileWebhookIsActiveError(ConflictError):
     """
 
 
-@dataclass
 class RequestEntityTooLargeError(RequestError):
-    """Error class for 413 status code."""
+    """Error with 413 status code."""
 
 
-@dataclass
 class TooManyRequestsError(RequestError):
-    """Error class for 429 status code."""
+    """Error with 429 status code."""
 
 
-@dataclass
 class RetryAfterError(TooManyRequestsError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Too Many Requests: retry after 42',
         'error_code': 429,
@@ -739,18 +688,32 @@ class RetryAfterError(TooManyRequestsError):
         }
     }
     """
-    ALL_REPLACEMENT_FIELDS_IS_REQUIRED = False
-    retry_after: int
+
+    def __init__(
+        self,
+        message: str = "",
+        *,
+        method: str,
+        parameters: dict[str, Any],
+        status_code: int,
+        description: str,
+        retry_after: int):
+        super().__init__(
+            message=message,
+            method=method,
+            parameters=parameters,
+            status_code=status_code,
+            description=description
+        )
+        self.retry_after = retry_after
 
 
-@dataclass
 class InternalServerError(RequestError):
-    """Error class for 500+ status code."""
+    """Error with 500+ status code."""
 
 
-@dataclass
 class ServerIsRestartingError(InternalServerError):
-    """Error class for this response:
+    """Error for this response:
     {
         'description': 'Internal Server Error: restart',
         'error_code': 500,
@@ -759,9 +722,8 @@ class ServerIsRestartingError(InternalServerError):
     """
 
 
-@dataclass
 class BadGatewayError(InternalServerError):
-    """Error class for this response:
+    """Error for this response:
         {
             'description': 'Bad Gateway',
             'error_code': 502,
@@ -779,6 +741,13 @@ def get_request_error(
     response_parameters: Optional[ResponseParameters] = None
 ) -> RequestError:
     kwargs = {
+        "message": "\n".join((
+            "Telegram Bot API request failed!",
+            f"├─ Method: {method!r}",
+            f"├─ Parameters: {parameters!r}",
+            f"├─ Status code: {status_code!r}",
+            f"└─ Description: {description!r}"
+        )),
         "method": method,
         "parameters": parameters,
         "status_code": status_code,
@@ -802,7 +771,7 @@ def get_request_error(
     elif status_code >= HTTPStatus.INTERNAL_SERVER_ERROR:
         return _get_internal_server_error(kwargs)
 
-    return RequestError(None, **kwargs)
+    return RequestError(**kwargs)
 
 
 def _get_bad_request_error(
@@ -832,15 +801,9 @@ def _get_bad_request_error(
         ("channel_private", PrivateChannelError),
         ("chat_write_forbidden", WriteToChatForbiddenError),
         ("message to pin not found", MessageToPinNotFoundError),
-        (
-            "not enough rights to manage pinned messages in the chat",
-            NoRightsToManagePinnedMessagesError
-        ),
+        ("not enough rights to manage pinned messages in the chat", NoRightsToManagePinnedMessagesError),
         ("not enough rights to export chat invite link", NoRightsToExportChatInviteLinkError),
-        (
-            "not enough rights to restrict/unrestrict chat member",
-            NoRightsToRestrictUnrestrictChatMemberError
-        ),
+        ("not enough rights to restrict/unrestrict chat member", NoRightsToRestrictUnrestrictChatMemberError),
         ("have no rights to send a message", NoRightsToSendMessageError),
         ("replied message not found", RepliedMessageNotFoundError),
         ("message identifier is not specified", MessageIDIsNotSpecifiedError),
@@ -848,10 +811,7 @@ def _get_bad_request_error(
         ("message can't be edited", MessageCannotBeEditedError),
         ("message can't be deleted", MessageCannotBeDeletedError),
         ("message is too long", MessageIsTooLongError),
-        (
-            "query is too old and response timeout expired or query id is invalid",
-            QueryIsTooOldOrInvalidIDError
-        ),
+        ("query is too old and response timeout expired or query id is invalid", QueryIsTooOldOrInvalidIDError),
         ("button_url_invalid", InvalidButtonURLError),
         ("button_data_invalid", InvalidButtonDataError),
         ("can't parse inline keyboard button", InlineKeyboardButtonParsingError),
@@ -871,20 +831,19 @@ def _get_bad_request_error(
         ("invalid file id", InvalidFileIDError)
     ):
         if message in lowered_description:
-            return error_type(None, **kwargs)
+            return error_type(**kwargs)
 
     if "group chat was upgraded to a supergroup chat" in lowered_description:
         return GroupWasUpgradedToSupergroupError(
-            None,
             **kwargs,
             migrate_to_chat_id=response_parameters.migrate_to_chat_id
         )
 
-    return BadRequestError(None, **kwargs)
+    return BadRequestError(**kwargs)
 
 
 def _get_unauthorized_error(kwargs: dict[str, Any]) -> UnauthorizedError:
-    return UnauthorizedError(None, **kwargs)
+    return UnauthorizedError(**kwargs)
 
 
 def _get_forbidden_error(kwargs: dict[str, Any]) -> ForbiddenError:
@@ -895,23 +854,20 @@ def _get_forbidden_error(kwargs: dict[str, Any]) -> ForbiddenError:
         ("user is deactivated", UserIsDeactivatedError),
         ("bot was kicked from the group chat", BotWasKickedFromGroupError),
         ("bot was kicked from the supergroup chat", BotWasKickedFromSupergroupError),
-        (
-            "bot can't initiate conversation with a user",
-            BotCannotInitiateConversationWithUserError
-        ),
+        ("bot can't initiate conversation with a user", BotCannotInitiateConversationWithUserError),
         ("message_delete_forbidden", DeleteMessageForbiddenError),
         ("bot is not a member of the supergroup chat", BotIsNotSupergroupMemberError),
         ("bot is not a member of the channel chat", BotIsNotChannelMemberError),
         ("bot can't send messages to bots", BotCannotSendMessagesToBotsError)
     ):
         if message in lowered_description:
-            return error_type(None, **kwargs)
+            return error_type(**kwargs)
 
-    return ForbiddenError(None, **kwargs)
+    return ForbiddenError(**kwargs)
 
 
 def _get_not_found_error(kwargs: dict[str, Any]) -> NotFoundError:
-    return NotFoundError(None, **kwargs)
+    return NotFoundError(**kwargs)
 
 
 def _get_conflict_error(kwargs: dict[str, Any]) -> ConflictError:
@@ -919,19 +875,16 @@ def _get_conflict_error(kwargs: dict[str, Any]) -> ConflictError:
 
     for message, error_type in (
         ("terminated by other getupdates request", MultipleGetUpdatesError),
-        (
-            "can't use getupdates method while webhook is active",
-            CannotUseGetUpdatesWhileWebhookIsActiveError
-        )
+        ("can't use getupdates method while webhook is active", CannotUseGetUpdatesWhileWebhookIsActiveError)
     ):
         if message in lowered_description:
-            return error_type(None, **kwargs)
+            return error_type(**kwargs)
 
-    return ConflictError(None, **kwargs)
+    return ConflictError(**kwargs)
 
 
 def _get_request_entity_too_large_error(kwargs: dict[str, Any]) -> RequestEntityTooLargeError:
-    return RequestEntityTooLargeError(None, **kwargs)
+    return RequestEntityTooLargeError(**kwargs)
 
 
 def _get_too_many_requests_error(
@@ -941,9 +894,9 @@ def _get_too_many_requests_error(
     lowered_description = kwargs["description"].lower()
 
     if "retry after" in lowered_description:
-        return RetryAfterError(None, **kwargs, retry_after=response_parameters.retry_after)
+        return RetryAfterError(**kwargs, retry_after=response_parameters.retry_after)
 
-    return TooManyRequestsError(None, **kwargs)
+    return TooManyRequestsError(**kwargs)
 
 
 def _get_internal_server_error(kwargs: dict[str, Any]) -> InternalServerError:
@@ -954,6 +907,6 @@ def _get_internal_server_error(kwargs: dict[str, Any]) -> InternalServerError:
         ("bad gateway", BadGatewayError)
     ):
         if message in lowered_description:
-            return error_type(None, **kwargs)
+            return error_type(**kwargs)
 
-    return InternalServerError(None, **kwargs)
+    return InternalServerError(**kwargs)
