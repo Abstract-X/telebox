@@ -33,7 +33,7 @@ from .utils import (
     UNSET,
     Group,
     TaskExecutor,
-    Deps,
+    DepsBase,
     Data,
     get_group,
     get_callback_data,
@@ -78,7 +78,7 @@ __all__ = [
     "UNSET",
     "Group",
     "TaskExecutor",
-    "Deps",
+    "DepsBase",
     "Data",
     "get_group",
     "get_callback_data"
