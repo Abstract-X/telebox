@@ -25,7 +25,7 @@ from telebox.dispatcher.abort import Abort
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
 from telebox.dispatcher.context import Context
 from telebox.utils.context import event_context, handler_context, error_handler_context
-from telebox.utils.deps import Deps
+from telebox.utils.deps import DepsBase
 
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ class Dispatcher:
     def __init__(
         self,
         listener: AbstractListener,
-        deps: Deps,
+        deps: DepsBase,
         *,
         min_workers: int = 10,
         max_workers: int = 100,
