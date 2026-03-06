@@ -10,7 +10,7 @@ from telebox.bot.type import Type, default_factory
 from telebox.bot.types.gift import Gift
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.bot.types.user import User
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

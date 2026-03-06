@@ -26,9 +26,9 @@ from telebox.dispatcher.types.handler_info import HandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.abort import Abort
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
-from telebox.dispatcher.context import Context
-from telebox.utils.context import event_context, handler_context, error_handler_context
-from telebox.utils.deps import DepsBase
+from telebox.context_values import event_context, handler_context, error_handler_context
+from telebox.context import Context
+from telebox.deps import DepsBase
 
 
 logger = logging.getLogger(__name__)

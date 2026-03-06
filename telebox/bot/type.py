@@ -2,7 +2,7 @@ import attrs
 from attrs import define
 
 from telebox.bot.converter import converting_context
-from telebox.utils.unset import UNSET
+from telebox.unset import UNSET
 
 
 def default_factory():

@@ -10,7 +10,7 @@ from telebox.bot.types.keyboard_button_poll_type import KeyboardButtonPollType
 from telebox.bot.types.keyboard_button_request_chat import KeyboardButtonRequestChat
 from telebox.bot.types.keyboard_button_request_users import KeyboardButtonRequestUsers
 from telebox.bot.types.web_app_info import WebAppInfo
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

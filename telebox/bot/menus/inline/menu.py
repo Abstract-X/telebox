@@ -4,7 +4,7 @@ from telebox.bot.menu import Menu
 from telebox.bot.menus.inline.keyboard import InlineKeyboard
 from telebox.bot.types.input_media import InputMedia
 from telebox.bot.types.message_entity import MessageEntity
-from telebox.utils.unset import Unset, UNSET
+from telebox.unset import Unset, UNSET
 
 
 class InlineMenu(Menu):

@@ -69,8 +69,8 @@ from telebox.bot.types.write_access_allowed import WriteAccessAllowed
 from telebox.bot.utils.ids import get_unprefixed_chat_id
 from telebox.bot.utils.links import get_message_public_link, get_message_private_link
 from telebox.bot.utils.texts import get_text_formatter
-from telebox.utils.text import get_text_with_surrogates, get_text_without_surrogates
-from telebox.utils.unset import Unset
+from telebox.text import get_text_with_surrogates, get_text_without_surrogates
+from telebox.unset import Unset
 if TYPE_CHECKING:
     from telebox.bot.types.checklist_tasks_added import ChecklistTasksAdded
     from telebox.bot.types.checklist_tasks_done import ChecklistTasksDone

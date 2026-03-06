@@ -149,7 +149,7 @@ def _create_types_package(
             if types[type_].fields:
                 import_builders[type_].add("attrs", "field")
 
-            if import_builders[type_].check("telebox.utils.unset", "Unset"):
+            if import_builders[type_].check("telebox.unset", "Unset"):
                 import_builders[type_].add("telebox.bot.type", "default_factory")
 
         package.add_module(
@@ -177,11 +177,11 @@ def _create_bot_module(
     import_builder.add("typing", "BinaryIO")
 
     # For context values
-    for i in ("CONTEXT", "OPTIONAL_CONTEXT"):
-        import_builder.add("telebox.utils.context", i)
+    for i in ("FROM_CONTEXT", "OPTIONAL_FROM_CONTEXT"):
+        import_builder.add("telebox.context_values", i)
 
     # For default values
-    import_builder.add("telebox.utils.unset", "UNSET")
+    import_builder.add("telebox.unset", "UNSET")
     import_builder.add("telebox.bot.default_parameters", "DefaultParameterSet")
 
     # For `profile` property
@@ -191,7 +191,7 @@ def _create_bot_module(
     import_builder.add("telebox.bot.menus.reply.menu", "ReplyMenu")
     import_builder.add("telebox.bot.menus.inline.menu", "InlineMenu")
     import_builder.add("telebox.bot.types.callback_query", "CallbackQuery")
-    import_builder.add("telebox.utils.context", "event_context")
+    import_builder.add("telebox.context_values", "event_context")
     import_builder.add("telebox.bot.types.link_preview_options", "LinkPreviewOptions")
     import_builder.add("telebox.bot.types.reply_parameters", "ReplyParameters")
     import_builder.add("telebox.bot.types.reply_keyboard_markup", "ReplyKeyboardMarkup")
@@ -298,7 +298,7 @@ def _create_type_hints_module(
         else:
             import_builder.add(f"telebox.bot.types.{get_snake_case_string(i)}", i)
 
-    import_builder.add("telebox.dispatcher.context", "Context", for_type_checking=True)
+    import_builder.add("telebox.context", "Context", for_type_checking=True)
 
     generator.create_module(
         Module(

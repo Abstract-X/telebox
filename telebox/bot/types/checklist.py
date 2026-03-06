@@ -8,7 +8,7 @@ from attrs import define, field
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.checklist_task import ChecklistTask
 from telebox.bot.types.message_entity import MessageEntity
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

@@ -7,7 +7,7 @@ from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.photo_size import PhotoSize
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

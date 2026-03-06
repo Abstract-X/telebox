@@ -51,11 +51,11 @@ class Bot:
     def {{ method.function_name }}(
         self,
         {% for i in method.positional_parameters %}
-        {{ i.name }}: {{ i.type_hint }}{% if i.is_context %} = CONTEXT{% endif %},
+        {{ i.name }}: {{ i.type_hint }}{% if i.is_context %} = FROM_CONTEXT{% endif %},
         {% endfor %}
         *,
         {% for i in method.keyword_parameters %}
-        {{ i.name }}: {{ i.type_hint }} = {% if i.is_optional and i.is_context %}OPTIONAL_CONTEXT{% elif i.is_context %}CONTEXT{% else %}UNSET{% endif %},
+        {{ i.name }}: {{ i.type_hint }} = {% if i.is_optional and i.is_context %}OPTIONAL_FROM_CONTEXT{% elif i.is_context %}FROM_CONTEXT{% else %}UNSET{% endif %},
         {% endfor %}
         timeout_secs: Union[float, int, None, Unset] = UNSET
     ) -> {{ method.result_type_hint }}:
@@ -138,9 +138,9 @@ class Bot:
     def send_reply_menu(
         self,
         menu: ReplyMenu,
-        chat_id: Union[int, str, Context] = CONTEXT,
-        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
-        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
+        business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
+        message_thread_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
@@ -170,11 +170,11 @@ class Bot:
     def send_inline_menu(
         self,
         menu: InlineMenu,
-        chat_id: Union[int, str, Context] = CONTEXT,
+        chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         edit: bool = True,
-        message_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
-        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
-        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        message_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
+        business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
+        message_thread_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
@@ -247,12 +247,12 @@ class Bot:
         self,
         text: str,
         reply_markup: Union[ReplyKeyboardMarkup, InlineKeyboardMarkup],
-        chat_id: Union[int, str, Context] = CONTEXT,
+        chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         parse_mode: Union[str, None, Unset] = UNSET,
         entities: Union[list[MessageEntity], None, Unset] = UNSET,
         media: Union[InputMedia, None, Unset] = UNSET,
-        business_connection_id: Union[str, Context, None] = OPTIONAL_CONTEXT,
-        message_thread_id: Union[int, Context, None] = OPTIONAL_CONTEXT,
+        business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
+        message_thread_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,

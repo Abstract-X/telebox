@@ -8,7 +8,7 @@ from attrs import define, field
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.input_message_content import InputMessageContent
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

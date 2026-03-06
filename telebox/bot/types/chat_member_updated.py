@@ -12,7 +12,7 @@ from telebox.bot.types.chat_invite_link import ChatInviteLink
 from telebox.bot.types.chat_member import ChatMember
 from telebox.bot.types.user import User
 from telebox.bot.utils.ids import get_unprefixed_chat_id
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

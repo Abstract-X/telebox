@@ -8,9 +8,9 @@ from telebox.bot.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.enums.input_file_type import InputFileType
 from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.converter import Converter, get_timestamp
-from telebox.utils.context import Context, get_event_value
-from telebox.utils.serialization import get_serialized_data
-from telebox.utils.unset import Unset, UNSET
+from telebox.context_values import FromContext, get_event_value
+from telebox.serialization import get_serialized_data
+from telebox.unset import Unset, UNSET
 
 
 class Payload:
@@ -31,7 +31,7 @@ class Payload:
 
     def _initialize(self, parameters: dict[str, Any]) -> None:
         for parameter, value in parameters.items():
-            if isinstance(value, Context):
+            if isinstance(value, FromContext):
                 value = get_event_value(parameter, optional=value.optional)
             elif parameter.endswith("parse_mode"):
                 prefix = parameter.removesuffix("parse_mode")

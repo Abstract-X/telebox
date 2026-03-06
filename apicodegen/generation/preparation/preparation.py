@@ -398,8 +398,8 @@ def _prepare_entity_type_hint(
             raise ValueError(f"Unknown type {i!r} (description={description!r})!")
 
     if is_context:
-        hint_types.append("Context")
-        import_builder.add("telebox.utils.context", "Context")
+        hint_types.append("FromContext")
+        import_builder.add("telebox.context_values", "FromContext")
 
     if len(hint_types) > 1:
         hint = f"Union[{', '.join(hint_types)}]"
@@ -415,7 +415,7 @@ def _prepare_entity_type_hint(
 
         if not is_context:
             optional_types.append("Unset")
-            import_builder.add("telebox.utils.unset", "Unset")
+            import_builder.add("telebox.unset", "Unset")
 
         if len(hint_types) > 1 and not array_nesting:
             hint = f"Union[{', '.join(hint_types)}, {', '.join(optional_types)}]"

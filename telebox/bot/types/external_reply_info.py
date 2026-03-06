@@ -29,7 +29,7 @@ from telebox.bot.types.venue import Venue
 from telebox.bot.types.video import Video
 from telebox.bot.types.video_note import VideoNote
 from telebox.bot.types.voice import Voice
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

@@ -7,7 +7,7 @@ from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
 from telebox.bot.utils.users import get_full_name
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

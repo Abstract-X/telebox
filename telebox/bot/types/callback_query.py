@@ -9,8 +9,8 @@ from telebox.bot.type import Type, default_factory
 from telebox.bot.types.maybe_inaccessible_message import MaybeInaccessibleMessage
 from telebox.bot.types.user import User
 from telebox.bot.utils.ids import get_unprefixed_chat_id
-from telebox.utils.callback_data import get_parsed_callback_data
-from telebox.utils.unset import Unset
+from telebox.callback_data import get_parsed_callback_data
+from telebox.unset import Unset
 
 
 @define(repr=False)

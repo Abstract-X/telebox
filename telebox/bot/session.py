@@ -6,7 +6,7 @@ from httpx import Client, Response, RequestError
 
 from telebox.bot.errors import get_request_error, InternalServerError
 from telebox.bot.converter import Converter
-from telebox.utils.serialization import get_deserialized_data
+from telebox.serialization import get_deserialized_data
 from telebox.bot.types.response_parameters import ResponseParameters
 from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.payload import Payload

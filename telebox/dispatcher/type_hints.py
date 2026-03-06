@@ -22,7 +22,7 @@ from telebox.bot.types.pre_checkout_query import PreCheckoutQuery
 from telebox.bot.types.shipping_query import ShippingQuery
 from telebox.dispatcher.types.media_group import MediaGroup
 if TYPE_CHECKING:
-    from telebox.dispatcher.context import Context
+    from telebox.context import Context
 
 
 Event = Union[

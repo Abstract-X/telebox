@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-from telebox.utils.unset import Unset, UNSET
+from telebox.unset import Unset, UNSET
 
 
 @dataclass

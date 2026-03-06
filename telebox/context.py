@@ -2,8 +2,8 @@ from typing import Optional, TypeVar, Generic
 
 from telebox.dispatcher.type_hints import Event, Handler, ErrorHandler
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.utils.deps import DepsBase
-from telebox.utils.data import Data
+from telebox.deps import DepsBase
+from telebox.data import Data
 
 
 ET = TypeVar("ET", bound=Event)

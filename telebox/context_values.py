@@ -38,7 +38,7 @@ def get_event_value(name: str, optional: bool = False) -> Any:
     return getattr(event, _CONTEXT_ATTRS[name])
 
 
-class Context:
+class FromContext:
     __slots__ = ("optional",)
     __optional_instance = None
     __required_instance = None
@@ -64,5 +64,5 @@ class Context:
         return False
 
 
-CONTEXT = Context(optional=False)
-OPTIONAL_CONTEXT = Context(optional=True)
+FROM_CONTEXT = FromContext(optional=False)
+OPTIONAL_FROM_CONTEXT = FromContext(optional=True)

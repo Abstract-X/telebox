@@ -9,7 +9,7 @@ from telebox.bot.type import Type, default_factory
 from telebox.bot.types.chat import Chat
 from telebox.bot.types.gift_background import GiftBackground
 from telebox.bot.types.sticker import Sticker
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

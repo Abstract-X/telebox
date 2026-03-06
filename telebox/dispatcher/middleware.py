@@ -1,4 +1,4 @@
-from telebox.dispatcher.context import Context
+from telebox.context import Context
 
 
 class Middleware:

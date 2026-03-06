@@ -1,6 +1,6 @@
 from typing import Union
 
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 def get_full_name(first_name: str, last_name: Union[str, None, Unset]) -> str:

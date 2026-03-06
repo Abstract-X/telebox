@@ -17,7 +17,6 @@ from .dispatcher import (
     Abort,
     MediaGroup,
     MediaGroupContentType,
-    Context,
     AbstractFilter,
     AbstractBaseFilter,
     Middleware,
@@ -28,19 +27,14 @@ from .dispatcher import (
     ErrorHandler
 )
 from .state_machine import StateMachine, AbstractStateStorage
-from .utils import (
-    Unset,
-    UNSET,
-    Group,
-    TaskExecutor,
-    DepsBase,
-    Data,
-    get_group,
-    get_callback_data,
-    event_context,
-    handler_context,
-    error_handler_context
-)
+from .callback_data import get_callback_data
+from .unset import Unset, UNSET
+from .group import Group, get_group
+from .task_executor import TaskExecutor
+from .deps import DepsBase
+from .data import Data
+from .context_values import event_context, handler_context, error_handler_context
+from .context import Context
 
 
 __all__ = [
