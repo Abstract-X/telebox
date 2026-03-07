@@ -32,9 +32,8 @@ from .unset import Unset, UNSET
 from .group import Group, get_group
 from .task_executor import TaskExecutor
 from .deps import DepsBase
-from .data import Data
 from .context_values import event_context, handler_context, error_handler_context
-from .context import Context
+from .contexts import EventContext, StateContext
 
 
 __all__ = [
@@ -54,7 +53,8 @@ __all__ = [
     "Abort",
     "MediaGroup",
     "MediaGroupContentType",
-    "Context",
+    "EventContext",
+    "StateContext",
     "AbstractFilter",
     "AbstractBaseFilter",
     "Middleware",
@@ -73,7 +73,6 @@ __all__ = [
     "Group",
     "TaskExecutor",
     "DepsBase",
-    "Data",
     "get_group",
     "get_callback_data"
 ]
