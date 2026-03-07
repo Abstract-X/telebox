@@ -11,7 +11,7 @@ from telebox.bot.types.unique_gift_backdrop import UniqueGiftBackdrop
 from telebox.bot.types.unique_gift_colors import UniqueGiftColors
 from telebox.bot.types.unique_gift_model import UniqueGiftModel
 from telebox.bot.types.unique_gift_symbol import UniqueGiftSymbol
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

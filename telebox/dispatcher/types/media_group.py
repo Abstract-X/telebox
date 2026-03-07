@@ -8,7 +8,7 @@ from telebox.bot.types.chat import Chat
 from telebox.bot.types.message_origin import MessageOrigin
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.dispatcher.enums.media_group_content_type import MediaGroupContentType
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @dataclass

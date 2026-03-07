@@ -3,7 +3,7 @@ from pathlib import Path
 
 from telebox.bot.bot import Bot
 from telebox.bot.errors import UnauthorizedError, NotFoundError
-from telebox.utils.code_generation.generation import create_app
+from telebox.code_generation.generation import create_app
 
 
 def process_command() -> None:

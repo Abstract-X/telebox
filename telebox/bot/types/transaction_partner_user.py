@@ -10,7 +10,7 @@ from telebox.bot.types.affiliate_info import AffiliateInfo
 from telebox.bot.types.gift import Gift
 from telebox.bot.types.paid_media import PaidMedia
 from telebox.bot.types.user import User
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

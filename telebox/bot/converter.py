@@ -8,7 +8,7 @@ import cattrs
 from cattrs.strategies import configure_union_passthrough
 from cattrs.gen import make_dict_unstructure_fn, make_dict_structure_fn, override  # noqa
 
-from telebox.utils.unset import Unset, UNSET
+from telebox.unset import Unset, UNSET
 from telebox.bot.default_parameters import DefaultParameterSet
 
 

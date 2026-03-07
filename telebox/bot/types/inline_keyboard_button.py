@@ -11,7 +11,7 @@ from telebox.bot.types.copy_text_button import CopyTextButton
 from telebox.bot.types.login_url import LoginUrl
 from telebox.bot.types.switch_inline_query_chosen_chat import SwitchInlineQueryChosenChat
 from telebox.bot.types.web_app_info import WebAppInfo
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

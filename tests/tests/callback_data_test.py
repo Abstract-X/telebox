@@ -3,7 +3,7 @@ from typing import Union
 import pytest
 
 from telebox import get_callback_data
-from telebox.utils.callback_data import (
+from telebox.callback_data import (
     get_parsed_callback_data,
     DATA_DELIMITER as DD,
     LIST_DELIMITER as LD

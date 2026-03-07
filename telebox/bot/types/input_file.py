@@ -7,7 +7,7 @@ from attrs import define, field
 
 from telebox.bot.type import Type
 from telebox.bot.enums.input_file_type import InputFileType
-from telebox.utils.unset import Unset, UNSET
+from telebox.unset import Unset, UNSET
 
 
 @define(repr=False)

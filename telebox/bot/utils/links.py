@@ -1,7 +1,7 @@
 from typing import Optional, Any, Iterable
 from urllib.parse import urlencode
 
-from telebox.utils.unset import UNSET
+from telebox.unset import UNSET
 
 
 def get_username_link(username: str, *, with_tg: bool = False) -> str:

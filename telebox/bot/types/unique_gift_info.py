@@ -8,7 +8,7 @@ from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.unique_gift import UniqueGift
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

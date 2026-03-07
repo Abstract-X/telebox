@@ -24,7 +24,7 @@ from telebox.bot.types.poll import Poll
 from telebox.bot.types.poll_answer import PollAnswer
 from telebox.bot.types.pre_checkout_query import PreCheckoutQuery
 from telebox.bot.types.shipping_query import ShippingQuery
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

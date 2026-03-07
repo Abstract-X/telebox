@@ -23,7 +23,7 @@ from telebox.bot.types.unique_gift_colors import UniqueGiftColors
 from telebox.bot.types.user_rating import UserRating
 from telebox.bot.utils.links import get_username_link
 from telebox.bot.utils.users import get_full_name
-from telebox.utils.unset import Unset
+from telebox.unset import Unset
 
 
 @define(repr=False)

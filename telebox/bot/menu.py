@@ -2,7 +2,7 @@ from typing import Union, Optional
 
 from telebox.bot.types.input_media import InputMedia
 from telebox.bot.types.message_entity import MessageEntity
-from telebox.utils.unset import Unset, UNSET
+from telebox.unset import Unset, UNSET
 
 
 class Menu:
