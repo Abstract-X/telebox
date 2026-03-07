@@ -62,13 +62,13 @@ class Dispatcher:
         *,
         min_workers: int = 10,
         max_workers: int = 100,
-        media_group_collecting_secs: Union[int, float] = 3
+        media_group_timeout: Union[int, float] = 3
     ):
         self._listener = listener
         self._deps = deps
         self._min_workers = min_workers
         self._max_workers = max_workers
-        self._media_group_collecting_secs = media_group_collecting_secs
+        self._media_group_timeout = media_group_timeout
         self._updates: Queue[Update] = Queue()
         self._events: deque[EventInfo] = deque()
         self._processing_chat_ids: set[int] = set()
@@ -516,7 +516,7 @@ class Dispatcher:
                 for media_group_id in tuple(self._media_group_containers):
                     secs = time.monotonic() - self._media_group_containers[media_group_id].time
 
-                    if secs > self._media_group_collecting_secs:
+                    if secs > self._media_group_timeout:
                         container = self._media_group_containers.pop(media_group_id)
                         event = MediaGroup(container.events)
 
