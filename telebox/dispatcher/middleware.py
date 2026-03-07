@@ -2,14 +2,14 @@ from telebox.contexts import EventContext
 
 
 class Middleware:
-    def pre_process_event(self, context: EventContext) -> None:
+    def pre_process_event(self, ctx: EventContext) -> None:
         pass
 
-    def process_event(self, context: EventContext) -> None:
+    def process_event(self, ctx: EventContext) -> None:
         pass
 
-    def post_process_event(self, context: EventContext) -> None:
+    def post_process_event(self, ctx: EventContext) -> None:
         pass
 
-    def process_error(self, context: EventContext) -> None:
+    def process_error(self, ctx: EventContext) -> None:
         pass
