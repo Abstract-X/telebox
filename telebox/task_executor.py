@@ -52,9 +52,9 @@ class TaskExecutor:
         args: tuple = (),
         kwargs: Optional[dict[str, Any]] = None,
         *,
-        delay_secs: Union[int, float] = 0
+        delay: Union[int, float] = 0
     ) -> str:
-        if delay_secs < 0:
+        if delay < 0:
             raise ValueError("Delay seconds cannot be negative!")
 
         if not self._is_started:
@@ -65,7 +65,7 @@ class TaskExecutor:
             task=task,
             args=args,
             kwargs=kwargs or {},
-            start_time=time.monotonic() + delay_secs
+            start_time=time.monotonic() + delay
         )
 
         with self._new_task_condition:
@@ -74,7 +74,7 @@ class TaskExecutor:
             self._unprocessed_tasks += 1
             self._new_task_condition.notify()
 
-        logger.debug("Task added: %r, delay_secs=%r.", task, delay_secs)
+        logger.debug("Task added: %r, delay=%r.", task, delay)
 
         return task.id
 

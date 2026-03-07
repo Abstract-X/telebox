@@ -93,8 +93,8 @@ class Bot:
         resize_reply_keyboard: Union[bool, Unset] = UNSET,
         api_url: str = API_URL,
         retries: int = 0,
-        retry_delay_secs: Union[int, float] = 0,
-        timeout_secs: Union[int, float, None] = 300
+        retry_delay: Union[int, float] = 0,
+        request_timeout: Union[int, float, None] = 300
     ):
         self._profile = None
         self.default_parameters = DefaultParameterSet(
@@ -111,8 +111,8 @@ class Bot:
             converter=self.converter,
             api_url=api_url,
             retries=retries,
-            retry_delay_secs=retry_delay_secs,
-            timeout_secs=timeout_secs,
+            retry_delay=retry_delay,
+            request_timeout=request_timeout,
             default_parameters=self.default_parameters
         )
 
@@ -133,7 +133,7 @@ class Bot:
         limit: Union[int, None, Unset] = UNSET,
         timeout: Union[int, None, Unset] = UNSET,
         allowed_updates: Union[list[str], None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[Update]:
         data = self._session.send_request(
             method="getUpdates",
@@ -143,7 +143,7 @@ class Bot:
                 "timeout": timeout,
                 "allowed_updates": allowed_updates
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -164,7 +164,7 @@ class Bot:
         allowed_updates: Union[list[str], None, Unset] = UNSET,
         drop_pending_updates: Union[bool, None, Unset] = UNSET,
         secret_token: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setWebhook",
@@ -177,7 +177,7 @@ class Bot:
                 "drop_pending_updates": drop_pending_updates,
                 "secret_token": secret_token
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -186,14 +186,14 @@ class Bot:
         self,
         *,
         drop_pending_updates: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteWebhook",
             parameters={
                 "drop_pending_updates": drop_pending_updates
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -201,11 +201,11 @@ class Bot:
     def get_webhook_info(
         self,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> WebhookInfo:
         data = self._session.send_request(
             method="getWebhookInfo",
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -216,11 +216,11 @@ class Bot:
     def get_me(
         self,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> User:
         data = self._session.send_request(
             method="getMe",
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         self._profile = self.converter.get_object(
@@ -233,11 +233,11 @@ class Bot:
     def log_out(
         self,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="logOut",
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -245,11 +245,11 @@ class Bot:
     def close(
         self,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="close",
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -272,7 +272,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendMessage",
@@ -293,7 +293,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -314,7 +314,7 @@ class Bot:
         protect_content: Union[bool, None, Unset] = UNSET,
         message_effect_id: Union[str, None, Unset] = UNSET,
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="forwardMessage",
@@ -330,7 +330,7 @@ class Bot:
                 "message_effect_id": message_effect_id,
                 "suggested_post_parameters": suggested_post_parameters
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -348,7 +348,7 @@ class Bot:
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[MessageId]:
         data = self._session.send_request(
             method="forwardMessages",
@@ -361,7 +361,7 @@ class Bot:
                 "disable_notification": disable_notification,
                 "protect_content": protect_content
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -392,7 +392,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> MessageId:
         data = self._session.send_request(
             method="copyMessage",
@@ -415,7 +415,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -434,7 +434,7 @@ class Bot:
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
         remove_caption: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[MessageId]:
         data = self._session.send_request(
             method="copyMessages",
@@ -448,7 +448,7 @@ class Bot:
                 "protect_content": protect_content,
                 "remove_caption": remove_caption
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -479,7 +479,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendPhoto",
@@ -502,7 +502,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -532,7 +532,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendAudio",
@@ -557,7 +557,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -585,7 +585,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendDocument",
@@ -608,7 +608,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -643,7 +643,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendVideo",
@@ -673,7 +673,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -705,7 +705,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendAnimation",
@@ -732,7 +732,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -759,7 +759,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendVoice",
@@ -781,7 +781,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -807,7 +807,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendVideoNote",
@@ -828,7 +828,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -856,7 +856,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendPaidMedia",
@@ -879,7 +879,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -900,7 +900,7 @@ class Bot:
         allow_paid_broadcast: Union[bool, None, Unset] = UNSET,
         message_effect_id: Union[str, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[Message]:
         data = self._session.send_request(
             method="sendMediaGroup",
@@ -916,7 +916,7 @@ class Bot:
                 "message_effect_id": message_effect_id,
                 "reply_parameters": reply_parameters
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -947,7 +947,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendLocation",
@@ -970,7 +970,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1000,7 +1000,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendVenue",
@@ -1025,7 +1025,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1051,7 +1051,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendContact",
@@ -1072,7 +1072,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1106,7 +1106,7 @@ class Bot:
         message_effect_id: Union[str, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendPoll",
@@ -1135,7 +1135,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1154,7 +1154,7 @@ class Bot:
         message_effect_id: Union[str, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendChecklist",
@@ -1168,7 +1168,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1191,7 +1191,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendDice",
@@ -1209,7 +1209,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1226,7 +1226,7 @@ class Bot:
         message_thread_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         parse_mode: Union[str, None, Unset] = UNSET,
         entities: Union[list[MessageEntity], None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="sendMessageDraft",
@@ -1238,7 +1238,7 @@ class Bot:
                 "parse_mode": parse_mode,
                 "entities": entities
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1250,7 +1250,7 @@ class Bot:
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         message_thread_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="sendChatAction",
@@ -1260,7 +1260,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "message_thread_id": message_thread_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1272,7 +1272,7 @@ class Bot:
         message_id: Union[int, FromContext] = FROM_CONTEXT,
         reaction: Union[list[ReactionType], None, Unset] = UNSET,
         is_big: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setMessageReaction",
@@ -1282,7 +1282,7 @@ class Bot:
                 "reaction": reaction,
                 "is_big": is_big
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1293,7 +1293,7 @@ class Bot:
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         offset: Union[int, None, Unset] = UNSET,
         limit: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> UserProfilePhotos:
         data = self._session.send_request(
             method="getUserProfilePhotos",
@@ -1302,7 +1302,7 @@ class Bot:
                 "offset": offset,
                 "limit": limit
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1316,7 +1316,7 @@ class Bot:
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         offset: Union[int, None, Unset] = UNSET,
         limit: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> UserProfileAudios:
         data = self._session.send_request(
             method="getUserProfileAudios",
@@ -1325,7 +1325,7 @@ class Bot:
                 "offset": offset,
                 "limit": limit
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1339,7 +1339,7 @@ class Bot:
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         emoji_status_custom_emoji_id: Union[str, None, Unset] = UNSET,
         emoji_status_expiration_date: Union[datetime, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setUserEmojiStatus",
@@ -1348,7 +1348,7 @@ class Bot:
                 "emoji_status_custom_emoji_id": emoji_status_custom_emoji_id,
                 "emoji_status_expiration_date": emoji_status_expiration_date
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1357,14 +1357,14 @@ class Bot:
         self,
         file_id: str,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> File:
         data = self._session.send_request(
             method="getFile",
             parameters={
                 "file_id": file_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1379,7 +1379,7 @@ class Bot:
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         until_date: Union[datetime, None, Unset] = UNSET,
         revoke_messages: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="banChatMember",
@@ -1389,7 +1389,7 @@ class Bot:
                 "until_date": until_date,
                 "revoke_messages": revoke_messages
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1400,7 +1400,7 @@ class Bot:
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         only_if_banned: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="unbanChatMember",
@@ -1409,7 +1409,7 @@ class Bot:
                 "user_id": user_id,
                 "only_if_banned": only_if_banned
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1422,7 +1422,7 @@ class Bot:
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         use_independent_chat_permissions: Union[bool, None, Unset] = UNSET,
         until_date: Union[datetime, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="restrictChatMember",
@@ -1433,7 +1433,7 @@ class Bot:
                 "use_independent_chat_permissions": use_independent_chat_permissions,
                 "until_date": until_date
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1460,7 +1460,7 @@ class Bot:
         can_manage_topics: Union[bool, None, Unset] = UNSET,
         can_manage_direct_messages: Union[bool, None, Unset] = UNSET,
         can_manage_tags: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="promoteChatMember",
@@ -1485,7 +1485,7 @@ class Bot:
                 "can_manage_direct_messages": can_manage_direct_messages,
                 "can_manage_tags": can_manage_tags
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1496,7 +1496,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatAdministratorCustomTitle",
@@ -1505,7 +1505,7 @@ class Bot:
                 "chat_id": chat_id,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1516,7 +1516,7 @@ class Bot:
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         tag: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatMemberTag",
@@ -1525,7 +1525,7 @@ class Bot:
                 "user_id": user_id,
                 "tag": tag
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1535,7 +1535,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         sender_chat_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="banChatSenderChat",
@@ -1543,7 +1543,7 @@ class Bot:
                 "chat_id": chat_id,
                 "sender_chat_id": sender_chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1553,7 +1553,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         sender_chat_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="unbanChatSenderChat",
@@ -1561,7 +1561,7 @@ class Bot:
                 "chat_id": chat_id,
                 "sender_chat_id": sender_chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1572,7 +1572,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         use_independent_chat_permissions: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatPermissions",
@@ -1581,7 +1581,7 @@ class Bot:
                 "chat_id": chat_id,
                 "use_independent_chat_permissions": use_independent_chat_permissions
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1590,14 +1590,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> str:
         data = self._session.send_request(
             method="exportChatInviteLink",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1610,7 +1610,7 @@ class Bot:
         expire_date: Union[datetime, None, Unset] = UNSET,
         member_limit: Union[int, None, Unset] = UNSET,
         creates_join_request: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ChatInviteLink:
         data = self._session.send_request(
             method="createChatInviteLink",
@@ -1621,7 +1621,7 @@ class Bot:
                 "member_limit": member_limit,
                 "creates_join_request": creates_join_request
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1638,7 +1638,7 @@ class Bot:
         expire_date: Union[datetime, None, Unset] = UNSET,
         member_limit: Union[int, None, Unset] = UNSET,
         creates_join_request: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ChatInviteLink:
         data = self._session.send_request(
             method="editChatInviteLink",
@@ -1650,7 +1650,7 @@ class Bot:
                 "member_limit": member_limit,
                 "creates_join_request": creates_join_request
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1665,7 +1665,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         name: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ChatInviteLink:
         data = self._session.send_request(
             method="createChatSubscriptionInviteLink",
@@ -1675,7 +1675,7 @@ class Bot:
                 "chat_id": chat_id,
                 "name": name
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1689,7 +1689,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         name: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ChatInviteLink:
         data = self._session.send_request(
             method="editChatSubscriptionInviteLink",
@@ -1698,7 +1698,7 @@ class Bot:
                 "chat_id": chat_id,
                 "name": name
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1711,7 +1711,7 @@ class Bot:
         invite_link: str,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ChatInviteLink:
         data = self._session.send_request(
             method="revokeChatInviteLink",
@@ -1719,7 +1719,7 @@ class Bot:
                 "invite_link": invite_link,
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1732,7 +1732,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="approveChatJoinRequest",
@@ -1740,7 +1740,7 @@ class Bot:
                 "chat_id": chat_id,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1750,7 +1750,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="declineChatJoinRequest",
@@ -1758,7 +1758,7 @@ class Bot:
                 "chat_id": chat_id,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1768,7 +1768,7 @@ class Bot:
         photo: InputFile,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatPhoto",
@@ -1776,7 +1776,7 @@ class Bot:
                 "photo": photo,
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1785,14 +1785,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteChatPhoto",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1802,7 +1802,7 @@ class Bot:
         title: str,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatTitle",
@@ -1810,7 +1810,7 @@ class Bot:
                 "title": title,
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1820,7 +1820,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         description: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatDescription",
@@ -1828,7 +1828,7 @@ class Bot:
                 "chat_id": chat_id,
                 "description": description
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1840,7 +1840,7 @@ class Bot:
         message_id: Union[int, FromContext] = FROM_CONTEXT,
         business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         disable_notification: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="pinChatMessage",
@@ -1850,7 +1850,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "disable_notification": disable_notification
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1861,7 +1861,7 @@ class Bot:
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         message_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="unpinChatMessage",
@@ -1870,7 +1870,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "message_id": message_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1879,14 +1879,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="unpinAllChatMessages",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1895,14 +1895,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="leaveChat",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1911,14 +1911,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ChatFullInfo:
         data = self._session.send_request(
             method="getChat",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1930,14 +1930,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[ChatMember]:
         data = self._session.send_request(
             method="getChatAdministrators",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -1952,14 +1952,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> int:
         data = self._session.send_request(
             method="getChatMemberCount",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -1969,7 +1969,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ChatMember:
         data = self._session.send_request(
             method="getChatMember",
@@ -1977,7 +1977,7 @@ class Bot:
                 "chat_id": chat_id,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -1990,7 +1990,7 @@ class Bot:
         sticker_set_name: str,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatStickerSet",
@@ -1998,7 +1998,7 @@ class Bot:
                 "sticker_set_name": sticker_set_name,
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2007,14 +2007,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteChatStickerSet",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2022,11 +2022,11 @@ class Bot:
     def get_forum_topic_icon_stickers(
         self,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[Sticker]:
         data = self._session.send_request(
             method="getForumTopicIconStickers",
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -2044,7 +2044,7 @@ class Bot:
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         icon_color: Union[int, None, Unset] = UNSET,
         icon_custom_emoji_id: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ForumTopic:
         data = self._session.send_request(
             method="createForumTopic",
@@ -2054,7 +2054,7 @@ class Bot:
                 "icon_color": icon_color,
                 "icon_custom_emoji_id": icon_custom_emoji_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2069,7 +2069,7 @@ class Bot:
         message_thread_id: Union[int, FromContext] = FROM_CONTEXT,
         name: Union[str, None, Unset] = UNSET,
         icon_custom_emoji_id: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="editForumTopic",
@@ -2079,7 +2079,7 @@ class Bot:
                 "name": name,
                 "icon_custom_emoji_id": icon_custom_emoji_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2089,7 +2089,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         message_thread_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="closeForumTopic",
@@ -2097,7 +2097,7 @@ class Bot:
                 "chat_id": chat_id,
                 "message_thread_id": message_thread_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2107,7 +2107,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         message_thread_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="reopenForumTopic",
@@ -2115,7 +2115,7 @@ class Bot:
                 "chat_id": chat_id,
                 "message_thread_id": message_thread_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2125,7 +2125,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         message_thread_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteForumTopic",
@@ -2133,7 +2133,7 @@ class Bot:
                 "chat_id": chat_id,
                 "message_thread_id": message_thread_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2143,7 +2143,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         message_thread_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="unpinAllForumTopicMessages",
@@ -2151,7 +2151,7 @@ class Bot:
                 "chat_id": chat_id,
                 "message_thread_id": message_thread_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2161,7 +2161,7 @@ class Bot:
         name: str,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="editGeneralForumTopic",
@@ -2169,7 +2169,7 @@ class Bot:
                 "name": name,
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2178,14 +2178,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="closeGeneralForumTopic",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2194,14 +2194,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="reopenGeneralForumTopic",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2210,14 +2210,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="hideGeneralForumTopic",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2226,14 +2226,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="unhideGeneralForumTopic",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2242,14 +2242,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="unpinAllGeneralForumTopicMessages",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2262,7 +2262,7 @@ class Bot:
         show_alert: Union[bool, None, Unset] = UNSET,
         url: Union[str, None, Unset] = UNSET,
         cache_time: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="answerCallbackQuery",
@@ -2273,7 +2273,7 @@ class Bot:
                 "url": url,
                 "cache_time": cache_time
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2283,7 +2283,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> UserChatBoosts:
         data = self._session.send_request(
             method="getUserChatBoosts",
@@ -2291,7 +2291,7 @@ class Bot:
                 "chat_id": chat_id,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2303,14 +2303,14 @@ class Bot:
         self,
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> BusinessConnection:
         data = self._session.send_request(
             method="getBusinessConnection",
             parameters={
                 "business_connection_id": business_connection_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2324,7 +2324,7 @@ class Bot:
         *,
         scope: Union[BotCommandScope, None, Unset] = UNSET,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setMyCommands",
@@ -2333,7 +2333,7 @@ class Bot:
                 "scope": scope,
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2343,7 +2343,7 @@ class Bot:
         *,
         scope: Union[BotCommandScope, None, Unset] = UNSET,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteMyCommands",
@@ -2351,7 +2351,7 @@ class Bot:
                 "scope": scope,
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2361,7 +2361,7 @@ class Bot:
         *,
         scope: Union[BotCommandScope, None, Unset] = UNSET,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[BotCommand]:
         data = self._session.send_request(
             method="getMyCommands",
@@ -2369,7 +2369,7 @@ class Bot:
                 "scope": scope,
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -2385,7 +2385,7 @@ class Bot:
         *,
         name: Union[str, None, Unset] = UNSET,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setMyName",
@@ -2393,7 +2393,7 @@ class Bot:
                 "name": name,
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2402,14 +2402,14 @@ class Bot:
         self,
         *,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> BotName:
         data = self._session.send_request(
             method="getMyName",
             parameters={
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2422,7 +2422,7 @@ class Bot:
         *,
         description: Union[str, None, Unset] = UNSET,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setMyDescription",
@@ -2430,7 +2430,7 @@ class Bot:
                 "description": description,
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2439,14 +2439,14 @@ class Bot:
         self,
         *,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> BotDescription:
         data = self._session.send_request(
             method="getMyDescription",
             parameters={
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2459,7 +2459,7 @@ class Bot:
         *,
         short_description: Union[str, None, Unset] = UNSET,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setMyShortDescription",
@@ -2467,7 +2467,7 @@ class Bot:
                 "short_description": short_description,
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2476,14 +2476,14 @@ class Bot:
         self,
         *,
         language_code: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> BotShortDescription:
         data = self._session.send_request(
             method="getMyShortDescription",
             parameters={
                 "language_code": language_code
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2495,14 +2495,14 @@ class Bot:
         self,
         photo: InputProfilePhoto,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setMyProfilePhoto",
             parameters={
                 "photo": photo
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2510,11 +2510,11 @@ class Bot:
     def remove_my_profile_photo(
         self,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="removeMyProfilePhoto",
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2524,7 +2524,7 @@ class Bot:
         *,
         chat_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         menu_button: Union[MenuButton, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setChatMenuButton",
@@ -2532,7 +2532,7 @@ class Bot:
                 "chat_id": chat_id,
                 "menu_button": menu_button
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2541,14 +2541,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> MenuButton:
         data = self._session.send_request(
             method="getChatMenuButton",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2561,7 +2561,7 @@ class Bot:
         *,
         rights: Union[ChatAdministratorRights, None, Unset] = UNSET,
         for_channels: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setMyDefaultAdministratorRights",
@@ -2569,7 +2569,7 @@ class Bot:
                 "rights": rights,
                 "for_channels": for_channels
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2578,14 +2578,14 @@ class Bot:
         self,
         *,
         for_channels: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> ChatAdministratorRights:
         data = self._session.send_request(
             method="getMyDefaultAdministratorRights",
             parameters={
                 "for_channels": for_channels
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2596,11 +2596,11 @@ class Bot:
     def get_available_gifts(
         self,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Gifts:
         data = self._session.send_request(
             method="getAvailableGifts",
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2618,7 +2618,7 @@ class Bot:
         text: Union[str, None, Unset] = UNSET,
         text_parse_mode: Union[str, None, Unset] = UNSET,
         text_entities: Union[list[MessageEntity], None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="sendGift",
@@ -2631,7 +2631,7 @@ class Bot:
                 "text_parse_mode": text_parse_mode,
                 "text_entities": text_entities
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2645,7 +2645,7 @@ class Bot:
         text: Union[str, None, Unset] = UNSET,
         text_parse_mode: Union[str, None, Unset] = UNSET,
         text_entities: Union[list[MessageEntity], None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="giftPremiumSubscription",
@@ -2657,7 +2657,7 @@ class Bot:
                 "text_parse_mode": text_parse_mode,
                 "text_entities": text_entities
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2667,7 +2667,7 @@ class Bot:
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         custom_description: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="verifyUser",
@@ -2675,7 +2675,7 @@ class Bot:
                 "user_id": user_id,
                 "custom_description": custom_description
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2685,7 +2685,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         custom_description: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="verifyChat",
@@ -2693,7 +2693,7 @@ class Bot:
                 "chat_id": chat_id,
                 "custom_description": custom_description
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2702,14 +2702,14 @@ class Bot:
         self,
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="removeUserVerification",
             parameters={
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2718,14 +2718,14 @@ class Bot:
         self,
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="removeChatVerification",
             parameters={
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2736,7 +2736,7 @@ class Bot:
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         message_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="readBusinessMessage",
@@ -2745,7 +2745,7 @@ class Bot:
                 "chat_id": chat_id,
                 "message_id": message_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2755,7 +2755,7 @@ class Bot:
         message_ids: list[int],
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteBusinessMessages",
@@ -2763,7 +2763,7 @@ class Bot:
                 "message_ids": message_ids,
                 "business_connection_id": business_connection_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2774,7 +2774,7 @@ class Bot:
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         last_name: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setBusinessAccountName",
@@ -2783,7 +2783,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "last_name": last_name
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2793,7 +2793,7 @@ class Bot:
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         username: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setBusinessAccountUsername",
@@ -2801,7 +2801,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "username": username
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2811,7 +2811,7 @@ class Bot:
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         bio: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setBusinessAccountBio",
@@ -2819,7 +2819,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "bio": bio
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2830,7 +2830,7 @@ class Bot:
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         is_public: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setBusinessAccountProfilePhoto",
@@ -2839,7 +2839,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "is_public": is_public
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2849,7 +2849,7 @@ class Bot:
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         is_public: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="removeBusinessAccountProfilePhoto",
@@ -2857,7 +2857,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "is_public": is_public
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2868,7 +2868,7 @@ class Bot:
         accepted_gift_types: AcceptedGiftTypes,
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setBusinessAccountGiftSettings",
@@ -2877,7 +2877,7 @@ class Bot:
                 "accepted_gift_types": accepted_gift_types,
                 "business_connection_id": business_connection_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2886,14 +2886,14 @@ class Bot:
         self,
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> StarAmount:
         data = self._session.send_request(
             method="getBusinessAccountStarBalance",
             parameters={
                 "business_connection_id": business_connection_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2906,7 +2906,7 @@ class Bot:
         star_count: int,
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="transferBusinessAccountStars",
@@ -2914,7 +2914,7 @@ class Bot:
                 "star_count": star_count,
                 "business_connection_id": business_connection_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -2933,7 +2933,7 @@ class Bot:
         sort_by_price: Union[bool, None, Unset] = UNSET,
         offset: Union[str, None, Unset] = UNSET,
         limit: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> OwnedGifts:
         data = self._session.send_request(
             method="getBusinessAccountGifts",
@@ -2950,7 +2950,7 @@ class Bot:
                 "offset": offset,
                 "limit": limit
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -2970,7 +2970,7 @@ class Bot:
         sort_by_price: Union[bool, None, Unset] = UNSET,
         offset: Union[str, None, Unset] = UNSET,
         limit: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> OwnedGifts:
         data = self._session.send_request(
             method="getUserGifts",
@@ -2985,7 +2985,7 @@ class Bot:
                 "offset": offset,
                 "limit": limit
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3007,7 +3007,7 @@ class Bot:
         sort_by_price: Union[bool, None, Unset] = UNSET,
         offset: Union[str, None, Unset] = UNSET,
         limit: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> OwnedGifts:
         data = self._session.send_request(
             method="getChatGifts",
@@ -3024,7 +3024,7 @@ class Bot:
                 "offset": offset,
                 "limit": limit
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3037,7 +3037,7 @@ class Bot:
         owned_gift_id: str,
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="convertGiftToStars",
@@ -3045,7 +3045,7 @@ class Bot:
                 "owned_gift_id": owned_gift_id,
                 "business_connection_id": business_connection_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3057,7 +3057,7 @@ class Bot:
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         keep_original_details: Union[bool, None, Unset] = UNSET,
         star_count: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="upgradeGift",
@@ -3067,7 +3067,7 @@ class Bot:
                 "keep_original_details": keep_original_details,
                 "star_count": star_count
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3079,7 +3079,7 @@ class Bot:
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         star_count: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="transferGift",
@@ -3089,7 +3089,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "star_count": star_count
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3106,7 +3106,7 @@ class Bot:
         areas: Union[list[StoryArea], None, Unset] = UNSET,
         post_to_chat_page: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Story:
         data = self._session.send_request(
             method="postStory",
@@ -3121,7 +3121,7 @@ class Bot:
                 "post_to_chat_page": post_to_chat_page,
                 "protect_content": protect_content
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3138,7 +3138,7 @@ class Bot:
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
         post_to_chat_page: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Story:
         data = self._session.send_request(
             method="repostStory",
@@ -3150,7 +3150,7 @@ class Bot:
                 "post_to_chat_page": post_to_chat_page,
                 "protect_content": protect_content
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3168,7 +3168,7 @@ class Bot:
         parse_mode: Union[str, None, Unset] = UNSET,
         caption_entities: Union[list[MessageEntity], None, Unset] = UNSET,
         areas: Union[list[StoryArea], None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Story:
         data = self._session.send_request(
             method="editStory",
@@ -3181,7 +3181,7 @@ class Bot:
                 "caption_entities": caption_entities,
                 "areas": areas
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3194,7 +3194,7 @@ class Bot:
         story_id: int,
         *,
         business_connection_id: Union[str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteStory",
@@ -3202,7 +3202,7 @@ class Bot:
                 "story_id": story_id,
                 "business_connection_id": business_connection_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3219,7 +3219,7 @@ class Bot:
         entities: Union[list[MessageEntity], None, Unset] = UNSET,
         link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Union[Message, Literal[True]]:
         data = self._session.send_request(
             method="editMessageText",
@@ -3234,7 +3234,7 @@ class Bot:
                 "link_preview_options": link_preview_options,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         if isinstance(data, dict):
@@ -3257,7 +3257,7 @@ class Bot:
         caption_entities: Union[list[MessageEntity], None, Unset] = UNSET,
         show_caption_above_media: Union[bool, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Union[Message, Literal[True]]:
         data = self._session.send_request(
             method="editMessageCaption",
@@ -3272,7 +3272,7 @@ class Bot:
                 "show_caption_above_media": show_caption_above_media,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         if isinstance(data, dict):
@@ -3292,7 +3292,7 @@ class Bot:
         message_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Union[Message, Literal[True]]:
         data = self._session.send_request(
             method="editMessageMedia",
@@ -3304,7 +3304,7 @@ class Bot:
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         if isinstance(data, dict):
@@ -3329,7 +3329,7 @@ class Bot:
         heading: Union[int, None, Unset] = UNSET,
         proximity_alert_radius: Union[int, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Union[Message, Literal[True]]:
         data = self._session.send_request(
             method="editMessageLiveLocation",
@@ -3346,7 +3346,7 @@ class Bot:
                 "proximity_alert_radius": proximity_alert_radius,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         if isinstance(data, dict):
@@ -3365,7 +3365,7 @@ class Bot:
         message_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Union[Message, Literal[True]]:
         data = self._session.send_request(
             method="stopMessageLiveLocation",
@@ -3376,7 +3376,7 @@ class Bot:
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         if isinstance(data, dict):
@@ -3395,7 +3395,7 @@ class Bot:
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         message_id: Union[int, FromContext] = FROM_CONTEXT,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="editMessageChecklist",
@@ -3406,7 +3406,7 @@ class Bot:
                 "message_id": message_id,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3422,7 +3422,7 @@ class Bot:
         message_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Union[Message, Literal[True]]:
         data = self._session.send_request(
             method="editMessageReplyMarkup",
@@ -3433,7 +3433,7 @@ class Bot:
                 "inline_message_id": inline_message_id,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         if isinstance(data, dict):
@@ -3451,7 +3451,7 @@ class Bot:
         message_id: Union[int, FromContext] = FROM_CONTEXT,
         business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Poll:
         data = self._session.send_request(
             method="stopPoll",
@@ -3461,7 +3461,7 @@ class Bot:
                 "business_connection_id": business_connection_id,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3475,7 +3475,7 @@ class Bot:
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         message_id: Union[int, FromContext] = FROM_CONTEXT,
         send_date: Union[datetime, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="approveSuggestedPost",
@@ -3484,7 +3484,7 @@ class Bot:
                 "message_id": message_id,
                 "send_date": send_date
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3495,7 +3495,7 @@ class Bot:
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         message_id: Union[int, FromContext] = FROM_CONTEXT,
         comment: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="declineSuggestedPost",
@@ -3504,7 +3504,7 @@ class Bot:
                 "message_id": message_id,
                 "comment": comment
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3514,7 +3514,7 @@ class Bot:
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         message_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteMessage",
@@ -3522,7 +3522,7 @@ class Bot:
                 "chat_id": chat_id,
                 "message_id": message_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3532,7 +3532,7 @@ class Bot:
         message_ids: list[int],
         *,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteMessages",
@@ -3540,7 +3540,7 @@ class Bot:
                 "message_ids": message_ids,
                 "chat_id": chat_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3561,7 +3561,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendSticker",
@@ -3580,7 +3580,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3592,14 +3592,14 @@ class Bot:
         self,
         name: str,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> StickerSet:
         data = self._session.send_request(
             method="getStickerSet",
             parameters={
                 "name": name
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3611,14 +3611,14 @@ class Bot:
         self,
         custom_emoji_ids: list[str],
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[Sticker]:
         data = self._session.send_request(
             method="getCustomEmojiStickers",
             parameters={
                 "custom_emoji_ids": custom_emoji_ids
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -3635,7 +3635,7 @@ class Bot:
         sticker_format: str,
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> File:
         data = self._session.send_request(
             method="uploadStickerFile",
@@ -3644,7 +3644,7 @@ class Bot:
                 "sticker_format": sticker_format,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3661,7 +3661,7 @@ class Bot:
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         sticker_type: Union[str, None, Unset] = UNSET,
         needs_repainting: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="createNewStickerSet",
@@ -3673,7 +3673,7 @@ class Bot:
                 "sticker_type": sticker_type,
                 "needs_repainting": needs_repainting
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3684,7 +3684,7 @@ class Bot:
         sticker: InputSticker,
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="addStickerToSet",
@@ -3693,7 +3693,7 @@ class Bot:
                 "sticker": sticker,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3703,7 +3703,7 @@ class Bot:
         sticker: str,
         position: int,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setStickerPositionInSet",
@@ -3711,7 +3711,7 @@ class Bot:
                 "sticker": sticker,
                 "position": position
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3720,14 +3720,14 @@ class Bot:
         self,
         sticker: str,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteStickerFromSet",
             parameters={
                 "sticker": sticker
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3739,7 +3739,7 @@ class Bot:
         sticker: InputSticker,
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="replaceStickerInSet",
@@ -3749,7 +3749,7 @@ class Bot:
                 "sticker": sticker,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3759,7 +3759,7 @@ class Bot:
         sticker: str,
         emoji_list: list[str],
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setStickerEmojiList",
@@ -3767,7 +3767,7 @@ class Bot:
                 "sticker": sticker,
                 "emoji_list": emoji_list
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3777,7 +3777,7 @@ class Bot:
         sticker: str,
         *,
         keywords: Union[list[str], None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setStickerKeywords",
@@ -3785,7 +3785,7 @@ class Bot:
                 "sticker": sticker,
                 "keywords": keywords
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3795,7 +3795,7 @@ class Bot:
         sticker: str,
         *,
         mask_position: Union[MaskPosition, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setStickerMaskPosition",
@@ -3803,7 +3803,7 @@ class Bot:
                 "sticker": sticker,
                 "mask_position": mask_position
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3813,7 +3813,7 @@ class Bot:
         name: str,
         title: str,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setStickerSetTitle",
@@ -3821,7 +3821,7 @@ class Bot:
                 "name": name,
                 "title": title
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3833,7 +3833,7 @@ class Bot:
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
         thumbnail: Union[InputFile, str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setStickerSetThumbnail",
@@ -3843,7 +3843,7 @@ class Bot:
                 "user_id": user_id,
                 "thumbnail": thumbnail
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3853,7 +3853,7 @@ class Bot:
         name: str,
         *,
         custom_emoji_id: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setCustomEmojiStickerSetThumbnail",
@@ -3861,7 +3861,7 @@ class Bot:
                 "name": name,
                 "custom_emoji_id": custom_emoji_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3870,14 +3870,14 @@ class Bot:
         self,
         name: str,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="deleteStickerSet",
             parameters={
                 "name": name
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3891,7 +3891,7 @@ class Bot:
         is_personal: Union[bool, None, Unset] = UNSET,
         next_offset: Union[str, None, Unset] = UNSET,
         button: Union[InlineQueryResultsButton, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="answerInlineQuery",
@@ -3903,7 +3903,7 @@ class Bot:
                 "next_offset": next_offset,
                 "button": button
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -3913,7 +3913,7 @@ class Bot:
         web_app_query_id: str,
         result: InlineQueryResult,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> SentWebAppMessage:
         data = self._session.send_request(
             method="answerWebAppQuery",
@@ -3921,7 +3921,7 @@ class Bot:
                 "web_app_query_id": web_app_query_id,
                 "result": result
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3938,7 +3938,7 @@ class Bot:
         allow_bot_chats: Union[bool, None, Unset] = UNSET,
         allow_group_chats: Union[bool, None, Unset] = UNSET,
         allow_channel_chats: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> PreparedInlineMessage:
         data = self._session.send_request(
             method="savePreparedInlineMessage",
@@ -3950,7 +3950,7 @@ class Bot:
                 "allow_group_chats": allow_group_chats,
                 "allow_channel_chats": allow_channel_chats
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -3992,7 +3992,7 @@ class Bot:
         suggested_post_parameters: Union[SuggestedPostParameters, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendInvoice",
@@ -4029,7 +4029,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -4062,7 +4062,7 @@ class Bot:
         send_phone_number_to_provider: Union[bool, None, Unset] = UNSET,
         send_email_to_provider: Union[bool, None, Unset] = UNSET,
         is_flexible: Union[bool, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> str:
         data = self._session.send_request(
             method="createInvoiceLink",
@@ -4090,7 +4090,7 @@ class Bot:
                 "send_email_to_provider": send_email_to_provider,
                 "is_flexible": is_flexible
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -4102,7 +4102,7 @@ class Bot:
         shipping_query_id: Union[str, FromContext] = FROM_CONTEXT,
         shipping_options: Union[list[ShippingOption], None, Unset] = UNSET,
         error_message: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="answerShippingQuery",
@@ -4112,7 +4112,7 @@ class Bot:
                 "shipping_options": shipping_options,
                 "error_message": error_message
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -4123,7 +4123,7 @@ class Bot:
         *,
         pre_checkout_query_id: Union[str, FromContext] = FROM_CONTEXT,
         error_message: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="answerPreCheckoutQuery",
@@ -4132,7 +4132,7 @@ class Bot:
                 "pre_checkout_query_id": pre_checkout_query_id,
                 "error_message": error_message
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -4140,11 +4140,11 @@ class Bot:
     def get_my_star_balance(
         self,
         *,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> StarAmount:
         data = self._session.send_request(
             method="getMyStarBalance",
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -4157,7 +4157,7 @@ class Bot:
         *,
         offset: Union[int, None, Unset] = UNSET,
         limit: Union[int, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> StarTransactions:
         data = self._session.send_request(
             method="getStarTransactions",
@@ -4165,7 +4165,7 @@ class Bot:
                 "offset": offset,
                 "limit": limit
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -4178,7 +4178,7 @@ class Bot:
         telegram_payment_charge_id: str,
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="refundStarPayment",
@@ -4186,7 +4186,7 @@ class Bot:
                 "telegram_payment_charge_id": telegram_payment_charge_id,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -4197,7 +4197,7 @@ class Bot:
         is_canceled: bool,
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="editUserStarSubscription",
@@ -4206,7 +4206,7 @@ class Bot:
                 "is_canceled": is_canceled,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -4216,7 +4216,7 @@ class Bot:
         errors: list[PassportElementError],
         *,
         user_id: Union[int, FromContext] = FROM_CONTEXT,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Literal[True]:
         data = self._session.send_request(
             method="setPassportDataErrors",
@@ -4224,7 +4224,7 @@ class Bot:
                 "errors": errors,
                 "user_id": user_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return data
@@ -4242,7 +4242,7 @@ class Bot:
         message_effect_id: Union[str, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         reply_markup: Union[InlineKeyboardMarkup, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         data = self._session.send_request(
             method="sendGame",
@@ -4258,7 +4258,7 @@ class Bot:
                 "reply_parameters": reply_parameters,
                 "reply_markup": reply_markup
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return self.converter.get_object(
@@ -4276,7 +4276,7 @@ class Bot:
         force: Union[bool, None, Unset] = UNSET,
         disable_edit_message: Union[bool, None, Unset] = UNSET,
         inline_message_id: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Union[Message, Literal[True]]:
         data = self._session.send_request(
             method="setGameScore",
@@ -4289,7 +4289,7 @@ class Bot:
                 "disable_edit_message": disable_edit_message,
                 "inline_message_id": inline_message_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         if isinstance(data, dict):
@@ -4307,7 +4307,7 @@ class Bot:
         chat_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         message_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         inline_message_id: Union[str, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> list[GameHighScore]:
         data = self._session.send_request(
             method="getGameHighScores",
@@ -4317,7 +4317,7 @@ class Bot:
                 "message_id": message_id,
                 "inline_message_id": inline_message_id
             },
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
         return [
@@ -4334,28 +4334,28 @@ class Bot:
         file: BinaryIO,
         *,
         chunk_size: int = 64 * 1024,
-        timeout_secs: Union[int, float, None] = None
+        request_timeout: Union[int, float, None] = None
     ) -> None:
         self._session.download_file(
             path=path,
             file=file,
             chunk_size=chunk_size,
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
     def drop_pending_updates(
         self,
         *,
         with_delete_webhook: bool = True,
-        timeout_secs: Union[int, float, None] = None
+        request_timeout: Union[int, float, None] = None
     ) -> None:
         if with_delete_webhook:
-            self.delete_webhook(timeout_secs=timeout_secs, drop_pending_updates=True)
+            self.delete_webhook(request_timeout=request_timeout, drop_pending_updates=True)
         else:
-            updates = self.get_updates(timeout_secs=timeout_secs, offset=-1)
+            updates = self.get_updates(request_timeout=request_timeout, offset=-1)
 
             if updates:
-                self.get_updates(timeout_secs=timeout_secs, offset=updates[-1].update_id + 1)
+                self.get_updates(request_timeout=request_timeout, offset=updates[-1].update_id + 1)
 
     def send_reply_menu(
         self,
@@ -4369,7 +4369,7 @@ class Bot:
         protect_content: Union[bool, None, Unset] = UNSET,
         message_effect_id: Union[str, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         return self._send_menu(
             text=menu.text,
@@ -4386,7 +4386,7 @@ class Bot:
             protect_content=protect_content,
             message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
     def send_inline_menu(
@@ -4403,7 +4403,7 @@ class Bot:
         protect_content: Union[bool, None, Unset] = UNSET,
         message_effect_id: Union[str, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         markup = menu.keyboard.get_markup()
         event = event_context.get(None)
@@ -4432,7 +4432,7 @@ class Bot:
                     chat_id=chat_id,
                     message_id=message_id,
                     reply_markup=markup,
-                    timeout_secs=timeout_secs
+                    request_timeout=request_timeout
                 )
 
             return self.edit_message_text(
@@ -4444,7 +4444,7 @@ class Bot:
                 entities=menu.entities,
                 link_preview_options=link_preview_options,
                 reply_markup=markup,
-                timeout_secs=timeout_secs
+                request_timeout=request_timeout
             )
 
         return self._send_menu(
@@ -4462,7 +4462,7 @@ class Bot:
             protect_content=protect_content,
             message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )
 
     def _send_menu(
@@ -4481,7 +4481,7 @@ class Bot:
         protect_content: Union[bool, None, Unset] = UNSET,
         message_effect_id: Union[str, None, Unset] = UNSET,
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
-        timeout_secs: Union[float, int, None, Unset] = UNSET
+        request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
         if media:
             if isinstance(media, InputMediaPhoto):
@@ -4569,5 +4569,5 @@ class Bot:
             message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
             reply_markup=reply_markup,
-            timeout_secs=timeout_secs
+            request_timeout=request_timeout
         )

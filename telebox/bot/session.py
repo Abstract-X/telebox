@@ -24,8 +24,8 @@ class Session:
         default_parameters: DefaultParameterSet,
         api_url: str,
         retries: int,
-        retry_delay_secs: Union[int, float],
-        timeout_secs: Union[int, float]
+        retry_delay: Union[int, float],
+        request_timeout: Union[int, float]
     ):
         self._client = client
         self._token = token
@@ -33,15 +33,15 @@ class Session:
         self._default_parameters = default_parameters
         self._api_url = api_url
         self._retries = retries
-        self._retry_delay_secs = retry_delay_secs
-        self._timeout_secs = timeout_secs
+        self._retry_delay = retry_delay
+        self._request_timeout = request_timeout
 
     def send_request(
         self,
         method: str,
         *,
         parameters: Optional[dict[str, Any]] = None,
-        timeout_secs: Union[int, float, None] = None
+        request_timeout: Union[int, float, None] = None
     ) -> Any:
         url = self._get_api_url(method)
         payload = Payload(
@@ -49,7 +49,7 @@ class Session:
             converter=self._converter,
             default_parameters=self._default_parameters
         )
-        timeout_secs = timeout_secs or self._timeout_secs
+        request_timeout = request_timeout or self._request_timeout
         retries = 0
 
         try:
@@ -60,7 +60,7 @@ class Session:
                             url=url,
                             data=payload.data,
                             files=payload.files,
-                            timeout=timeout_secs
+                            timeout=request_timeout
                         ),
                         method=method,
                         parameters=payload.data
@@ -73,7 +73,7 @@ class Session:
                         i.seek(0)
 
                     retries += 1
-                    time.sleep(self._retry_delay_secs)
+                    time.sleep(self._retry_delay)
         finally:
             for i in payload.opened_files:
                 with contextlib.suppress(Exception):
@@ -85,13 +85,13 @@ class Session:
         file: BinaryIO,
         chunk_size: int,
         *,
-        timeout_secs: Union[int, float, None] = None
+        request_timeout: Union[int, float, None] = None
     ) -> None:
         if self._api_url == API_URL:
             with self._client.stream(
                 method="GET",
                 url=f"{API_URL}/file/bot{self._token}/{path}",
-                timeout=timeout_secs
+                timeout=request_timeout
             ) as response:
                 response.raise_for_status()
 

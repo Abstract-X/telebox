@@ -21,19 +21,19 @@ class LongPollingListener(AbstractListener):
         self,
         bot: "Bot",
         *,
-        error_delay_secs: Union[int, float] = 5,
+        error_delay: Union[int, float] = 5,
         limit: Optional[int] = None,
         timeout: Optional[int] = 10,
         allowed_updates: Optional[list[str]] = None
     ):
-        if error_delay_secs < 0:
+        if error_delay < 0:
             raise ValueError("Error delay seconds cannot be negative!")
 
         self._bot = bot
-        self._error_delay_secs = error_delay_secs
+        self._error_delay = error_delay
         self._limit = limit
         self._timeout = timeout
-        self._timeout_secs = timeout + 1 if timeout else None
+        self._request_timeout = timeout + 1 if timeout else None
         self._allowed_updates = allowed_updates
         self._stop_event = Event()
 
@@ -48,14 +48,14 @@ class LongPollingListener(AbstractListener):
                         limit=self._limit,
                         timeout=self._timeout,
                         allowed_updates=self._allowed_updates,
-                        timeout_secs=self._timeout_secs
+                        request_timeout=self._request_timeout
                     )
                 except TimeoutException:
-                    logger.error("Timeout for requesting updates has expired!")
+                    logger.error("Requesting updates timed out.")
                 except Exception:  # noqa
                     logger.exception("An error occurred while receiving updates!")
 
-                    for _ in range(self._error_delay_secs):
+                    for _ in range(self._error_delay):
                         if self._stop_event.is_set():
                             return
 
