@@ -1,8 +1,7 @@
 from typing import Optional
 from threading import Lock
 
-from telebox.dispatcher.drafts.storage import AbstractDraftStorage
-from telebox.dispatcher.drafts.draft import Value
+from telebox.dispatcher.drafts.storage import AbstractDraftStorage, Value
 
 
 class MemoryDraftStorage(AbstractDraftStorage):
@@ -10,7 +9,7 @@ class MemoryDraftStorage(AbstractDraftStorage):
         self._drafts: dict[tuple[int, Optional[int]], dict[str, Value]] = {}
         self._lock = Lock()
 
-    def _save_draft(
+    def save_draft(
         self,
         draft: dict[str, Value],
         *,
@@ -20,18 +19,20 @@ class MemoryDraftStorage(AbstractDraftStorage):
         with self._lock:
             self._drafts[(chat_id, user_id)] = draft.copy()
 
-    def _load_draft(
+    def load_draft(
         self,
         chat_id: int,
         user_id: Optional[int] = None
-    ) -> Optional[dict[str, Value]]:
+    ) -> dict[str, Value]:
         with self._lock:
             draft = self._drafts.get((chat_id, user_id))
 
             if draft is not None:
                 return draft.copy()
 
-    def _clear_draft(
+        return {}
+
+    def clear_draft(
         self,
         *,
         chat_id: int,

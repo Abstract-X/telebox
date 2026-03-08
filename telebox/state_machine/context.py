@@ -1,7 +1,7 @@
 from typing import Optional, TypeVar, Generic
 
 from telebox.bot.bot import Bot
-from telebox.dispatcher.drafts.storage import AbstractDraftStorage
+from telebox.dispatcher.drafts.lazy_draft import LazyDraft
 from telebox.deps import DepsBase
 
 
@@ -17,7 +17,7 @@ class StateContext(Generic[DT]):
         "user_id",
         "data",
         "bot",
-        "draft_storage"
+        "draft"
     )
 
     def __init__(
@@ -30,7 +30,7 @@ class StateContext(Generic[DT]):
         user_id: Optional[int] = None,
         data: Optional[dict] = None,
         bot: Optional[Bot] = None,
-        draft_storage: Optional[AbstractDraftStorage] = None
+        draft: Optional[LazyDraft] = None
     ):
         self.deps: DT = deps
         self.state: str = state
@@ -39,4 +39,4 @@ class StateContext(Generic[DT]):
         self.user_id: Optional[int] = user_id
         self.data: dict = data if data is not None else {}
         self.bot: Optional[Bot] = bot
-        self.draft_storage: Optional[AbstractDraftStorage] = draft_storage
+        self.draft: Optional[LazyDraft] = draft

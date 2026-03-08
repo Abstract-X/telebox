@@ -5,6 +5,7 @@ from contextvars import ContextVar  # noqa
 event_context = ContextVar("event_context")
 handler_context = ContextVar("handler_context")
 error_handler_context = ContextVar("error_handler_context")
+draft_context = ContextVar("draft_context")
 
 _CONTEXT_ATTRS = {
     "chat_id": "chat_id",
