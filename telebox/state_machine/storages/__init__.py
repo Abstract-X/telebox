@@ -1,8 +1,8 @@
-from .json import JSONStateStorage
+from .file import FileStateStorage
 from .memory import MemoryStateStorage
 
 
 __all__ = [
-    "JSONStateStorage",
+    "FileStateStorage",
     "MemoryStateStorage"
 ]

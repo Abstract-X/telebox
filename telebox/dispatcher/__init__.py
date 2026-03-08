@@ -9,7 +9,7 @@ from .listeners import LongPollingListener, WebhookListener
 from .types import MediaGroup
 from .router import Router
 from .context import EventContext
-from .drafts import AbstractDraftStorage, Draft
+from .drafts import AbstractDraftStorage, MemoryDraftStorage, FileDraftStorage, Draft
 
 
 __all__ = [
@@ -30,5 +30,7 @@ __all__ = [
     "ErrorHandler",
     "EventContext",
     "AbstractDraftStorage",
+    "MemoryDraftStorage",
+    "FileDraftStorage",
     "Draft"
 ]
