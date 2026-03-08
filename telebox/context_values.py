@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union, Optional
 from contextvars import ContextVar  # noqa
 
 
@@ -66,3 +66,16 @@ class FromContext:
 
 FROM_CONTEXT = FromContext(optional=False)
 OPTIONAL_FROM_CONTEXT = FromContext(optional=True)
+
+
+def get_chat_id_and_user_id(
+    chat_id: Union[int, FromContext],
+    user_id: Union[int, FromContext, None]
+) -> tuple[int, Optional[int]]:
+    if isinstance(chat_id, FromContext):
+        chat_id = get_event_value("chat_id", optional=chat_id.optional)
+
+    if isinstance(user_id, FromContext):
+        user_id = get_event_value("user_id", optional=user_id.optional)
+
+    return chat_id, user_id

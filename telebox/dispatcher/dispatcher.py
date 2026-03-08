@@ -11,6 +11,7 @@ import signal
 from signal import Signals, SIGINT, SIGTERM
 import time
 
+from telebox.bot.bot import Bot
 from telebox.bot.types.update import Update
 from telebox.bot.types.message import Message
 from telebox.dispatcher.types.media_group import MediaGroup
@@ -28,6 +29,8 @@ from telebox.dispatcher.abort import Abort
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
 from telebox.context_values import event_context, handler_context, error_handler_context
 from telebox.dispatcher.context import EventContext
+from telebox.dispatcher.drafts.storage import AbstractDraftStorage
+from telebox.state_machine.machine import StateMachine
 from telebox.deps import DepsBase
 
 
@@ -62,12 +65,18 @@ class Dispatcher:
         *,
         min_workers: int = 10,
         max_workers: int = 100,
+        bot: Optional[Bot] = None,
+        state_machine: Optional[StateMachine] = None,
+        draft_storage: Optional[AbstractDraftStorage] = None,
         media_group_timeout: Union[int, float] = 3
     ):
         self._listener = listener
         self._deps = deps
         self._min_workers = min_workers
         self._max_workers = max_workers
+        self._bot = bot
+        self._state_machine = state_machine
+        self._draft_storage = draft_storage
         self._media_group_timeout = media_group_timeout
         self._updates: Queue[Update] = Queue()
         self._events: deque[EventInfo] = deque()
@@ -593,7 +602,10 @@ class Dispatcher:
             event_type=event_info.event_type,
             deps=self._deps,
             chat_id=event_info.chat_id,
-            user_id=event_info.user_id
+            user_id=event_info.user_id,
+            bot=self._bot,
+            state_machine=self._state_machine,
+            draft_storage=self._draft_storage
         )
 
         try:
