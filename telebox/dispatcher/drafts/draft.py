@@ -36,5 +36,14 @@ class Draft:
         del self._data[field]
         self._is_changed = True
 
+    def drop(self, field: str, default: Value = None) -> Value:
+        if field in self._data:
+            value = self._data.pop(field)
+            self._is_changed = True
+
+            return value
+
+        return default
+
     def get_data(self) -> dict[str, Value]:
         return self._data
