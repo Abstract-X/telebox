@@ -27,14 +27,20 @@ from .dispatcher import (
     ErrorHandler,
     EventContext
 )
-from .state_machine import StateMachine, AbstractStateStorage, StateContext
+from .state_machine import (
+    StateMachine,
+    AbstractStateStorage,
+    MemoryStateStorage,
+    FileStateStorage,
+    StateContext
+)
 from .callback_data import get_callback_data
 from .unset import Unset, UNSET
 from .group import Group, get_group
 from .task_executor import TaskExecutor
 from .deps import DepsBase
 from .context_values import event_context, handler_context, error_handler_context
-from .dispatcher import AbstractDraftStorage, Draft
+from .dispatcher import AbstractDraftStorage, MemoryDraftStorage, FileDraftStorage, Draft
 
 
 __all__ = [
@@ -66,7 +72,11 @@ __all__ = [
     "ErrorHandler",
     "StateMachine",
     "AbstractStateStorage",
+    "MemoryStateStorage",
+    "FileStateStorage",
     "AbstractDraftStorage",
+    "MemoryDraftStorage",
+    "FileDraftStorage",
     "Draft",
     "event_context",
     "handler_context",

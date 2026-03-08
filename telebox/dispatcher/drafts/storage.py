@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Union, Any
+from typing import Optional, Union
 
 from telebox.context_values import (
     FromContext,
@@ -7,14 +7,14 @@ from telebox.context_values import (
     OPTIONAL_FROM_CONTEXT,
     get_chat_id_and_user_id
 )
-from telebox.dispatcher.drafts.draft import Draft
+from telebox.dispatcher.drafts.draft import Draft, Value
 
 
 class AbstractDraftStorage(ABC):
     @abstractmethod
     def _save_draft(
         self,
-        draft: dict[str, Any],
+        draft: dict[str, Value],
         *,
         chat_id: int,
         user_id: Optional[int] = None
@@ -27,7 +27,7 @@ class AbstractDraftStorage(ABC):
         *,
         chat_id: int,
         user_id: Optional[int] = None
-    ) -> Optional[dict[str, Any]]:
+    ) -> Optional[dict[str, Value]]:
         pass
 
     @abstractmethod

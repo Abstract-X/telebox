@@ -1,5 +1,6 @@
 from typing import Any, Union, Optional
 
+
 Value = Union[str, int, float, bool, None]
 
 

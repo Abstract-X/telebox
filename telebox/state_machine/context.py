@@ -1,6 +1,7 @@
 from typing import Optional, TypeVar, Generic
 
-from telebox import Bot
+from telebox.bot.bot import Bot
+from telebox.dispatcher.drafts.storage import AbstractDraftStorage
 from telebox.deps import DepsBase
 
 
@@ -8,7 +9,16 @@ DT = TypeVar("DT", bound=DepsBase)
 
 
 class StateContext(Generic[DT]):
-    __slots__ = ("deps", "state", "next_state", "chat_id", "user_id", "data", "bot")
+    __slots__ = (
+        "deps",
+        "state",
+        "next_state",
+        "chat_id",
+        "user_id",
+        "data",
+        "bot",
+        "draft_storage"
+    )
 
     def __init__(
         self,
@@ -19,7 +29,8 @@ class StateContext(Generic[DT]):
         *,
         user_id: Optional[int] = None,
         data: Optional[dict] = None,
-        bot: Optional[Bot] = None
+        bot: Optional[Bot] = None,
+        draft_storage: Optional[AbstractDraftStorage] = None
     ):
         self.deps: DT = deps
         self.state: str = state
@@ -28,3 +39,4 @@ class StateContext(Generic[DT]):
         self.user_id: Optional[int] = user_id
         self.data: dict = data if data is not None else {}
         self.bot: Optional[Bot] = bot
+        self.draft_storage: Optional[AbstractDraftStorage] = draft_storage

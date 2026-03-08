@@ -10,6 +10,7 @@ from telebox.context_values import (
     get_chat_id_and_user_id
 )
 from telebox.state_machine.context import StateContext
+from telebox.dispatcher.drafts.storage import AbstractDraftStorage
 from telebox.bot.bot import Bot
 from telebox.deps import DepsBase
 
@@ -21,12 +22,14 @@ class StateMachine:
         storage: AbstractStateStorage,
         deps: DepsBase,
         *,
-        bot: Optional[Bot] = None
+        bot: Optional[Bot] = None,
+        draft_storage: Optional[AbstractDraftStorage] = None
     ):
         self.initial_state = initial_state
         self._storage = storage
         self._deps = deps
         self._bot = bot
+        self._draft_storage = draft_storage
         self._enter_hooks: dict[str, list[Callable[[StateContext], None]]] = {}
         self._exit_hooks: dict[str, list[Callable[[StateContext], None]]] = {}
 
@@ -188,5 +191,6 @@ class StateMachine:
             chat_id=chat_id,
             user_id=user_id,
             data=data,
-            bot=self._bot
+            bot=self._bot,
+            draft_storage=self._draft_storage
         )
