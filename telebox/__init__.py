@@ -39,8 +39,8 @@ from .unset import Unset, UNSET
 from .group import Group, get_group
 from .task_executor import TaskExecutor
 from .deps import DepsBase
-from .context_values import event_context, handler_context, error_handler_context
-from .dispatcher import AbstractDraftStorage, MemoryDraftStorage, FileDraftStorage, Draft
+from .context_values import event_context, handler_context, error_handler_context, draft_context
+from .dispatcher import AbstractDraftStorage, MemoryDraftStorage, FileDraftStorage, LazyDraft
 
 
 __all__ = [
@@ -77,10 +77,11 @@ __all__ = [
     "AbstractDraftStorage",
     "MemoryDraftStorage",
     "FileDraftStorage",
-    "Draft",
+    "LazyDraft",
     "event_context",
     "handler_context",
     "error_handler_context",
+    "draft_context",
     "Unset",
     "UNSET",
     "Group",

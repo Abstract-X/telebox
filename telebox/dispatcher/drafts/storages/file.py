@@ -3,8 +3,7 @@ from typing import Optional, Union
 from threading import Lock
 
 from telebox.serialization import get_serialized_data, get_deserialized_data
-from telebox.dispatcher.drafts.storage import AbstractDraftStorage
-from telebox.dispatcher.drafts.draft import Value
+from telebox.dispatcher.drafts.storage import AbstractDraftStorage, Value
 
 
 class FileDraftStorage(AbstractDraftStorage):
@@ -13,7 +12,7 @@ class FileDraftStorage(AbstractDraftStorage):
         self._temp_path = self._path.with_suffix(".temp")
         self._lock = Lock()
 
-    def _save_draft(
+    def save_draft(
         self,
         draft: dict[str, Value],
         *,
@@ -27,19 +26,19 @@ class FileDraftStorage(AbstractDraftStorage):
             drafts[key] = draft
             self._save_drafts(drafts)
 
-    def _load_draft(
+    def load_draft(
         self,
         chat_id: int,
         user_id: Optional[int] = None
-    ) -> Optional[dict[str, Value]]:
+    ) -> dict[str, Value]:
         key = _get_key(chat_id=chat_id, user_id=user_id)
 
         with self._lock:
             stored_drafts = self._load_drafts()
 
-            return stored_drafts.get(key)
+            return stored_drafts.get(key, {})
 
-    def _clear_draft(
+    def clear_draft(
         self,
         *,
         chat_id: int,

@@ -1,8 +1,8 @@
 from typing import Optional, TypeVar, Generic
 
+from telebox.dispatcher.drafts.lazy_draft import LazyDraft
 from telebox.dispatcher.type_hints import Event, Handler, ErrorHandler
 from telebox.dispatcher.enums.event_type import EventType
-from telebox.dispatcher.drafts.storage import AbstractDraftStorage
 from telebox.bot.bot import Bot
 from telebox.state_machine.machine import StateMachine
 from telebox.deps import DepsBase
@@ -21,7 +21,7 @@ class EventContext(Generic[ET, DT]):
         "user_id",
         "bot",
         "state_machine",
-        "draft_storage",
+        "draft",
         "data",
         "handler",
         "error",
@@ -38,7 +38,7 @@ class EventContext(Generic[ET, DT]):
         user_id: Optional[int] = None,
         bot: Optional[Bot] = None,
         state_machine: Optional[StateMachine] = None,
-        draft_storage: Optional[AbstractDraftStorage] = None
+        draft: Optional[LazyDraft] = None
     ):
         self.event: ET = event
         self.event_type: EventType = event_type
@@ -51,4 +51,4 @@ class EventContext(Generic[ET, DT]):
         self.error_handler: Optional[ErrorHandler] = None
         self.bot: Optional[Bot] = bot
         self.state_machine: Optional[StateMachine] = state_machine
-        self.draft_storage: Optional[AbstractDraftStorage] = draft_storage
+        self.draft: Optional[LazyDraft] = draft

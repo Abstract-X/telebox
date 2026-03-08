@@ -7,10 +7,12 @@ from telebox.context_values import (
     FromContext,
     FROM_CONTEXT,
     OPTIONAL_FROM_CONTEXT,
-    get_chat_id_and_user_id
+    get_chat_id_and_user_id,
+    draft_context
 )
 from telebox.state_machine.context import StateContext
 from telebox.dispatcher.drafts.storage import AbstractDraftStorage
+from telebox.dispatcher.drafts.lazy_draft import LazyDraft
 from telebox.bot.bot import Bot
 from telebox.deps import DepsBase
 
@@ -184,6 +186,15 @@ class StateMachine:
         user_id: Optional[int] = None,
         data: Optional[dict] = None
     ) -> StateContext:
+        draft = draft_context.get(None)
+
+        if (draft is None) and (self._draft_storage is not None):
+            draft = LazyDraft(
+                storage=self._draft_storage,
+                chat_id=chat_id,
+                user_id=user_id
+            )
+
         return StateContext(
             deps=self._deps,
             state=state,
@@ -192,5 +203,5 @@ class StateMachine:
             user_id=user_id,
             data=data,
             bot=self._bot,
-            draft_storage=self._draft_storage
+            draft=draft
         )
