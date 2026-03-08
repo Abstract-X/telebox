@@ -27,7 +27,7 @@ from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.abort import Abort
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
 from telebox.context_values import event_context, handler_context, error_handler_context
-from telebox.contexts import EventContext
+from telebox.dispatcher.context import EventContext
 from telebox.deps import DepsBase
 
 

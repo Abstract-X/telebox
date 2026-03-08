@@ -5,7 +5,7 @@ from telebox.state_machine.storage import AbstractStateStorage
 from telebox.state_machine.magazine import StateMagazine
 from telebox.context_values import FromContext, FROM_CONTEXT, OPTIONAL_FROM_CONTEXT, event_context, get_event_value
 from telebox.dispatcher.type_hints import Event
-from telebox.contexts import StateContext
+from telebox.state_machine.context import StateContext
 from telebox.deps import DepsBase
 
 

@@ -1,4 +1,4 @@
-from telebox.contexts import EventContext
+from telebox.dispatcher.context import EventContext
 
 
 class Middleware:
