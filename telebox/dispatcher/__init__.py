@@ -9,6 +9,7 @@ from .listeners import LongPollingListener, WebhookListener
 from .types import MediaGroup
 from .router import Router
 from .context import EventContext
+from .drafts import AbstractDraftStorage, Draft
 
 
 __all__ = [
@@ -27,5 +28,7 @@ __all__ = [
     "Router",
     "Handler",
     "ErrorHandler",
-    "EventContext"
+    "EventContext",
+    "AbstractDraftStorage",
+    "Draft"
 ]

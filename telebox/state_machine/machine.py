@@ -3,17 +3,30 @@ from typing import Optional, Union, Callable
 from telebox.state_machine.errors import PreviousStateNotFoundError
 from telebox.state_machine.storage import AbstractStateStorage
 from telebox.state_machine.magazine import StateMagazine
-from telebox.context_values import FromContext, FROM_CONTEXT, OPTIONAL_FROM_CONTEXT, event_context, get_event_value
-from telebox.dispatcher.type_hints import Event
+from telebox.context_values import (
+    FromContext,
+    FROM_CONTEXT,
+    OPTIONAL_FROM_CONTEXT,
+    get_chat_id_and_user_id
+)
 from telebox.state_machine.context import StateContext
+from telebox.bot.bot import Bot
 from telebox.deps import DepsBase
 
 
 class StateMachine:
-    def __init__(self, initial_state: str, storage: AbstractStateStorage, deps: DepsBase):
+    def __init__(
+        self,
+        initial_state: str,
+        storage: AbstractStateStorage,
+        deps: DepsBase,
+        *,
+        bot: Optional[Bot] = None
+    ):
         self.initial_state = initial_state
         self._storage = storage
         self._deps = deps
+        self._bot = bot
         self._enter_hooks: dict[str, list[Callable[[StateContext], None]]] = {}
         self._exit_hooks: dict[str, list[Callable[[StateContext], None]]] = {}
 
@@ -29,7 +42,7 @@ class StateMachine:
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT
     ) -> str:
-        chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
+        chat_id, user_id = get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         magazine = self._load_magazine(chat_id=chat_id, user_id=user_id)
 
         return magazine.state
@@ -39,7 +52,7 @@ class StateMachine:
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT
     ) -> Optional[str]:
-        chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
+        chat_id, user_id = get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         magazine = self._load_magazine(chat_id=chat_id, user_id=user_id)
 
         return magazine.previous_state
@@ -50,7 +63,7 @@ class StateMachine:
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         user_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT
     ) -> list[str]:
-        chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
+        chat_id, user_id = get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         magazine = self._load_magazine(chat_id=chat_id, user_id=user_id)
 
         return magazine.states
@@ -63,12 +76,11 @@ class StateMachine:
         user_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         data: Optional[dict] = None
     ) -> None:
-        chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
+        chat_id, user_id = get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         magazine = self._load_magazine(chat_id=chat_id, user_id=user_id)
         self._process_transition(
             magazine=magazine,
-            source_state=magazine.state,
-            destination_state=state,
+            state=state,
             chat_id=chat_id,
             user_id=user_id,
             data=data
@@ -81,10 +93,11 @@ class StateMachine:
         user_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         data: Optional[dict] = None
     ) -> None:
-        chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
+        chat_id, user_id = get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         magazine = self._load_magazine(chat_id=chat_id, user_id=user_id)
-        context = StateContext(
-            deps=self._deps,
+        context = self._get_context(
+            state=magazine.state,
+            next_state=magazine.state,
             chat_id=chat_id,
             user_id=user_id,
             data=data
@@ -100,7 +113,7 @@ class StateMachine:
         user_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         data: Optional[dict] = None
     ) -> None:
-        chat_id, user_id = _get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
+        chat_id, user_id = get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         magazine = self._load_magazine(chat_id=chat_id, user_id=user_id)
 
         if magazine.previous_state is None:
@@ -110,8 +123,7 @@ class StateMachine:
 
         self._process_transition(
             magazine=magazine,
-            source_state=magazine.state,
-            destination_state=magazine.previous_state,
+            state=magazine.previous_state,
             chat_id=chat_id,
             user_id=user_id,
             data=data
@@ -137,45 +149,44 @@ class StateMachine:
     def _process_transition(
         self,
         magazine: StateMagazine,
-        source_state: str,
-        destination_state: str,
+        state: str,
         *,
         chat_id: int,
         user_id: Optional[int] = None,
         data: Optional[dict] = None
     ) -> None:
-        context = StateContext(
-            deps=self._deps,
+        context = self._get_context(
+            state=magazine.state,
+            next_state=state,
             chat_id=chat_id,
             user_id=user_id,
             data=data
         )
 
-        for hook in self._exit_hooks.get(source_state, []):
+        for hook in self._exit_hooks.get(magazine.state, []):
             hook(context)
 
-        magazine.set_state(destination_state)
+        magazine.set_state(state)
         self._save_magazine(magazine, chat_id=chat_id, user_id=user_id)
 
-        for hook in self._enter_hooks.get(destination_state, []):
+        for hook in self._enter_hooks.get(state, []):
             hook(context)
 
-
-def _get_chat_id_and_user_id(
-    chat_id: Union[int, FromContext],
-    user_id: Union[int, FromContext, None]
-) -> tuple[int, Optional[int]]:
-    if isinstance(chat_id, FromContext):
-        chat_id = get_event_value("chat_id", optional=chat_id.optional)
-
-    if isinstance(user_id, FromContext):
-        user_id = get_event_value("user_id", optional=user_id.optional)
-
-    return chat_id, user_id
-
-
-def _get_event(event: Union[Event, FromContext, None]) -> Optional[Event]:
-    if isinstance(event, FromContext):
-        event = event_context.get()
-
-    return event
+    def _get_context(
+        self,
+        state: str,
+        next_state: str,
+        *,
+        chat_id: int,
+        user_id: Optional[int] = None,
+        data: Optional[dict] = None
+    ) -> StateContext:
+        return StateContext(
+            deps=self._deps,
+            state=state,
+            next_state=next_state,
+            chat_id=chat_id,
+            user_id=user_id,
+            data=data,
+            bot=self._bot
+        )
