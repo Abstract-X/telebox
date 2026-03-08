@@ -100,16 +100,13 @@ class StateMachine:
     ) -> None:
         chat_id, user_id = get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
         magazine = self._load_magazine(chat_id=chat_id, user_id=user_id)
-        context = self._get_context(
+        self._process_transition(
+            magazine=magazine,
             state=magazine.state,
-            next_state=magazine.state,
             chat_id=chat_id,
             user_id=user_id,
             data=data
         )
-
-        for hook in self._enter_hooks.get(magazine.state, []):
-            hook(context)
 
     def set_previous_state(
         self,
@@ -160,33 +157,8 @@ class StateMachine:
         user_id: Optional[int] = None,
         data: Optional[dict] = None
     ) -> None:
-        context = self._get_context(
-            state=magazine.state,
-            next_state=state,
-            chat_id=chat_id,
-            user_id=user_id,
-            data=data
-        )
-
-        for hook in self._exit_hooks.get(magazine.state, []):
-            hook(context)
-
-        magazine.set_state(state)
-        self._save_magazine(magazine, chat_id=chat_id, user_id=user_id)
-
-        for hook in self._enter_hooks.get(state, []):
-            hook(context)
-
-    def _get_context(
-        self,
-        state: str,
-        next_state: str,
-        *,
-        chat_id: int,
-        user_id: Optional[int] = None,
-        data: Optional[dict] = None
-    ) -> StateContext:
         draft = draft_context.get(None)
+        is_own_draft = False
 
         if (draft is None) and (self._draft_storage is not None):
             draft = LazyDraft(
@@ -194,14 +166,32 @@ class StateMachine:
                 chat_id=chat_id,
                 user_id=user_id
             )
+            is_own_draft = True
 
-        return StateContext(
+        context = StateContext(
             deps=self._deps,
-            state=state,
-            next_state=next_state,
+            state=magazine.state,
+            next_state=state,
             chat_id=chat_id,
             user_id=user_id,
             data=data,
             bot=self._bot,
             draft=draft
         )
+
+        if state != magazine.state:
+            for hook in self._exit_hooks.get(magazine.state, []):
+                hook(context)
+
+            magazine.set_state(state)
+            self._save_magazine(magazine, chat_id=chat_id, user_id=user_id)
+
+        for hook in self._enter_hooks.get(state, []):
+            hook(context)
+
+        if (draft is not None) and is_own_draft and draft.is_changed:
+            self._draft_storage.save_draft(
+                draft=draft.get_data(),
+                chat_id=chat_id,
+                user_id=user_id
+            )
