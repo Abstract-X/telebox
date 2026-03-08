@@ -24,9 +24,19 @@ class AbstractDraftStorage(ABC):
     @abstractmethod
     def _load_draft(
         self,
+        *,
         chat_id: int,
         user_id: Optional[int] = None
     ) -> Optional[dict[str, Any]]:
+        pass
+
+    @abstractmethod
+    def _clear_draft(
+        self,
+        *,
+        chat_id: int,
+        user_id: Optional[int] = None
+    ) -> None:
         pass
 
     def save_draft(
@@ -52,6 +62,14 @@ class AbstractDraftStorage(ABC):
         data = self._load_draft(chat_id=chat_id, user_id=user_id)
 
         return Draft(data)
+
+    def clear_draft(
+        self,
+        chat_id: Union[int, FromContext] = FROM_CONTEXT,
+        user_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT
+    ) -> None:
+        chat_id, user_id = get_chat_id_and_user_id(chat_id=chat_id, user_id=user_id)
+        self._clear_draft(chat_id=chat_id, user_id=user_id)
 
     def draft(
         self,
