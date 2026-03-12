@@ -190,8 +190,7 @@ def _create_bot_module(
     # For menus
     import_builder.add("telebox.bot.menus.reply.menu", "ReplyMenu")
     import_builder.add("telebox.bot.menus.inline.menu", "InlineMenu")
-    import_builder.add("telebox.bot.types.callback_query", "CallbackQuery")
-    import_builder.add("telebox.context_values", "event_context")
+    import_builder.add("telebox.bot.menus.inline.keyboard", "InlineKeyboard")
     import_builder.add("telebox.bot.types.link_preview_options", "LinkPreviewOptions")
     import_builder.add("telebox.bot.types.reply_parameters", "ReplyParameters")
     import_builder.add("telebox.bot.types.reply_keyboard_markup", "ReplyKeyboardMarkup")
