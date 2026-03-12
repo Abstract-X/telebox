@@ -9,6 +9,7 @@ from httpx import Client
 from telebox.bot.converter import Converter
 from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.errors import BotError
+from telebox.bot.menus.inline.keyboard import InlineKeyboard
 from telebox.bot.menus.inline.menu import InlineMenu
 from telebox.bot.menus.reply.menu import ReplyMenu
 from telebox.bot.session import Session, API_URL
@@ -19,7 +20,6 @@ from telebox.bot.types.bot_description import BotDescription
 from telebox.bot.types.bot_name import BotName
 from telebox.bot.types.bot_short_description import BotShortDescription
 from telebox.bot.types.business_connection import BusinessConnection
-from telebox.bot.types.callback_query import CallbackQuery
 from telebox.bot.types.chat_administrator_rights import ChatAdministratorRights
 from telebox.bot.types.chat_full_info import ChatFullInfo
 from telebox.bot.types.chat_invite_link import ChatInviteLink
@@ -76,7 +76,7 @@ from telebox.bot.types.user_chat_boosts import UserChatBoosts
 from telebox.bot.types.user_profile_audios import UserProfileAudios
 from telebox.bot.types.user_profile_photos import UserProfilePhotos
 from telebox.bot.types.webhook_info import WebhookInfo
-from telebox.context_values import FromContext, FROM_CONTEXT, OPTIONAL_FROM_CONTEXT, event_context
+from telebox.context_values import FromContext, FROM_CONTEXT, OPTIONAL_FROM_CONTEXT
 from telebox.unset import Unset, UNSET
 
 
@@ -4393,8 +4393,6 @@ class Bot:
         self,
         menu: InlineMenu,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        edit: bool = True,
-        message_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         message_thread_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         direct_messages_topic_id: Union[int, None, Unset] = UNSET,
@@ -4405,51 +4403,9 @@ class Bot:
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
-        markup = menu.keyboard.get_markup()
-        event = event_context.get(None)
-
-        if (
-            message_id
-            or (
-                (event is not None)
-                and isinstance(event, CallbackQuery)
-                and edit
-            )
-        ):
-            if menu.media:
-                data = self.converter.get_data(menu.media)
-                data["caption"] = menu.text
-                data["parse_mode"] = menu.parse_mode
-                data["caption_entities"] = menu.entities
-                media = self.converter.get_object(
-                    data=data,
-                    class_=type(menu.media)
-                )
-
-                return self.edit_message_media(
-                    media=media,
-                    business_connection_id=business_connection_id,
-                    chat_id=chat_id,
-                    message_id=message_id,
-                    reply_markup=markup,
-                    request_timeout=request_timeout
-                )
-
-            return self.edit_message_text(
-                text=menu.text,
-                business_connection_id=business_connection_id,
-                chat_id=chat_id,
-                message_id=message_id,
-                parse_mode=menu.parse_mode,
-                entities=menu.entities,
-                link_preview_options=link_preview_options,
-                reply_markup=markup,
-                request_timeout=request_timeout
-            )
-
         return self._send_menu(
             text=menu.text,
-            reply_markup=markup,
+            reply_markup=menu.keyboard.get_markup(),
             chat_id=chat_id,
             parse_mode=menu.parse_mode,
             entities=menu.entities,
@@ -4462,6 +4418,62 @@ class Bot:
             protect_content=protect_content,
             message_effect_id=message_effect_id,
             reply_parameters=reply_parameters,
+            request_timeout=request_timeout
+        )
+
+    def edit_inline_menu(
+        self,
+        menu: InlineMenu,
+        chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
+        message_id: Union[int, FromContext, None] = FROM_CONTEXT,
+        business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
+        link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
+        request_timeout: Union[float, int, None, Unset] = UNSET
+    ) -> Message:
+        if menu.media:
+            data = self.converter.get_data(menu.media)
+            data["caption"] = menu.text
+            data["parse_mode"] = menu.parse_mode
+            data["caption_entities"] = menu.entities
+            media = self.converter.get_object(
+                data=data,
+                class_=type(menu.media)
+            )
+
+            return self.edit_message_media(
+                media=media,
+                business_connection_id=business_connection_id,
+                chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=menu.keyboard.get_markup(),
+                request_timeout=request_timeout
+            )
+
+        return self.edit_message_text(
+            text=menu.text,
+            business_connection_id=business_connection_id,
+            chat_id=chat_id,
+            message_id=message_id,
+            parse_mode=menu.parse_mode,
+            entities=menu.entities,
+            link_preview_options=link_preview_options,
+            reply_markup=menu.keyboard.get_markup(),
+            request_timeout=request_timeout
+        )
+
+    def edit_inline_menu_keyboard(
+        self,
+        keyboard: InlineKeyboard,
+        chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
+        message_id: Union[int, FromContext, None] = FROM_CONTEXT,
+        business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
+        request_timeout: Union[float, int, None, Unset] = UNSET
+    ) -> Message:
+        return self.edit_message_reply_markup(
+            business_connection_id=business_connection_id,
+            chat_id=chat_id,
+            message_id=message_id,
+            reply_markup=keyboard.get_markup(),
             request_timeout=request_timeout
         )
 
