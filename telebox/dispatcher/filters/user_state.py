@@ -4,7 +4,7 @@ from telebox.dispatcher.filter import AbstractFilter
 from telebox.dispatcher.types.media_group import MediaGroup
 from telebox.bot.types.message import Message
 from telebox.bot.types.callback_query import CallbackQuery
-from telebox.state_machine.machine import StateMachine
+from telebox.dispatcher.state_machine import StateMachine
 
 
 class UserStateFilter(AbstractFilter):
@@ -17,7 +17,7 @@ class UserStateFilter(AbstractFilter):
 
     def get_value(self, event: Union[Message, MediaGroup, CallbackQuery]) -> Optional[str]:
         if (event.chat_id is not None) and (event.user_id is not None):
-            return self._machine.get_state(chat_id=event.chat_id, user_id=event.user_id)
+            return self._machine.get_bundle(chat_id=event.chat_id, user_id=event.user_id).state
 
     def check_value(self, value: Optional[str]) -> bool:
         return value in self._states

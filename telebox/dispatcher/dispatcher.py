@@ -11,7 +11,6 @@ import signal
 from signal import Signals, SIGINT, SIGTERM
 import time
 
-from telebox.bot.bot import Bot
 from telebox.bot.types.update import Update
 from telebox.bot.types.message import Message
 from telebox.dispatcher.types.media_group import MediaGroup
@@ -27,20 +26,19 @@ from telebox.dispatcher.types.handler_info import HandlerInfo
 from telebox.dispatcher.types.error_handler_info import ErrorHandlerInfo
 from telebox.dispatcher.abort import Abort
 from telebox.dispatcher.type_hints import Handler, ErrorHandler
-from telebox.context_values import (
-    event_context,
-    handler_context,
-    error_handler_context,
-    draft_context
-)
 from telebox.dispatcher.context import EventContext
-from telebox.dispatcher.drafts.storage import AbstractDraftStorage
-from telebox.dispatcher.drafts.lazy_draft import LazyDraft
-from telebox.state_machine.machine import StateMachine
-from telebox.deps import DepsBase
+from telebox.context_values import (
+    event_context_context,
+    event_context,
+    chat_id_context,
+    user_id_context,
+    handler_context,
+    error_handler_context
+)
 
 
 logger = logging.getLogger(__name__)
+
 
 _empty_filter = EmptyFilter()
 _WORKER_WAITING_SECS = 60
@@ -67,22 +65,16 @@ class Dispatcher:
     def __init__(
         self,
         listener: AbstractListener,
-        deps: DepsBase,
         *,
         min_workers: int = 10,
         max_workers: int = 100,
-        bot: Optional[Bot] = None,
-        state_machine: Optional[StateMachine] = None,
-        draft_storage: Optional[AbstractDraftStorage] = None,
+        event_context_type: type[EventContext] = EventContext,
         media_group_timeout: Union[int, float] = 3
     ):
         self._listener = listener
-        self._deps = deps
         self._min_workers = min_workers
         self._max_workers = max_workers
-        self._bot = bot
-        self._state_machine = state_machine
-        self._draft_storage = draft_storage
+        self._event_context_type = event_context_type
         self._media_group_timeout = media_group_timeout
         self._updates: Queue[Update] = Queue()
         self._events: deque[EventInfo] = deque()
@@ -602,120 +594,111 @@ class Dispatcher:
             self._new_event_condition.notify()
 
     def _process_event(self, event_info: EventInfo) -> None:
-        logger.debug("Event processing started: %r.", event_info.event)
+        try:
+            logger.debug("Event processing started: %r.", event_info.event)
 
-        if self._draft_storage is not None:
-            draft = LazyDraft(
-                storage=self._draft_storage,
+            context = self._event_context_type(
+                event=event_info.event,
+                event_type=event_info.event_type,
                 chat_id=event_info.chat_id,
                 user_id=event_info.user_id
             )
-        else:
-            draft = None
-
-        context = EventContext(
-            event=event_info.event,
-            event_type=event_info.event_type,
-            deps=self._deps,
-            chat_id=event_info.chat_id,
-            user_id=event_info.user_id,
-            bot=self._bot,
-            state_machine=self._state_machine,
-            draft=draft
-        )
-        event_context_token = event_context.set(event_info.event)
-        draft_context_token = draft_context.set(draft)
-        handler_context_token = None
-        error_handler_context_token = None
-
-        try:
-            if not event_info.middleware_pre_processed:
-                for i in self._middlewares:
-                    i.pre_process_event(context)
-
-                event_info.middleware_pre_processed = True
-
-            handler_info = self._get_handler(event_info)
-
-            if handler_info is None:
-                event_info.processing_status = ProcessingStatus.HANDLER_NOT_FOUND
-
-                return
-
-            if handler_info.with_chat_queue and (event_info.chat_id is not None):
-                event_info.with_chat_queue = True
-
-                if not event_info.from_chat_queue:
-                    with self._event_lock:
-                        if event_info.chat_id in self._processing_chat_ids:
-                            chat_events = self._chat_queues.get(event_info.chat_id)
-
-                            if chat_events is None:
-                                chat_events = self._chat_queues[event_info.chat_id] = SimpleQueue()
-
-                            chat_events.put_nowait(event_info)
-                            event_info.processing_status = ProcessingStatus.ADDED_TO_CHAT_QUEUE
-
-                            return
-                        else:
-                            self._processing_chat_ids.add(event_info.chat_id)
-
-            handler_context_token = handler_context.set(handler_info.handler)
-            context.handler = handler_info.handler
-
-            for i in self._middlewares:
-                i.process_event(context)
-
-            handler_info.handler(context)
-
-            for i in self._middlewares:
-                i.post_process_event(context)
-        except Abort:
-            event_info.processing_status = ProcessingStatus.ABORTED
-        except Exception as error:
-            event_info.processing_status = ProcessingStatus.ERROR_OCCURRED
-            context.error = error
+            event_context_context_token = event_context_context.set(context)
+            event_context_token = event_context.set(event_info.event)
+            chat_id_context_token = chat_id_context.set(event_info.chat_id)
+            user_id_context_token = user_id_context.set(event_info.user_id)
 
             try:
+                if not event_info.middleware_pre_processed:
+                    for i in self._middlewares:
+                        i.on_pre_process(context)
+
+                    event_info.middleware_pre_processed = True
+
+                handler_info = self._get_handler(event_info)
+
+                if handler_info is None:
+                    event_info.processing_status = ProcessingStatus.HANDLER_NOT_FOUND
+
+                    return
+
+                if handler_info.with_chat_queue and (event_info.chat_id is not None):
+                    event_info.with_chat_queue = True
+
+                    if not event_info.from_chat_queue:
+                        with self._event_lock:
+                            if event_info.chat_id in self._processing_chat_ids:
+                                chat_events = self._chat_queues.get(event_info.chat_id)
+
+                                if chat_events is None:
+                                    chat_events = self._chat_queues[event_info.chat_id] = SimpleQueue()
+
+                                chat_events.put_nowait(event_info)
+                                event_info.processing_status = ProcessingStatus.ADDED_TO_CHAT_QUEUE
+
+                                return
+                            else:
+                                self._processing_chat_ids.add(event_info.chat_id)
+
+                context.handler = handler_info.handler
+                handler_context_token = handler_context.set(handler_info.handler)
+
+                try:
+                    middleware_data = {}
+                    started_middlewares = []
+
+                    try:
+                        for i in self._middlewares:
+                            middleware_data[i] = i.on_start(context)
+                            started_middlewares.append(i)
+
+                        for i in self._middlewares:
+                            i.on_process(context)
+
+                        handler_info.handler(context)
+
+                        for i in self._middlewares:
+                            i.on_post_process(context)
+                    finally:
+                        for i in started_middlewares:
+                            try:
+                                i.on_finish(context, middleware_data[i])
+                            except Exception:  # noqa
+                                logger.exception(
+                                    "Exception occurred while finishing middleware %r for event %r!",
+                                    type(i).__name__,
+                                    event_info.event
+                                )
+                finally:
+                    handler_context.reset(handler_context_token)
+            except Exception as error:
+                event_info.processing_status = ProcessingStatus.ERROR_OCCURRED
+                context.error = error
                 error_handler_info = self._get_error_handler(error)
 
                 if error_handler_info is None:
                     raise error
 
-                error_handler_context_token = error_handler_context.set(error_handler_info.handler)
                 context.error_handler = error_handler_info.handler
+                error_handler_context_token = error_handler_context.set(error_handler_info.handler)
 
-                for i in self._middlewares:
-                    i.process_error(context)
-
-                error_handler_info.handler(context)
-            except Exception:
-                logger.exception("An error occurred while processing the event %r!", event_info.event)
-        finally:
-            event_context.reset(event_context_token)
-            draft_context.reset(draft_context_token)
-
-            if handler_context_token is not None:
-                handler_context.reset(handler_context_token)
-
-            if error_handler_context_token is not None:
-                error_handler_context.reset(error_handler_context_token)
-
-            if (draft is not None) and draft.is_changed:
                 try:
-                    self._draft_storage.save_draft(
-                        draft=draft.get_data(),
-                        chat_id=event_info.chat_id,
-                        user_id=event_info.user_id
-                    )
-                except Exception:
-                    logger.exception(
-                        "Failed to save draft (chat_id=%r, user_id=%r, draft: %r)!",
-                        event_info.chat_id,
-                        event_info.user_id,
-                        draft.get_data()
-                    )
+                    for i in self._middlewares:
+                        i.on_error(context)
 
+                    error_handler_info.handler(context)
+                finally:
+                    error_handler_context.reset(error_handler_context_token)
+            finally:
+                event_context_context.reset(event_context_context_token)
+                event_context.reset(event_context_token)
+                chat_id_context.reset(chat_id_context_token)
+                user_id_context.reset(user_id_context_token)
+        except Abort:
+            event_info.processing_status = ProcessingStatus.ABORTED
+        except Exception:  # noqa
+            logger.exception("An error occurred while processing the event %r!", event_info.event)
+        finally:
             if event_info.processing_status is not ProcessingStatus.ERROR_OCCURRED:
                 logger.debug(
                     _EVENT_PROCESSING_LOG_TEMPLATES[event_info.processing_status],

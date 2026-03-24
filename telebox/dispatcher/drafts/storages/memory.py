@@ -1,42 +1,32 @@
 from typing import Optional
 from threading import Lock
 
-from telebox.dispatcher.drafts.storage import AbstractDraftStorage, Value
+from telebox.dispatcher.drafts.storage import AbstractDraftStorage
 
 
 class MemoryDraftStorage(AbstractDraftStorage):
     def __init__(self):
-        self._drafts: dict[tuple[int, Optional[int]], dict[str, Value]] = {}
+        self._drafts: dict[tuple[int, Optional[int]], bytes] = {}
         self._lock = Lock()
 
-    def save_draft(
+    def _save(
         self,
-        draft: dict[str, Value],
+        data: bytes,
         *,
         chat_id: int,
         user_id: Optional[int] = None
     ) -> None:
         with self._lock:
-            self._drafts[(chat_id, user_id)] = draft.copy()
+            self._drafts[(chat_id, user_id)] = data
 
-    def load_draft(
-        self,
-        chat_id: int,
-        user_id: Optional[int] = None
-    ) -> dict[str, Value]:
-        with self._lock:
-            draft = self._drafts.get((chat_id, user_id))
-
-            if draft is not None:
-                return draft.copy()
-
-        return {}
-
-    def clear_draft(
+    def _load(
         self,
         *,
         chat_id: int,
         user_id: Optional[int] = None
-    ) -> None:
+    ) -> Optional[bytes]:
         with self._lock:
-            self._drafts.pop((chat_id, user_id), None)
+            return self._drafts.get((chat_id, user_id))
+
+    def delete(self, *, chat_id: int, user_id: Optional[int] = None) -> None:
+        self._drafts.pop((chat_id, user_id), None)

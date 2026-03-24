@@ -1,15 +1,17 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Union
 
+from telebox.serialization import get_serialized_data, get_deserialized_data
 
-Value = Union[str, int, float, bool, None]
+
+Value = Union[str, int, float, bool, list["Value"], dict[str, "Value"], None]
 
 
 class AbstractDraftStorage(ABC):
     @abstractmethod
-    def save_draft(
+    def _save(
         self,
-        draft: dict[str, Value],
+        data: bytes,
         *,
         chat_id: int,
         user_id: Optional[int] = None
@@ -17,19 +19,43 @@ class AbstractDraftStorage(ABC):
         pass
 
     @abstractmethod
-    def load_draft(
+    def _load(
+        self,
+        *,
+        chat_id: int,
+        user_id: Optional[int] = None
+    ) -> Optional[bytes]:
+        pass
+
+    @abstractmethod
+    def delete(self, *, chat_id: int, user_id: Optional[int] = None) -> None:
+        pass
+
+    def save(
+        self,
+        data: dict[str, Value],
+        *,
+        chat_id: int,
+        user_id: Optional[int] = None
+    ) -> None:
+        if data:
+            self._save(
+                data=get_serialized_data(data),
+                chat_id=chat_id,
+                user_id=user_id
+            )
+        else:
+            self.delete(chat_id=chat_id, user_id=user_id)
+
+    def load(
         self,
         *,
         chat_id: int,
         user_id: Optional[int] = None
     ) -> dict[str, Value]:
-        pass
+        data = self._load(chat_id=chat_id, user_id=user_id)
 
-    @abstractmethod
-    def clear_draft(
-        self,
-        *,
-        chat_id: int,
-        user_id: Optional[int] = None
-    ) -> None:
-        pass
+        if not data:
+            return {}
+
+        return get_deserialized_data(data)

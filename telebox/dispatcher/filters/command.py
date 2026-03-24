@@ -22,8 +22,10 @@ class CommandFilter(AbstractFilter):
             if ignore_case:
                 i = i.lower()
 
+            self._commands.add(i)
+
             if username:
-                self._commands.update((i, f"{i}@{username.lower()}"))
+                self._commands.add(f"{i}@{username.lower()}")
 
         self._ignore_case = ignore_case
 
