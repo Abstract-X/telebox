@@ -8,9 +8,24 @@ from telebox.bot.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.enums.input_file_type import InputFileType
 from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.converter import Converter, get_timestamp
-from telebox.context_values import FromContext, get_event_value
+from telebox.context_values import event_context
+from telebox.context_values import FromContext
 from telebox.serialization import get_serialized_data
 from telebox.unset import Unset, UNSET
+
+
+_CONTEXT_ATTRS = {
+    "chat_id": "chat_id",
+    "user_id": "user_id",
+    "message_thread_id": "message_thread_id",
+    "business_connection_id": "business_connection_id",
+    "sender_chat_id": "sender_chat_id",
+    "message_id": "message_id",
+    "callback_query_id": "id",
+    "inline_query_id": "id",
+    "shipping_query_id": "id",
+    "pre_checkout_query_id": "id"
+}
 
 
 class Payload:
@@ -32,7 +47,7 @@ class Payload:
     def _initialize(self, parameters: dict[str, Any]) -> None:
         for parameter, value in parameters.items():
             if isinstance(value, FromContext):
-                value = get_event_value(parameter, optional=value.optional)
+                value = _get_event_value(parameter, optional=value.optional)
             elif parameter.endswith("parse_mode"):
                 prefix = parameter.removesuffix("parse_mode")
 
@@ -68,7 +83,7 @@ class Payload:
                 value = self._prepare_value(value)
 
                 if isinstance(value, (dict, list)):
-                    value = get_serialized_data(value)
+                    value = get_serialized_data(value).decode("utf-8")
 
                 self.data[parameter] = str(value)
 
@@ -154,3 +169,21 @@ class Payload:
             return protect_content
         elif self._default_parameters.protect_content:
             return True
+
+
+def _get_event_value(name: str, optional: bool = False) -> Any:
+    event = event_context.get(None)
+
+    if event is None:
+        if optional:
+            return None
+
+        raise LookupError(f"Unable to get {name!r}: event context is not set!")
+
+    if not hasattr(event, _CONTEXT_ATTRS[name]):
+        if not optional:
+            raise ValueError(f"{name!r} is required!")
+
+        return None
+
+    return getattr(event, _CONTEXT_ATTRS[name])

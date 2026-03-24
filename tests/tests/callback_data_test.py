@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 import pytest
 
@@ -11,67 +11,97 @@ from telebox.callback_data import (
 
 
 @pytest.mark.parametrize(
-    ["id_", "payload"],
+    "callback_id",
+    [1, 123, 0, -1, -123]
+)
+@pytest.mark.parametrize(
+    "flow_id",
+    [None, 1, 123, 0, -1, -123]
+)
+@pytest.mark.parametrize(
+    "payload",
     [
-        # Types
-        [1, None],
-        [2, "foo"],
-        [3, 12345],
-        [4, 12.345],
-        [5, True],
-        [6, False],
-        [7, []],
-        [8, [None]],
-        [9, ["foo", "bar"]],
-        [10, [123, 456]],
-        [11, [12.34, 56.789]],
-        [12, [None, "foo", 12345, 12.345, True, False]],
-
-        # Escaping
-        [13, f"{DD}foo{DD}{DD}bar{DD}"],
-        [14, [f"{LD}foo{LD}{LD}", f"{LD}bar{LD}"]],
-        [15, DD],
-        [16, f"{DD}{DD}"],
-        [17, [LD]],
-        [18, [LD, LD]],
-        [19, "\\"],
-        [20, ["\\", "\\"]],
-        [21, f"{DD}\\{LD}"],
-        [22, [f"{DD}\\{LD}", f"\\{DD}\\{LD}\\"]],
-        [23, "\\\\"]
+        None,
+        "",
+        "foo",
+        "FOO",
+        12345,
+        *range(0, 92),
+        -12345,
+        0.0,
+        -0.0,
+        1e-10,
+        -1e-10,
+        1e10,
+        -1e10,
+        123.45,
+        -123.45,
+        True,
+        False,
+        [],
+        [None],
+        ["foo"],
+        [123],
+        [-123],
+        [True],
+        [False],
+        [1.23],
+        [-1.23],
+        ["", ""],
+        ["foo", ""],
+        ["", "bar"],
+        ["foo", "bar"],
+        [123, 456],
+        [-123, -456],
+        [-123, 456],
+        [123, -456],
+        [12.34, 56.789],
+        [-12.34, 56.789],
+        [12.34, -56.789],
+        [-12.34, -56.789],
+        [None, "foo", 12345, 12.345, True, False],
+        [None, "foo", -12345, 12.345, False, True],
+        [None, "foo", 12345, -12.345, True, False],
+        [None, "foo", -12345, -12.345, False, True],
+        f"{DD}foo{DD}{DD}bar{DD}",
+        f"{LD}foo{LD}{LD}", f"{LD}bar{LD}",
+        DD,
+        LD,
+        f"{DD}{DD}",
+        f"{LD}{LD}",
+        f"{LD}{DD}",
+        f"{DD}{LD}",
+        [DD],
+        [LD],
+        [DD, DD],
+        [LD, LD],
+        [LD, DD],
+        [DD, LD],
+        [f"{DD}", f"{LD}"],
+        [f"{DD}{LD}", f"{LD}{DD}"],
+        "\\",
+        "foo\\",
+        ["\\", "\\"],
+        f"{DD}\\{LD}",
+        [f"{DD}\\{LD}", f"\\{DD}\\{LD}\\"],
+        "\\\\",
+        "\\\\\\"
     ]
 )
-def test(id_: int, payload: Union[str, int, float, bool, list, None]):
-    data = get_callback_data(
-        id_=id_,
-        payload=payload
-    )
-    parsed_id, parsed_payload = get_parsed_callback_data(data)
+def test(callback_id, flow_id: Optional[int], payload: Union[str, int, float, bool, list, None]):
+    data = get_callback_data(callback_id, flow_id=flow_id, payload=payload)
 
-    assert id_ == parsed_id
-    assert payload == parsed_payload
+    assert get_parsed_callback_data(data) == (callback_id, flow_id, payload)
 
 
 @pytest.mark.parametrize(
-    ["id_", "payload"],
-    [
-        [11111111111111111111111111111111111111111111111111111111111111111, None],
-        [1, "foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfo"]
-    ]
-)
-def test_large_data(id_: int, payload: Union[str, int, float, bool, list, None]):
-    with pytest.raises(ValueError):
-        get_callback_data(id_=id_, payload=payload)
-
-
-@pytest.mark.parametrize(
-    ["id_", "payload"],
+    ["callback_id", "payload"],
     [
         [1, [[]]],
         [2, ["foo", []]],
         [3, ["foo", ["bar"]]]
     ]
 )
-def test_nested_list(id_: int, payload: Union[str, int, float, bool, list, None]):
+def test_nested_list(callback_id: int, payload: Union[str, int, float, bool, list, None]):
     with pytest.raises(ValueError):
-        get_callback_data(id_=id_, payload=payload)
+        get_callback_data(callback_id, payload=payload)

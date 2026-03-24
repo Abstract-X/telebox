@@ -1,38 +1,59 @@
-from typing import Union
+from typing import Union, Optional
 
 
-DATA_DELIMITER = "|"
-LIST_DELIMITER = ":"
+DATA_DELIMITER = "\x1E"
+LIST_DELIMITER = "\x1F"
+NEGATIVE_FLAG = "\x1D"
+ENCODING_ALPHABET = r"""!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[~]^_`abcdefghijklmnopqrstuvwxyz{"""
+DECODING_MAPPING = {
+    character: i
+    for i, character in enumerate(ENCODING_ALPHABET)
+}
+BASE = len(ENCODING_ALPHABET)
 ESCAPING_CHARACTERS = ("\\", DATA_DELIMITER, LIST_DELIMITER)
 
 
-def get_callback_data(id_: int, payload: Union[str, int, float, bool, list, None] = None) -> str:
+def get_callback_data(
+    callback_id: int,
+    *,
+    flow_id: Optional[int] = None,
+    payload: Union[str, int, float, bool, list, None] = None
+) -> str:
+    parts = [_get_encoded_number(callback_id)]
+
+    if flow_id is not None:
+        parts.append(f"F{_get_encoded_number(flow_id)}")
+
     if payload is not None:
-        serialized_payload = _get_serialized_object(payload)
+        parts.append(
+            _get_serialized_object(payload)
+        )
 
-        data = f"{id_}{DATA_DELIMITER}{serialized_payload}"
-    else:
-        data = str(id_)
-
-    if len(data.encode("UTF-8")) > 64:
-        raise ValueError("Callback data is greater than 64 bytes!")
-
-    return data
+    return DATA_DELIMITER.join(parts)
 
 
-def get_parsed_callback_data(data: str) -> tuple[int, Union[str, int, float, bool, list, None]]:
+def get_parsed_callback_data(
+    data: str
+) -> tuple[int, Optional[int], Union[str, int, float, bool, list, None]]:
     values = _get_parts(DATA_DELIMITER, data)
+    callback_id = int(_get_decoded_number(values[0]))
+    flow_id = None
+    payload = None
 
     if len(values) == 1:
-        id_ = values[0]
-        payload = None
+        pass
     elif len(values) == 2:
-        id_, payload = values
-        payload = _get_deserialized_object(payload)
+        if values[1].startswith("F"):
+            flow_id = int(_get_decoded_number(values[1][1:]))
+        else:
+            payload = _get_deserialized_object(values[1])
+    elif len(values) == 3:
+        flow_id = int(_get_decoded_number(values[1][1:]))
+        payload = _get_deserialized_object(values[2])
     else:
-        raise ValueError("Parsing error!")
+        raise ValueError(f"Parsing error {data!r}!")
 
-    return int(id_), payload
+    return callback_id, flow_id, payload
 
 
 def _get_serialized_object(object_: Union[str, int, float, bool, list, None]) -> str:
@@ -41,9 +62,9 @@ def _get_serialized_object(object_: Union[str, int, float, bool, list, None]) ->
 
         return f"s{escaped_string}"
     elif isinstance(object_, bool):
-        return "b1" if object_ else "b0"
+        return "+" if object_ else "-"
     elif isinstance(object_, int):
-        return f"i{object_}"
+        return f"i{_get_encoded_number(object_)}"
     elif object_ is None:
         return "n"
     elif isinstance(object_, float):
@@ -67,6 +88,13 @@ def _get_serialized_object(object_: Union[str, int, float, bool, list, None]) ->
 
 
 def _get_deserialized_object(string: str):
+    if string == "+":
+        return True
+    elif string == "-":
+        return False
+    elif string == "n":
+        return None
+
     character = string[0]
     value = string[1:]
 
@@ -80,12 +108,8 @@ def _get_deserialized_object(string: str):
         ]
     elif character == "s":
         return _get_unescaped_string(value)
-    elif character == "b":
-        return value == "1"
     elif character == "i":
-        return int(value)
-    elif string == "n":
-        return None
+        return int(_get_decoded_number(value))
     elif character == "f":
         return float(value)
     else:
@@ -114,27 +138,60 @@ def _get_parts(character: str, string: str):
 
 
 def _get_escaped_string(string: str) -> str:
-    escaped_string = string
+    characters = []
 
-    for i in ESCAPING_CHARACTERS:
-        escaped_string = escaped_string.replace(i, f"\\{i}")
+    for i in string:
+        if i in ESCAPING_CHARACTERS:
+            characters.append("\\")
 
-    return escaped_string
+        characters.append(i)
+
+    return "".join(characters)
 
 
 def _get_unescaped_string(string: str) -> str:
-    result = []
-    index = 0
+    characters = []
+    iterator = iter(string)
 
-    while index < len(string):
-        if string[index] == "\\":
-            next_index = index + 1
+    for i in iterator:
+        if i == "\\":
+            next_character = next(iterator)
 
-            if string[next_index] in ESCAPING_CHARACTERS:
-                result.append(string[next_index])
-                index += 2
+            if next_character in ESCAPING_CHARACTERS:
+                characters.append(next_character)
         else:
-            result.append(string[index])
-            index += 1
+            characters.append(i)
 
-    return "".join(result)
+    return "".join(characters)
+
+
+def _get_encoded_number(number: int) -> str:
+    if number == 0:
+        return ENCODING_ALPHABET[0]
+
+    is_negative = number < 0
+    number = abs(number)
+    encoded_number = ""
+
+    while number > 0:
+        number, remainder = divmod(number, BASE)
+        encoded_number = ENCODING_ALPHABET[remainder] + encoded_number
+
+    if is_negative:
+        encoded_number = NEGATIVE_FLAG + encoded_number
+
+    return encoded_number
+
+
+def _get_decoded_number(number: str) -> int:
+    is_negative = number.startswith(NEGATIVE_FLAG)
+
+    if is_negative:
+        number = number[1:]
+
+    decoded_number = 0
+
+    for i in number:
+        decoded_number = decoded_number * BASE + DECODING_MAPPING[i]
+
+    return -decoded_number if is_negative else decoded_number

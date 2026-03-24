@@ -45,8 +45,16 @@ class CallbackQuery(Type):
         return self.message.message_id if self.message else None
 
     @property
+    def callback_id(self) -> Optional[int]:
+        if self.data:
+            return get_parsed_callback_data(self.data)[0]
+
+    @property
+    def flow_id(self) -> Optional[int]:
+        if self.data:
+            return get_parsed_callback_data(self.data)[1]
+            
+    @property
     def payload(self) -> Union[str, int, float, bool, list, None]:
         if self.data:
-            _, payload = get_parsed_callback_data(self.data)
-
-            return payload
+            return get_parsed_callback_data(self.data)[2]

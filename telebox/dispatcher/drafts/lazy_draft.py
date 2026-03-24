@@ -1,5 +1,5 @@
 from typing import Optional
-from threading import Lock
+import copy
 
 from telebox.dispatcher.drafts.storage import AbstractDraftStorage, Value
 
@@ -15,14 +15,13 @@ class LazyDraft:
         self._storage = storage
         self._chat_id = chat_id
         self._user_id = user_id
-        self._draft: Optional[dict[str, Value]] = None
-        self._draft_lock = Lock()
-        self._is_changed = False
+        self._data: Optional[dict[str, Value]] = None
+        self._original_data: Optional[dict[str, Value]] = None
 
     def __getitem__(self, item: str) -> Value:
         self._lazy_load()
 
-        return self._draft[item]
+        return self._data[item]
 
     def __setitem__(self, key: str, value: Value) -> None:
         self.set(field=key, value=value)
@@ -33,51 +32,48 @@ class LazyDraft:
     def __iter__(self):
         self._lazy_load()
 
-        return iter(self._draft)
+        return iter(self._data)
+
+    @property
+    def is_loaded(self) -> bool:
+        return self._data is not None
 
     @property
     def is_changed(self) -> bool:
-        with self._draft_lock:
-            if self._draft is None:
-                return False
+        if not self.is_loaded:
+            return False
 
-            return self._is_changed
+        return self._data != self._original_data
 
     def get(self, field: str, default: Value = None) -> Value:
         self._lazy_load()
 
-        return self._draft.get(field, default)
+        return self._data.get(field, default)
 
     def set(self, field: str, value: Value) -> None:
         self._lazy_load()
-        self._draft[field] = value
-        self._is_changed = True
+        self._data[field] = value
 
     def delete(self, field: str) -> None:
         self._lazy_load()
-        del self._draft[field]
-        self._is_changed = True
+        del self._data[field]
 
-    def drop(self, field: str, default: Value = None) -> Value:
+    def pop(self, field: str, default: Value = None) -> Value:
         self._lazy_load()
 
-        if field in self._draft:
-            value = self._draft.pop(field)
-            self._is_changed = True
+        return self._data.pop(field, default)
 
-            return value
-
-        return default
+    def clear(self) -> None:
+        self._lazy_load()
+        self._data.clear()
 
     def get_data(self) -> dict[str, Value]:
         self._lazy_load()
 
-        return self._draft
+        return self._data
 
     def _lazy_load(self) -> None:
-        with self._draft_lock:
-            if self._draft is None:
-                self._draft = self._storage.load_draft(
-                    chat_id=self._chat_id,
-                    user_id=self._user_id
-                )
+        if not self.is_loaded:
+            data = self._storage.load(chat_id=self._chat_id, user_id=self._user_id)
+            self._data = copy.deepcopy(data)
+            self._original_data = data
