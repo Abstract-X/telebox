@@ -155,12 +155,15 @@ from .invoice import Invoice
 from .keyboard_button import KeyboardButton
 from .keyboard_button_poll_type import KeyboardButtonPollType
 from .keyboard_button_request_chat import KeyboardButtonRequestChat
+from .keyboard_button_request_managed_bot import KeyboardButtonRequestManagedBot
 from .keyboard_button_request_users import KeyboardButtonRequestUsers
 from .labeled_price import LabeledPrice
 from .link_preview_options import LinkPreviewOptions
 from .location import Location
 from .location_address import LocationAddress
 from .login_url import LoginUrl
+from .managed_bot_created import ManagedBotCreated
+from .managed_bot_updated import ManagedBotUpdated
 from .mask_position import MaskPosition
 from .maybe_inaccessible_message import MaybeInaccessibleMessage
 from .menu_button import MenuButton
@@ -206,8 +209,11 @@ from .photo_size import PhotoSize
 from .poll import Poll
 from .poll_answer import PollAnswer
 from .poll_option import PollOption
+from .poll_option_added import PollOptionAdded
+from .poll_option_deleted import PollOptionDeleted
 from .pre_checkout_query import PreCheckoutQuery
 from .prepared_inline_message import PreparedInlineMessage
+from .prepared_keyboard_button import PreparedKeyboardButton
 from .proximity_alert_triggered import ProximityAlertTriggered
 from .reaction_count import ReactionCount
 from .reaction_type import ReactionType
@@ -340,6 +346,10 @@ __all__ = [
     "WebAppData",
     "ProximityAlertTriggered",
     "MessageAutoDeleteTimerChanged",
+    "ManagedBotCreated",
+    "ManagedBotUpdated",
+    "PollOptionAdded",
+    "PollOptionDeleted",
     "ChatBoostAdded",
     "BackgroundFill",
     "BackgroundFillSolid",
@@ -389,6 +399,7 @@ __all__ = [
     "KeyboardButton",
     "KeyboardButtonRequestUsers",
     "KeyboardButtonRequestChat",
+    "KeyboardButtonRequestManagedBot",
     "KeyboardButtonPollType",
     "ReplyKeyboardRemove",
     "InlineKeyboardMarkup",
@@ -481,6 +492,9 @@ __all__ = [
     "BusinessBotRights",
     "BusinessConnection",
     "BusinessMessagesDeleted",
+    "SentWebAppMessage",
+    "PreparedInlineMessage",
+    "PreparedKeyboardButton",
     "ResponseParameters",
     "InputMedia",
     "InputMediaPhoto",
@@ -532,8 +546,6 @@ __all__ = [
     "InputContactMessageContent",
     "InputInvoiceMessageContent",
     "ChosenInlineResult",
-    "SentWebAppMessage",
-    "PreparedInlineMessage",
     "LabeledPrice",
     "Invoice",
     "ShippingAddress",

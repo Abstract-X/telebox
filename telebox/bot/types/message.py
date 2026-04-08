@@ -38,6 +38,7 @@ from telebox.bot.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.invoice import Invoice
 from telebox.bot.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.types.location import Location
+from telebox.bot.types.managed_bot_created import ManagedBotCreated
 from telebox.bot.types.message_auto_delete_timer_changed import MessageAutoDeleteTimerChanged
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.bot.types.message_origin import MessageOrigin
@@ -46,6 +47,8 @@ from telebox.bot.types.paid_message_price_changed import PaidMessagePriceChanged
 from telebox.bot.types.passport_data import PassportData
 from telebox.bot.types.photo_size import PhotoSize
 from telebox.bot.types.poll import Poll
+from telebox.bot.types.poll_option_added import PollOptionAdded
+from telebox.bot.types.poll_option_deleted import PollOptionDeleted
 from telebox.bot.types.proximity_alert_triggered import ProximityAlertTriggered
 from telebox.bot.types.refunded_payment import RefundedPayment
 from telebox.bot.types.sticker import Sticker
@@ -104,6 +107,7 @@ class Message(Type):
     quote: Union[TextQuote, None, Unset] = field(factory=default_factory, kw_only=True)
     reply_to_story: Union[Story, None, Unset] = field(factory=default_factory, kw_only=True)
     reply_to_checklist_task_id: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
+    reply_to_poll_option_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     via_bot: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
     edit_date: Union[datetime, None, Unset] = field(factory=default_factory, kw_only=True)
     has_protected_content: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)
@@ -179,7 +183,10 @@ class Message(Type):
     giveaway: Union[Giveaway, None, Unset] = field(factory=default_factory, kw_only=True)
     giveaway_winners: Union[GiveawayWinners, None, Unset] = field(factory=default_factory, kw_only=True)
     giveaway_completed: Union["GiveawayCompleted", None, Unset] = field(factory=default_factory, kw_only=True)
+    managed_bot_created: Union[ManagedBotCreated, None, Unset] = field(factory=default_factory, kw_only=True)
     paid_message_price_changed: Union[PaidMessagePriceChanged, None, Unset] = field(factory=default_factory, kw_only=True)
+    poll_option_added: Union[PollOptionAdded, None, Unset] = field(factory=default_factory, kw_only=True)
+    poll_option_deleted: Union[PollOptionDeleted, None, Unset] = field(factory=default_factory, kw_only=True)
     suggested_post_approved: Union["SuggestedPostApproved", None, Unset] = field(factory=default_factory, kw_only=True)
     suggested_post_approval_failed: Union["SuggestedPostApprovalFailed", None, Unset] = field(factory=default_factory, kw_only=True)
     suggested_post_declined: Union["SuggestedPostDeclined", None, Unset] = field(factory=default_factory, kw_only=True)

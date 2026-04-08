@@ -16,6 +16,7 @@ from telebox.bot.types.chat_join_request import ChatJoinRequest
 from telebox.bot.types.chat_member_updated import ChatMemberUpdated
 from telebox.bot.types.chosen_inline_result import ChosenInlineResult
 from telebox.bot.types.inline_query import InlineQuery
+from telebox.bot.types.managed_bot_updated import ManagedBotUpdated
 from telebox.bot.types.message import Message
 from telebox.bot.types.message_reaction_count_updated import MessageReactionCountUpdated
 from telebox.bot.types.message_reaction_updated import MessageReactionUpdated
@@ -53,6 +54,7 @@ class Update(Type):
     chat_join_request: Union[ChatJoinRequest, None, Unset] = field(factory=default_factory, kw_only=True)
     chat_boost: Union[ChatBoostUpdated, None, Unset] = field(factory=default_factory, kw_only=True)
     removed_chat_boost: Union[ChatBoostRemoved, None, Unset] = field(factory=default_factory, kw_only=True)
+    managed_bot: Union[ManagedBotUpdated, None, Unset] = field(factory=default_factory, kw_only=True)
     type: Optional[UpdateType] = field(init=False)
     content: Any = field(init=False)
 
@@ -126,6 +128,9 @@ class Update(Type):
         elif self.removed_chat_boost:
             self.type = UpdateType.REMOVED_CHAT_BOOST
             self.content = self.removed_chat_boost
+        elif self.managed_bot:
+            self.type = UpdateType.MANAGED_BOT
+            self.content = self.managed_bot
         else:
             self.type = None
             self.content = None

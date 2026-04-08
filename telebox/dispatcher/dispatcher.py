@@ -264,6 +264,17 @@ class Dispatcher:
             filter_=filter_
         )
 
+    def add_managed_bot_handler(
+        self,
+        handler: Handler,
+        filter_: Optional[AbstractBaseFilter] = None
+    ) -> None:
+        self._add_handler(
+            handler=handler,
+            event_type=EventType.MANAGED_BOT,
+            filter_=filter_
+        )
+
     def add_media_group_handler(
         self,
         handler: Handler,

@@ -184,6 +184,16 @@ class Router:
             filter_=self._get_filter(filter_)
         )
 
+    def add_managed_bot_handler(
+        self,
+        handler: Handler,
+        filter_: Optional[AbstractBaseFilter] = None
+    ) -> None:
+        self._dispatcher.add_managed_bot_handler(
+            handler=handler,
+            filter_=self._get_filter(filter_)
+        )
+
     def add_media_group_handler(
         self,
         handler: Handler,
