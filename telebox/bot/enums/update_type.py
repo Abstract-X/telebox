@@ -28,3 +28,4 @@ class UpdateType(Enum):
     CHAT_JOIN_REQUEST = "chat_join_request"
     CHAT_BOOST = "chat_boost"
     REMOVED_CHAT_BOOST = "removed_chat_boost"
+    MANAGED_BOT = "managed_bot"

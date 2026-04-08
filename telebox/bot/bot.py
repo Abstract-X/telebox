@@ -46,6 +46,7 @@ from telebox.bot.types.input_poll_option import InputPollOption
 from telebox.bot.types.input_profile_photo import InputProfilePhoto
 from telebox.bot.types.input_sticker import InputSticker
 from telebox.bot.types.input_story_content import InputStoryContent
+from telebox.bot.types.keyboard_button import KeyboardButton
 from telebox.bot.types.labeled_price import LabeledPrice
 from telebox.bot.types.link_preview_options import LinkPreviewOptions
 from telebox.bot.types.mask_position import MaskPosition
@@ -57,6 +58,7 @@ from telebox.bot.types.owned_gifts import OwnedGifts
 from telebox.bot.types.passport_element_error import PassportElementError
 from telebox.bot.types.poll import Poll
 from telebox.bot.types.prepared_inline_message import PreparedInlineMessage
+from telebox.bot.types.prepared_keyboard_button import PreparedKeyboardButton
 from telebox.bot.types.reaction_type import ReactionType
 from telebox.bot.types.reply_keyboard_markup import ReplyKeyboardMarkup
 from telebox.bot.types.reply_keyboard_remove import ReplyKeyboardRemove
@@ -1093,13 +1095,20 @@ class Bot:
         is_anonymous: Union[bool, None, Unset] = UNSET,
         type: Union[str, None, Unset] = UNSET,
         allows_multiple_answers: Union[bool, None, Unset] = UNSET,
-        correct_option_id: Union[int, None, Unset] = UNSET,
+        allows_revoting: Union[bool, None, Unset] = UNSET,
+        shuffle_options: Union[bool, None, Unset] = UNSET,
+        allow_adding_options: Union[bool, None, Unset] = UNSET,
+        hide_results_until_closes: Union[bool, None, Unset] = UNSET,
+        correct_option_ids: Union[list[int], None, Unset] = UNSET,
         explanation: Union[str, None, Unset] = UNSET,
         explanation_parse_mode: Union[str, None, Unset] = UNSET,
         explanation_entities: Union[list[MessageEntity], None, Unset] = UNSET,
         open_period: Union[int, None, Unset] = UNSET,
         close_date: Union[datetime, None, Unset] = UNSET,
         is_closed: Union[bool, None, Unset] = UNSET,
+        description: Union[str, None, Unset] = UNSET,
+        description_parse_mode: Union[str, None, Unset] = UNSET,
+        description_entities: Union[list[MessageEntity], None, Unset] = UNSET,
         disable_notification: Union[bool, None, Unset] = UNSET,
         protect_content: Union[bool, None, Unset] = UNSET,
         allow_paid_broadcast: Union[bool, None, Unset] = UNSET,
@@ -1121,13 +1130,20 @@ class Bot:
                 "is_anonymous": is_anonymous,
                 "type": type,
                 "allows_multiple_answers": allows_multiple_answers,
-                "correct_option_id": correct_option_id,
+                "allows_revoting": allows_revoting,
+                "shuffle_options": shuffle_options,
+                "allow_adding_options": allow_adding_options,
+                "hide_results_until_closes": hide_results_until_closes,
+                "correct_option_ids": correct_option_ids,
                 "explanation": explanation,
                 "explanation_parse_mode": explanation_parse_mode,
                 "explanation_entities": explanation_entities,
                 "open_period": open_period,
                 "close_date": close_date,
                 "is_closed": is_closed,
+                "description": description,
+                "description_parse_mode": description_parse_mode,
+                "description_entities": description_entities,
                 "disable_notification": disable_notification,
                 "protect_content": protect_content,
                 "allow_paid_broadcast": allow_paid_broadcast,
@@ -2318,6 +2334,38 @@ class Bot:
             class_=BusinessConnection
         )
 
+    def get_managed_bot_token(
+        self,
+        *,
+        user_id: Union[int, FromContext] = FROM_CONTEXT,
+        request_timeout: Union[float, int, None, Unset] = UNSET
+    ) -> str:
+        data = self._session.send_request(
+            method="getManagedBotToken",
+            parameters={
+                "user_id": user_id
+            },
+            request_timeout=request_timeout
+        )
+
+        return data
+
+    def replace_managed_bot_token(
+        self,
+        *,
+        user_id: Union[int, FromContext] = FROM_CONTEXT,
+        request_timeout: Union[float, int, None, Unset] = UNSET
+    ) -> str:
+        data = self._session.send_request(
+            method="replaceManagedBotToken",
+            parameters={
+                "user_id": user_id
+            },
+            request_timeout=request_timeout
+        )
+
+        return data
+
     def set_my_commands(
         self,
         commands: list[BotCommand],
@@ -3207,6 +3255,77 @@ class Bot:
 
         return data
 
+    def answer_web_app_query(
+        self,
+        web_app_query_id: str,
+        result: InlineQueryResult,
+        *,
+        request_timeout: Union[float, int, None, Unset] = UNSET
+    ) -> SentWebAppMessage:
+        data = self._session.send_request(
+            method="answerWebAppQuery",
+            parameters={
+                "web_app_query_id": web_app_query_id,
+                "result": result
+            },
+            request_timeout=request_timeout
+        )
+
+        return self.converter.get_object(
+            data=data,
+            class_=SentWebAppMessage
+        )
+
+    def save_prepared_inline_message(
+        self,
+        result: InlineQueryResult,
+        *,
+        user_id: Union[int, FromContext] = FROM_CONTEXT,
+        allow_user_chats: Union[bool, None, Unset] = UNSET,
+        allow_bot_chats: Union[bool, None, Unset] = UNSET,
+        allow_group_chats: Union[bool, None, Unset] = UNSET,
+        allow_channel_chats: Union[bool, None, Unset] = UNSET,
+        request_timeout: Union[float, int, None, Unset] = UNSET
+    ) -> PreparedInlineMessage:
+        data = self._session.send_request(
+            method="savePreparedInlineMessage",
+            parameters={
+                "result": result,
+                "user_id": user_id,
+                "allow_user_chats": allow_user_chats,
+                "allow_bot_chats": allow_bot_chats,
+                "allow_group_chats": allow_group_chats,
+                "allow_channel_chats": allow_channel_chats
+            },
+            request_timeout=request_timeout
+        )
+
+        return self.converter.get_object(
+            data=data,
+            class_=PreparedInlineMessage
+        )
+
+    def save_prepared_keyboard_button(
+        self,
+        button: KeyboardButton,
+        *,
+        user_id: Union[int, FromContext] = FROM_CONTEXT,
+        request_timeout: Union[float, int, None, Unset] = UNSET
+    ) -> PreparedKeyboardButton:
+        data = self._session.send_request(
+            method="savePreparedKeyboardButton",
+            parameters={
+                "button": button,
+                "user_id": user_id
+            },
+            request_timeout=request_timeout
+        )
+
+        return self.converter.get_object(
+            data=data,
+            class_=PreparedKeyboardButton
+        )
+
     def edit_message_text(
         self,
         text: str,
@@ -3907,56 +4026,6 @@ class Bot:
         )
 
         return data
-
-    def answer_web_app_query(
-        self,
-        web_app_query_id: str,
-        result: InlineQueryResult,
-        *,
-        request_timeout: Union[float, int, None, Unset] = UNSET
-    ) -> SentWebAppMessage:
-        data = self._session.send_request(
-            method="answerWebAppQuery",
-            parameters={
-                "web_app_query_id": web_app_query_id,
-                "result": result
-            },
-            request_timeout=request_timeout
-        )
-
-        return self.converter.get_object(
-            data=data,
-            class_=SentWebAppMessage
-        )
-
-    def save_prepared_inline_message(
-        self,
-        result: InlineQueryResult,
-        *,
-        user_id: Union[int, FromContext] = FROM_CONTEXT,
-        allow_user_chats: Union[bool, None, Unset] = UNSET,
-        allow_bot_chats: Union[bool, None, Unset] = UNSET,
-        allow_group_chats: Union[bool, None, Unset] = UNSET,
-        allow_channel_chats: Union[bool, None, Unset] = UNSET,
-        request_timeout: Union[float, int, None, Unset] = UNSET
-    ) -> PreparedInlineMessage:
-        data = self._session.send_request(
-            method="savePreparedInlineMessage",
-            parameters={
-                "result": result,
-                "user_id": user_id,
-                "allow_user_chats": allow_user_chats,
-                "allow_bot_chats": allow_bot_chats,
-                "allow_group_chats": allow_group_chats,
-                "allow_channel_chats": allow_channel_chats
-            },
-            request_timeout=request_timeout
-        )
-
-        return self.converter.get_object(
-            data=data,
-            class_=PreparedInlineMessage
-        )
 
     def send_invoice(
         self,

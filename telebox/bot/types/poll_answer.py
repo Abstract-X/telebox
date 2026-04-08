@@ -16,6 +16,7 @@ from telebox.unset import Unset
 class PollAnswer(Type):
     poll_id: str = field()
     option_ids: list[int] = field()
+    option_persistent_ids: list[str] = field()
     voter_chat: Union[Chat, None, Unset] = field(factory=default_factory, kw_only=True)
     user: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
     

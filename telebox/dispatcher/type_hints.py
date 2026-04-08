@@ -12,6 +12,7 @@ from telebox.bot.types.chat_join_request import ChatJoinRequest
 from telebox.bot.types.chat_member_updated import ChatMemberUpdated
 from telebox.bot.types.chosen_inline_result import ChosenInlineResult
 from telebox.bot.types.inline_query import InlineQuery
+from telebox.bot.types.managed_bot_updated import ManagedBotUpdated
 from telebox.bot.types.message import Message
 from telebox.bot.types.message_reaction_count_updated import MessageReactionCountUpdated
 from telebox.bot.types.message_reaction_updated import MessageReactionUpdated
@@ -35,6 +36,7 @@ Event = Union[
     ChatMemberUpdated,
     ChosenInlineResult,
     InlineQuery,
+    ManagedBotUpdated,
     MediaGroup,
     Message,
     MessageReactionCountUpdated,

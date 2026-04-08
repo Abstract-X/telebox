@@ -8,6 +8,7 @@ from attrs import define, field
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.keyboard_button_poll_type import KeyboardButtonPollType
 from telebox.bot.types.keyboard_button_request_chat import KeyboardButtonRequestChat
+from telebox.bot.types.keyboard_button_request_managed_bot import KeyboardButtonRequestManagedBot
 from telebox.bot.types.keyboard_button_request_users import KeyboardButtonRequestUsers
 from telebox.bot.types.web_app_info import WebAppInfo
 from telebox.unset import Unset
@@ -20,6 +21,7 @@ class KeyboardButton(Type):
     style: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     request_users: Union[KeyboardButtonRequestUsers, None, Unset] = field(factory=default_factory, kw_only=True)
     request_chat: Union[KeyboardButtonRequestChat, None, Unset] = field(factory=default_factory, kw_only=True)
+    request_managed_bot: Union[KeyboardButtonRequestManagedBot, None, Unset] = field(factory=default_factory, kw_only=True)
     request_contact: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     request_location: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     request_poll: Union[KeyboardButtonPollType, None, Unset] = field(factory=default_factory, kw_only=True)

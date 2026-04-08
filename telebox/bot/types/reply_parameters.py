@@ -20,3 +20,4 @@ class ReplyParameters(Type):
     quote_entities: Union[list[MessageEntity], None, Unset] = field(factory=default_factory, kw_only=True)
     quote_position: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     checklist_task_id: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
+    poll_option_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
