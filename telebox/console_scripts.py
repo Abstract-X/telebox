@@ -1,6 +1,8 @@
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
+from httpx import Client
+
 from telebox.bot.bot import Bot
 from telebox.bot.errors import UnauthorizedError, NotFoundError
 from telebox.code_generation.generation import create_app
@@ -45,7 +47,9 @@ def info(namespace: Namespace) -> None:
     token = namespace.token
 
     try:
-        with Bot(token) as bot:
+        with Client() as client:
+            bot = Bot(client, token)
+            bot.get_me()
             short_description = bot.get_my_short_description().short_description
             description = bot.get_my_description().description
             commands = bot.get_my_commands()
