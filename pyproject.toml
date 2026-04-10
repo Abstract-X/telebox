@@ -33,7 +33,7 @@ codegen = [
 ]
 
 [project.scripts]
-telebox = "telebox.utils.console_scripts:process_command"
+telebox = "telebox.console_scripts:process_command"
 
 [project.urls]
 "Homepage" = "https://github.com/Abstract-X/telebox"
