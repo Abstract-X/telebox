@@ -341,7 +341,10 @@ def _resolve_message_type_hints(
         i.type_hint = re.sub(r"\bMessage\b", '"Message"', i.type_hint)
 
     for type_ in types:
-        if not import_builders[type_].check("telebox.bot.types.message", "Message"):
+        if not (
+            import_builders[type_].check("telebox.bot.types.message", "Message")
+            or import_builders[type_].check("telebox.bot.types.maybe_inaccessible_message", "MaybeInaccessibleMessage")
+        ):
             continue
 
         for i in message.fields:

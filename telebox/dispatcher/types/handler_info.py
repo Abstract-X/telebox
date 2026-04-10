@@ -8,4 +8,4 @@ from telebox.dispatcher.type_hints import Handler
 class HandlerInfo:
     handler: Handler
     filter: AbstractBaseFilter
-    with_chat_queue: bool
+    use_chat_queue: bool

@@ -47,8 +47,6 @@ from telebox.bot.types.paid_message_price_changed import PaidMessagePriceChanged
 from telebox.bot.types.passport_data import PassportData
 from telebox.bot.types.photo_size import PhotoSize
 from telebox.bot.types.poll import Poll
-from telebox.bot.types.poll_option_added import PollOptionAdded
-from telebox.bot.types.poll_option_deleted import PollOptionDeleted
 from telebox.bot.types.proximity_alert_triggered import ProximityAlertTriggered
 from telebox.bot.types.refunded_payment import RefundedPayment
 from telebox.bot.types.sticker import Sticker
@@ -79,6 +77,8 @@ if TYPE_CHECKING:
     from telebox.bot.types.checklist_tasks_done import ChecklistTasksDone
     from telebox.bot.types.giveaway_completed import GiveawayCompleted
     from telebox.bot.types.maybe_inaccessible_message import MaybeInaccessibleMessage
+    from telebox.bot.types.poll_option_added import PollOptionAdded
+    from telebox.bot.types.poll_option_deleted import PollOptionDeleted
     from telebox.bot.types.suggested_post_approval_failed import SuggestedPostApprovalFailed
     from telebox.bot.types.suggested_post_approved import SuggestedPostApproved
     from telebox.bot.types.suggested_post_declined import SuggestedPostDeclined
@@ -185,8 +185,8 @@ class Message(Type):
     giveaway_completed: Union["GiveawayCompleted", None, Unset] = field(factory=default_factory, kw_only=True)
     managed_bot_created: Union[ManagedBotCreated, None, Unset] = field(factory=default_factory, kw_only=True)
     paid_message_price_changed: Union[PaidMessagePriceChanged, None, Unset] = field(factory=default_factory, kw_only=True)
-    poll_option_added: Union[PollOptionAdded, None, Unset] = field(factory=default_factory, kw_only=True)
-    poll_option_deleted: Union[PollOptionDeleted, None, Unset] = field(factory=default_factory, kw_only=True)
+    poll_option_added: Union["PollOptionAdded", None, Unset] = field(factory=default_factory, kw_only=True)
+    poll_option_deleted: Union["PollOptionDeleted", None, Unset] = field(factory=default_factory, kw_only=True)
     suggested_post_approved: Union["SuggestedPostApproved", None, Unset] = field(factory=default_factory, kw_only=True)
     suggested_post_approval_failed: Union["SuggestedPostApprovalFailed", None, Unset] = field(factory=default_factory, kw_only=True)
     suggested_post_declined: Union["SuggestedPostDeclined", None, Unset] = field(factory=default_factory, kw_only=True)

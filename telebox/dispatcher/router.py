@@ -54,12 +54,12 @@ class Router:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_callback_query_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_channel_media_group_handler(
@@ -67,12 +67,12 @@ class Router:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_channel_media_group_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_channel_post_handler(
@@ -80,12 +80,12 @@ class Router:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_channel_post_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_chat_boost_handler(
@@ -153,12 +153,12 @@ class Router:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_edited_channel_post_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_edited_message_handler(
@@ -166,12 +166,12 @@ class Router:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_edited_message_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_inline_query_handler(
@@ -199,12 +199,12 @@ class Router:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_media_group_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_message_handler(
@@ -212,12 +212,12 @@ class Router:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._dispatcher.add_message_handler(
             handler=handler,
             filter_=self._get_filter(filter_),
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_message_reaction_handler(

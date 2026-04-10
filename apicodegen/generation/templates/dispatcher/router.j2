@@ -33,14 +33,14 @@ class Router:
         filter_: Optional[AbstractBaseFilter] = None{% if i in state_event_types %},{% endif +%}
         {% if i in state_event_types %}
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
         {% endif %}
     ) -> None:
         self._dispatcher.add_{{ i.lower() }}_handler(
             handler=handler,
             filter_=self._get_filter(filter_){% if i in state_event_types %},{% endif +%}
             {% if i in state_event_types %}
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
             {% endif %}
         )
     {% endfor %}
