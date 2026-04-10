@@ -598,6 +598,8 @@ def _evaluate_type_annotations() -> None:
         "GiveawayCompleted": GiveawayCompleted,
         "MaybeInaccessibleMessage": MaybeInaccessibleMessage,
         "Message": Message,
+        "PollOptionAdded": PollOptionAdded,
+        "PollOptionDeleted": PollOptionDeleted,
         "SuggestedPostApprovalFailed": SuggestedPostApprovalFailed,
         "SuggestedPostApproved": SuggestedPostApproved,
         "SuggestedPostDeclined": SuggestedPostDeclined,

@@ -8,7 +8,7 @@ from .listener import AbstractListener
 from .listeners import LongPollingListener, WebhookListener
 from .types import MediaGroup
 from .router import Router
-from .context import EventContext
+from .context import EventContext, ET
 from .drafts import AbstractDraftStorage, MemoryDraftStorage, FileDraftStorage, LazyDraft
 from .flows import AbstractFlowStorage, MemoryFlowStorage, FileFlowStorage, Flow, FlowManager, flow_context
 from .state_machine import StateMachine, AbstractStateBundleStorage, MemoryStateBundleStorage, FileStateBundleStorage
@@ -32,6 +32,7 @@ __all__ = [
     "Handler",
     "ErrorHandler",
     "EventContext",
+    "ET",
     "AbstractDraftStorage",
     "MemoryDraftStorage",
     "FileDraftStorage",

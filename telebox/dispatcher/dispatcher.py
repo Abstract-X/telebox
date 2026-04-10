@@ -122,13 +122,13 @@ class Dispatcher:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._add_handler(
             handler=handler,
             event_type=EventType.CALLBACK_QUERY,
             filter_=filter_,
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_channel_media_group_handler(
@@ -136,13 +136,13 @@ class Dispatcher:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._add_handler(
             handler=handler,
             event_type=EventType.CHANNEL_MEDIA_GROUP,
             filter_=filter_,
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_channel_post_handler(
@@ -150,13 +150,13 @@ class Dispatcher:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._add_handler(
             handler=handler,
             event_type=EventType.CHANNEL_POST,
             filter_=filter_,
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_chat_boost_handler(
@@ -230,13 +230,13 @@ class Dispatcher:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._add_handler(
             handler=handler,
             event_type=EventType.EDITED_CHANNEL_POST,
             filter_=filter_,
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_edited_message_handler(
@@ -244,13 +244,13 @@ class Dispatcher:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._add_handler(
             handler=handler,
             event_type=EventType.EDITED_MESSAGE,
             filter_=filter_,
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_inline_query_handler(
@@ -280,13 +280,13 @@ class Dispatcher:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._add_handler(
             handler=handler,
             event_type=EventType.MEDIA_GROUP,
             filter_=filter_,
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_message_handler(
@@ -294,13 +294,13 @@ class Dispatcher:
         handler: Handler,
         filter_: Optional[AbstractBaseFilter] = None,
         *,
-        with_chat_queue: bool = True
+        use_chat_queue: bool = True
     ) -> None:
         self._add_handler(
             handler=handler,
             event_type=EventType.MESSAGE,
             filter_=filter_,
-            with_chat_queue=with_chat_queue
+            use_chat_queue=use_chat_queue
         )
 
     def add_message_reaction_handler(
@@ -488,13 +488,13 @@ class Dispatcher:
         handler: Handler,
         event_type: EventType,
         filter_: Optional[AbstractBaseFilter] = None,
-        with_chat_queue: bool = False
+        use_chat_queue: bool = False
     ) -> None:
         self._handlers[event_type].append(
             HandlerInfo(
                 handler=handler,
                 filter=filter_ or _empty_filter,
-                with_chat_queue=with_chat_queue
+                use_chat_queue=use_chat_queue
             )
         )
 
@@ -608,23 +608,25 @@ class Dispatcher:
         try:
             logger.debug("Event processing started: %r.", event_info.event)
 
-            context = self._event_context_type(
-                event=event_info.event,
-                event_type=event_info.event_type,
-                chat_id=event_info.chat_id,
-                user_id=event_info.user_id
-            )
-            event_context_context_token = event_context_context.set(context)
+            if event_info.ctx is None:
+                event_info.ctx = self._event_context_type(
+                    event=event_info.event,
+                    event_type=event_info.event_type,
+                    chat_id=event_info.chat_id,
+                    user_id=event_info.user_id
+                )
+
+            event_context_context_token = event_context_context.set(event_info.ctx)
             event_context_token = event_context.set(event_info.event)
             chat_id_context_token = chat_id_context.set(event_info.chat_id)
             user_id_context_token = user_id_context.set(event_info.user_id)
 
             try:
-                if not event_info.middleware_pre_processed:
+                if not event_info.is_pre_processed:
                     for i in self._middlewares:
-                        i.on_pre_process(context)
+                        i.on_pre_process(event_info.ctx)
 
-                    event_info.middleware_pre_processed = True
+                    event_info.is_pre_processed = True
 
                 handler_info = self._get_handler(event_info)
 
@@ -633,8 +635,8 @@ class Dispatcher:
 
                     return
 
-                if handler_info.with_chat_queue and (event_info.chat_id is not None):
-                    event_info.with_chat_queue = True
+                if handler_info.use_chat_queue and (event_info.chat_id is not None):
+                    event_info.use_chat_queue = True
 
                     if not event_info.from_chat_queue:
                         with self._event_lock:
@@ -651,7 +653,7 @@ class Dispatcher:
                             else:
                                 self._processing_chat_ids.add(event_info.chat_id)
 
-                context.handler = handler_info.handler
+                event_info.ctx.handler = handler_info.handler
                 handler_context_token = handler_context.set(handler_info.handler)
 
                 try:
@@ -660,20 +662,20 @@ class Dispatcher:
 
                     try:
                         for i in self._middlewares:
-                            middleware_data[i] = i.on_start(context)
+                            middleware_data[i] = i.on_start(event_info.ctx)
                             started_middlewares.append(i)
 
                         for i in self._middlewares:
-                            i.on_process(context)
+                            i.on_process(event_info.ctx)
 
-                        handler_info.handler(context)
+                        handler_info.handler(event_info.ctx)
 
                         for i in self._middlewares:
-                            i.on_post_process(context)
+                            i.on_post_process(event_info.ctx)
                     finally:
                         for i in started_middlewares:
                             try:
-                                i.on_finish(context, middleware_data[i])
+                                i.on_finish(event_info.ctx, middleware_data[i])
                             except Exception:  # noqa
                                 logger.exception(
                                     "Exception occurred while finishing middleware %r for event %r!",
@@ -684,20 +686,20 @@ class Dispatcher:
                     handler_context.reset(handler_context_token)
             except Exception as error:
                 event_info.processing_status = ProcessingStatus.ERROR_OCCURRED
-                context.error = error
+                event_info.ctx.error = error
                 error_handler_info = self._get_error_handler(error)
 
                 if error_handler_info is None:
                     raise error
 
-                context.error_handler = error_handler_info.handler
+                event_info.ctx.error_handler = error_handler_info.handler
                 error_handler_context_token = error_handler_context.set(error_handler_info.handler)
 
                 try:
                     for i in self._middlewares:
-                        i.on_error(context)
+                        i.on_error(event_info.ctx)
 
-                    error_handler_info.handler(context)
+                    error_handler_info.handler(event_info.ctx)
                 finally:
                     error_handler_context.reset(error_handler_context_token)
             finally:
@@ -721,7 +723,7 @@ class Dispatcher:
 
                 return
 
-            if event_info.with_chat_queue:
+            if event_info.use_chat_queue:
                 self._set_chat_event_completion(chat_id=event_info.chat_id)
 
             self._set_event_completion()
