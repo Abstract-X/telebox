@@ -417,8 +417,8 @@ TYPE_ADDITIONAL_CODE_IMPORTS = {
         ("telebox.bot.utils.links", "get_message_public_link"),
         ("telebox.bot.utils.links", "get_message_private_link"),
         ("telebox.bot.utils.texts", "get_text_formatter"),
-        ("telebox.text", "get_text_with_surrogates"),
-        ("telebox.text", "get_text_without_surrogates")
+        ("telebox.utils", "get_text_with_surrogates"),
+        ("telebox.utils", "get_text_without_surrogates")
     ],
     "CallbackQuery": [
         ("typing", "Optional"),

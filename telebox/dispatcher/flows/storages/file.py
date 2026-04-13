@@ -4,7 +4,7 @@ from threading import Lock
 import uuid
 
 from telebox.dispatcher.flows.storage import AbstractFlowStorage
-from telebox.serialization import get_serialized_data, get_deserialized_data
+from telebox.utils import get_serialized_data, get_deserialized_data
 
 
 class FileFlowStorage(AbstractFlowStorage):

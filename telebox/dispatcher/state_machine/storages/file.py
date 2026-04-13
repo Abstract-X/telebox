@@ -4,7 +4,7 @@ from threading import Lock
 import uuid
 
 from telebox.dispatcher.state_machine.storage import AbstractStateBundleStorage
-from telebox.serialization import get_serialized_data, get_deserialized_data
+from telebox.utils import get_serialized_data, get_deserialized_data
 
 
 class FileStateBundleStorage(AbstractStateBundleStorage):

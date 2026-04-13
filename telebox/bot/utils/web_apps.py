@@ -5,7 +5,7 @@ import hmac
 
 from telebox.bot.converter import Converter
 from telebox.bot.types.web_app_init_data import WebAppInitData
-from telebox.serialization import get_deserialized_data
+from telebox.utils import get_deserialized_data
 
 
 def check_web_app_init_data(data: str, token: str, *, with_exceptions: bool = False) -> bool:

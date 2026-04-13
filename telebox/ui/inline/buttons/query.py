@@ -1,29 +1,28 @@
 from typing import Union
 
-from telebox.bot.menus.reply.button import AbstractReplyButton
-from telebox.bot.types.keyboard_button import KeyboardButton
-from telebox.bot.types.keyboard_button_poll_type import KeyboardButtonPollType
+from telebox.bot.types.inline_keyboard_button import InlineKeyboardButton
+from telebox.ui.inline.button import AbstractInlineButton
 from telebox.unset import Unset, UNSET
 
 
-class PollRequestButton(AbstractReplyButton):
+class QueryButton(AbstractInlineButton):
     def __init__(
         self,
         text: str,
-        type_: KeyboardButtonPollType,
+        query: str,
         *,
         icon_custom_emoji_id: Union[str, None, Unset] = UNSET,
         style: Union[str, None, Unset] = UNSET
     ):
         self.text = text
-        self.type = type_
+        self.query = query
         self.icon_custom_emoji_id = icon_custom_emoji_id
         self.style = style
 
-    def get(self) -> KeyboardButton:
-        return KeyboardButton(
+    def get(self) -> InlineKeyboardButton:
+        return InlineKeyboardButton(
             text=self.text,
-            request_poll=self.type,
+            switch_inline_query=self.query,
             icon_custom_emoji_id=self.icon_custom_emoji_id,
             style=self.style
         )

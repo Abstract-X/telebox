@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Union, Optional
 
 from telebox.dispatcher.flows.errors import FlowNotFoundError
-from telebox.serialization import get_serialized_data, get_deserialized_data
+from telebox.utils import get_serialized_data, get_deserialized_data
 
 
 Value = Union[str, int, float, bool, list["Value"], dict[str, "Value"], None]

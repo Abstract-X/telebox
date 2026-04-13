@@ -1,6 +1,6 @@
 from typing import Optional
 
-from telebox.bot.menus.inline.button import AbstractInlineButton
+from telebox.ui.inline.button import AbstractInlineButton
 from telebox.bot.types.inline_keyboard_markup import InlineKeyboardMarkup
 
 

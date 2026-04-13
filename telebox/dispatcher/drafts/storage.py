@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Union
 
-from telebox.serialization import get_serialized_data, get_deserialized_data
+from telebox.utils import get_serialized_data, get_deserialized_data
 
 
 Value = Union[str, int, float, bool, list["Value"], dict[str, "Value"], None]
