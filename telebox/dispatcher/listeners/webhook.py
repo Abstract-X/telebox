@@ -6,7 +6,7 @@ from pathlib import Path
 from telebox.bot.types import Update
 from telebox.bot.converter import Converter
 from telebox.dispatcher.listener import AbstractListener
-from telebox.serialization import get_deserialized_data
+from telebox.utils import get_deserialized_data
 
 
 logger = logging.getLogger(__name__)

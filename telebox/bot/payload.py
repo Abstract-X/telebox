@@ -10,7 +10,7 @@ from telebox.bot.default_parameters import DefaultParameterSet
 from telebox.bot.converter import Converter, get_timestamp
 from telebox.context_values import event_context
 from telebox.context_values import FromContext
-from telebox.serialization import get_serialized_data
+from telebox.utils import get_serialized_data
 from telebox.unset import Unset, UNSET
 
 

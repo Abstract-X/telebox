@@ -1,29 +1,26 @@
 from typing import Union
 
-from telebox.bot.menus.inline.button import AbstractInlineButton
-from telebox.bot.types.inline_keyboard_button import InlineKeyboardButton
-from telebox.bot.types.login_url import LoginUrl
+from telebox.bot.types.keyboard_button import KeyboardButton
+from telebox.ui.reply.button import AbstractReplyButton
 from telebox.unset import Unset, UNSET
 
 
-class LoginButton(AbstractInlineButton):
+class ContactRequestButton(AbstractReplyButton):
     def __init__(
         self,
         text: str,
-        url: LoginUrl,
         *,
         icon_custom_emoji_id: Union[str, None, Unset] = UNSET,
         style: Union[str, None, Unset] = UNSET
     ):
         self.text = text
-        self.url = url
         self.icon_custom_emoji_id = icon_custom_emoji_id
         self.style = style
 
-    def get(self) -> InlineKeyboardButton:
-        return InlineKeyboardButton(
+    def get(self) -> KeyboardButton:
+        return KeyboardButton(
             text=self.text,
-            login_url=self.url,
+            request_contact=True,
             icon_custom_emoji_id=self.icon_custom_emoji_id,
             style=self.style
         )

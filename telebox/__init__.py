@@ -4,7 +4,10 @@ from .bot import (
     MessageType,
     get_text,
     set_up_bot,
-    Webhook,
+    Webhook
+)
+from .ui import (
+    UI,
     ReplyMenu,
     InlineMenu,
     ReplyKeyboard,
@@ -57,6 +60,7 @@ __all__ = [
     "get_text",
     "set_up_bot",
     "Webhook",
+    "UI",
     "ReplyMenu",
     "ReplyKeyboard",
     "InlineMenu",

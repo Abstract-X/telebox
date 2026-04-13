@@ -5,7 +5,7 @@ import re
 from telebox.bot.utils.links import get_user_link
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.bot.consts import message_entity_types
-from telebox.text import get_text_with_surrogates, get_text_without_surrogates
+from telebox.utils import get_text_with_surrogates, get_text_without_surrogates
 
 
 _FORMATTING_ENTITY_TYPES = {
