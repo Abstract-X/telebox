@@ -2,7 +2,7 @@ from typing import Optional, Union, overload, Callable, TypeVar
 import functools
 
 from telebox.bot.types.callback_query import CallbackQuery
-from telebox.dispatcher.flows.storage import AbstractFlowStorage, Value
+from telebox.dispatcher.flows.storage import AbstractFlowStorage
 from telebox.dispatcher.flows.flow import Flow
 from telebox.dispatcher.flows.errors import FlowNotFoundError
 from telebox.context_values import (
@@ -75,7 +75,7 @@ class FlowContext:
         return self._flow
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._flow.is_changed:
+        if exc_type is None and self._flow.is_changed:
             self._storage.save(
                 flow_id=self._flow_id,
                 data=self._flow.get_data()
@@ -97,25 +97,11 @@ class FlowManager:
 
         return self._storage.create(chat_id=chat_id, user_id=user_id)
 
-    def get_flow(self, flow_id: Union[int, FromContext] = FROM_CONTEXT) -> FlowContext:
+    def flow(self, flow_id: Union[int, FromContext] = FROM_CONTEXT) -> FlowContext:
         return FlowContext(
             flow_id=_get_flow_id(flow_id),
             storage=self._storage
         )
-
-    def update_flow_data(self, flow_id: Union[int, FromContext] = FROM_CONTEXT, /, **fields: Value) -> None:
-        with self.get_flow(_get_flow_id(flow_id)) as flow:
-            for name, value in fields.items():
-                flow[name] = value
-
-    def get_flow_data(self, flow_id: Union[int, FromContext] = FROM_CONTEXT) -> dict[str, Value]:
-        flow = Flow(
-            data=self._storage.load(
-                flow_id=_get_flow_id(flow_id)
-            )
-        )
-
-        return flow.get_data()
 
     def finish_flow(self, flow_id: Union[int, FromContext] = FROM_CONTEXT) -> None:
         flow_id = _get_flow_id(flow_id)
