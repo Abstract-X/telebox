@@ -2,7 +2,8 @@ from .bot import (
     Bot,
     UpdateType,
     MessageType,
-    get_text,
+    get_html_text,
+    get_markdown_text,
     set_up_bot,
     Webhook
 )
@@ -57,7 +58,8 @@ __all__ = [
     "Bot",
     "UpdateType",
     "MessageType",
-    "get_text",
+    "get_html_text",
+    "get_markdown_text",
     "set_up_bot",
     "Webhook",
     "UI",

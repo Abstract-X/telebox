@@ -22,7 +22,7 @@ from .links import (
 from .users import get_full_name
 from .ids import get_prefixed_chat_id, get_unprefixed_chat_id
 from .web_apps import check_web_app_init_data, get_web_app_init_data
-from .texts import get_text
+from .texts import get_html_text, get_markdown_text
 from .utils import set_up_bot, Webhook
 
 
@@ -51,7 +51,8 @@ __all__ = [
     "get_unprefixed_chat_id",
     "check_web_app_init_data",
     "get_web_app_init_data",
-    "get_text",
+    "get_html_text",
+    "get_markdown_text",
     "set_up_bot",
     "Webhook"
 ]
