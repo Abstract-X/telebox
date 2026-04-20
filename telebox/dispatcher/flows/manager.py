@@ -97,6 +97,13 @@ class FlowManager:
 
         return self._storage.create(chat_id=chat_id, user_id=user_id)
 
+    def get_flow(self, flow_id: Union[int, FromContext] = FROM_CONTEXT) -> Flow:
+        return Flow(
+            data=self._storage.load(
+                flow_id=_get_flow_id(flow_id)
+            )
+        )
+
     def flow(self, flow_id: Union[int, FromContext] = FROM_CONTEXT) -> FlowContext:
         return FlowContext(
             flow_id=_get_flow_id(flow_id),
