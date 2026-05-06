@@ -17,7 +17,14 @@ class DependencyMiddleware(Middleware):
         **kwargs
     ) -> None:
         self._bot = bot
-        self._ui = ui
+
+        if ui is not None:
+            self._ui = ui
+        elif bot is not None:
+            self._ui = UI(bot)
+        else:
+            self._ui = None
+
         self._state_machine = state_machine
         self._flow_manager = flow_manager
         self._kwargs = kwargs

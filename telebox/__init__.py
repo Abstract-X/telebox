@@ -44,7 +44,7 @@ from .dispatcher import (
     LazyDraft,
     Flow,
     FlowManager,
-    flow_context,
+    flow_handler,
     DependencyMiddleware,
     DraftMiddleware
 )
@@ -97,7 +97,7 @@ __all__ = [
     "LazyDraft",
     "Flow",
     "FlowManager",
-    "flow_context",
+    "flow_handler",
     "Unset",
     "UNSET",
     "Group",
