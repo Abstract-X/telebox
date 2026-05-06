@@ -27,6 +27,12 @@ class MemoryStateBundleStorage(AbstractStateBundleStorage):
         user_id: Optional[int] = None
     ) -> tuple[Optional[list[str]], Optional[int]]:
         with self._lock:
-            magazine, flow_id = self._bundles.get((chat_id, user_id))
+            values = self._bundles.get((chat_id, user_id))
+
+            if values is not None:
+                magazine, flow_id = values
+            else:
+                magazine = []
+                flow_id = None
 
             return magazine[:], flow_id

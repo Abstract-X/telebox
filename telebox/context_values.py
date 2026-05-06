@@ -7,7 +7,6 @@ chat_id_context = ContextVar("chat_id_context")
 user_id_context = ContextVar("user_id_context")
 handler_context = ContextVar("handler_context")
 error_handler_context = ContextVar("error_handler_context")
-flow_id_context = ContextVar("flow_id_context")
 
 
 class FromContext:

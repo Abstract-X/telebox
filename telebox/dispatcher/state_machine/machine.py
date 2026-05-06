@@ -7,7 +7,6 @@ from telebox.context_values import (
     event_context_context,
     chat_id_context,
     user_id_context,
-    flow_id_context,
     FromContext,
     FROM_CONTEXT,
     OPTIONAL_FROM_CONTEXT
@@ -68,7 +67,7 @@ class StateMachine:
         *,
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         user_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT,
-        flow_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT
+        flow_id: Optional[int] = None
     ) -> None:
         chat_id = _get_chat_id(chat_id)
         user_id = _get_user_id(user_id)
@@ -78,7 +77,7 @@ class StateMachine:
             magazine=bundle.magazine,
             chat_id=chat_id,
             user_id=user_id,
-            flow_id=_get_flow_id(flow_id)
+            flow_id=flow_id
         )
 
     def set_previous_state(
@@ -86,7 +85,7 @@ class StateMachine:
         *,
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         user_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT,
-        flow_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT
+        flow_id: Optional[int] = None
     ) -> None:
         chat_id = _get_chat_id(chat_id)
         user_id = _get_user_id(user_id)
@@ -102,14 +101,14 @@ class StateMachine:
             magazine=bundle.magazine,
             chat_id=chat_id,
             user_id=user_id,
-            flow_id=_get_flow_id(flow_id)
+            flow_id=flow_id
         )
 
     def switch_state(
         self,
         state: str,
         *,
-        flow_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT,
+        flow_id: Optional[int] = None,
         ctx: Union["EventContext", FromContext] = FROM_CONTEXT
     ) -> None:
         ctx = _get_ctx(ctx)
@@ -118,13 +117,13 @@ class StateMachine:
             bundle=bundle,
             state=state,
             ctx=ctx,
-            flow_id=_get_flow_id(flow_id)
+            flow_id=flow_id
         )
 
     def revert_state(
         self,
         *,
-        flow_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT,
+        flow_id: Optional[int] = None,
         ctx: Union["EventContext", FromContext] = FROM_CONTEXT
     ) -> None:
         ctx = _get_ctx(ctx)
@@ -139,7 +138,7 @@ class StateMachine:
             bundle=bundle,
             state=bundle.previous_state,
             ctx=ctx,
-            flow_id=_get_flow_id(flow_id)
+            flow_id=flow_id
         )
 
     def _update_bundle(
@@ -199,13 +198,6 @@ def _get_user_id(user_id: Union[int, None, FromContext]) -> int:
         return user_id_context.get(None)
 
     return user_id
-
-
-def _get_flow_id(flow_id: Union[int, None, FromContext]) -> Optional[int]:
-    if isinstance(flow_id, FromContext):
-        return flow_id_context.get(None)
-
-    return flow_id
 
 
 def _set_magazine_state(magazine: list[str], state: str) -> None:

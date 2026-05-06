@@ -19,6 +19,7 @@ class EventContext(Generic[ET]):
     event_type: EventType
     chat_id: Optional[int] = None
     user_id: Optional[int] = None
+    flow_id: Optional[int] = None
     handler: Optional[Handler] = None
     error: Optional[Exception] = None
     error_handler: Optional[ErrorHandler] = None
