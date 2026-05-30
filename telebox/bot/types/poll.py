@@ -8,6 +8,7 @@ from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.message_entity import MessageEntity
+from telebox.bot.types.poll_media import PollMedia
 from telebox.bot.types.poll_option import PollOption
 from telebox.unset import Unset
 
@@ -23,11 +24,15 @@ class Poll(Type):
     type: str = field()
     allows_multiple_answers: bool = field()
     allows_revoting: bool = field()
+    members_only: bool = field()
     question_entities: Union[list[MessageEntity], None, Unset] = field(factory=default_factory, kw_only=True)
+    country_codes: Union[list[str], None, Unset] = field(factory=default_factory, kw_only=True)
     correct_option_ids: Union[list[int], None, Unset] = field(factory=default_factory, kw_only=True)
     explanation: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     explanation_entities: Union[list[MessageEntity], None, Unset] = field(factory=default_factory, kw_only=True)
+    explanation_media: Union[PollMedia, None, Unset] = field(factory=default_factory, kw_only=True)
     open_period: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     close_date: Union[datetime, None, Unset] = field(factory=default_factory, kw_only=True)
     description: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     description_entities: Union[list[MessageEntity], None, Unset] = field(factory=default_factory, kw_only=True)
+    media: Union[PollMedia, None, Unset] = field(factory=default_factory, kw_only=True)

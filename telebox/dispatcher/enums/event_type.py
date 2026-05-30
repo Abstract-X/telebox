@@ -18,6 +18,7 @@ class EventType(Enum):
     EDITED_BUSINESS_MESSAGE = "edited_business_message"
     EDITED_CHANNEL_POST = "edited_channel_post"
     EDITED_MESSAGE = "edited_message"
+    GUEST_MESSAGE = "guest_message"
     INLINE_QUERY = "inline_query"
     MANAGED_BOT = "managed_bot"
     MEDIA_GROUP = "media_group"

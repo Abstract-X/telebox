@@ -253,6 +253,17 @@ class Dispatcher:
             use_chat_queue=use_chat_queue
         )
 
+    def add_guest_message_handler(
+        self,
+        handler: Handler,
+        filter_: Optional[AbstractBaseFilter] = None
+    ) -> None:
+        self._add_handler(
+            handler=handler,
+            event_type=EventType.GUEST_MESSAGE,
+            filter_=filter_
+        )
+
     def add_inline_query_handler(
         self,
         handler: Handler,

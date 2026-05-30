@@ -3,11 +3,13 @@
 
 from typing import Union
 
+from telebox.bot.types.input_paid_media_live_photo import InputPaidMediaLivePhoto
 from telebox.bot.types.input_paid_media_photo import InputPaidMediaPhoto
 from telebox.bot.types.input_paid_media_video import InputPaidMediaVideo
 
 
 InputPaidMedia = Union[
+    InputPaidMediaLivePhoto,
     InputPaidMediaPhoto,
     InputPaidMediaVideo
 ]

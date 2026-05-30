@@ -23,6 +23,7 @@ class User(Type):
     added_to_attachment_menu: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)
     can_join_groups: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_read_all_group_messages: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
+    supports_guest_queries: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     supports_inline_queries: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     can_connect_to_business: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)
     has_main_web_app: Union[bool, None, Unset] = field(factory=default_factory, kw_only=True)

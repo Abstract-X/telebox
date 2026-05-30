@@ -7,15 +7,19 @@ from telebox.bot.types.input_media_animation import InputMediaAnimation
 from telebox.bot.types.input_media_audio import InputMediaAudio
 from telebox.bot.types.input_media_document import InputMediaDocument
 from telebox.bot.types.input_media_live_photo import InputMediaLivePhoto
+from telebox.bot.types.input_media_location import InputMediaLocation
 from telebox.bot.types.input_media_photo import InputMediaPhoto
+from telebox.bot.types.input_media_venue import InputMediaVenue
 from telebox.bot.types.input_media_video import InputMediaVideo
 
 
-InputMedia = Union[
+InputPollMedia = Union[
     InputMediaAnimation,
     InputMediaAudio,
     InputMediaDocument,
     InputMediaLivePhoto,
+    InputMediaLocation,
     InputMediaPhoto,
+    InputMediaVenue,
     InputMediaVideo
 ]

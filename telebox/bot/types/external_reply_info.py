@@ -18,6 +18,7 @@ from telebox.bot.types.giveaway import Giveaway
 from telebox.bot.types.giveaway_winners import GiveawayWinners
 from telebox.bot.types.invoice import Invoice
 from telebox.bot.types.link_preview_options import LinkPreviewOptions
+from telebox.bot.types.live_photo import LivePhoto
 from telebox.bot.types.location import Location
 from telebox.bot.types.message_origin import MessageOrigin
 from telebox.bot.types.paid_media_info import PaidMediaInfo
@@ -41,6 +42,7 @@ class ExternalReplyInfo(Type):
     animation: Union[Animation, None, Unset] = field(factory=default_factory, kw_only=True)
     audio: Union[Audio, None, Unset] = field(factory=default_factory, kw_only=True)
     document: Union[Document, None, Unset] = field(factory=default_factory, kw_only=True)
+    live_photo: Union[LivePhoto, None, Unset] = field(factory=default_factory, kw_only=True)
     paid_media: Union[PaidMediaInfo, None, Unset] = field(factory=default_factory, kw_only=True)
     photo: Union[list[PhotoSize], None, Unset] = field(factory=default_factory, kw_only=True)
     sticker: Union[Sticker, None, Unset] = field(factory=default_factory, kw_only=True)
