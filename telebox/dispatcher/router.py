@@ -174,6 +174,16 @@ class Router:
             use_chat_queue=use_chat_queue
         )
 
+    def add_guest_message_handler(
+        self,
+        handler: Handler,
+        filter_: Optional[AbstractBaseFilter] = None
+    ) -> None:
+        self._dispatcher.add_guest_message_handler(
+            handler=handler,
+            filter_=self._get_filter(filter_)
+        )
+
     def add_inline_query_handler(
         self,
         handler: Handler,

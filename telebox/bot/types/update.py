@@ -39,6 +39,7 @@ class Update(Type):
     business_message: Union[Message, None, Unset] = field(factory=default_factory, kw_only=True)
     edited_business_message: Union[Message, None, Unset] = field(factory=default_factory, kw_only=True)
     deleted_business_messages: Union[BusinessMessagesDeleted, None, Unset] = field(factory=default_factory, kw_only=True)
+    guest_message: Union[Message, None, Unset] = field(factory=default_factory, kw_only=True)
     message_reaction: Union[MessageReactionUpdated, None, Unset] = field(factory=default_factory, kw_only=True)
     message_reaction_count: Union[MessageReactionCountUpdated, None, Unset] = field(factory=default_factory, kw_only=True)
     inline_query: Union[InlineQuery, None, Unset] = field(factory=default_factory, kw_only=True)
@@ -83,6 +84,9 @@ class Update(Type):
         elif self.deleted_business_messages:
             self.type = UpdateType.DELETED_BUSINESS_MESSAGES
             self.content = self.deleted_business_messages
+        elif self.guest_message:
+            self.type = UpdateType.GUEST_MESSAGE
+            self.content = self.guest_message
         elif self.message_reaction:
             self.type = UpdateType.MESSAGE_REACTION
             self.content = self.message_reaction

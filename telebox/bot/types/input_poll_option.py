@@ -6,6 +6,7 @@ from typing import Union
 from attrs import define, field
 
 from telebox.bot.type import Type, default_factory
+from telebox.bot.types.input_poll_option_media import InputPollOptionMedia
 from telebox.bot.types.message_entity import MessageEntity
 from telebox.unset import Unset
 
@@ -15,3 +16,4 @@ class InputPollOption(Type):
     text: str = field()
     text_parse_mode: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     text_entities: Union[list[MessageEntity], None, Unset] = field(factory=default_factory, kw_only=True)
+    media: Union[InputPollOptionMedia, None, Unset] = field(factory=default_factory, kw_only=True)

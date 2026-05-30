@@ -25,6 +25,7 @@ class ChatMemberRestricted(Type):
     can_send_polls: bool = field()
     can_send_other_messages: bool = field()
     can_add_web_page_previews: bool = field()
+    can_react_to_messages: bool = field()
     can_edit_tag: bool = field()
     can_change_info: bool = field()
     can_invite_users: bool = field()

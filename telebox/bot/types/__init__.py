@@ -17,6 +17,7 @@ from .background_type_fill import BackgroundTypeFill
 from .background_type_pattern import BackgroundTypePattern
 from .background_type_wallpaper import BackgroundTypeWallpaper
 from .birthdate import Birthdate
+from .bot_access_settings import BotAccessSettings
 from .bot_command import BotCommand
 from .bot_command_scope import BotCommandScope
 from .bot_command_scope_all_chat_administrators import BotCommandScopeAllChatAdministrators
@@ -135,13 +136,20 @@ from .input_media import InputMedia
 from .input_media_animation import InputMediaAnimation
 from .input_media_audio import InputMediaAudio
 from .input_media_document import InputMediaDocument
+from .input_media_live_photo import InputMediaLivePhoto
+from .input_media_location import InputMediaLocation
 from .input_media_photo import InputMediaPhoto
+from .input_media_sticker import InputMediaSticker
+from .input_media_venue import InputMediaVenue
 from .input_media_video import InputMediaVideo
 from .input_message_content import InputMessageContent
 from .input_paid_media import InputPaidMedia
+from .input_paid_media_live_photo import InputPaidMediaLivePhoto
 from .input_paid_media_photo import InputPaidMediaPhoto
 from .input_paid_media_video import InputPaidMediaVideo
+from .input_poll_media import InputPollMedia
 from .input_poll_option import InputPollOption
+from .input_poll_option_media import InputPollOptionMedia
 from .input_profile_photo import InputProfilePhoto
 from .input_profile_photo_animated import InputProfilePhotoAnimated
 from .input_profile_photo_static import InputProfilePhotoStatic
@@ -159,6 +167,7 @@ from .keyboard_button_request_managed_bot import KeyboardButtonRequestManagedBot
 from .keyboard_button_request_users import KeyboardButtonRequestUsers
 from .labeled_price import LabeledPrice
 from .link_preview_options import LinkPreviewOptions
+from .live_photo import LivePhoto
 from .location import Location
 from .location_address import LocationAddress
 from .login_url import LoginUrl
@@ -188,6 +197,7 @@ from .owned_gift_unique import OwnedGiftUnique
 from .owned_gifts import OwnedGifts
 from .paid_media import PaidMedia
 from .paid_media_info import PaidMediaInfo
+from .paid_media_live_photo import PaidMediaLivePhoto
 from .paid_media_photo import PaidMediaPhoto
 from .paid_media_preview import PaidMediaPreview
 from .paid_media_purchased import PaidMediaPurchased
@@ -208,6 +218,7 @@ from .passport_file import PassportFile
 from .photo_size import PhotoSize
 from .poll import Poll
 from .poll_answer import PollAnswer
+from .poll_media import PollMedia
 from .poll_option import PollOption
 from .poll_option_added import PollOptionAdded
 from .poll_option_deleted import PollOptionDeleted
@@ -229,6 +240,7 @@ from .revenue_withdrawal_state import RevenueWithdrawalState
 from .revenue_withdrawal_state_failed import RevenueWithdrawalStateFailed
 from .revenue_withdrawal_state_pending import RevenueWithdrawalStatePending
 from .revenue_withdrawal_state_succeeded import RevenueWithdrawalStateSucceeded
+from .sent_guest_message import SentGuestMessage
 from .sent_web_app_message import SentWebAppMessage
 from .shared_user import SharedUser
 from .shipping_address import ShippingAddress
@@ -319,6 +331,7 @@ __all__ = [
     "Animation",
     "Audio",
     "Document",
+    "LivePhoto",
     "Story",
     "VideoQuality",
     "Video",
@@ -326,11 +339,15 @@ __all__ = [
     "Voice",
     "PaidMediaInfo",
     "PaidMedia",
-    "PaidMediaPreview",
+    "PaidMediaLivePhoto",
     "PaidMediaPhoto",
+    "PaidMediaPreview",
     "PaidMediaVideo",
     "Contact",
     "Dice",
+    "PollMedia",
+    "InputPollMedia",
+    "InputPollOptionMedia",
     "PollOption",
     "InputPollOption",
     "PollAnswer",
@@ -461,6 +478,7 @@ __all__ = [
     "OwnedGiftRegular",
     "OwnedGiftUnique",
     "OwnedGifts",
+    "BotAccessSettings",
     "AcceptedGiftTypes",
     "StarAmount",
     "BotCommand",
@@ -493,17 +511,23 @@ __all__ = [
     "BusinessConnection",
     "BusinessMessagesDeleted",
     "SentWebAppMessage",
+    "SentGuestMessage",
     "PreparedInlineMessage",
     "PreparedKeyboardButton",
     "ResponseParameters",
     "InputMedia",
-    "InputMediaPhoto",
-    "InputMediaVideo",
     "InputMediaAnimation",
     "InputMediaAudio",
     "InputMediaDocument",
+    "InputMediaLivePhoto",
+    "InputMediaLocation",
+    "InputMediaPhoto",
+    "InputMediaSticker",
+    "InputMediaVenue",
+    "InputMediaVideo",
     "InputFile",
     "InputPaidMedia",
+    "InputPaidMediaLivePhoto",
     "InputPaidMediaPhoto",
     "InputPaidMediaVideo",
     "InputProfilePhoto",

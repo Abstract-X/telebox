@@ -9,6 +9,7 @@ from attrs import define, field
 from telebox.bot.type import Type, default_factory
 from telebox.bot.types.chat import Chat
 from telebox.bot.types.message_entity import MessageEntity
+from telebox.bot.types.poll_media import PollMedia
 from telebox.bot.types.user import User
 from telebox.unset import Unset
 
@@ -19,6 +20,7 @@ class PollOption(Type):
     text: str = field()
     voter_count: int = field()
     text_entities: Union[list[MessageEntity], None, Unset] = field(factory=default_factory, kw_only=True)
+    media: Union[PollMedia, None, Unset] = field(factory=default_factory, kw_only=True)
     added_by_user: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
     added_by_chat: Union[Chat, None, Unset] = field(factory=default_factory, kw_only=True)
     addition_date: Union[datetime, None, Unset] = field(factory=default_factory, kw_only=True)

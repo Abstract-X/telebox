@@ -37,6 +37,7 @@ from telebox.bot.types.giveaway_winners import GiveawayWinners
 from telebox.bot.types.inline_keyboard_markup import InlineKeyboardMarkup
 from telebox.bot.types.invoice import Invoice
 from telebox.bot.types.link_preview_options import LinkPreviewOptions
+from telebox.bot.types.live_photo import LivePhoto
 from telebox.bot.types.location import Location
 from telebox.bot.types.managed_bot_created import ManagedBotCreated
 from telebox.bot.types.message_auto_delete_timer_changed import MessageAutoDeleteTimerChanged
@@ -98,6 +99,7 @@ class Message(Type):
     sender_boost_count: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     sender_business_bot: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
     sender_tag: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
+    guest_query_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     business_connection_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     forward_origin: Union[MessageOrigin, None, Unset] = field(factory=default_factory, kw_only=True)
     is_topic_message: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)
@@ -109,6 +111,8 @@ class Message(Type):
     reply_to_checklist_task_id: Union[int, None, Unset] = field(factory=default_factory, kw_only=True)
     reply_to_poll_option_id: Union[str, None, Unset] = field(factory=default_factory, kw_only=True)
     via_bot: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
+    guest_bot_caller_user: Union[User, None, Unset] = field(factory=default_factory, kw_only=True)
+    guest_bot_caller_chat: Union[Chat, None, Unset] = field(factory=default_factory, kw_only=True)
     edit_date: Union[datetime, None, Unset] = field(factory=default_factory, kw_only=True)
     has_protected_content: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)
     is_from_offline: Union[Literal[True], None, Unset] = field(factory=default_factory, kw_only=True)
@@ -124,6 +128,7 @@ class Message(Type):
     animation: Union[Animation, None, Unset] = field(factory=default_factory, kw_only=True)
     audio: Union[Audio, None, Unset] = field(factory=default_factory, kw_only=True)
     document: Union[Document, None, Unset] = field(factory=default_factory, kw_only=True)
+    live_photo: Union[LivePhoto, None, Unset] = field(factory=default_factory, kw_only=True)
     paid_media: Union[PaidMediaInfo, None, Unset] = field(factory=default_factory, kw_only=True)
     photo: Union[list[PhotoSize], None, Unset] = field(factory=default_factory, kw_only=True)
     sticker: Union[Sticker, None, Unset] = field(factory=default_factory, kw_only=True)
