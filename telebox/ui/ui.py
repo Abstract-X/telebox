@@ -275,17 +275,32 @@ class UI:
                 return self.bot.send_photo(
                     photo=media.media,
                     chat_id=chat_id,
+                    business_connection_id=business_connection_id,
+                    message_thread_id=message_thread_id,
+                    direct_messages_topic_id=direct_messages_topic_id,
+                    disable_notification=disable_notification,
+                    protect_content=protect_content,
+                    message_effect_id=message_effect_id,
+                    reply_parameters=reply_parameters,
                     caption=text,
                     parse_mode=parse_mode,
                     caption_entities=entities,
                     show_caption_above_media=media.show_caption_above_media,
                     has_spoiler=media.has_spoiler,
-                    reply_markup=reply_markup
+                    reply_markup=reply_markup,
+                    request_timeout=request_timeout
                 )
             elif isinstance(media, InputMediaVideo):
                 return self.bot.send_video(
                     video=media.media,
                     chat_id=chat_id,
+                    business_connection_id=business_connection_id,
+                    message_thread_id=message_thread_id,
+                    direct_messages_topic_id=direct_messages_topic_id,
+                    disable_notification=disable_notification,
+                    protect_content=protect_content,
+                    message_effect_id=message_effect_id,
+                    reply_parameters=reply_parameters,
                     duration=media.duration,
                     width=media.width,
                     height=media.height,
@@ -298,12 +313,20 @@ class UI:
                     show_caption_above_media=media.show_caption_above_media,
                     has_spoiler=media.has_spoiler,
                     supports_streaming=media.supports_streaming,
-                    reply_markup=reply_markup
+                    reply_markup=reply_markup,
+                    request_timeout=request_timeout
                 )
             elif isinstance(media, InputMediaAnimation):
                 return self.bot.send_animation(
                     animation=media.media,
                     chat_id=chat_id,
+                    business_connection_id=business_connection_id,
+                    message_thread_id=message_thread_id,
+                    direct_messages_topic_id=direct_messages_topic_id,
+                    disable_notification=disable_notification,
+                    protect_content=protect_content,
+                    message_effect_id=message_effect_id,
+                    reply_parameters=reply_parameters,
                     duration=media.duration,
                     width=media.width,
                     height=media.height,
@@ -313,23 +336,39 @@ class UI:
                     caption_entities=entities,
                     show_caption_above_media=media.show_caption_above_media,
                     has_spoiler=media.has_spoiler,
-                    reply_markup=reply_markup
+                    reply_markup=reply_markup,
+                    request_timeout=request_timeout
                 )
             elif isinstance(media, InputMediaDocument):
                 return self.bot.send_document(
                     document=media.media,
                     chat_id=chat_id,
+                    business_connection_id=business_connection_id,
+                    message_thread_id=message_thread_id,
+                    direct_messages_topic_id=direct_messages_topic_id,
+                    disable_notification=disable_notification,
+                    protect_content=protect_content,
+                    message_effect_id=message_effect_id,
+                    reply_parameters=reply_parameters,
                     thumbnail=media.thumbnail,
                     caption=text,
                     parse_mode=parse_mode,
                     caption_entities=entities,
                     disable_content_type_detection=media.disable_content_type_detection,
-                    reply_markup=reply_markup
+                    reply_markup=reply_markup,
+                    request_timeout=request_timeout
                 )
             elif isinstance(media, InputMediaAudio):
                 return self.bot.send_audio(
                     audio=media.media,
                     chat_id=chat_id,
+                    business_connection_id=business_connection_id,
+                    message_thread_id=message_thread_id,
+                    direct_messages_topic_id=direct_messages_topic_id,
+                    disable_notification=disable_notification,
+                    protect_content=protect_content,
+                    message_effect_id=message_effect_id,
+                    reply_parameters=reply_parameters,
                     caption=text,
                     parse_mode=text,
                     caption_entities=entities,
@@ -337,7 +376,8 @@ class UI:
                     performer=media.performer,
                     title=media.title,
                     thumbnail=media.thumbnail,
-                    reply_markup=reply_markup
+                    reply_markup=reply_markup,
+                    request_timeout=request_timeout
                 )
             else:
                 raise ValueError(f"Unknown media type {media.type!r}!")
