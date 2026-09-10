@@ -6,12 +6,12 @@ from telebox.dispatcher.state_machine.storage import AbstractStateBundleStorage
 
 class MemoryStateBundleStorage(AbstractStateBundleStorage):
     def __init__(self):
-        self._bundles: dict[tuple[int, Optional[int]], tuple[list[str], Optional[int]]] = {}
+        self._bundles: dict[tuple[int, Optional[int]], tuple[list[int], Optional[int]]] = {}
         self._lock = Lock()
 
     def save(
         self,
-        magazine: list[str],
+        magazine: list[int],
         *,
         chat_id: int,
         user_id: Optional[int] = None,
@@ -25,7 +25,7 @@ class MemoryStateBundleStorage(AbstractStateBundleStorage):
         *,
         chat_id: int,
         user_id: Optional[int] = None
-    ) -> tuple[Optional[list[str]], Optional[int]]:
+    ) -> tuple[Optional[list[int]], Optional[int]]:
         with self._lock:
             values = self._bundles.get((chat_id, user_id))
 

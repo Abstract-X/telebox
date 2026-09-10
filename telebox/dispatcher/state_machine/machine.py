@@ -17,34 +17,34 @@ if TYPE_CHECKING:
 
 @dataclass
 class StateBundle:
-    magazine: list[str]
+    magazine: list[int]
     flow_id: Optional[int] = None
 
     @property
-    def state(self) -> str:
+    def state_id(self) -> int:
         return self.magazine[-1]
 
     @property
-    def previous_state(self) -> Optional[str]:
+    def previous_state_id(self) -> Optional[int]:
         return self.magazine[-2] if len(self.magazine) > 1 else None
 
 
 class StateMachine:
-    def __init__(self, initial_state: str, storage: AbstractStateBundleStorage):
-        self._initial_state = initial_state
+    def __init__(self, initial_state_id: str, storage: AbstractStateBundleStorage):
+        self._initial_state_id = initial_state_id
         self._storage = storage
-        self._enter_hooks: dict[str, list[Callable[["EventContext"], None]]] = {}
-        self._exit_hooks: dict[str, list[Callable[["EventContext"], None]]] = {}
+        self._enter_hooks: dict[int, list[Callable[["EventContext"], None]]] = {}
+        self._exit_hooks: dict[int, list[Callable[["EventContext"], None]]] = {}
 
     @property
     def initial_state(self) -> str:
-        return self._initial_state
+        return self._initial_state_id
 
-    def add_enter_hook(self, state: str, hook: Callable[["EventContext"], None]) -> None:
-        self._enter_hooks.setdefault(state, []).append(hook)
+    def add_enter_hook(self, state_id: int, hook: Callable[["EventContext"], None]) -> None:
+        self._enter_hooks.setdefault(state_id, []).append(hook)
 
-    def add_exit_hook(self, state: str, hook: Callable[["EventContext"], None]) -> None:
-        self._exit_hooks.setdefault(state, []).append(hook)
+    def add_exit_hook(self, state_id: int, hook: Callable[["EventContext"], None]) -> None:
+        self._exit_hooks.setdefault(state_id, []).append(hook)
 
     def get_bundle(
         self,
@@ -61,9 +61,9 @@ class StateMachine:
 
         return StateBundle(magazine=magazine, flow_id=flow_id)
 
-    def set_state(
+    def set_state_id(
         self,
-        state: str,
+        state_id: int,
         *,
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
         user_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT,
@@ -72,7 +72,7 @@ class StateMachine:
         chat_id = _get_chat_id(chat_id)
         user_id = _get_user_id(user_id)
         bundle = self.get_bundle(chat_id=chat_id, user_id=user_id)
-        _set_magazine_state(magazine=bundle.magazine, state=state)
+        _set_magazine_state(magazine=bundle.magazine, state_id=state_id)
         self._update_bundle(
             magazine=bundle.magazine,
             chat_id=chat_id,
@@ -80,7 +80,7 @@ class StateMachine:
             flow_id=flow_id
         )
 
-    def set_previous_state(
+    def set_previous_state_id(
         self,
         *,
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
@@ -91,12 +91,12 @@ class StateMachine:
         user_id = _get_user_id(user_id)
         bundle = self.get_bundle(chat_id=chat_id, user_id=user_id)
 
-        if bundle.previous_state is None:
+        if bundle.previous_state_id is None:
             raise PreviousStateNotFoundError(
                 f"No previous state for chat_id={chat_id}, user_id={user_id}!"
             )
 
-        _set_magazine_state(magazine=bundle.magazine, state=bundle.previous_state)
+        _set_magazine_state(magazine=bundle.magazine, state_id=bundle.previous_state_id)
         self._update_bundle(
             magazine=bundle.magazine,
             chat_id=chat_id,
@@ -106,7 +106,7 @@ class StateMachine:
 
     def switch_state(
         self,
-        state: str,
+        state_id: int,
         *,
         flow_id: Optional[int] = None,
         ctx: Union["EventContext", FromContext] = FROM_CONTEXT
@@ -115,7 +115,7 @@ class StateMachine:
         bundle = self.get_bundle(chat_id=ctx.chat_id, user_id=ctx.user_id)
         self._process_transition(
             bundle=bundle,
-            state=state,
+            state_id=state_id,
             ctx=ctx,
             flow_id=flow_id
         )
@@ -129,21 +129,21 @@ class StateMachine:
         ctx = _get_ctx(ctx)
         bundle = self.get_bundle(chat_id=ctx.chat_id, user_id=ctx.user_id)
 
-        if bundle.previous_state is None:
+        if bundle.previous_state_id is None:
             raise PreviousStateNotFoundError(
                 f"No previous state for chat_id={ctx.chat_id}, user_id={ctx.user_id}!"
             )
 
         self._process_transition(
             bundle=bundle,
-            state=bundle.previous_state,
+            state_id=bundle.previous_state_id,
             ctx=ctx,
             flow_id=flow_id
         )
 
     def _update_bundle(
         self,
-        magazine: list[str],
+        magazine: list[int],
         *,
         chat_id: int,
         user_id: Optional[int] = None,
@@ -159,15 +159,15 @@ class StateMachine:
     def _process_transition(
         self,
         bundle: StateBundle,
-        state: str,
+        state_id: int,
         ctx: "EventContext",
         flow_id: Optional[int] = None
     ) -> None:
-        if state != bundle.state:
-            for hook in self._exit_hooks.get(bundle.state, ()):
+        if state_id != bundle.state_id:
+            for hook in self._exit_hooks.get(bundle.state_id, ()):
                 hook(ctx)
 
-            _set_magazine_state(magazine=bundle.magazine, state=state)
+            _set_magazine_state(magazine=bundle.magazine, state_id=state_id)
             self._update_bundle(
                 magazine=bundle.magazine,
                 chat_id=ctx.chat_id,
@@ -175,7 +175,7 @@ class StateMachine:
                 flow_id=flow_id
             )
 
-        for hook in self._enter_hooks.get(state, ()):
+        for hook in self._enter_hooks.get(state_id, ()):
             hook(ctx)
 
 
@@ -200,10 +200,10 @@ def _get_user_id(user_id: Union[int, None, FromContext]) -> int:
     return user_id
 
 
-def _set_magazine_state(magazine: list[str], state: str) -> None:
+def _set_magazine_state(magazine: list[int], state_id: int) -> None:
     try:
-        index = magazine.index(state)
+        index = magazine.index(state_id)
     except ValueError:
-        magazine.append(state)
+        magazine.append(state_id)
     else:
         del magazine[index + 1:]

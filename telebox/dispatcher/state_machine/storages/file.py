@@ -14,7 +14,7 @@ class FileStateBundleStorage(AbstractStateBundleStorage):
 
     def save(
         self,
-        magazine: list[str],
+        magazine: list[int],
         *,
         chat_id: int,
         user_id: Optional[int] = None,
@@ -35,7 +35,7 @@ class FileStateBundleStorage(AbstractStateBundleStorage):
         *,
         chat_id: int,
         user_id: Optional[int] = None
-    ) -> tuple[Optional[list[str]], Optional[int]]:
+    ) -> tuple[Optional[list[int]], Optional[int]]:
         key = _get_key(chat_id=chat_id, user_id=user_id)
 
         with self._lock:

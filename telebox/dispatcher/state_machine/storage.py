@@ -6,7 +6,7 @@ class AbstractStateBundleStorage(ABC):
     @abstractmethod
     def save(
         self,
-        magazine: list[str],
+        magazine: list[int],
         *,
         chat_id: int,
         user_id: Optional[int] = None,
@@ -20,5 +20,5 @@ class AbstractStateBundleStorage(ABC):
         *,
         chat_id: int,
         user_id: Optional[int] = None
-    ) -> tuple[Optional[list[str]], Optional[int]]:
+    ) -> tuple[Optional[list[int]], Optional[int]]:
         pass
