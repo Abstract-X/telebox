@@ -1,8 +1,8 @@
-from .file import FileStateBundleStorage
-from .memory import MemoryStateBundleStorage
+from .file import FileStateStorage
+from .memory import MemoryStateStorage
 
 
 __all__ = [
-    "FileStateBundleStorage",
-    "MemoryStateBundleStorage"
+    "FileStateStorage",
+    "MemoryStateStorage"
 ]

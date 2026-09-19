@@ -1,15 +1,18 @@
 import copy
+from typing import Optional
 
 from telebox.dispatcher.flows.storage import Value
 
 
 class Flow:
-    def __init__(self, data: dict[str, Value]):
-        self._data = data
+    def __init__(self, id_: int, parent_id: Optional[int] = None, data: Optional[dict[str, Value]] = None):
+        self.id = id_
+        self.parent_id = parent_id
+        self.data = data or {}
         self._original_data = copy.deepcopy(data)
 
     def __getitem__(self, item: str) -> Value:
-        return self._data[item]
+        return self.data[item]
 
     def __setitem__(self, key: str, value: Value) -> None:
         self.set(field=key, value=value)
@@ -18,26 +21,23 @@ class Flow:
         self.delete(field=key)
 
     def __iter__(self):
-        return iter(self._data)
+        return iter(self.data)
 
     @property
     def is_changed(self) -> bool:
-        return self._data != self._original_data
+        return self.data != self._original_data
 
     def get(self, field: str, default: Value = None) -> Value:
-        return self._data.get(field, default)
+        return self.data.get(field, default)
 
     def set(self, field: str, value: Value) -> None:
-        self._data[field] = value
+        self.data[field] = value
 
     def delete(self, field: str) -> None:
-        del self._data[field]
+        del self.data[field]
 
     def pop(self, field: str, default: Value = None) -> Value:
-        return self._data.pop(field, default)
+        return self.data.pop(field, default)
 
     def clear(self) -> None:
-        self._data.clear()
-
-    def get_data(self) -> dict[str, Value]:
-        return self._data
+        self.data.clear()

@@ -5,7 +5,8 @@ from telebox.bot.bot import Bot
 from telebox.ui.ui import UI
 from telebox.dispatcher.state_machine import StateMachine
 from telebox.dispatcher.drafts.lazy_draft import LazyDraft
-from telebox.dispatcher.flows.manager import FlowManager
+from telebox.dispatcher.flows.manager import FlowManager, FlowSession
+from telebox.dispatcher.flows.flow import Flow
 from telebox.dispatcher.type_hints import Event, Handler, ErrorHandler
 from telebox.dispatcher.enums.event_type import EventType
 
@@ -27,15 +28,8 @@ class EventContext(Generic[ET]):
     state_machine: Optional[StateMachine] = None
     flow_manager: Optional[FlowManager] = None
     draft: Optional[LazyDraft] = None
-    _flow_id: Optional[int] = field(default=None, init=False, repr=False)
+    flow_session: Optional[FlowSession] = field(default=None, init=False)
 
     @property
-    def flow_id(self) -> int:
-        if self._flow_id is None:
-            raise ValueError("flow_id is not set!")
-
-        return self._flow_id
-
-    @flow_id.setter
-    def flow_id(self, value: int) -> None:
-        self._flow_id = value
+    def flow(self) -> Optional[Flow]:
+        return self.flow_session.flow
