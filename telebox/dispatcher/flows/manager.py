@@ -18,34 +18,38 @@ F = TypeVar("F", bound=Callable)
 
 
 @overload
-def flow_handler(func: F, *, start: bool = False) -> F: ...
+def with_flow(func: F, *, start: bool = False, chat: bool = False) -> F: ...
 
 
 @overload
-def flow_handler(*, start: bool = False) -> Callable[[F], F]: ...
+def with_flow(*, start: bool = False, chat: bool = False) -> Callable[[F], F]: ...
 
 
-def flow_handler(func=None, /, *, start: bool = False):
-    def decorator(handler: F) -> F:
-        @functools.wraps(handler)
+def with_flow(func=None, /, *, start: bool = False, chat: bool = False):
+    def decorator(callback: F) -> F:
+        @functools.wraps(callback)
         def wrapper(ctx):
-            if start:
-                flow_id = ctx.flow_manager.start_flow(chat_id=ctx.chat_id, user_id=ctx.user_id)
+            if ctx.flow_session is not None:
+                raise RuntimeError("Flow session is already started!")
+
+            chat_id = ctx.chat_id
+            user_id = None if chat else ctx.user_id
+
+            if isinstance(ctx.event, CallbackQuery):
+                flow_id = ctx.event.flow_id
             else:
-                flow_id = None
+                flow_id = ctx.state_machine.get_input_flow_id(chat_id=chat_id, user_id=user_id)
 
-                if isinstance(ctx.event, CallbackQuery):
-                    flow_id = ctx.event.flow_id
+            if start:
+                flow_id = ctx.flow_manager.start_flow(chat_id=chat_id, user_id=user_id, parent_flow_id=flow_id)
 
-                if flow_id is None:
-                    flow_id = ctx.state_machine.get_bundle(chat_id=ctx.chat_id, user_id=ctx.user_id).flow_id
+            if flow_id is None:
+                raise FlowNotFoundError(f"Flow not found for chat_id={chat_id}, user_id={user_id}!")
 
-                if flow_id is None:
-                    raise FlowNotFoundError(f"Flow not found for chat_id={ctx.chat_id}, user_id={ctx.user_id}!")
+            ctx.flow_session = ctx.flow_manager.session(flow_id)
 
-            ctx.flow_id = flow_id
-
-            return handler(ctx)
+            with ctx.flow_session:
+                return callback(ctx)
 
         return wrapper
 
@@ -55,27 +59,35 @@ def flow_handler(func=None, /, *, start: bool = False):
     return decorator(func)
 
 
-class FlowContext:
+class FlowSession:
     def __init__(self, flow_id: int, storage: AbstractFlowStorage):
         self._flow_id = flow_id
         self._storage = storage
-        self._flow: Optional[Flow] = None
+        self.flow: Optional[Flow] = None
 
     def __enter__(self) -> Flow:
-        self._flow = Flow(
-            data=self._storage.load(
-                flow_id=self._flow_id
-            )
-        )
+        self._load(self._flow_id)
 
-        return self._flow
+        return self.flow
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is None and self._flow.is_changed:
-            self._storage.save(
-                flow_id=self._flow_id,
-                data=self._flow.get_data()
-            )
+        if (exc_type is None) and (self.flow is not None) and self.flow.is_changed:
+            self._storage.save(flow_id=self.flow.id, data=self.flow.data)
+
+    def save(self) -> None:
+        self._storage.save(flow_id=self.flow.id, data=self.flow.data)
+
+    def return_to_parent(self) -> None:
+        if self.flow.parent_id is None:
+            raise FlowNotFoundError(f"Parent flow not found for flow_id={self.flow.id}!")
+
+        self._storage.finish(self.flow.id)
+        self._load(self.flow.parent_id)
+
+    def _load(self, flow_id: int) -> None:
+        data, parent_id = self._storage.load(flow_id=flow_id)
+        self._flow_id = flow_id
+        self.flow = Flow(id_=flow_id, parent_id=parent_id, data=data)
 
 
 class FlowManager:
@@ -86,22 +98,24 @@ class FlowManager:
         self,
         *,
         chat_id: Union[int, FromContext] = FROM_CONTEXT,
-        user_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT
+        user_id: Union[int, None, FromContext] = OPTIONAL_FROM_CONTEXT,
+        parent_flow_id: Optional[int] = None
     ) -> int:
         chat_id = _get_chat_id(chat_id)
         user_id = _get_user_id(user_id)
 
-        return self._storage.create(chat_id=chat_id, user_id=user_id)
+        return self._storage.create(chat_id=chat_id, user_id=user_id, parent_flow_id=parent_flow_id)
 
     def get_flow(self, flow_id: int) -> Flow:
-        return Flow(
-            data=self._storage.load(
-                flow_id=flow_id
-            )
-        )
+        data, parent_id = self._storage.load(flow_id=flow_id)
 
-    def flow(self, flow_id: int) -> FlowContext:
-        return FlowContext(flow_id=flow_id, storage=self._storage)
+        return Flow(id_=flow_id, parent_id=parent_id, data=data)
+
+    def session(self, flow_id: int) -> FlowSession:
+        return FlowSession(flow_id=flow_id, storage=self._storage)
+
+    def save_flow(self, flow: Flow) -> None:
+        self._storage.save(flow_id=flow.id, data=flow.data)
 
     def finish_flow(self, flow_id: int) -> None:
         self._storage.finish(flow_id)

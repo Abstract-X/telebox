@@ -10,8 +10,8 @@ from .types import MediaGroup
 from .router import Router
 from .context import EventContext, ET
 from .drafts import AbstractDraftStorage, MemoryDraftStorage, FileDraftStorage, LazyDraft
-from .flows import AbstractFlowStorage, MemoryFlowStorage, FileFlowStorage, Flow, FlowManager, flow_handler
-from .state_machine import StateMachine, AbstractStateBundleStorage, MemoryStateBundleStorage, FileStateBundleStorage
+from .flows import AbstractFlowStorage, MemoryFlowStorage, FileFlowStorage, Flow, FlowManager, with_flow
+from .state_machine import StateMachine, AbstractStateStorage, MemoryStateStorage, FileStateStorage
 from .middlewares import DependencyMiddleware, DraftMiddleware
 
 
@@ -42,11 +42,11 @@ __all__ = [
     "FileFlowStorage",
     "Flow",
     "FlowManager",
-    "flow_handler",
+    "with_flow",
     "StateMachine",
-    "AbstractStateBundleStorage",
-    "MemoryStateBundleStorage",
-    "FileStateBundleStorage",
+    "AbstractStateStorage",
+    "MemoryStateStorage",
+    "FileStateStorage",
     "DependencyMiddleware",
     "DraftMiddleware"
 ]

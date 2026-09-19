@@ -1,11 +1,11 @@
 from .machine import StateMachine
-from .storage import AbstractStateBundleStorage
-from .storages import MemoryStateBundleStorage, FileStateBundleStorage
+from .storage import AbstractStateStorage
+from .storages import MemoryStateStorage, FileStateStorage
 
 
 __all__ = [
     "StateMachine",
-    "AbstractStateBundleStorage",
-    "MemoryStateBundleStorage",
-    "FileStateBundleStorage"
+    "AbstractStateStorage",
+    "MemoryStateStorage",
+    "FileStateStorage"
 ]

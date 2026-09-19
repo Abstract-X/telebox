@@ -1,7 +1,7 @@
 from .storage import AbstractFlowStorage
 from .storages import MemoryFlowStorage, FileFlowStorage
 from .flow import Flow
-from .manager import FlowManager, flow_handler
+from .manager import FlowManager, with_flow
 
 
 __all__ = [
@@ -10,5 +10,5 @@ __all__ = [
     "FileFlowStorage",
     "Flow",
     "FlowManager",
-    "flow_handler"
+    "with_flow"
 ]

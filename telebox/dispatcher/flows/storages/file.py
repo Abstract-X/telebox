@@ -1,10 +1,10 @@
+import json
 from typing import Optional, Union, Any
 from pathlib import Path
 from threading import Lock
 import uuid
 
 from telebox.dispatcher.flows.storage import AbstractFlowStorage
-from telebox.utils import get_serialized_data, get_deserialized_data
 
 
 class FileFlowStorage(AbstractFlowStorage):
@@ -12,19 +12,18 @@ class FileFlowStorage(AbstractFlowStorage):
         self._path = Path(path).resolve()
         self._lock = Lock()
 
-    def create(self, *, chat_id: int, user_id: Optional[int] = None) -> int:
+    def create(self, *, chat_id: int, user_id: Optional[int] = None, parent_flow_id: Optional[int] = None) -> int:
         with self._lock:
             content = self._load_content()
             flow_id = content["next_id"]
             content["next_id"] += 1
             flow_key = _get_flow_key(flow_id)
             content["flows"][flow_key] = {
-                "chat_id": chat_id
+                "chat_id": chat_id,
+                "user_id": user_id,
+                "data": {},
+                "parent_id": parent_flow_id
             }
-
-            if user_id is not None:
-                content["flows"][flow_key]["user_id"] = user_id
-
             self._save_content(content)
 
             return flow_id
@@ -37,48 +36,35 @@ class FileFlowStorage(AbstractFlowStorage):
             content["flows"].pop(flow_key, None)
             self._save_content(content)
 
-    def check(self, flow_id: int) -> bool:
+    def save(self, flow_id: int, data: Optional[dict[str, Any]] = None) -> None:
         flow_key = _get_flow_key(flow_id)
 
         with self._lock:
             content = self._load_content()
+            record = content["flows"].get(flow_key)
 
-            return flow_key in content["flows"]
-
-    def _save(self, flow_id: int, data: Optional[bytes] = None) -> None:
-        flow_key = _get_flow_key(flow_id)
-
-        with self._lock:
-            content = self._load_content()
-
-            if flow_key in content["flows"]:
-                if data:
-                    content["flows"][flow_key]["data"] = get_deserialized_data(data)
-                else:
-                    content["flows"][flow_key].pop("data", None)
-
+            if record is not None:
+                record["data"] = data
                 self._save_content(content)
 
-    def _load(self, flow_id: int) -> Optional[bytes]:
+    def load(self, flow_id: int) -> tuple[Optional[dict[str, Any]], Optional[int]]:
         flow_key = _get_flow_key(flow_id)
 
         with self._lock:
             content = self._load_content()
-            flow = content["flows"].get(flow_key)
+            record = content["flows"].get(flow_key)
 
-            if flow:
-                data = flow.get("data")
+            if record is not None:
+                return record["data"], record["parent_id"]
 
-                return get_serialized_data(data) if data else None
+            return None, None
 
     def _save_content(self, content: dict[str, Any]) -> None:
         temp_path = self._path.parent / f".{uuid.uuid4().hex}.json"
 
         try:
-            with temp_path.open("wb") as file:
-                file.write(
-                    get_serialized_data(content)
-                )
+            with temp_path.open("w") as file:
+                json.dump(content, file, indent=4, sort_keys=True)
 
             temp_path.replace(self._path)
         finally:
@@ -87,9 +73,7 @@ class FileFlowStorage(AbstractFlowStorage):
     def _load_content(self) -> dict[str, Any]:
         try:
             with self._path.open() as file:
-                return get_deserialized_data(
-                    file.read()
-                )
+                return json.load(file)
         except FileNotFoundError:
             return {
                 "next_id": 1,

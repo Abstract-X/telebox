@@ -1,43 +1,49 @@
-from typing import Optional
+import copy
+from dataclasses import dataclass
+from typing import Optional, Any
 from threading import Lock
 
 from telebox.dispatcher.flows.storage import AbstractFlowStorage
 
 
+@dataclass
+class Record:
+    chat_id: int
+    user_id: Optional[int] = None
+    data: Optional[dict[str, Any]] = None
+    parent_id: Optional[int] = None
+
+
 class MemoryFlowStorage(AbstractFlowStorage):
     def __init__(self):
-        self._flows: dict[int, tuple[int, Optional[int], Optional[bytes]]] = {}
+        self._records: dict[int, Record] = {}
         self._lock = Lock()
         self._next_id = 1
 
-    def create(self, *, chat_id: int, user_id: Optional[int] = None) -> int:
+    def create(self, *, chat_id: int, user_id: Optional[int] = None, parent_flow_id: Optional[int] = None) -> int:
         with self._lock:
             flow_id = self._next_id
             self._next_id += 1
-            self._flows[flow_id] = (chat_id, user_id, None)
+            self._records[flow_id] = Record(chat_id=chat_id, user_id=user_id, parent_id=parent_flow_id)
 
             return flow_id
 
     def finish(self, flow_id: int) -> None:
         with self._lock:
-            self._flows.pop(flow_id, None)
+            self._records.pop(flow_id, None)
 
-    def check(self, flow_id: int) -> bool:
+    def save(self, flow_id: int, data: Optional[dict[str, Any]] = None) -> None:
         with self._lock:
-            return flow_id in self._flows
+            record = self._records.get(flow_id)
 
-    def _save(self, flow_id: int, data: Optional[bytes] = None) -> None:
+            if record is not None:
+                record.data = copy.deepcopy(data)
+
+    def load(self, flow_id: int) -> tuple[Optional[dict[str, Any]], Optional[int]]:
         with self._lock:
-            stored_flow = self._flows.get(flow_id)
+            record = self._records.get(flow_id)
 
-            if stored_flow is None:
-                return
+            if record is not None:
+                return record.data, record.parent_id
 
-            self._flows[flow_id] = (stored_flow[0], stored_flow[1], data)
-
-    def _load(self, flow_id: int) -> Optional[bytes]:
-        with self._lock:
-            flow = self._flows.get(flow_id)
-
-            if flow:
-                return flow[2]
+            return None, None

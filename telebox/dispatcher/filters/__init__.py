@@ -3,7 +3,6 @@ from .callback import CallbackFilter
 from .callback_data import CallbackDataFilter
 from .cashtag import CashtagFilter
 from .chat import ChatFilter
-from .chat_state import ChatStateFilter
 from .chat_type import ChatTypeFilter
 from .command import CommandFilter
 from .dice import DiceFilter
@@ -23,7 +22,7 @@ from .text import TextFilter
 from .text_command import TextCommandFilter
 from .text_mention import TextMentionFilter
 from .user import UserFilter
-from .user_state import UserStateFilter
+from .state import StateFilter
 
 
 __all__ = [
@@ -33,7 +32,6 @@ __all__ = [
     "CallbackDataFilter",
     "CashtagFilter",
     "ChatFilter",
-    "ChatStateFilter",
     "ChatTypeFilter",
     "CommandFilter",
     "DiceFilter",
@@ -53,5 +51,5 @@ __all__ = [
     "TextCommandFilter",
     "TextMentionFilter",
     "UserFilter",
-    "UserStateFilter"
+    "StateFilter"
 ]
