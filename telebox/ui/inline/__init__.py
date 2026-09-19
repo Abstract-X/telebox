@@ -3,6 +3,7 @@ from .keyboard import InlineKeyboard
 from .keyboards import PaginatedInlineKeyboard
 from .buttons import (
     CallbackButton,
+    FlowCallbackButton,
     ChosenChatQueryButton,
     CopyTextButton,
     CurrentChatQueryButton,
@@ -18,6 +19,7 @@ __all__ = [
     "InlineKeyboard",
     "PaginatedInlineKeyboard",
     "CallbackButton",
+    "FlowCallbackButton",
     "ChosenChatQueryButton",
     "CopyTextButton",
     "CurrentChatQueryButton",
