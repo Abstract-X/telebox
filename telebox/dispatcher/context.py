@@ -1,4 +1,4 @@
-from typing import Optional, TypeVar, Generic
+from typing import Optional, TypeVar, Generic, Any
 from dataclasses import dataclass, field
 
 from telebox.bot.bot import Bot
@@ -29,6 +29,7 @@ class EventContext(Generic[ET]):
     flow_manager: Optional[FlowManager] = None
     draft: Optional[LazyDraft] = None
     flow_session: Optional[FlowSession] = field(default=None, init=False)
+    data: Optional[dict[str, Any]] = field(default_factory=dict, init=False)
 
     @property
     def flow(self) -> Optional[Flow]:
