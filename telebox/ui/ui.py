@@ -26,7 +26,7 @@ class UI:
     def __init__(self, bot: Bot):
         self.bot = bot
 
-    def send_reply_menu(
+    def show_reply_menu(
         self,
         menu: ReplyMenu,
         *,
@@ -97,39 +97,6 @@ class UI:
             request_timeout=request_timeout
         )
 
-    def send_inline_menu(
-        self,
-        menu: InlineMenu,
-        *,
-        chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
-        business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
-        message_thread_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
-        direct_messages_topic_id: Union[int, None, Unset] = UNSET,
-        link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
-        disable_notification: Union[bool, None, Unset] = UNSET,
-        protect_content: Union[bool, None, Unset] = UNSET,
-        message_effect_id: Union[str, None, Unset] = UNSET,
-        reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
-        request_timeout: Union[float, int, None, Unset] = UNSET
-    ) -> Message:
-        return self._send_menu(
-            text=menu.text,
-            reply_markup=menu.keyboard.get_markup(),
-            chat_id=chat_id,
-            parse_mode=menu.parse_mode,
-            entities=menu.entities,
-            media=menu.media,
-            business_connection_id=business_connection_id,
-            message_thread_id=message_thread_id,
-            direct_messages_topic_id=direct_messages_topic_id,
-            link_preview_options=link_preview_options,
-            disable_notification=disable_notification,
-            protect_content=protect_content,
-            message_effect_id=message_effect_id,
-            reply_parameters=reply_parameters,
-            request_timeout=request_timeout
-        )
-
     def edit_inline_menu(
         self,
         menu: InlineMenu,
@@ -140,7 +107,7 @@ class UI:
         link_preview_options: Union[LinkPreviewOptions, None, Unset] = UNSET,
         request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
-        if menu.media:
+        if menu.media is not None:
             data = self.bot.converter.get_data(menu.media)
             data["caption"] = menu.text
             data["parse_mode"] = menu.parse_mode
@@ -195,8 +162,8 @@ class UI:
         message_id: Union[int, FromContext, None] = FROM_CONTEXT,
         business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         request_timeout: Union[float, int, None, Unset] = UNSET
-    ) -> None:
-        self.bot.edit_message_reply_markup(
+    ) -> Message:
+        return self.bot.edit_message_reply_markup(
             business_connection_id=business_connection_id,
             chat_id=chat_id,
             message_id=message_id,
@@ -207,6 +174,7 @@ class UI:
         self,
         menu: InlineMenu,
         *,
+        edit: bool = True,
         chat_id: Union[int, str, FromContext] = FROM_CONTEXT,
         message_id: Union[int, FromContext, None] = OPTIONAL_FROM_CONTEXT,
         business_connection_id: Union[str, FromContext, None] = OPTIONAL_FROM_CONTEXT,
@@ -219,27 +187,32 @@ class UI:
         reply_parameters: Union[ReplyParameters, None, Unset] = UNSET,
         request_timeout: Union[float, int, None, Unset] = UNSET
     ) -> Message:
-        if isinstance(message_id, FromContext):
-            event = event_context.get(None)
+        if edit:
+            if isinstance(message_id, FromContext):
+                event = event_context.get(None)
 
-            if isinstance(event, CallbackQuery) and (event.message_id is not None):
-                message_id = event.message_id
-            else:
-                message_id = None
+                if isinstance(event, CallbackQuery) and (event.message_id is not None):
+                    message_id = event.message_id
+                else:
+                    message_id = None
 
-        if message_id is not None:
-            return self.edit_inline_menu(
-                menu=menu,
-                chat_id=chat_id,
-                message_id=message_id,
-                business_connection_id=business_connection_id,
-                link_preview_options=link_preview_options,
-                request_timeout=request_timeout
-            )
+            if message_id is not None:
+                return self.edit_inline_menu(
+                    menu=menu,
+                    chat_id=chat_id,
+                    message_id=message_id,
+                    business_connection_id=business_connection_id,
+                    link_preview_options=link_preview_options,
+                    request_timeout=request_timeout
+                )
 
-        return self.send_inline_menu(
-            menu=menu,
+        return self._send_menu(
+            text=menu.text,
+            reply_markup=menu.keyboard.get_markup(),
             chat_id=chat_id,
+            parse_mode=menu.parse_mode,
+            entities=menu.entities,
+            media=menu.media,
             business_connection_id=business_connection_id,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
@@ -370,7 +343,7 @@ class UI:
                     message_effect_id=message_effect_id,
                     reply_parameters=reply_parameters,
                     caption=text,
-                    parse_mode=text,
+                    parse_mode=parse_mode,
                     caption_entities=entities,
                     duration=media.duration,
                     performer=media.performer,
