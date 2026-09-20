@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 
 from telebox.bot.bot import Bot
 from telebox.ui.ui import UI
+from telebox.task_executor import TaskExecutor
 from telebox.dispatcher.state_machine import StateMachine
 from telebox.dispatcher.drafts.lazy_draft import LazyDraft
 from telebox.dispatcher.flows.manager import FlowManager, FlowSession
@@ -27,6 +28,7 @@ class EventContext(Generic[ET]):
     ui: Optional[UI] = None
     state_machine: Optional[StateMachine] = None
     flow_manager: Optional[FlowManager] = None
+    task_executor: Optional[TaskExecutor] = None
     draft: Optional[LazyDraft] = None
     flow_session: Optional[FlowSession] = field(default=None, init=False)
     data: Optional[dict[str, Any]] = field(default_factory=dict, init=False)
