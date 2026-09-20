@@ -1,6 +1,7 @@
 from typing import Optional
 
 from telebox.bot.bot import Bot
+from telebox.task_executor import TaskExecutor
 from telebox.dispatcher.flows.manager import FlowManager
 from telebox.dispatcher.state_machine import StateMachine
 from telebox.dispatcher.middleware import Middleware
@@ -14,6 +15,7 @@ class DependencyMiddleware(Middleware):
         ui: Optional[UI] = None,
         state_machine: Optional[StateMachine] = None,
         flow_manager: Optional[FlowManager] = None,
+        task_executor: Optional[TaskExecutor] = None,
         **kwargs
     ) -> None:
         self._bot = bot
@@ -27,6 +29,7 @@ class DependencyMiddleware(Middleware):
 
         self._state_machine = state_machine
         self._flow_manager = flow_manager
+        self._task_executor = task_executor
         self._kwargs = kwargs
 
     def on_pre_process(self, ctx) -> None:
@@ -34,6 +37,7 @@ class DependencyMiddleware(Middleware):
         ctx.ui = self._ui
         ctx.state_machine = self._state_machine
         ctx.flow_manager = self._flow_manager
+        ctx.task_executor = self._task_executor
 
         for name, value in self._kwargs.items():
             setattr(ctx, name, value)

@@ -7,6 +7,9 @@ import heapq
 import time
 import uuid
 
+from telebox.context_values import event_context, chat_id_context, user_id_context
+from telebox.dispatcher.type_hints import Event
+
 
 logger = logging.getLogger(__name__)
 _WORKER_WAITING_SECS = 60
@@ -20,6 +23,9 @@ class Task:
     kwargs: dict[str, Any]
     start_time: float
     is_cancelled: bool = False
+    context_event: Optional[Event] = None
+    context_chat_id: Optional[int] = None
+    context_user_id: Optional[int] = None
 
 
 class TaskExecutor:
@@ -46,7 +52,7 @@ class TaskExecutor:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.wait()
 
-    def add_task(
+    def schedule_task(
         self,
         task: Callable,
         args: tuple = (),
@@ -65,7 +71,10 @@ class TaskExecutor:
             task=task,
             args=args,
             kwargs=kwargs or {},
-            start_time=time.monotonic() + delay
+            start_time=time.monotonic() + delay,
+            context_event=event_context.get(None),
+            context_chat_id=chat_id_context.get(None),
+            context_user_id=user_id_context.get(None)
         )
 
         with self._new_task_condition:
@@ -74,7 +83,7 @@ class TaskExecutor:
             self._unprocessed_tasks += 1
             self._new_task_condition.notify()
 
-        logger.debug("Task added: %r, delay=%r.", task, delay)
+        logger.debug("Task scheduled: %r, delay=%r.", task, delay)
 
         return task.id
 
@@ -182,12 +191,20 @@ class TaskExecutor:
 
             logger.debug("Task processing started: %r.", task)
 
+            event_context_token = event_context.set(task.context_event)
+            chat_id_context_token = chat_id_context.set(task.context_chat_id)
+            user_id_context_token = user_id_context.set(task.context_user_id)
+
             # noinspection PyBroadException
             try:
                 task.task(*task.args, **task.kwargs)
             except Exception:
                 logger.exception("An error occurred while processing a task!")
             finally:
+                event_context.reset(event_context_token)
+                chat_id_context.reset(chat_id_context_token)
+                user_id_context.reset(user_id_context_token)
+                last_processing_time = time.monotonic()
                 self._set_task_completion()
                 logger.debug("Task processing finished: %r.", task)
 
