@@ -1,12 +1,10 @@
 from typing import Union
 
-from telebox.bot.types.inline_keyboard_button import InlineKeyboardButton
-from telebox.ui.inline.button import AbstractInlineButton
-from telebox.callback_data import get_callback_data
+from telebox.ui.inline import CallbackButton
 from telebox.unset import Unset, UNSET
 
 
-class FlowCallbackButton(AbstractInlineButton):
+class FlowCallbackButton(CallbackButton):
     def __init__(
         self,
         text: str,
@@ -17,21 +15,11 @@ class FlowCallbackButton(AbstractInlineButton):
         icon_custom_emoji_id: Union[str, None, Unset] = UNSET,
         style: Union[str, None, Unset] = UNSET
     ):
-        self.text = text
-        self.callback_id = callback_id
-        self.flow_id = flow_id
-        self.payload = payload
-        self.icon_custom_emoji_id = icon_custom_emoji_id
-        self.style = style
-
-    def get(self) -> InlineKeyboardButton:
-        return InlineKeyboardButton(
-            text=self.text,
-            callback_data=get_callback_data(
-                callback_id=self.callback_id,
-                flow_id=self.flow_id,
-                payload=self.payload
-            ),
-            icon_custom_emoji_id=self.icon_custom_emoji_id,
-            style=self.style
+        super().__init__(
+            text=text,
+            callback_id=callback_id,
+            flow_id=flow_id,
+            payload=payload,
+            icon_custom_emoji_id=icon_custom_emoji_id,
+            style=style
         )
