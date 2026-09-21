@@ -5,9 +5,8 @@ from telebox.dispatcher.flows.storage import Value
 
 
 class Flow:
-    def __init__(self, id_: int, parent_id: Optional[int] = None, data: Optional[dict[str, Value]] = None):
+    def __init__(self, id_: int, data: Optional[dict[str, Value]] = None):
         self.id = id_
-        self.parent_id = parent_id
         self.data = data or {}
         self._original_data = copy.deepcopy(data)
 

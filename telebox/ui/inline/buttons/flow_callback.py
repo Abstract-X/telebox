@@ -1,6 +1,6 @@
 from typing import Union
 
-from telebox.ui.inline import CallbackButton
+from telebox.ui.inline.buttons.callback import CallbackButton
 from telebox.unset import Unset, UNSET
 
 

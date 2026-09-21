@@ -7,7 +7,7 @@ Value = Union[str, int, float, bool, list["Value"], dict[str, "Value"], None]
 
 class AbstractFlowStorage(ABC):
     @abstractmethod
-    def create(self, *, chat_id: int, user_id: Optional[int] = None, parent_flow_id: Optional[int] = None) -> int:
+    def create(self, *, chat_id: int, user_id: Optional[int] = None) -> int:
         pass
 
     @abstractmethod
@@ -19,5 +19,5 @@ class AbstractFlowStorage(ABC):
         pass
 
     @abstractmethod
-    def load(self, flow_id: int) -> tuple[Optional[dict[str, Any]], Optional[int]]:
+    def load(self, flow_id: int) -> Optional[dict[str, Any]]:
         pass
