@@ -6,7 +6,7 @@ from telebox.ui.ui import UI
 from telebox.task_executor import TaskExecutor
 from telebox.dispatcher.state_machine import StateMachine
 from telebox.dispatcher.drafts.lazy_draft import LazyDraft
-from telebox.dispatcher.flows.manager import FlowManager, FlowSession
+from telebox.dispatcher.flows.manager import FlowManager
 from telebox.dispatcher.flows.flow import Flow
 from telebox.dispatcher.type_hints import Event, Handler, ErrorHandler
 from telebox.dispatcher.enums.event_type import EventType
@@ -27,12 +27,8 @@ class EventContext(Generic[ET]):
     bot: Optional[Bot] = None
     ui: Optional[UI] = None
     state_machine: Optional[StateMachine] = None
+    flow: Optional[Flow] = None
     flow_manager: Optional[FlowManager] = None
     task_executor: Optional[TaskExecutor] = None
     draft: Optional[LazyDraft] = None
-    flow_session: Optional[FlowSession] = field(default=None, init=False)
     data: Optional[dict[str, Any]] = field(default_factory=dict, init=False)
-
-    @property
-    def flow(self) -> Optional[Flow]:
-        return self.flow_session.flow

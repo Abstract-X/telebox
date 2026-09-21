@@ -12,7 +12,7 @@ class FileFlowStorage(AbstractFlowStorage):
         self._path = Path(path).resolve()
         self._lock = Lock()
 
-    def create(self, *, chat_id: int, user_id: Optional[int] = None, parent_flow_id: Optional[int] = None) -> int:
+    def create(self, *, chat_id: int, user_id: Optional[int] = None) -> int:
         with self._lock:
             content = self._load_content()
             flow_id = content["next_id"]
@@ -21,8 +21,7 @@ class FileFlowStorage(AbstractFlowStorage):
             content["flows"][flow_key] = {
                 "chat_id": chat_id,
                 "user_id": user_id,
-                "data": {},
-                "parent_id": parent_flow_id
+                "data": {}
             }
             self._save_content(content)
 
@@ -47,7 +46,7 @@ class FileFlowStorage(AbstractFlowStorage):
                 record["data"] = data
                 self._save_content(content)
 
-    def load(self, flow_id: int) -> tuple[Optional[dict[str, Any]], Optional[int]]:
+    def load(self, flow_id: int) -> Optional[dict[str, Any]]:
         flow_key = _get_flow_key(flow_id)
 
         with self._lock:
@@ -55,9 +54,7 @@ class FileFlowStorage(AbstractFlowStorage):
             record = content["flows"].get(flow_key)
 
             if record is not None:
-                return record["data"], record["parent_id"]
-
-            return None, None
+                return record["data"]
 
     def _save_content(self, content: dict[str, Any]) -> None:
         temp_path = self._path.parent / f".{uuid.uuid4().hex}.json"

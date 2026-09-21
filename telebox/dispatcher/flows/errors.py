@@ -7,3 +7,7 @@ class FlowError(TeleboxError):
 
 class FlowNotFoundError(FlowError):
     pass
+
+
+class FlowAlreadyExistsError(FlowError):
+    pass
